@@ -1,4 +1,4 @@
-# Assessment Web
+# Portal Backend
 
 ## Install
 
@@ -17,7 +17,7 @@ you need:
 ./init.sh
 
 # 2. Connect to assessment-portal
-By default the portal is accessable at http://localhost:80
+By default the portal is accessable at http://localhost:8001
 ```
 
 ## Usage
