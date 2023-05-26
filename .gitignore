@@ -6,7 +6,6 @@
 /vendor
 .composer
 .env
-.env.user
 .env.backup
 .env.production
 .phpunit.result.cache
