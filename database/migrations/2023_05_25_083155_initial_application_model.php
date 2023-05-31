@@ -22,10 +22,9 @@ return new class extends Migration
 
         Schema::create('application_hashes', function(Blueprint $table){
             $table->uuid('form_hash_id');
-            $table->uuid('application_id');
+            $table->foreignUuid('application_id')->constrained();
             $table->string('hash');
 
-            $table->foreign('application_id')->references('id')->on('applications');
             $table->primary(['form_hash_id', 'application_id'], 'id');
         });
 
@@ -36,27 +35,24 @@ return new class extends Migration
         Schema::create('application_reviews', function(Blueprint $table){
             $table->uuid('id')->primary();
             $table->timestamp('created_at')->useCurrent();
-            $table->uuid('application_id');
+            $table->foreignUuid('application_id')->constrained();
             $table->uuid('user_id');
 
             $table->string('judgement');
-            $table->string('encrypted_comment');
+            $table->text('encrypted_comment');
             $table->string('encryption_key_id');
 
-            $table->foreign('application_id')->references('id')->on('applications');
             $table->foreign('judgement')->references('judgement')->on('judgements');
         });
 
         Schema::create('answers', function(Blueprint $table){
             $table->uuid('id')->primary();
-            $table->uuid('application_id');
+            $table->foreignUuid('application_id')->constrained();
             $table->uuid('question_id');
             $table->timestamp('created_at')->useCurrent();
 
-            $table->string('encrypted_answer');
+            $table->text('encrypted_answer');
             $table->string('encryption_key_id');
-
-            $table->foreign('application_id')->references('id')->on('applications');
         });
     }
 
