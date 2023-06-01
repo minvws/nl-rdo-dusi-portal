@@ -27,16 +27,6 @@ class ApplicationHash extends Model
         'hash'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-//        'form_hash_id' => 'uuid',
-//        'application_id' => 'uuid'
-    ];
-
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
