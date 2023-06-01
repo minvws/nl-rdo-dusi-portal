@@ -29,6 +29,11 @@ return [
     */
 
     'disks' => [
+        'forms' => [
+            'driver' => 'local',
+            'root' => storage_path('forms'),
+            'throw' => false,
+        ],
 
         'local' => [
             'driver' => 'local',

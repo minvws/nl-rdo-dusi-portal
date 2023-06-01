@@ -18,26 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/forms/{id}', [FormController::class, 'show']);
-
-Route::get('/private', function () {
-    return view('private');
-});
-
-
-Route::post('/login', 'App\Http\Controllers\Auth\LoginController@login');
-
-
-// Change the language of the page
-Route::get('ChangeLanguage/{locale}', function ($locale) {
-    if (in_array($locale, Config::get('app.locales'))) {
-        session(['locale' => $locale]);
-    }
-    return redirect()->back();
-})->name('changelang');
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/logged_in', function () {
-        return view('private');
-    });
+Route::prefix('api')->group(function () {
+    Route::get('forms', [FormController::class, 'index']);
+    Route::get('forms/{id}', [FormController::class, 'show']);
 });
