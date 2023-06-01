@@ -32,6 +32,10 @@ return [
     */
 
     'stores' => [
+        'form' => [
+            'driver' => 'file',
+            'path' => storage_path('form'),
+        ],
 
         'apc' => [
             'driver' => 'apc',

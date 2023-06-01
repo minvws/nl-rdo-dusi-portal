@@ -6,11 +6,11 @@ namespace App\Services;
 use App\Helpers\FormKeyHelper;
 use App\Repositories\FormCacheRepository;
 
-readonly class FormService
+class FormService
 {
     public function __construct(
-        private FormCacheRepository $formCacheRepository,
-        private FormKeyHelper       $formKeyHelper
+        private readonly FormCacheRepository $formCacheRepository,
+        private readonly FormKeyHelper $formKeyHelper
     ) {
     }
 

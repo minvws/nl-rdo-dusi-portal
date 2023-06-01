@@ -3,52 +3,40 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Cache\Repository as CacheRepository;
 
 readonly class FormCacheRepository
 {
-    private const DISK = 'forms';
+    private const TAGS = ['form'];
 
-    private Filesystem $storage;
+    private CacheRepository $cacheRepository;
 
-    public function __construct(FilesystemManager $manager)
+    public function __construct(CacheRepository $cacheRepository, private ?int $ttl)
     {
-        $this->storage = $manager->disk(self::DISK);
-    }
-
-    private function pathForKey(string $key): string
-    {
-        return "$key.json";
-    }
-
-    private function keyForPath(string $path): string
-    {
-        return pathinfo($path, PATHINFO_FILENAME);
-    }
-
-    public function getKeys(): array
-    {
-        return array_map(fn ($path) => $this->keyForPath($path), $this->storage->allFiles());
+        if ($cacheRepository->supportsTags()) {
+            $this->cacheRepository = $cacheRepository->tags(self::TAGS);
+        } else {
+            $this->cacheRepository = $cacheRepository;
+        }
     }
 
     public function exists(string $key): bool
     {
-        return $this->storage->exists($this->pathForKey($key));
+        return $this->cacheRepository->has($key);
     }
 
     public function get(string $key): ?string
     {
-        return $this->storage->get($this->pathForKey($key));
+        return $this->cacheRepository->get($key);
     }
 
     public function store(string $key, string $data): bool
     {
-        return $this->storage->put($this->pathForKey($key), $data);
+        return $this->cacheRepository->put($key, $data, $this->ttl);
     }
 
     public function purge(string $key): bool
     {
-        return $this->storage->delete($this->pathForKey($key));
+        return $this->cacheRepository->forget($key);
     }
 }

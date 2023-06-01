@@ -14,9 +14,6 @@ class CacheForms extends Command
 
     public function handle(FormRepository $formRepository, FormCacheService $formCacheService): void
     {
-        $oldKeys = $formCacheService->getKeys();
-        $newKeys = [];
-
         $this->info('Retrieving forms...');
         $forms = $formRepository->getActiveForms();
 
@@ -27,22 +24,13 @@ class CacheForms extends Command
         $this->newLine();
 
         $this->info('Cache form list...');
-        $newKeys[] = $formCacheService->cacheFormList($forms);
+        $formCacheService->cacheFormList($forms);
         $this->newLine();
 
         if (count($forms) > 0) {
             $this->info('Cache forms...');
             $this->withProgressBar($forms, function (Form $form) use ($formCacheService, &$newKeys) {
-                $newKeys[] = $formCacheService->cacheForm($form);
-            });
-            $this->newLine(2);
-        }
-
-        $obsoleteKeys = array_diff($oldKeys, $newKeys);
-        if (count($obsoleteKeys) > 0) {
-            $this->info('Purge obsolete forms...');
-            $this->withProgressBar($obsoleteKeys, function (string $obsoleteKey) use ($formCacheService) {
-                $formCacheService->purge($obsoleteKey);
+                $formCacheService->cacheForm($form);
             });
             $this->newLine(2);
         }

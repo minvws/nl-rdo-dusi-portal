@@ -18,11 +18,6 @@ readonly class FormCacheService
     ) {
     }
 
-    public function getKeys(): array
-    {
-        return $this->formCacheRepository->getKeys();
-    }
-
     public function cacheFormList(Collection $forms): string|false
     {
         $key = $this->formKeyHelper->keyForList();
