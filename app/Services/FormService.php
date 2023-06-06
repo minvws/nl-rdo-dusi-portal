@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Helpers\FormKeyHelper;
+use App\Jobs\ProcessFormSubmit;
 use App\Repositories\FormCacheRepository;
 
 class FormService
@@ -28,5 +29,10 @@ class FormService
     public function getFormSchema(string $id): ?string
     {
         return $this->formCacheRepository->get($this->formKeyHelper->keyForFormId($id));
+    }
+
+    public function submitForm(string $id, string $data): void
+    {
+        ProcessFormSubmit::dispatch($id, $data);
     }
 }
