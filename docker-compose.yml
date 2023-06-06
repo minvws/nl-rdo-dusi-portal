@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 
 services:
     laravel.test:
@@ -11,7 +11,7 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
-            - '${APP_PORT:-9080}:80'
+            - '${APP_PORT:-8001}:80'
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
@@ -21,9 +21,9 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-            - application-portal
+            - portal-backend
         depends_on:
-            - pgsqld
+            - pgsql
 
     pgsql:
         environment:
@@ -35,11 +35,26 @@ services:
             - 'pgsql:/var/lib/postgresql/data'
             - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
         networks:
-            - application-portal
+            - portal-backend
+        ports:
+            - ${POSTGRES_PORT:-9101}:5432
+
+    rabbitmq:
+        image: rabbitmq:3.12-management
+        ports:
+            - ${RABBITMQ_PORT:-9102}:5672
+            - ${RABBITMQ_MANAGEMENT_PORT:-9103}:15672
+        networks:
+            portal-backend:
+                aliases:
+                    - portal-backend-rabbitmq
 
 networks:
-    application-portal:
-        driver: bridge
+    portal-backend:
+        name: portal-backend
+    #    form-admin-web:
+    #        external: true
+
 volumes:
     pgsql:
         driver: local
