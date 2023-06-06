@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 
 services:
     laravel.test:
@@ -22,12 +22,14 @@ services:
             - '.:/var/www/html'
         networks:
             portal-web:
-#            portal-backend:
-#                aliases:
-#                    - portal-web
+            portal-backend:
+#            form-admin-web:
 
 networks:
     portal-web:
-        driver: bridge
-#    portal-backend:
+    portal-backend:
+        name: portal-backend
+        external: true
+#    form-admin-web:
+#        name: form-admin-web
 #        external: true
