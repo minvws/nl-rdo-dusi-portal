@@ -36,4 +36,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         return view('private');
     });
+    Route::get('/applications', [\App\Http\Controllers\ApplicationController::class, 'overview']);
 });

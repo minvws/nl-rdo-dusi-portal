@@ -16,18 +16,9 @@
     <nav aria-label="Hoofdnavigatie">
         <div>
             <ul>
-                <li ><a href="/" aria-current="page">Hoofdpagina</a></li>
-                <li><a href="/">Ipsum</a></li>
-                <li><a href="/">Dolor</a></li>
-                <li>@guest
-                    <a href="{{ route('login') }}" class="button ro-icon ro-icon-user">Inloggen</a>
-                    @endguest</li>
-                <li>@auth
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button class="button ro-icon ro-icon-user" type="submit">Logout</button>
-                </form>
-                @endauth
+                <li ><a href="" aria-current="page">Hoofdpagina</a></li>
+                <li><a href="">Ipsum</a></li>
+                <li><a href="">Dolor</a></li>
             </ul>
         </div>
     </nav>

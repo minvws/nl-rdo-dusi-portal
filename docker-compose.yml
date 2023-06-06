@@ -22,54 +22,11 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-            - application-portal
-        depends_on:
-            - pgsql
-
-    user-admin-web:
-        build:
-            context: '${USER_APP_PATH}/vendor/laravel/sail/runtimes/8.2'
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP}'
-        image: sail-8.2/app
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        ports:
-            - '${USER_APP_PORT:-9080}:80'
-        environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
-            IGNITION_LOCAL_SITES_PATH: '${PWD}'
-            TZ: 'Europe/Amsterdam'
-        volumes:
-            - '${USER_APP_PATH}:/var/www/html'
-            - '.env.user:/var/www/html/.env'
-        networks:
-            - application-portal
-        depends_on:
-            - pgsql
-
-    pgsql:
-        container_name: assessment-web_postgres
-        environment:
-            POSTGRES_PASSWORD: '${DB_PASSWORD}'
-            POSTGRES_USER: '${DB_USERNAME}'
-            POSTGRES_DB: 'nope'
-            TZ: 'Europe/Amsterdam'
-        image: 'postgres:12'
-        volumes:
-            - 'pgsql:/var/lib/postgresql/data'
-            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
-            - './database/scripts/create-databases.sql:/docker-entrypoint-initdb.d/20-create-databases.sql'
-        networks:
-            - application-portal
+            - nl-rdo-dusi-portal-backend_sail
+            - nl-rdo-dusi-user-admin-web_sail
 
 networks:
-    application-portal:
-        driver: bridge
-volumes:
-    pgsql:
-        driver: local
+    nl-rdo-dusi-portal-backend_sail:
+        external: true
+    nl-rdo-dusi-user-admin-web_sail:
+        external: true

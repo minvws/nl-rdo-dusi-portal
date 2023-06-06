@@ -12,7 +12,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.7",
+        "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.10",
         "sass": "^1.62.1"
     }
 }
