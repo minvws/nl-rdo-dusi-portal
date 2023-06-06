@@ -2,13 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\FormService;
 use Illuminate\Http\JsonResponse;
 
 class FormController extends Controller
 {
-    public function show(): JsonResponse
+    public function index(FormService $formService): JsonResponse
     {
-        $form = json_decode(file_get_contents(base_path('resources/mocks/form.json')));
-        return response()->json($form, options: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $json = $formService->getActiveForms();
+        return JsonResponse::fromJsonString($json);
+    }
+
+    public function show(string $id, FormService $formService): JsonResponse
+    {
+        $json = $formService->getFormSchema($id);
+        abort_if($json === null, 404);
+        return JsonResponse::fromJsonString($json);
     }
 }
