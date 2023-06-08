@@ -13,7 +13,7 @@ class ProcessFormSubmit implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public string $data)
+    public function __construct(public string $id, public string $data)
     {
     }
 
@@ -22,6 +22,6 @@ class ProcessFormSubmit implements ShouldQueue
      */
     public function handle(): void
     {
-        echo "Received ProcessFormSubmit job with data length " . strlen($this->data) . "\n";
+        echo "Received ProcessFormSubmit job for form \"{$this->id}\" with data length " . strlen($this->data) . "\n";
     }
 }
