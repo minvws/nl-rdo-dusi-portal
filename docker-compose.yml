@@ -41,6 +41,7 @@ services:
 
 networks:
     form-admin-web:
+        name: form-admin-web
 
 volumes:
     pgsql:
