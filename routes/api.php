@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\FormController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,7 +8,4 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('forms', [FormController::class, 'index']);
-Route::get('forms/{id}', [FormController::class, 'show']);
-Route::post('forms/{id}', [FormController::class, 'submit']);
-Route::post('forms/{id}/files', [FormController::class, 'uploadFile']);
+// ...
