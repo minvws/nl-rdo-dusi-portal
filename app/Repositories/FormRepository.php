@@ -4,20 +4,18 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Form;
+use App\Models\Subsidy;
 use Illuminate\Support\Collection;
 
 class FormRepository
 {
-    public function getActiveForms(): Collection
+    public function getOpenFormsForSubsidy(Subsidy $subsidy): Collection
     {
-        return collect([$this->getForm('123')]);
+        return $subsidy->forms()->open()->ordered()->get();
     }
 
     public function getForm(string $id): ?Form
     {
-        $form = new Form();
-        $form->id = $id;
-        $form->title = 'Example Form';
-        return $form;
+        return Form::query()->open()->find($id);
     }
 }

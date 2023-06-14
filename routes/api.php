@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\SubsidyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('forms', [FormController::class, 'index']);
-Route::get('forms/{id}', [FormController::class, 'show']);
-Route::post('forms/{id}', [FormController::class, 'submit']);
+Route::get('subsidies', [SubsidyController::class, 'index'])->name('subsidy-list');
+Route::get('forms/{id}', [FormController::class, 'show'])->name('form-show');
+Route::post('forms/{id}', [FormController::class, 'submit'])->name('form-submit');
+Route::post('forms/{id}/files', [FormController::class, 'uploadFile'])->name('form-upload-file');

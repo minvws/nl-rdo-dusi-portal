@@ -14,9 +14,6 @@ class FormResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'id' => $this->id,
-            'title' => $this->title
-        ];
+        return json_decode(file_get_contents(base_path('resources/mocks/form.json')), true);
     }
 }

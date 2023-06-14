@@ -5,9 +5,9 @@ namespace App\Helpers;
 
 use App\Models\Form;
 
-class FormKeyHelper
+class CacheKeyHelper
 {
-    public function keyForList(): string
+    public function keyForActiveSubsidies(): string
     {
         return 'form_list';
     }

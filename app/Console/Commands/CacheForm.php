@@ -3,21 +3,27 @@
 namespace App\Console\Commands;
 
 use App\Repositories\FormRepository;
-use App\Services\FormCacheService;
+use App\Services\CacheService;
 use Illuminate\Console\Command;
+use Ramsey\Uuid\Uuid;
 
 class CacheForm extends Command
 {
     protected $signature = 'cache:form {id}';
-    protected $description = 'Caches the active forms list and schemas';
+    protected $description = 'Caches a single form';
 
-    public function handle(FormRepository $formRepository, FormCacheService $formCacheService): int
+    public function handle(FormRepository $formRepository, CacheService $formCacheService): int
     {
+        if (!Uuid::isValid($this->argument('id'))) {
+            $this->error('Given argument is not a valid UUID!');
+            return self::FAILURE;
+        }
+
         $this->info('Retrieving form...');
         $form = $formRepository->getForm($this->argument('id'));
 
         if ($form === null) {
-            $this->error('Form not found!');
+            $this->error('Form not found or not open!');
             return self::FAILURE;
         }
 
@@ -28,7 +34,7 @@ class CacheForm extends Command
 
         $this->newLine();
 
-        $this->info('Finished!');
+        $this->info('Done caching form');
         return self::SUCCESS;
     }
 }
