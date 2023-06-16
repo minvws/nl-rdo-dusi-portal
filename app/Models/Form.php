@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Form extends Model
 {
@@ -22,6 +23,11 @@ class Form extends Model
     public function subsidy(): BelongsTo
     {
         return $this->belongsTo(Subsidy::class);
+    }
+
+    public function fields(): HasMany
+    {
+        return $this->hasMany(Field::class)->ordered();
     }
 
     public function scopeOrdered(Builder $query): Builder

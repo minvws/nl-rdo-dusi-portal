@@ -16,6 +16,6 @@ class FormRepository
 
     public function getForm(string $id): ?Form
     {
-        return Form::query()->open()->find($id);
+        return Form::query()->open()->with('fields')->find($id);
     }
 }
