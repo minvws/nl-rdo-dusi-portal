@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+    laravel.test:
+        build:
+            context: ./vendor/laravel/sail/runtimes/8.2
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: sail-8.2/app
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-8003}:80'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+            IGNITION_LOCAL_SITES_PATH: '${PWD}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            form-admin-web:
+
+    pgsql:
+        environment:
+            POSTGRES_PASSWORD: '${DB_PASSWORD}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_DB: '${DB_DATABASE}'
+        image: 'postgres:12'
+        volumes:
+            - 'pgsql:/var/lib/postgresql/data'
+            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+        networks:
+            form-admin-web:
+                aliases:
+                    - form-admin-web-pgsql
+        ports:
+            - ${POSTGRES_PORT:-9301}:5432
+
+networks:
+    form-admin-web:
+        name: form-admin-web
+
+volumes:
+    pgsql:
+        driver: local
