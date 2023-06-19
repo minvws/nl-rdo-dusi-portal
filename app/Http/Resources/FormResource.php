@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Field;
+use App\Models\FieldType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -53,8 +54,14 @@ class FormResource extends JsonResource
 
     private function createFieldDataSchema(Field $field): array
     {
+        $type = match ($field->type) {
+            FieldType::TextNumeric => 'number',
+            FieldType::Checkbox => 'boolean',
+            default => 'string'
+        };
+
         return [
-            'type' => 'string',
+            'type' => $type,
             'title' => $field->label
         ];
     }

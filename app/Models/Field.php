@@ -7,11 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read FieldType $type
+ */
 class Field extends Model
 {
     use HasFactory;
 
     protected $connection = Connection::Form;
+
+    protected $casts = [
+        'type' => FieldType::class
+    ];
 
     protected $keyType = 'string';
     public $timestamps = false;
