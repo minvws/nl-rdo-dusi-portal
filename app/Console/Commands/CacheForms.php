@@ -13,7 +13,7 @@ class CacheForms extends Command
     protected $signature = 'cache:forms';
     protected $description = 'Caches the open forms for the active subsidies';
 
-    public function handle(SubsidyRepository $subsidyRepository, FormRepository $formRepository, CacheService $formCacheService): int
+    public function handle(SubsidyRepository $subsidyRepository, FormRepository $formRepository, CacheService $cacheService): int
     {
         $this->info('Retrieving subsidies...');
         $activeSubsidies = $subsidyRepository->getActiveSubsidies();
@@ -37,8 +37,8 @@ class CacheForms extends Command
 
             if (count($forms) > 0) {
                 $this->info('Caching forms for subsidy...');
-                $this->withProgressBar($forms, function (Form $form) use ($formCacheService, &$newKeys) {
-                    $formCacheService->cacheForm($form);
+                $this->withProgressBar($forms, function (Form $form) use ($cacheService) {
+                    $cacheService->cacheForm($form);
                 });
                 $this->newLine();
             }

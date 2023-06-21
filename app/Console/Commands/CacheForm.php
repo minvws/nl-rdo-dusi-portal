@@ -12,7 +12,7 @@ class CacheForm extends Command
     protected $signature = 'cache:form {id}';
     protected $description = 'Caches a single form';
 
-    public function handle(FormRepository $formRepository, CacheService $formCacheService): int
+    public function handle(FormRepository $formRepository, CacheService $cacheService): int
     {
         if (!Uuid::isValid($this->argument('id'))) {
             $this->error('Given argument is not a valid UUID!');
@@ -30,7 +30,7 @@ class CacheForm extends Command
         $this->newLine();
 
         $this->info('Caching form...');
-        $formCacheService->cacheForm($form);
+        $cacheService->cacheForm($form);
 
         $this->newLine();
 

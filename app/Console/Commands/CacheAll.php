@@ -2,9 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Repositories\FormRepository;
-use App\Repositories\SubsidyRepository;
-use App\Services\CacheService;
 use Illuminate\Console\Command;
 
 class CacheAll extends Command
@@ -12,7 +9,7 @@ class CacheAll extends Command
     protected $signature = 'cache:all';
     protected $description = 'Caches the active subsidies';
 
-    public function handle(SubsidyRepository $subsidyRepository, FormRepository $formRepository, CacheService $formCacheService): int
+    public function handle(): int
     {
         $result = $this->call('cache:subsidies');
         if ($result !== self::SUCCESS) {
