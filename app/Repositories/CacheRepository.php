@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use Illuminate\Cache\Repository as CacheRepository;
+use Illuminate\Cache\Repository as LaravelCacheRepository;
 
-readonly class FormCacheRepository
+readonly class CacheRepository
 {
     private const TAGS = ['form'];
 
-    private CacheRepository $cacheRepository;
+    private LaravelCacheRepository $cacheRepository;
 
-    public function __construct(CacheRepository $cacheRepository, private ?int $ttl)
+    public function __construct(LaravelCacheRepository $cacheRepository, private ?int $ttl)
     {
         if ($cacheRepository->supportsTags()) {
             $this->cacheRepository = $cacheRepository->tags(self::TAGS);

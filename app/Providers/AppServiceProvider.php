@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Repositories\FormCacheRepository;
+use App\Repositories\CacheRepository;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
@@ -16,8 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(FormCacheRepository::class, function (Application $app) {
-            return new FormCacheRepository($app->get(CacheManager::class)->store('form'), config('form.cache_ttl'));
+        $this->app->singleton(CacheRepository::class, function (Application $app) {
+            return new CacheRepository($app->get(CacheManager::class)->store('form'), config('form.cache_ttl'));
         });
     }
 
