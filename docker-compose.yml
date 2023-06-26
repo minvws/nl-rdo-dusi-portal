@@ -21,7 +21,7 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-            - portal-backend
+            portal-backend:
         depends_on:
             - pgsql
 
@@ -35,26 +35,20 @@ services:
             - 'pgsql:/var/lib/postgresql/data'
             - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
         networks:
-            - portal-backend
+            portal-backend:
+                aliases:
+                    - pgsql_application
         ports:
             - ${POSTGRES_PORT:-9101}:5432
-
     rabbitmq:
         image: rabbitmq:3.12-management
         ports:
             - ${RABBITMQ_PORT:-9102}:5672
             - ${RABBITMQ_MANAGEMENT_PORT:-9103}:15672
-        networks:
-            portal-backend:
-                aliases:
-                    - portal-backend-rabbitmq
-
 networks:
     portal-backend:
         name: portal-backend
-    #    form-admin-web:
-    #        external: true
-
+        
 volumes:
     pgsql:
         driver: local

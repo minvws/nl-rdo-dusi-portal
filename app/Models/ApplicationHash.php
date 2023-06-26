@@ -12,6 +12,8 @@ class ApplicationHash extends Model
     use HasFactory;
     use HasCompositePrimaryKey;
 
+    protected $connection = "pgsql_application";
+
     protected $primaryKey = ['form_hash_id', 'application_id'];
 
     public $timestamps = false;

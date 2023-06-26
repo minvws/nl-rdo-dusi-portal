@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         Application::factory(100)
             ->has(ApplicationReview::factory(10))
             ->has(ApplicationHash::factory(10))
-            ->has(Answer::factory(10))
+            ->has(Answer::factory(18))
             ->create();
     }
 }

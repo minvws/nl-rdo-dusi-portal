@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => 'pgsql',
+    'default' => 'pgsql_application',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     */
 
     'connections' => [
-        'pgsql' => [
+        'pgsql_application' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),

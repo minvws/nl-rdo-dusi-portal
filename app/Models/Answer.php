@@ -12,6 +12,8 @@ class Answer extends Model
     use HasFactory;
     use HasUuids;
 
+    protected $connection = "pgsql_application";
+
     const UPDATED_AT = NULL;
 
     /**
