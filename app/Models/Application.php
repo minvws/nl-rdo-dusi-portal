@@ -11,7 +11,7 @@ class Application extends Model
     use HasFactory;
     use HasUuids;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::Application;
 
     const UPDATED_AT = NULL;
 

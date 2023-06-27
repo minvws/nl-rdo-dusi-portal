@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Services\EncryptionService;
+use App\Services\ApplicationService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,8 +22,9 @@ class ProcessFormSubmit implements ShouldQueue
     /**
      * @throws Exception
      */
-    public function handle(): void
+    public function handle(EncryptionService $encryptionService, ApplicationService $formService): void
     {
-        echo "Received ProcessFormSubmit job for form \"{$this->id}\" with data length " . strlen($this->data) . "\n";
+        $data = $encryptionService->decryptFormSubmit($this->data);
+        $formService->processFormSubmit($this->id, $data);
     }
 }

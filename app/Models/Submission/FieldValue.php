@@ -1,0 +1,15 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Models\Submission;
+
+use App\Models\Definition\Field;
+
+readonly class FieldValue
+{
+    public function __construct(
+        public Field $field,
+        public string|int|bool|null $value
+    ) {
+    }
+}

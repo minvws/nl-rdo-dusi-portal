@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\HasCompositePrimaryKey;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +12,7 @@ class ApplicationReview extends Model
     use HasFactory;
     use HasUuids;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::Application;
 
     const UPDATED_AT = NULL;
 
