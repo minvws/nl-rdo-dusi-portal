@@ -22,6 +22,7 @@ services:
             - '.:/var/www/html'
         networks:
             portal-backend:
+            form-admin-web:
         depends_on:
             - pgsql
 
@@ -38,6 +39,7 @@ services:
             portal-backend:
                 aliases:
                     - pgsql_application
+                    - portal-backend-pgsql
         ports:
             - ${POSTGRES_PORT:-9101}:5432
     rabbitmq:
@@ -45,10 +47,18 @@ services:
         ports:
             - ${RABBITMQ_PORT:-9102}:5672
             - ${RABBITMQ_MANAGEMENT_PORT:-9103}:15672
+        networks:
+            portal-backend:
+                aliases:
+                    - portal-backend-rabbitmq
+
 networks:
     portal-backend:
         name: portal-backend
-        
+    form-admin-web:
+        name: form-admin-web
+        external: true
+
 volumes:
     pgsql:
         driver: local
