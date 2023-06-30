@@ -43,7 +43,10 @@ And finally for `nl-rdo-dusi-portal-web` inside the `nl-rdo-dusi-portal-web` dir
 # 1. Copy the .env.example to .env and start the application
 ./init.sh
 
-# 2. Connect to portal
+# 2. Cache forms (re-run this command if you re-seed the form-web database)
+vendor/bin/sail artisan cache:all
+
+# 3. Connect to portal
 By default the portal is accessible at http://localhost:8000
 ```
 
