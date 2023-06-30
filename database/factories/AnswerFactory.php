@@ -12,7 +12,7 @@ class AnswerFactory extends Factory
         return [
             'application_id' => Application::factory(),
             'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
-            'question_id' => $this->faker->uuid,
+            'field_id' => $this->faker->uuid,
             'encrypted_answer' => $this->faker->text,
             'encryption_key_id' => $this->faker->uuid,
         ];

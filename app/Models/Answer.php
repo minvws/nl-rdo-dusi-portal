@@ -25,7 +25,7 @@ class Answer extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'question_id',
+        'field_id',
         'encrypted_answer',
         'encryption_key_id',
     ];
