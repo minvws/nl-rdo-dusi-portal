@@ -55,15 +55,21 @@ class FormResource extends JsonResource
     private function createFieldDataSchema(Field $field): array
     {
         $type = match ($field->type) {
-            FieldType::TextNumeric => 'number',
+            FieldType::TextNumeric => 'integer',
             FieldType::Checkbox => 'boolean',
             default => 'string'
         };
 
-        return [
+        $result = [
             'type' => $type,
             'title' => $field->label
         ];
+
+        if ($field->type === FieldType::Select) {
+            $result['enum'] = $field->params['options'];
+        }
+
+        return $result;
     }
 
     private function createUISchema(): array
@@ -77,14 +83,20 @@ class FormResource extends JsonResource
             $result['elements'][] = $this->createFieldUISchema($field);
         }
 
-        return $result;
+        return [
+            'type' => 'CustomGroupControl',
+            'options' => ['section' => true],
+            'label' => 'contactInformation.section',
+            'elements' => [$result]
+        ];
     }
 
     private function createFieldUISchema(Field $field): array
     {
         return [
-            'type' => 'Control',
-            'scope' => "#/properties/{$field->id}"
+            'type' => 'CustomControl',
+            'scope' => "#/properties/{$field->id}",
+            'label' => $field->label
         ];
     }
 }

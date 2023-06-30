@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read FieldType $type
+ * @property-read ?array $params
  */
 class Field extends Model
 {
@@ -17,7 +18,8 @@ class Field extends Model
     protected $connection = Connection::Form;
 
     protected $casts = [
-        'type' => FieldType::class
+        'type' => FieldType::class,
+        'params' => 'json'
     ];
 
     protected $keyType = 'string';

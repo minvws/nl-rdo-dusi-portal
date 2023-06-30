@@ -40,7 +40,13 @@ class CacheForms extends Command
                 $this->withProgressBar($forms, function (Form $form) use ($cacheService) {
                     $cacheService->cacheForm($form);
                 });
+
                 $this->newLine();
+
+                $this->info("Cached forms:");
+                foreach ($forms as $form) {
+                    $this->info("v" . $form->version . ': ' . $form->id);
+                }
             }
 
             $this->newLine();
