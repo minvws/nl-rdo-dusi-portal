@@ -14,11 +14,18 @@ class SubsidyResource extends JsonResource
             'title' => $this->title,
         ];
 
-        if (isset($this->publishedForm)) {
-            $data['_links'] = [
-                'form' => ['href' => route('api.form-show', ['id' => $this->publishedForm->id])]
-            ];
+        if (!isset($this->publishedForm)) {
+            return $data;
         }
+
+        $data['publishedForm'] = [
+            'id' => $this->publishedForm->id,
+            'version' => $this->publishedForm->version
+        ];
+
+        $data['_links'] = [
+            'form' => ['href' => route('api.form-show', ['id' => $this->publishedForm->id]), false]
+        ];
 
         return $data;
     }
