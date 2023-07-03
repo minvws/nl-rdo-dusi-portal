@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Connection;
+
 return [
 
     /*
@@ -82,6 +84,15 @@ return [
                     'vhost' => env('RABBITMQ_VHOST', '/'),
                 ],
             ],
+            'options' => [
+                'queue' => [
+                    // ...
+
+                    'reroute_failed' => true,
+                    'failed_exchange' => 'failed-exchange',
+                    'failed_routing_key' => 'application-x.%s',
+                ],
+            ],
         ],
 
     ],
@@ -99,7 +110,7 @@ return [
 
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
-        'database' => env('DB_CONNECTION', 'mysql'),
+        'database' => env('DB_CONNECTION', Connection::Application),
         'table' => 'failed_jobs',
     ],
 

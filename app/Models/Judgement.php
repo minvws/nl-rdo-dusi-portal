@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Barryvdh\LaravelIdeHelper\Eloquent;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +16,7 @@ class Judgement extends Model
 {
     use HasFactory;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::Application;
 
     protected $primaryKey = 'judgement';
 

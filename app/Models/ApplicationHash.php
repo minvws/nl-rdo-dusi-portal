@@ -12,7 +12,7 @@ class ApplicationHash extends Model
     use HasFactory;
     use HasCompositePrimaryKey;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::Application;
 
     protected $primaryKey = ['form_hash_id', 'application_id'];
 

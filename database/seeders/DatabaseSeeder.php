@@ -6,9 +6,7 @@ use App\Models\Answer;
 use App\Models\Application;
 use App\Models\ApplicationHash;
 use App\Models\ApplicationReview;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {

@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Str;
+use App\Models\Connection;
 
 return [
 
@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => 'pgsql_application',
+    'default' => Connection::Application,
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     */
 
     'connections' => [
-        'pgsql_application' => [
+        Connection::Application => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
@@ -42,6 +42,20 @@ return [
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
+        Connection::Form => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_FORM_URL'),
+            'host' => env('DB_FORM_HOST', '127.0.0.1'),
+            'port' => env('DB_FORM_PORT', '5432'),
+            'database' => env('DB_FORM_DATABASE', 'forge'),
+            'username' => env('DB_FORM_USERNAME', 'forge'),
+            'password' => env('DB_FORM_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,

@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $encrypted_answer
+ */
 class Answer extends Model
 {
     use HasFactory;
     use HasUuids;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::Application;
 
     const UPDATED_AT = NULL;
 
@@ -22,7 +25,7 @@ class Answer extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'question_id',
+        'field_id',
         'encrypted_answer',
         'encryption_key_id',
     ];
