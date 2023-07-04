@@ -5,7 +5,8 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Connection;
 use App\Models\Field;
 use App\Models\Form;
-use App\Models\FormStatus;
+use App\Models\FormUI;
+use App\Models\VersionStatus;
 use App\Models\Subsidy;
 use App\Services\CacheService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -28,14 +29,38 @@ class FormControllerTest extends TestCase
     private Subsidy $subsidy;
     private Form $form;
     private Field $field;
+    private FormUI $formUI;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->subsidy = Subsidy::factory()->create();
-        $this->form = Form::factory()->create(['subsidy_id' => $this->subsidy->id, 'status' => FormStatus::Published]);
+        $this->form = Form::factory()->create(['subsidy_id' => $this->subsidy->id, 'status' => VersionStatus::Published]);
         $this->field = Field::factory()->create(['form_id' => $this->form->id]);
+
+
+        $ui = [
+            "type" => "CustomGroupControl",
+            "options" => [
+                "section" => true
+            ],
+            "label" => "Section",
+            "elements" => [
+                [
+                    "type" => "VerticalLayout",
+                    "elements" => [
+                        [
+                            "type" => "CustomControl",
+                            "scope" => "#/properties/" . $this->field->code
+                        ],
+                    ]
+                ]
+            ]
+        ];
+
+        $this->ui = FormUI::factory()->create(['form_id' => $this->form->id, 'status' => VersionStatus::Published, 'ui' => $ui]);
+
 
         $this->app->get(CacheService::class)->cacheForm($this->form);
     }
@@ -50,11 +75,11 @@ class FormControllerTest extends TestCase
         $response->assertJsonPath('metadata.subsidy.title', $this->subsidy->title);
 
         $response->assertJsonCount(1, 'dataSchema.properties');
-        $response->assertJsonpath('dataSchema.properties.' . $this->field->id . '.type', 'string');
-        $response->assertJsonpath('dataSchema.properties.' . $this->field->id . '.title', $this->field->label);
+        $response->assertJsonPath('dataSchema.properties.' . $this->field->code . '.type', 'string');
+        $response->assertJsonPath('dataSchema.properties.' . $this->field->code . '.title', $this->field->title);
 
         $response->assertJsonCount(1, 'uiSchema.elements');
-        $response->assertJsonpath('uiSchema.elements.0.scope', '#/properties/' . $this->field->id);
+        $response->assertJsonPath('uiSchema.elements.0.elements.0.scope', '#/properties/' . $this->field->code);
     }
 
     public function testShowFormShouldReturnA404IfNotFound(): void

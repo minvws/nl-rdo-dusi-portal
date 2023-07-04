@@ -12,6 +12,9 @@ class SubsidyResource extends JsonResource
         $data = [
             'id' => $this->id,
             'title' => $this->title,
+            'description' => $this->description,
+            'validFrom' => $this->valid_from->format('Y-m-d'),
+            'validTo' => $this->valid_to?->format('Y-m-d')
         ];
 
         if (!isset($this->publishedForm)) {

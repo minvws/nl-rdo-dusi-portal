@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\FormStatus;
+use App\Models\VersionStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
@@ -21,7 +21,7 @@ class FormFactory extends Factory
         return [
             'id' => Uuid::uuid4(),
             'version' => 1,
-            'status' => FormStatus::Draft
+            'status' => VersionStatus::Draft
         ];
     }
 }

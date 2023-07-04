@@ -2,12 +2,20 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property-read string $id
+ * @property-read string $title
+ * @property-read string $description
+ * @property-read DateTimeInterface $valid_from
+ * @property-read ?DateTimeInterface $valid_to
+ */
 class Subsidy extends Model
 {
     use HasFactory;
@@ -15,6 +23,10 @@ class Subsidy extends Model
     public $timestamps = false;
     protected $connection = Connection::Form;
     protected $keyType = 'string';
+    protected $casts = [
+        'valid_from' => 'date',
+        'valid_to' => 'date'
+    ];
 
     public function forms(): HasMany
     {

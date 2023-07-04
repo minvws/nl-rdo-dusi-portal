@@ -4,7 +4,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Connection;
 use App\Models\Form;
-use App\Models\FormStatus;
+use App\Models\VersionStatus;
 use App\Models\Subsidy;
 use App\Repositories\SubsidyRepository;
 use App\Services\CacheService;
@@ -13,6 +13,10 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\WipesSubsidyDefinitions;
 
+/**
+ * @group subsidy
+ * @group subsidy-controller
+ */
 class SubsidyControllerTest extends TestCase
 {
     protected array $connectionsToTransact = [Connection::Form];
@@ -29,10 +33,10 @@ class SubsidyControllerTest extends TestCase
         parent::setUp();
 
         $this->subsidy1 = Subsidy::factory()->create(['title' => 'B']);
-        Form::factory()->create(['subsidy_id' => $this->subsidy1->id, 'status' => FormStatus::Published]);
+        Form::factory()->create(['subsidy_id' => $this->subsidy1->id, 'status' => VersionStatus::Published]);
 
         $this->subsidy2 = Subsidy::factory()->create(['title' => 'A']);
-        Form::factory()->create(['subsidy_id' => $this->subsidy2->id, 'status' => FormStatus::Published]);
+        Form::factory()->create(['subsidy_id' => $this->subsidy2->id, 'status' => VersionStatus::Published]);
 
         $activeSubsidies = $this->app->get(SubsidyRepository::class)->getActiveSubsidies();
         $this->app->get(CacheService::class)->cacheActiveSubsidies($activeSubsidies);
@@ -49,6 +53,11 @@ class SubsidyControllerTest extends TestCase
         // check order
         $response->assertJsonPath('0.title', $this->subsidy2->title);
         $response->assertJsonPath('1.title', $this->subsidy1->title);
+
+        // check metadata
+        $response->assertJsonPath('1.description', $this->subsidy1->description);
+        $response->assertJsonPath('1.validFrom', $this->subsidy1->valid_from->format('Y-m-d'));
+        $response->assertJsonPath('1.validTo', $this->subsidy1->valid_to?->format('Y-m-d'));
 
         // check form link
         $this->assertEquals(route('api.form-show', $this->subsidy2->publishedForm->id), $response->json('0._links.form.href'));
