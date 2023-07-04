@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class OrganisationRole extends Pivot
 {
-    use HasUuid;
+    use HasUuids;
 
     /**
      * The attributes that are mass assignable.
