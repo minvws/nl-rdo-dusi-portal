@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Models\Definition\Form;
+use App\Shared\Models\Definition\Form;
 
 class FormRepository
 {

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Definition\Field;
-use App\Models\Definition\FieldType;
-use App\Models\Definition\Form;
+use App\Shared\Models\Definition\Field;
+use App\Shared\Models\Definition\FieldType;
+use App\Shared\Models\Definition\Form;
 use App\Models\Submission\FieldValue;
 use App\Models\Submission\FormSubmit;
 use App\Repositories\FormRepository;
@@ -65,8 +65,8 @@ readonly class FormDecodingService
 
         $values = [];
         foreach ($form->fields as $field) {
-            $fieldContainer = $container->nestedContainer($field->id);
-            $values[$field->id] = $this->decodeFieldValue($field, $fieldContainer);
+            $fieldContainer = $container->nestedContainer($field->code);
+            $values[$field->code] = $this->decodeFieldValue($field, $fieldContainer);
         }
 
         return new FormSubmit($form, $values);

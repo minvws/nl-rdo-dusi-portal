@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Models\Definition;
+namespace App\Shared\Models\Definition;
 
-enum FormStatus: string
+enum VersionStatus: string
 {
     case Draft = 'draft';
     case Published = 'published';

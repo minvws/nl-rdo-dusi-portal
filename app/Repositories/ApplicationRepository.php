@@ -5,8 +5,8 @@ namespace App\Repositories;
 
 use App\Models\Answer;
 use App\Models\Application;
-use App\Models\Definition\Field;
-use App\Models\Definition\Form;
+use App\Shared\Models\Definition\Field;
+use App\Shared\Models\Definition\Form;
 
 readonly class ApplicationRepository
 {

@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Services;
 
-use App\Models\Definition\Field;
-use App\Models\Definition\FieldType;
-use App\Models\Definition\Form;
-use App\Models\Definition\FormStatus;
-use App\Models\Definition\Subsidy;
+use App\Shared\Models\Definition\Field;
+use App\Shared\Models\Definition\FieldType;
+use App\Shared\Models\Definition\Form;
+use App\Shared\Models\Definition\Subsidy;
+use App\Shared\Models\Definition\VersionStatus;
 use App\Services\ApplicationService;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -29,17 +29,17 @@ class ApplicationServiceTest extends TestCase
     {
         parent::setUp();
         $subsidy = Subsidy::factory()->create();
-        $this->form = Form::factory()->create(['subsidy_id' => $subsidy->id, 'status' => FormStatus::Published]);
-        $this->textField = Field::factory()->create(['form_id' => $this->form->id, 'type' => FieldType::Text]);
-        $this->numericField = Field::factory()->create(['form_id' => $this->form->id, 'type' => FieldType::TextNumeric]);
+        $this->form = Form::factory()->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);
+        $this->textField = Field::factory()->create(['form_id' => $this->form->id, 'type' => FieldType::Text, 'code' => 'text']);
+        $this->numericField = Field::factory()->create(['form_id' => $this->form->id, 'type' => FieldType::TextNumeric, 'code' => 'number']);
     }
 
 
     public function testProcessFormSubmit(): void
     {
         $data = [
-            $this->textField->id => $this->faker->word,
-            $this->numericField->id => $this->faker->randomDigit(),
+            $this->textField->code => $this->faker->word,
+            $this->numericField->code => $this->faker->randomDigit(),
         ];
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
@@ -61,8 +61,8 @@ class ApplicationServiceTest extends TestCase
     public function testProcessFormSubmitInvalidFieldData(mixed $text, mixed $numeric, string $expectedException): void
     {
         $data = [
-            $this->textField->id => $text,
-            $this->numericField->id => $numeric,
+            $this->textField->code => $text,
+            $this->numericField->code => $numeric,
         ];
 
         $applicationService = $this->app->get(ApplicationService::class);

@@ -1,16 +1,19 @@
 <?php
 
-namespace Database\Factories\Definition;
+namespace App\Shared\Models\Definition\Factories;
 
-use App\Models\Definition\FormStatus;
+use App\Shared\Models\Definition\Form;
+use App\Shared\Models\Definition\VersionStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Definition\Form>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Shared\Models\Definition\Form>
  */
 class FormFactory extends Factory
 {
+    protected $model = Form::class;
+
     /**
      * Define the model's default state.
      *
@@ -21,7 +24,7 @@ class FormFactory extends Factory
         return [
             'id' => Uuid::uuid4(),
             'version' => 1,
-            'status' => FormStatus::Draft
+            'status' => VersionStatus::Draft
         ];
     }
 }

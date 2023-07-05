@@ -1,14 +1,23 @@
 <?php
 
-namespace App\Models\Definition;
+namespace App\Shared\Models\Definition;
 
-use App\Models\Connection;
+use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\Factories\SubsidyFactory;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property-read string $id
+ * @property-read string $title
+ * @property-read string $description
+ * @property-read DateTimeInterface $valid_from
+ * @property-read ?DateTimeInterface $valid_to
+ */
 class Subsidy extends Model
 {
     use HasFactory;
@@ -16,6 +25,10 @@ class Subsidy extends Model
     public $timestamps = false;
     protected $connection = Connection::Form;
     protected $keyType = 'string';
+    protected $casts = [
+        'valid_from' => 'date',
+        'valid_to' => 'date'
+    ];
 
     public function forms(): HasMany
     {
@@ -35,5 +48,10 @@ class Subsidy extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->whereRelation('forms', fn (Builder $subQuery) => $subQuery->open());
+    }
+
+    protected static function newFactory(): SubsidyFactory
+    {
+        return new SubsidyFactory();
     }
 }

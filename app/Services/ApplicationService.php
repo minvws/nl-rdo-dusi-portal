@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Application;
-use App\Models\Connection;
+use App\Shared\Models\Connection;
 use App\Models\Submission\FieldValue;
 use App\Models\Submission\FormSubmit;
 use App\Repositories\ApplicationRepository;

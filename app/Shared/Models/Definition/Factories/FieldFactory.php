@@ -1,15 +1,18 @@
 <?php
 
-namespace Database\Factories\Definition;
+namespace App\Shared\Models\Definition\Factories;
 
+use App\Shared\Models\Definition\Field;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Definition\Form>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Shared\Models\Definition\Form>
  */
 class FieldFactory extends Factory
 {
+    protected $model = Field::class;
+
     /**
      * Define the model's default state.
      *
@@ -19,10 +22,10 @@ class FieldFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
-            'label' => $this->faker->words(3, true),
+            'code' => $this->faker->word,
+            'title' => $this->faker->words(3, true),
             'type' => 'text',
-            'is_required' => true,
-            'sort' => 1
+            'is_required' => true
         ];
     }
 }
