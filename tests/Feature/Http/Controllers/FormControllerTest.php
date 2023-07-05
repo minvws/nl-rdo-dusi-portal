@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\Connection;
-use App\Models\Field;
-use App\Models\Form;
-use App\Models\FormUI;
-use App\Models\VersionStatus;
-use App\Models\Subsidy;
 use App\Services\CacheService;
+use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\Field;
+use App\Shared\Models\Definition\Form;
+use App\Shared\Models\Definition\FormUI;
+use App\Shared\Models\Definition\Subsidy;
+use App\Shared\Models\Definition\VersionStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;

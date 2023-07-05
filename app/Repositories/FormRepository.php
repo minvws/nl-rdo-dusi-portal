@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Models\Form;
-use App\Models\Subsidy;
+use App\Shared\Models\Definition\Form;
+use App\Shared\Models\Definition\Subsidy;
 use Illuminate\Support\Collection;
 
 class FormRepository

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Models\Subsidy;
+use App\Shared\Models\Definition\Subsidy;
 use Illuminate\Support\Collection;
 
 class SubsidyRepository

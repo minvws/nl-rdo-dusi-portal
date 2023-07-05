@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Field;
-use App\Models\FieldType;
+use App\Shared\Models\Definition\Field;
+use App\Shared\Models\Definition\FieldType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

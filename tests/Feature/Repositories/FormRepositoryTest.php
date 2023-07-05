@@ -2,12 +2,11 @@
 
 namespace Tests\Feature\Repositories;
 
-use App\Models\Connection;
-use App\Models\Field;
-use App\Models\Form;
-use App\Models\VersionStatus;
-use App\Models\Subsidy;
 use App\Repositories\FormRepository;
+use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\Form;
+use App\Shared\Models\Definition\Subsidy;
+use App\Shared\Models\Definition\VersionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
-use App\Models\Form;
+use App\Shared\Models\Definition\Form;
 
 class CacheKeyHelper
 {

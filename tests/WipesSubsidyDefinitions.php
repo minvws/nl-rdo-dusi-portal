@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Models\Connection;
+use App\Shared\Models\Connection;
 use Illuminate\Support\Facades\DB;
 
 trait WipesSubsidyDefinitions

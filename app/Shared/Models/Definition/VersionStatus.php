@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Shared\Models\Definition;
 
 enum VersionStatus: string
 {

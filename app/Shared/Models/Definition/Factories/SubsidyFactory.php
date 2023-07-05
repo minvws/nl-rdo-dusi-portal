@@ -1,15 +1,18 @@
 <?php
 
-namespace Database\Factories;
+namespace App\Shared\Models\Definition\Factories;
 
+use App\Shared\Models\Definition\Subsidy;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Subsidy>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Shared\Models\Definition\Subsidy>
  */
 class SubsidyFactory extends Factory
 {
+    protected $model = Subsidy::class;
+
     /**
      * Define the model's default state.
      *
