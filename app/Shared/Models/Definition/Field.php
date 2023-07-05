@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Models\Definition;
+namespace App\Shared\Models\Definition;
 
-use App\Models\Connection;
-use Illuminate\Database\Eloquent\Builder;
+use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\Factories\FieldFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read string $id
+ * @property-read string $code
+ * @property-read string $title
+ * @property-read ?string $description
  * @property-read FieldType $type
- * @property-read boolean $is_required
+ * @property-read ?array $params
  */
 class Field extends Model
 {
@@ -20,7 +23,8 @@ class Field extends Model
     protected $connection = Connection::Form;
 
     protected $casts = [
-        'type' => FieldType::class
+        'type' => FieldType::class,
+        'params' => 'json'
     ];
 
     protected $keyType = 'string';
@@ -31,8 +35,8 @@ class Field extends Model
         return $this->belongsTo(Form::class);
     }
 
-    public function scopeOrdered(Builder $query): Builder
+    protected static function newFactory(): FieldFactory
     {
-        return $query->orderBy('sort');
+        return new FieldFactory();
     }
 }

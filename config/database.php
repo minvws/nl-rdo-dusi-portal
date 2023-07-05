@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Connection;
+use App\Shared\Models\Connection;
 
 return [
 

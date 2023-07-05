@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Models\Definition;
+namespace App\Shared\Models\Definition;
 
 enum FieldType: string
 {
     case Text = 'text';
     case TextNumeric = 'text:numeric';
     case TextEmail = 'text:email';
-    case TextTel ='text:tel';
+    Case TextTel ='text:tel';
     case TextUrl = 'text:url';
     case Checkbox = 'checkbox';
     case Select = 'select';

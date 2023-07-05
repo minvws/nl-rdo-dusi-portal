@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Repositories;
 
-use App\Models\Connection;
-use App\Models\Definition\Form;
-use App\Models\Definition\FormStatus;
-use App\Models\Definition\Subsidy;
+use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\Form;
+use App\Shared\Models\Definition\Subsidy;
+use App\Shared\Models\Definition\VersionStatus;
 use App\Repositories\FormRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -25,7 +25,7 @@ class FormRepositoryTest extends TestCase
     public function testGetForm(): void
     {
         $subsidy = Subsidy::factory()->create();
-        $form = Form::factory()->create(['status' => FormStatus::Published, 'subsidy_id' => $subsidy->id]);
+        $form = Form::factory()->create(['status' => VersionStatus::Published, 'subsidy_id' => $subsidy->id]);
 
         $repository = $this->app->get(FormRepository::class);
         $form = $repository->getForm($form->id);
