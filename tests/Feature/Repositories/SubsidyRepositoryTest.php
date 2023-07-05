@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Repositories;
 
-use App\Models\Connection;
-use App\Models\Form;
-use App\Models\VersionStatus;
-use App\Models\Subsidy;
 use App\Repositories\SubsidyRepository;
+use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\Form;
+use App\Shared\Models\Definition\Subsidy;
+use App\Shared\Models\Definition\VersionStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\WipesSubsidyDefinitions;

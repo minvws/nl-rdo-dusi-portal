@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Helpers\CacheKeyHelper;
-use App\Http\Resources\SubsidyResource;
 use App\Http\Resources\FormResource;
-use App\Models\Form;
+use App\Http\Resources\SubsidyResource;
 use App\Repositories\CacheRepository;
+use App\Shared\Models\Definition\Form;
 use Illuminate\Support\Collection;
 
 readonly class CacheService

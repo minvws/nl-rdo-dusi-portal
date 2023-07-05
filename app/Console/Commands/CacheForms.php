@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Form;
 use App\Repositories\FormRepository;
 use App\Repositories\SubsidyRepository;
 use App\Services\CacheService;
+use App\Shared\Models\Definition\Form;
 use Illuminate\Console\Command;
 
 class CacheForms extends Command

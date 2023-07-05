@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Shared\Models\Definition;
 
+use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\Factories\FormUIFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,5 +31,10 @@ class FormUI extends Model
     public function form(): BelongsTo
     {
         return $this->belongsTo(Form::class);
+    }
+
+    protected static function newFactory(): FormUIFactory
+    {
+        return new FormUIFactory();
     }
 }

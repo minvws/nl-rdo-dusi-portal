@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Shared\Models\Definition;
 
+use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\Factories\FormFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -55,5 +57,10 @@ class Form extends Model
     public function scopeOpen(Builder $query): Builder
     {
         return $query->whereIn('status', [VersionStatus::Published, VersionStatus::Archived]);
+    }
+
+    protected static function newFactory(): FormFactory
+    {
+        return new FormFactory();
     }
 }
