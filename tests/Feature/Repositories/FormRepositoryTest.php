@@ -5,7 +5,7 @@ namespace Tests\Feature\Repositories;
 use App\Models\Connection;
 use App\Models\Field;
 use App\Models\Form;
-use App\Models\FormStatus;
+use App\Models\VersionStatus;
 use App\Models\Subsidy;
 use App\Repositories\FormRepository;
 use Illuminate\Database\Eloquent\Model;
@@ -54,15 +54,15 @@ class FormRepositoryTest extends TestCase
     public function testGetOpenForms(int $draftForms, int $publishedForms, int $archivedForms, int $expectedOpenForms): void
     {
         for ($i = 0; $i < $draftForms; $i++) {
-            Form::factory()->create(['status' => FormStatus::Draft, 'subsidy_id' => $this->subsidy->id]);
+            Form::factory()->create(['status' => VersionStatus::Draft, 'subsidy_id' => $this->subsidy->id]);
         }
 
         for ($i = 0; $i < $publishedForms; $i++) {
-            Form::factory()->create(['status' => FormStatus::Published, 'subsidy_id' => $this->subsidy->id]);
+            Form::factory()->create(['status' => VersionStatus::Published, 'subsidy_id' => $this->subsidy->id]);
         }
 
         for ($i = 0; $i < $archivedForms; $i++) {
-            Form::factory()->create(['status' => FormStatus::Archived, 'subsidy_id' => $this->subsidy->id]);
+            Form::factory()->create(['status' => VersionStatus::Archived, 'subsidy_id' => $this->subsidy->id]);
         }
 
         $repository = $this->app->get(FormRepository::class);
@@ -72,16 +72,16 @@ class FormRepositoryTest extends TestCase
     public function getFormDataProvider(): array
     {
         return [
-            [FormStatus::Draft, false],
-            [FormStatus::Published, true],
-            [FormStatus::Archived, true]
+            [VersionStatus::Draft, false],
+            [VersionStatus::Published, true],
+            [VersionStatus::Archived, true]
         ];
     }
 
     /**
      * @dataProvider getFormDataProvider
      */
-    public function testGetForm(FormStatus $status, bool $expectForm): void
+    public function testGetForm(VersionStatus $status, bool $expectForm): void
     {
         $form = Form::factory()->create(['status' => $status, 'subsidy_id' => $this->subsidy->id]);
 

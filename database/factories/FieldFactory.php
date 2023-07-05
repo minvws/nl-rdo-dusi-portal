@@ -19,10 +19,10 @@ class FieldFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
-            'label' => $this->faker->words(3, true),
+            'code' => $this->faker->word,
+            'title' => $this->faker->words(3, true),
             'type' => 'text',
-            'is_required' => true,
-            'sort' => 1
+            'is_required' => true
         ];
     }
 }

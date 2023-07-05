@@ -8,25 +8,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read string $id
- * @property-read string $code
- * @property-read string $title
- * @property-read ?string $description
- * @property-read FieldType $type
- * @property-read ?array $params
+ * @property-read VersionStatus $status
+ * @property-read int $version
+ * @property-read string $ui
  */
-class Field extends Model
+class FormUI extends Model
 {
     use HasFactory;
 
+    protected $table = 'form_uis';
     protected $connection = Connection::Form;
 
     protected $casts = [
-        'type' => FieldType::class,
-        'params' => 'json'
+        'status' => VersionStatus::class,
+        'ui' => 'json'
     ];
 
     protected $keyType = 'string';
-    public $timestamps = false;
 
     public function form(): BelongsTo
     {

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-enum FormStatus: string
+enum VersionStatus: string
 {
     case Draft = 'draft';
     case Published = 'published';

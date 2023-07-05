@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property-read FormStatus $status
+ * @property-read string $id
+ * @property-read VersionStatus $status
+ * @property-read int $version
+ * @property-read ?FormUI $publishedUI
  */
 class Form extends Model
 {
@@ -18,7 +22,7 @@ class Form extends Model
     protected $connection = Connection::Form;
 
     protected $casts = [
-        'status' => FormStatus::class
+        'status' => VersionStatus::class
     ];
 
     protected $keyType = 'string';
@@ -30,7 +34,17 @@ class Form extends Model
 
     public function fields(): HasMany
     {
-        return $this->hasMany(Field::class)->ordered();
+        return $this->hasMany(Field::class);
+    }
+
+    public function uis(): HasMany
+    {
+        return $this->hasMany(FormUI::class);
+    }
+
+    public function publishedUI(): HasOne
+    {
+        return $this->hasOne(FormUI::class)->where('status', '=', 'published');
     }
 
     public function scopeOrdered(Builder $query): Builder
@@ -40,6 +54,6 @@ class Form extends Model
 
     public function scopeOpen(Builder $query): Builder
     {
-        return $query->whereIn('status', [FormStatus::Published, FormStatus::Archived]);
+        return $query->whereIn('status', [VersionStatus::Published, VersionStatus::Archived]);
     }
 }

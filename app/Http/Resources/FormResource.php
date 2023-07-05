@@ -14,7 +14,7 @@ class FormResource extends JsonResource
         return [
             'metadata' => $this->createMetadata(),
             'dataSchema' => $this->createDataSchema(),
-            'uiSchema' => $this->createUISchema(),
+            'uiSchema' => $this->publishedUI?->ui,
             '_links' => [
                 'submit' => ['href' => route('api.form-submit', $this->id)]
             ],
@@ -27,7 +27,10 @@ class FormResource extends JsonResource
             'id' => $this->id,
             'subsidy' => [
                 'id' => $this->subsidy->id,
-                'title' => $this->subsidy->title
+                'title' => $this->subsidy->title,
+                'description' => $this->subsidy->description,
+                'validFrom' => $this->subsidy->valid_from->format('Y-m-d'),
+                'validTo' => $this->subsidy->valid_to?->format('Y-m-d')
             ]
         ];
     }
@@ -39,9 +42,9 @@ class FormResource extends JsonResource
 
         $required = [];
         foreach ($this->fields as $field) {
-            $result['properties'][$field->id] = $this->createFieldDataSchema($field);
+            $result['properties'][$field->code] = $this->createFieldDataSchema($field);
             if ($field->is_required) {
-                $required[] = $field->id;
+                $required[] = $field->code;
             }
         }
 
@@ -62,7 +65,8 @@ class FormResource extends JsonResource
 
         $result = [
             'type' => $type,
-            'title' => $field->label
+            'title' => $field->title,
+            'description' => $field->description
         ];
 
         if ($field->type === FieldType::Select) {
@@ -70,33 +74,5 @@ class FormResource extends JsonResource
         }
 
         return $result;
-    }
-
-    private function createUISchema(): array
-    {
-        $result = [
-            'type' => 'VerticalLayout',
-            'elements' => []
-        ];
-
-        foreach ($this->fields as $field) {
-            $result['elements'][] = $this->createFieldUISchema($field);
-        }
-
-        return [
-            'type' => 'CustomGroupControl',
-            'options' => ['section' => true],
-            'label' => 'contactInformation.section',
-            'elements' => [$result]
-        ];
-    }
-
-    private function createFieldUISchema(Field $field): array
-    {
-        return [
-            'type' => 'CustomControl',
-            'scope' => "#/properties/{$field->id}",
-            'label' => $field->label
-        ];
     }
 }

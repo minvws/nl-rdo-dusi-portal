@@ -19,7 +19,10 @@ class SubsidyFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
-            'title' => $this->faker->words(asText: true)
+            'title' => $this->faker->words(asText: true),
+            'description' => $this->faker->paragraph,
+            'valid_from' => $this->faker->dateTimeBetween('3 years ago', '3 months ago'),
+            'valid_to' => $this->faker->dateTimeBetween('next month', 'now + 3 years'),
         ];
     }
 }
