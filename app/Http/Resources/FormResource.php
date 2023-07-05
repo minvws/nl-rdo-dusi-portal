@@ -66,8 +66,11 @@ class FormResource extends JsonResource
         $result = [
             'type' => $type,
             'title' => $field->title,
-            'description' => $field->description
         ];
+
+        if (!empty($field->description)) {
+            $result['description'] = $field->description;
+        }
 
         if ($field->type === FieldType::Select) {
             $result['enum'] = $field->params['options'];
