@@ -57,7 +57,7 @@ class User extends Authenticatable
     /**
      * User that created this user.
      *
-     * @return BelongsTo<self>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function createdBy(): BelongsTo
     {

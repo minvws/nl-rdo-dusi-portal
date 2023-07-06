@@ -15,7 +15,7 @@ class ApplicationController extends BaseController
     }
 
     /**
-     * @return Application|Factory|View
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function overview(Request $request)
     {

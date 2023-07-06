@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Barryvdh\LaravelIdeHelper\Eloquent;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,12 +22,22 @@ class Judgement extends Model
 
     protected $primaryKey = 'judgement';
 
+    /**
+     * @var false
+     */
     public $incrementing = false;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'judgement',
     ];
 
+    /**
+     * @var array<string, string> casts
+     *
+     */
     protected $casts = [
         'judgement' => Enums\Judgement::class
     ];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -14,7 +16,7 @@ class Answer extends Model
 
     protected $connection = "pgsql_application";
 
-    const UPDATED_AT = NULL;
+    public const UPDATED_AT = null;
 
     /**
      * The attributes that are mass assignable.

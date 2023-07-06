@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Redirector;
+use Illuminate\Http\RedirectResponse;
 
 /**
  * LoginController
@@ -12,13 +16,13 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /**
-     * login
+     * Login.
      *
-     * @param Request request
+     * @param \Illuminate\Http\Request $request The HTTP request.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Redirector|RedirectResponse
      */
-    public function login(Request $request): \Illuminate\Http\RedirectResponse
+    public function login(Request $request): Redirector|RedirectResponse
     {
         $credentials = $request->only('email', 'password');
 

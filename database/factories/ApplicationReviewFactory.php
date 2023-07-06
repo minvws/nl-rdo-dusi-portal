@@ -13,7 +13,7 @@ class ApplicationReviewFactory extends Factory
     /**
      * Define the model's default state.
      *
-     * @return array<string, mixed>
+     * @return (Factory|\DateTime|mixed|string)[]
      */
     public function definition(): array
     {

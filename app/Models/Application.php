@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Application extends Model
 {
@@ -13,7 +16,7 @@ class Application extends Model
 
     protected $connection = "pgsql_application";
 
-    const UPDATED_AT = NULL;
+    public const UPDATED_AT = null;
 
     /**
      * The attributes that are mass assignable.
@@ -33,17 +36,17 @@ class Application extends Model
         'locked_from' => 'timestamp',
     ];
 
-    public function applicationHashes()
+    public function applicationHashes(): HasMany
     {
         return $this->hasMany(ApplicationHash::class, 'application_id', 'id');
     }
 
-    public function applicationReviews()
+    public function applicationReviews(): HasMany
     {
         return $this->hasMany(ApplicationReview::class, 'application_id', 'id');
     }
 
-    public function answers()
+    public function answers(): HasMany
     {
         return $this->hasMany(Answer::class, 'application_id', 'id');
     }

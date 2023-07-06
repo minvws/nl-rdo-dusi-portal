@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Traits\HasCompositePrimaryKey;
@@ -14,8 +16,19 @@ class ApplicationHash extends Model
 
     protected $connection = "pgsql_application";
 
-    protected $primaryKey = ['form_hash_id', 'application_id'];
+    /**
+     * Get the primary key for the model.
+     *
+     * @return array|string
+     */
+    public function getKeyName()
+    {
+        return ['form_hash_id', 'application_id'];
+    }
 
+    /**
+     * @var false
+     */
     public $timestamps = false;
 
     /**

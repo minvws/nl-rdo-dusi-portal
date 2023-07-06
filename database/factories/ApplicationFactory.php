@@ -12,7 +12,7 @@ class ApplicationFactory extends Factory
     /**
      * Define the model's default state.
      *
-     * @return array<string, mixed>
+     * @return (\DateTime|string)[]
      */
     public function definition(): array
     {
