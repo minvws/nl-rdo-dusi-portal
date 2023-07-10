@@ -14,10 +14,7 @@ class FormResource extends JsonResource
         return [
             'metadata' => $this->createMetadata(),
             'dataSchema' => $this->createDataSchema(),
-            'uiSchema' => $this->publishedUI?->ui,
-            '_links' => [
-                'submit' => ['href' => route('api.form-submit', $this->id)]
-            ],
+            'uiSchema' => $this->publishedUI?->ui
         ];
     }
 

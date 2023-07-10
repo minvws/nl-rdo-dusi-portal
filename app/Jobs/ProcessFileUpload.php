@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Shared\Models\Application\FileUpload;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,7 +14,7 @@ class ProcessFileUpload implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public string $formId, public string $fileId, public string $data)
+    public function __construct(public readonly FileUpload $fileUpload)
     {
     }
 

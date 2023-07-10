@@ -27,7 +27,7 @@ class SubsidyResource extends JsonResource
         ];
 
         $data['_links'] = [
-            'form' => ['href' => route('api.form-show', ['id' => $this->publishedForm->id]), false]
+            'form' => ['href' => route('api.form-show', ['form' => $this->publishedForm->id]), false]
         ];
 
         return $data;
