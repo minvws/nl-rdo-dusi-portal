@@ -3,10 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Application;
+use App\Models\ApplicationHash;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ApplicationHash>
+ * @extends Factory<ApplicationHash>
  */
 class ApplicationHashFactory extends Factory
 {

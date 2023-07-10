@@ -3,22 +3,21 @@
 namespace Database\Factories;
 
 use App\Models\Application;
+use App\Models\Field;
+use App\Models\Answer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Answer>
+ * @extends Factory<Answer>
  */
 class AnswerFactory extends Factory
 {
-    /**
-     * @return (Factory|\DateTime|string)[]
-     */
     public function definition(): array
     {
         return [
             'application_id' => Application::factory(),
             'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
-            'question_id' => $this->faker->uuid,
+            'field_id' => Field::all()->random()->id,
             'encrypted_answer' => $this->faker->text,
             'encryption_key_id' => $this->faker->uuid,
         ];

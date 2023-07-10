@@ -9,22 +9,31 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $form_id
+ * @property string $judgement
+ * @property Uuid $id
+ * @property \DateTimeInterface|null $locked_from
+ * @property \Illuminate\Support\Collection<Answer> $answers
+ */
 class Application extends Model
 {
     use HasFactory;
     use HasUuids;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::APPLICATION;
 
     public const UPDATED_AT = null;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<array-key, string>
      */
     protected $fillable = [
-        'form_id'
+        'form_id',
+        'judgement',
+        'locked_from',
     ];
 
     /**

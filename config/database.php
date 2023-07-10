@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\Connection;
+
 return [
 
     /*
@@ -34,7 +36,7 @@ return [
     */
 
     'connections' => [
-        'pgsql_user' => [
+        Connection::USER => [
             'driver' => 'pgsql',
             'url' => env('USER_DATABASE_URL'),
             'host' => env('USER_DB_HOST', '127.0.0.1'),
@@ -48,7 +50,7 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
-        'pgsql_form' => [
+        Connection::FORM => [
             'driver' => 'pgsql',
             'url' => env('FORM_DATABASE_URL'),
             'host' => env('FORM_DB_HOST', '127.0.0.1'),
@@ -62,7 +64,7 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
-        'pgsql_application' => [
+        Connection::APPLICATION => [
             'driver' => 'pgsql',
             'url' => env('APPLICATION_DATABASE_URL'),
             'host' => env('APPLICATION_DB_HOST', '127.0.0.1'),

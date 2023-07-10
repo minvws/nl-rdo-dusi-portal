@@ -11,10 +11,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ApplicationHash extends Model
 {
-    use HasCompositePrimaryKey;
     use HasFactory;
+    use HasCompositePrimaryKey;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::APPLICATION;
 
     /**
      * Get the primary key for the model.
@@ -34,7 +34,7 @@ class ApplicationHash extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<array-key, string>
      */
     protected $fillable = [
         'form_hash_id',

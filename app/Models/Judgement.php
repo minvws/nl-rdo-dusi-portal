@@ -18,7 +18,7 @@ class Judgement extends Model
 {
     use HasFactory;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::APPLICATION;
 
     protected $primaryKey = 'judgement';
 

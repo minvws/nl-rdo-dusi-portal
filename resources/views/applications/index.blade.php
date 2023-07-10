@@ -3,7 +3,7 @@
 @section('content')
     <article>
         <div class="filter">
-            <form action="" method="get">
+            <form action={{route("applications.index")}} method="get">
                 <label for="voorbeeld-text-input-1">Status van de aanvraag</label>
                 <select id="judgement" name="judgement">
                     @foreach ($judgements as $judgement)
@@ -24,13 +24,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ($applications as $application)
-                    <tr>
-                        <td>{{$application->id}}</td>
-                        <td>{{$application->created_at}}</td>
-                        <td>{{$application->judgement}}</td>
-                    </tr>
-                @endforeach
+                    @foreach ($applications as $application)
+                        <tr>
+                            <td>{{$application->id}}</td>
+                            <td>{{$application->created_at}}</td>
+                            <td>{{$application->judgement}}</td>
+                            <td>
+                                <a href="{{ route('applications.show', ['application' => $application->id]) }}">Show</a>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

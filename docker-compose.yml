@@ -22,11 +22,15 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-            - nl-rdo-dusi-portal-backend_sail
-            - nl-rdo-dusi-user-admin-web_sail
+            portal-backend:
+            form-admin-web:
+            nl-rdo-dusi-user-admin-web_sail:
+
 
 networks:
-    nl-rdo-dusi-portal-backend_sail:
+    portal-backend:
         external: true
     nl-rdo-dusi-user-admin-web_sail:
+        external: true
+    form-admin-web:
         external: true

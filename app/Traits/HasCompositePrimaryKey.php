@@ -14,7 +14,7 @@ trait HasCompositePrimaryKey
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function setKeysForSaveQuery($query)
+    protected function setKeysForSaveQuery($query): \Illuminate\Database\Eloquent\Builder
     {
         $keys = $this->getKeyName();
         return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(function ($q) use ($keys) {
@@ -40,9 +40,9 @@ trait HasCompositePrimaryKey
     }
 
     /**
-     * @return false
+     * @return bool
      */
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         return false;
     }
@@ -52,7 +52,7 @@ trait HasCompositePrimaryKey
      *
      * @return mixed
      */
-    public function getKey()
+    public function getKey(): mixed
     {
         $fields = $this->getKeyName();
         $keys = [];

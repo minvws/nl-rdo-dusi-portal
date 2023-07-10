@@ -5,10 +5,10 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
+        "php": "^8.2",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
-        "laravel/framework": "^10.0",
-        "php": "^8.2"
+        "laravel/framework": "^10.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",

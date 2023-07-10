@@ -14,14 +14,14 @@ class ApplicationReview extends Model
     use HasFactory;
     use HasUuids;
 
-    protected $connection = "pgsql_application";
+    protected $connection = Connection::APPLICATION;
 
     public const UPDATED_AT = null;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<array-key, string>
      */
     protected $fillable = [
         'encrypted_comment',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Models\Connection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,12 +22,12 @@ class User extends Authenticatable
     use HasUuids;
     use TwoFactorAuthenticatable;
 
-    protected $connection = 'pgsql_user';
+    protected $connection = Connection::USER;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<array-key, string>
      */
     protected $fillable = [
         'name',
@@ -54,11 +55,6 @@ class User extends Authenticatable
         'active_until' => 'timestamp',
     ];
 
-    /**
-     * User that created this user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(__CLASS__, 'created_by');

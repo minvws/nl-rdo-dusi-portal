@@ -17,9 +17,7 @@ class LoginController extends Controller
 {
     /**
      * Login.
-     *
-     * @param \Illuminate\Http\Request $request The HTTP request.
-     *
+     * @param Request $request
      * @return Redirector|RedirectResponse
      */
     public function login(Request $request): Redirector|RedirectResponse
