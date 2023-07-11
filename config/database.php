@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use App\Models\Connection;
 
 return [
 
@@ -15,7 +16,7 @@ return [
     |
     */
 
-    'default' => 'pgsql',
+    'default' => Connection::FORM,
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +35,7 @@ return [
     */
 
     'connections' => [
-        'pgsql' => [
+        Connection::FORM => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
