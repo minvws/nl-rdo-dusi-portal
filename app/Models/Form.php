@@ -40,17 +40,17 @@ class Form extends Model
 
     public function subsidy(): BelongsTo
     {
-        return $this->belongsTo(Subsidy::class);
+        return $this->belongsTo(Subsidy::class, 'subsidy_id', 'id');
     }
 
     public function fields(): HasMany
     {
-        return $this->hasMany(Field::class);
+        return $this->hasMany(Field::class, 'form_id', 'id');
     }
 
     public function uis(): HasMany
     {
-        return $this->hasMany(FormUI::class);
+        return $this->hasMany(FormUI::class, 'form_id', 'id');
     }
 
     public function publishedUI(): HasOne

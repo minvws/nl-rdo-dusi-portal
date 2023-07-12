@@ -37,7 +37,7 @@ class Subsidy extends Model
 
     public function forms(): HasMany
     {
-        return $this->hasMany(Form::class);
+        return $this->hasMany(Form::class, 'subsidy_id', 'id');
     }
 
     public function publishedForm(): HasOne
