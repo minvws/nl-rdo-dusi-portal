@@ -93,6 +93,15 @@ class FieldsTableSeeder extends Seeder
             isRequired: false,
         );
 
+        $this->createTextField(
+            formId: FormsTableSeeder::BTV_V1_UUID,
+            code: 'email',
+            title: 'E-mailadres',
+            inputMode: 'email',
+            maxLength: 300,
+            isRequired: false,
+        );
+
         $this->createBankAccountField(
             formId: FormsTableSeeder::BTV_V1_UUID,
             code: 'bankAccountNumber',
@@ -104,6 +113,13 @@ class FieldsTableSeeder extends Seeder
             code: 'bankAccountHolder',
             title: 'Tenaamstelling rekeningnummer',
             maxLength: 50,
+        );
+
+        $this->createSelectField(
+            formId: FormsTableSeeder::BTV_V1_UUID,
+            code: 'communicationPreference',
+            title: 'Communicatievoorkeur',
+            options: ['Digitaal', 'Post']
         );
 
         $this->createUploadField(
