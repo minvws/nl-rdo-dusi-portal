@@ -213,4 +213,13 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Frontend Base URL
+    |--------------------------------------------------------------------------
+    |
+    | This value is the base URL of the frontend application. This value is used when the
+    | framework needs to redirect to the frontend application.
+    */
+    'frontend_base_url' => env('FRONTEND_BASE_URL'),
 ];

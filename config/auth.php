@@ -107,4 +107,14 @@ return [
 
     'password_timeout' => 10800,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Digid mock enabled
+    |--------------------------------------------------------------------------
+    |
+    | Here you may define if the digid mock is enabled or not.
+    |
+    */
+
+    'digid_mock_enabled' => env('DIGID_MOCK_ENABLED', false),
 ];

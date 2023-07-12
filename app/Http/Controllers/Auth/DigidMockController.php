@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use MinVWS\OpenIDConnectLaravel\Http\Responses\LoginResponseHandlerInterface;
+
+class DigidMockController extends Controller
+{
+    private LoginResponseHandlerInterface $loginResponseHandler;
+
+    public function __construct(LoginResponseHandlerInterface $loginResponseHandler)
+    {
+        $this->loginResponseHandler = $loginResponseHandler;
+    }
+
+    public function login()
+    {
+        return $this->loginResponseHandler->handleLoginResponse((object)[
+            "bsn" => "942424242",
+        ]);
+    }
+}

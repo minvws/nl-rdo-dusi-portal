@@ -25,7 +25,6 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
         }
         # TODO: Log login to Calvin?
         Auth::setUser($user);
-        # TODO: Should we configure this in the config or should the frontend supply this.
-        return new RedirectResponse('http://localhost:5173');
+        return new RedirectResponse(config('app.frontend_base_url'));
     }
 }
