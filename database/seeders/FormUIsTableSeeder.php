@@ -11,12 +11,24 @@ class FormUIsTableSeeder extends Seeder
 
     public function run(): void
     {
-        $ui = [
+        $page1 = [
+            'type' => 'HorizontalLayout',
+            'elements' => [
+                [
+                    'type' => 'FormHtml',
+                    'options' => [
+                        'html' => file_get_contents(__DIR__ . '/btv-intro.html'),
+                    ]
+                ]
+            ]
+        ];
+
+        $page2 = [
             "type" => "CustomGroupControl",
             "options" => [
                 "section" => true
             ],
-            "label" => "contactInformation.section",
+            "label" => "Contactgegevens aanvrager",
             "elements" => [
                 [
                     "type" => "VerticalLayout",
@@ -76,6 +88,33 @@ class FormUIsTableSeeder extends Seeder
                         [
                             "type" => "CustomControl",
                             "scope" => "#/properties/bankAccountHolder"
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $page3 = [
+            "type" => "CustomGroupControl",
+            "options" => [
+                "section" => true
+            ],
+            "label" => "Controleren, uploaden en verzenden",
+            "elements" => [
+                [
+                    "type" => "VerticalLayout",
+                    "elements" => [
+                        [
+                            "type" => "FormHtml",
+                            "options" => ['html' => '<h3>Controleren</h5><p>Controleer hieronder uw gegevens.</p>']
+                        ],
+                        [
+                            "type" => "FormResultsTable",
+                            "options" => [
+                                "fields" => [
+                                    'Indiener' => '{firstName} {infix} {lastName}'
+                                ]
+                            ]
                         ],
                         [
                             "type" => "CustomControl",
@@ -98,6 +137,37 @@ class FormUIsTableSeeder extends Seeder
                             "scope" => "#/properties/permissionToProcessPersonalData"
                         ]
                     ]
+                ]
+            ]
+        ];
+
+        $ui = [
+            'type' => 'CustomPageNavigationControl',
+            'elements' => [
+                [
+                    'type' => 'CustomPageControl',
+                    'label' => 'Start',
+                    'elements' => [$page1],
+                    'options' => [
+                        'required' => []
+                    ]
+                ],
+                [
+                    'type' => 'CustomPageControl',
+                    'label' => 'Contactgegevens aanvrager',
+                    'elements' => [$page2],
+                    'options' => [
+                        'required' => [
+                            'formOfAddress',
+                            'firstName',
+                            'lastName'
+                        ]
+                    ]
+                ],
+                [
+                    'type' => 'CustomPageControl',
+                    'label' => 'Controleren, uploaden en verzenden',
+                    'elements' => [$page3]
                 ]
             ]
         ];
