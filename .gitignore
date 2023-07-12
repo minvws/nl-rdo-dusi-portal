@@ -17,7 +17,10 @@ Homestead.yaml
 npm-debug.log
 public/mix-manifest.json
 _ide_helper.php
+.idea
 
 # Groups
 /storage/*.key
 /storage/debugbar
+/storage/logs
+
