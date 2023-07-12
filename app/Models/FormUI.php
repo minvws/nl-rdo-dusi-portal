@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Connection;
@@ -9,10 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read string $id
- * @property-read VersionStatus $status
- * @property-read int $version
- * @property-read string $ui
+ * @property string $id
+ * @property string $form_id
+ * @property int $version
+ * @property VersionStatus $status
+ * @property array $ui
  */
 class FormUI extends Model
 {

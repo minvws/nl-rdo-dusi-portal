@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Shared\Models\Definition\Factories;
+namespace Database\Factories;
 
+use App\Models\Field;
 use App\Models\Form;
-use App\Models\Enums\VersionStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
  * @extends Factory<Form>
  */
-class FormFactory extends Factory
+class FieldFactory extends Factory
 {
-    protected $model = Form::class;
+    protected $model = Field::class;
 
     /**
      * Define the model's default state.
@@ -23,8 +23,10 @@ class FormFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
-            'version' => 1,
-            'status' => VersionStatus::Draft
+            'code' => $this->faker->word,
+            'title' => $this->faker->words(3, true),
+            'type' => 'text',
+            'is_required' => true
         ];
     }
 }

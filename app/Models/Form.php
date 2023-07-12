@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Models\Connection;
 use App\Models\Enums\VersionStatus;
-
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -14,10 +14,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property-read string $id
- * @property-read VersionStatus $status
- * @property-read int $version
- * @property-read ?FormUI $publishedUI
+ * @property string $id
+ * @property string $subsidy_id
+ * @property int $version
+ * @property VersionStatus $status
  */
 class Form extends Model
 {

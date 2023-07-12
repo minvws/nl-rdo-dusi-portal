@@ -1,19 +1,26 @@
+# Directories
 /node_modules
-/public/build
+/vendor
 /public/hot
 /public/storage
-/storage/*.key
-/vendor
-.composer
+/public/css
+/public/js
+/public/fonts
+/public/images/vendor
+/public/build
+
+# Files
 .env
 .env.backup
-.env.production
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
-auth.json
 npm-debug.log
-yarn-error.log
-/.fleet
+public/mix-manifest.json
+_ide_helper.php
+
+# Groups
+/storage/*.key
+/storage/debugbar
+/storage/logs
 /.idea
-/.vscode

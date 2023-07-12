@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Connection;
@@ -11,16 +13,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property-read string $id
- * @property-read string $title
- * @property-read string $description
- * @property-read DateTimeInterface $valid_from
- * @property-read ?DateTimeInterface $valid_to
+ * @property string $title
+ * @property string $description
+ * @property DateTimeInterface $valid_from
+ * @property DateTimeInterface $valid_to
+ * @property Form[] $forms
  */
+
 class Subsidy extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+    /**
+     * @var string|null
+     */
     protected $connection = Connection::FORM;
     protected $keyType = 'string';
 
@@ -48,10 +56,5 @@ class Subsidy extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('title');
-    }
-
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->whereRelation('forms', fn (Builder $subQuery) => $subQuery->open());
     }
 }

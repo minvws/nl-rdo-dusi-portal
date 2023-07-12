@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Connection;
@@ -9,12 +11,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read string $id
- * @property-read string $code
- * @property-read string $title
- * @property-read ?string $description
- * @property-read FieldType $type
- * @property-read ?array $params
+ * @property string $id
+ * @property string $form_id
+ * @property string $code
+ * @property string $title
+ * @property string $description
+ * @property FieldType $type
+ * @property array $params
+ * @property bool $is_required
+ * @property string $source
  */
 class Field extends Model
 {

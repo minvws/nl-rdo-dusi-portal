@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Models\Definition\Factories;
+namespace Database\Factories;
 
 use App\Models\FormUI;
 use App\Models\Enums\VersionStatus;

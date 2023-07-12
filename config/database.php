@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Support\Str;
+declare(strict_types=1);
+
 use App\Models\Connection;
 
 return [
@@ -35,6 +36,20 @@ return [
     */
 
     'connections' => [
+        Connection::USER => [
+            'driver' => 'pgsql',
+            'url' => env('USER_DATABASE_URL'),
+            'host' => env('USER_DB_HOST', '127.0.0.1'),
+            'port' => env('USER_DB_PORT', '5432'),
+            'database' => env('USER_DB_DATABASE', 'forge'),
+            'username' => env('USER_DB_USERNAME', 'forge'),
+            'password' => env('USER_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
         Connection::FORM => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
