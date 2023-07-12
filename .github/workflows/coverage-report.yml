@@ -1,0 +1,61 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: pcov
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist
+
+      - name: Execute tests with Code Coverage
+        run: vendor/bin/phpunit --coverage-clover tests/coverage.xml
+
+      - if: ${{ github.event_name == 'pull_request' }}
+        name: Download artifact
+        uses: dawidd6/action-download-artifact@v2.27.0
+        continue-on-error: true
+        with:
+          workflow: .github/workflows/coverage-report.yml # this file
+          branch: main
+          name: coverage-report
+          path: tests/base
+
+      - if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: tests/coverage.xml
+
+      - name: Coverage Report as Comment (Clover)
+        if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+        uses: lucassabreu/comment-coverage-clover@v0.10.0
+        with:
+          file: tests/coverage.xml
+          base-file: tests/base/coverage.xml
