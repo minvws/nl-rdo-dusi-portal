@@ -74,6 +74,12 @@ class FormResource extends JsonResource
 
         if ($field->type === FieldType::Select) {
             $result['enum'] = $field->params['options'];
+        } elseif ($field->type === FieldType::Upload) {
+            $result['file'] = true;
+        } elseif ($field->type === FieldType::CustomBankAccount) {
+            $result['iban'] = true;
+        } elseif ($field->type === FieldType::TextTel) {
+            $result['tel'] = true;
         }
 
         return $result;
