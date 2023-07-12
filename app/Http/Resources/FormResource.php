@@ -80,6 +80,10 @@ class FormResource extends JsonResource
             $result['iban'] = true;
         } elseif ($field->type === FieldType::TextTel) {
             $result['tel'] = true;
+        } elseif ($field->type === FieldType::Checkbox) {
+            $result['const'] = true;
+        } elseif ($field->type === FieldType::TextEmail) {
+            $result['format'] = 'email';
         }
 
         return $result;
