@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\DigidMockController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+if (config('auth.digid_mock_enabled')) {
+    Route::get('oidc/login', [DigidMockController::class, 'login'])->name('digid-mock-login');
+}

@@ -10,6 +10,7 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "minvws/openid-connect-php-laravel": "^0.0.5",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
     },
     "require-dev": {
@@ -62,6 +63,12 @@
             "pestphp/pest-plugin": true
         }
     },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "git",
+            "url":  "git@github.com:minvws/nl-rdo-openid-connect-php-laravel.git"
+        }
+    ]
 }

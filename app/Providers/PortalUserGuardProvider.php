@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
 use App\Auth\PortalUserGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 
-class AuthServiceProvider extends ServiceProvider
+class PortalUserGuardProvider extends ServiceProvider
 {
     /**
      * The model to policy mappings for the application.
