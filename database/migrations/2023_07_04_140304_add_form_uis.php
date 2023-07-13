@@ -40,7 +40,6 @@ return new class extends Migration
             $table->renameColumn('title', 'label');
             $table->dropColumn('source');
             $table->unsignedInteger('sort');
-            $table->text('description')->after('title')->nullable();
         });
 
         Schema::table('subsidies', function (Blueprint $table) {
