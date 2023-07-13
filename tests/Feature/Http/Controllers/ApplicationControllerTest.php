@@ -4,7 +4,6 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Jobs\ProcessFileUpload;
 use App\Jobs\ProcessFormSubmit;
-use App\Models\DraftApplication;
 use App\Models\PortalUser;
 use App\Services\ApplicationService;
 use App\Services\CacheService;
