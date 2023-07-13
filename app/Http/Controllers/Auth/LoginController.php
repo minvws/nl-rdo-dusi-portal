@@ -14,11 +14,11 @@ class LoginController extends Controller
     //
     public function login(Request $request): RedirectResponse
     {
-        $credentials = $request->only('name', 'password');
+        $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             // Authentication passed, redirect to a secure page
-            return redirect()->intended('/logged_in');
+            return redirect()->intended('/');
         } else {
             // Authentication failed, redirect back to the login form
             // return redirect()->back()->withErrors(['message' => 'Invalid credentials']);

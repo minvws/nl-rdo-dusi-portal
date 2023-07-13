@@ -9,7 +9,7 @@
         class="ro-logo"
         aria-label="{{__('Rijksoverheid logo, go to the VIEP homepage') }}">
         <img src="/img/staging.gif" alt="" />
-        Assessment Web {{config('app.env')}}
+        Form Admin Web {{config('app.env')}}
     </a>
 @else
     <a
@@ -17,6 +17,6 @@
         class="ro-logo"
         aria-label="{{__('Rijksoverheid logo, go to the VIEP homepage') }}">
         <img src="/img/ro-logo.svg" alt="Logo Rijksoverheid" />
-        Assessment Web
+        Form Admin Web
     </a>
 @endif

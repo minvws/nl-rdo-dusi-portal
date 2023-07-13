@@ -22,6 +22,7 @@ services:
             - '.:/var/www/html'
         networks:
             form-admin-web:
+            nl-rdo-dusi-user-admin-web_sail:
 
     pgsql:
         environment:
@@ -42,6 +43,8 @@ services:
 networks:
     form-admin-web:
         name: form-admin-web
+    nl-rdo-dusi-user-admin-web_sail:
+        external: true
 
 volumes:
     pgsql:
