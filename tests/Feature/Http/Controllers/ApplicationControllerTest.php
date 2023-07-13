@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 use App\Jobs\ProcessFileUpload;
 use App\Jobs\ProcessFormSubmit;
 use App\Models\DraftApplication;
+use App\Models\PortalUser;
 use App\Services\ApplicationService;
 use App\Services\CacheService;
 use App\Services\FormService;
@@ -20,6 +21,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 use Tests\WipesSubsidyDefinitions;
 
@@ -67,11 +69,13 @@ class ApplicationControllerTest extends TestCase
     {
         Queue::fake();
 
+        $user = new PortalUser(base64_encode(openssl_random_pseudo_bytes(32)), Uuid::uuid4(), null);
+
         $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $fakeFile = UploadedFile::fake()->createWithContent('id.pdf', 'This should be an encrypted string');
         $data = ['fieldCode' => $this->field->code, 'file' => $fakeFile];
-        $response = $this->postJson(route('api.application-upload-file', ['application' => $applicationId]), $data);
+        $response = $this->actingAs($user)->postJson(route('api.application-upload-file', ['application' => $applicationId]), $data);
         $this->assertEquals(202, $response->status());
 
         $fileId = $response->json('id');
@@ -93,14 +97,30 @@ class ApplicationControllerTest extends TestCase
         $this->assertEquals(base64_encode($fakeFile->getContent()), $job->fileUpload->encryptedContents);
     }
 
-    public function testSubmit(): void
+    public function testFileUploadRequiresLogin(): void
     {
         Queue::fake();
 
         $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
+        $fakeFile = UploadedFile::fake()->createWithContent('id.pdf', 'This should be an encrypted string');
+        $data = ['fieldCode' => $this->field->code, 'file' => $fakeFile];
+        $response = $this->postJson(route('api.application-upload-file', ['application' => $applicationId]), $data);
+        $this->assertEquals(401, $response->status());
+
+        Queue::assertNotPushed(ProcessFileUpload::class);
+    }
+
+    public function testSubmit(): void
+    {
+        Queue::fake();
+
+        $user = new PortalUser(base64_encode(openssl_random_pseudo_bytes(32)), Uuid::uuid4(), null);
+
+        $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
+        $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $data['data'] = 'This should be an encrypted string';
-        $response = $this->putJson(route('api.application-submit', ['application' => $applicationId]), $data);
+        $response = $this->actingAs($user)->putJson(route('api.application-submit', ['application' => $applicationId]), $data);
         $this->assertEquals(202, $response->status());
 
         Queue::assertPushed(ProcessFormSubmit::class);
@@ -113,5 +133,18 @@ class ApplicationControllerTest extends TestCase
         $this->assertEquals($applicationId, $job->formSubmit->applicationMetadata->id);
         $this->assertEquals($this->form->id, $job->formSubmit->applicationMetadata->formId);
         $this->assertEquals(base64_encode($data['data']), $job->formSubmit->encryptedData);
+    }
+
+    public function testSubmitRequiresLogin(): void
+    {
+        Queue::fake();
+
+        $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
+        $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
+        $data['data'] = 'This should be an encrypted string';
+        $response = $this->putJson(route('api.application-submit', ['application' => $applicationId]), $data);
+        $this->assertEquals(401, $response->status());
+
+        Queue::assertNotPushed(ProcessFormSubmit::class);
     }
 }
