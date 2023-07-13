@@ -22,8 +22,6 @@ class SubsidyRepositoryTest extends TestCase
     use DatabaseTransactions;
     use WithFaker;
 
-    protected array $connectionsToTransact = [Connection::FORM];
-
     public function testGetSubsidy(): void
     {
         $subsidy = Subsidy::factory()->create();

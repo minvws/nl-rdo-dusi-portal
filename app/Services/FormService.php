@@ -22,14 +22,14 @@ class FormService
     public function createSubsidy(
         string $title,
         string $description,
-        DateTimeInterface $valid_from,
-        DateTimeInterface $valid_to
+        DateTimeInterface $validFrom,
+        DateTimeInterface $validTo
     ): void {
         $subsidy = $this->formRepository->makeSubsidy();
         $subsidy->title = $title;
         $subsidy->description = $description;
-        $subsidy->valid_from = $valid_from;
-        $subsidy->valid_to = $valid_to;
+        $subsidy->valid_from = $validFrom;
+        $subsidy->valid_to = $validTo;
         $this->formRepository->saveSubsidy($subsidy);
     }
 
@@ -47,7 +47,7 @@ class FormService
         string $description,
         FieldType $type,
         array $params,
-        bool $is_required,
+        bool $isRequired,
         string $code,
         string $source
     ): void {
@@ -56,25 +56,25 @@ class FormService
         $field->description = $description;
         $field->type = $type;
         $field->params = $params;
-        $field->is_required = $is_required;
+        $field->is_required = $isRequired;
         $field->code = $code;
         $field->source = $source;
         $this->formRepository->saveField($field);
     }
 
-    public function createFormUI(Form $form, int $version, VersionStatus $status, array $ui): void
+    public function createFormUI(Form $form, int $version, VersionStatus $status, array $uiArray): void
     {
         $formUI = $this->formRepository->makeFormUI($form);
         $formUI->version = $version;
         $formUI->status = $status;
-        $formUI->ui = $ui;
+        $formUI->ui = $uiArray;
         $this->formRepository->saveFormUI($formUI);
     }
 
-    public function updateForm(Form $form, string $subsidy_id, string $version, string $status): void
+    public function updateForm(Form $form, string $subsidyId, string $version, string $status): void
     {
         $form->update([
-            'subsidy_id' => $subsidy_id,
+            'subsidy_id' => $subsidyId,
             'version' => $version,
             'status' => $status,
         ]);
