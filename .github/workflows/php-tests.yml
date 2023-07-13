@@ -52,7 +52,6 @@ jobs:
         run: php artisan migrate
       - name: Execute tests (Unit and Feature)
         env:
-          DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DB_DATABASE: ci_db_test
