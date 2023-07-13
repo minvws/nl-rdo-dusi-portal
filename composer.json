@@ -25,6 +25,7 @@
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
         "nunomaduro/larastan": "^2.1.6",
+        "phpmd/phpmd": "^2.13",
         "phpunit/phpunit": "^10.1",
         "pragmarx/google2fa": "^8.0",
         "psalm/plugin-laravel": "^2.0",
@@ -61,7 +62,8 @@
         ],
         "psalm": "vendor/bin/psalm --config=psalm.xml",
         "phpstan": "vendor/bin/phpstan -c phpstan.neon",
-        "phpcs": "phpcs --standard=phpcs.xml"
+        "phpcs": "vendor/bin/phpcs --standard=phpcs.xml",
+        "phpmd": "vendor/bin/phpmd app/ text ruleset.phpmd.xml"
     },
     "extra": {
         "laravel": {

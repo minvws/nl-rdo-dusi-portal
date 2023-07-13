@@ -28,9 +28,9 @@ class CreateAdmin extends Command
     /**
      * Create a new command instance.
      *
-     * @param TwoFactorAuthenticationProvider $twoFactorAuthenticationProvider
+     * @param TwoFactorAuthenticationProvider $authProvider
      */
-    public function __construct(protected TwoFactorAuthenticationProvider $twoFactorAuthenticationProvider)
+    public function __construct(protected TwoFactorAuthenticationProvider $authProvider)
     {
         parent::__construct();
     }
@@ -55,7 +55,7 @@ class CreateAdmin extends Command
         ]);
 
         $user->forceFill([
-            'two_factor_secret' => encrypt($this->twoFactorAuthenticationProvider->generateSecretKey()),
+            'two_factor_secret' => encrypt($this->authProvider->generateSecretKey()),
             'two_factor_recovery_codes' => null,
         ]);
         $user->save();

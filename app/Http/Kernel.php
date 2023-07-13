@@ -43,7 +43,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -75,7 +75,7 @@ class Kernel extends HttpKernel
     public static function applicationVersion(): string
     {
         // Silence is ok here
-        $versionJson = @file_get_contents(public_path("/version.json"));
+        $versionJson = file_get_contents(public_path("/version.json"));
         if (!$versionJson) {
             return 'Undefined';
         }
