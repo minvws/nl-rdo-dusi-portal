@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Repositories;
 
+use App\Models\Connection;
 use App\Models\Enums\VersionStatus;
 use App\Models\Form;
 use App\Models\Subsidy;
@@ -20,6 +21,8 @@ class SubsidyRepositoryTest extends TestCase
 {
     use DatabaseTransactions;
     use WithFaker;
+
+    protected array $connectionsToTransact = [Connection::FORM];
 
     public function testGetSubsidy(): void
     {

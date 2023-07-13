@@ -48,6 +48,8 @@ jobs:
         run: chmod -R 777 storage bootstrap/cache
       - name: Create public/js folder and dummy files
         run: mkdir public/js && touch public/js/app.js
+      - name: Migrate database
+        run: php artisan migrate
       - name: Execute tests (Unit and Feature)
         env:
           DB_CONNECTION: pgsql
