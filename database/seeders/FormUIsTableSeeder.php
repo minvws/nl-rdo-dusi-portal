@@ -234,7 +234,12 @@ class FormUIsTableSeeder extends Seeder
                 [
                     'type' => 'CustomPageControl',
                     'label' => 'Controleren, uploaden en verzenden',
-                    'elements' => [$page3]
+                    'elements' => [$page3],
+                    'options' => [
+                        'required' => [
+                            'permissionToProcessPersonalData',
+                        ]
+                    ]
                 ]
             ]
         ];
