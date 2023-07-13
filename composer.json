@@ -1,9 +1,9 @@
 {
-    "name": "laravel/laravel",
+    "name": "minvws/nl-rdo-dusi-form-admin-web",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
-    "license": "MIT",
+    "description": "",
+    "keywords": [],
+    "license": "EUPL-1.2",
     "require": {
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.7",
@@ -12,23 +12,22 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8.1",
-        "barryvdh/laravel-ide-helper": "^2.13",
-        "jorijn/laravel-security-checker": "^2.4",
-        "nunomaduro/larastan": "^2.6",
-        "phpunit/phpunit": "^9.6.10",
-        "psalm/plugin-laravel": "^2.8",
-        "vimeo/psalm": "^5.12",
-        "squizlabs/php_codesniffer": "^3.7",
-        "slevomat/coding-standard": "^8.12",
-        "laravel/tinker": "^2.8.1",
+        "barryvdh/laravel-ide-helper": "^2.13.0",
         "fakerphp/faker": "^1.23.0",
+        "jorijn/laravel-security-checker": "^2.4.0",
         "laravel/pint": "^1.10.4",
         "laravel/sail": "^1.23.1",
+        "laravel/tinker": "^2.8.1",
         "mockery/mockery": "^1.6.2",
-        "nunomaduro/collision": "^6.4",
+        "nunomaduro/collision": "^6.4.0",
+        "nunomaduro/larastan": "^2.6.3",
+        "phpmd/phpmd": "^2.13.0",
         "phpunit/phpunit": "^9.6.10",
+        "psalm/plugin-laravel": "^2.8",
+        "slevomat/coding-standard": "^8.13.1",
         "spatie/laravel-ignition": "^2.2.0",
-        "phpmd/phpmd": "^2.13.0"
+        "squizlabs/php_codesniffer": "^3.7.2",
+        "vimeo/psalm": "^5.13.1"
     },
     "autoload": {
         "psr-4": {
