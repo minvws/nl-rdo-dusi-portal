@@ -82,7 +82,7 @@ jobs:
       - name: Check for known CVE vulnerabilities
         run: php artisan security-check:now
   phpmd:
-    needs: composer-install
+    needs: call-composer-install
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -115,7 +115,7 @@ jobs:
         run: vendor/bin/phpmd app/ text ruleset.phpmd.xml
 
   coverage:
-    needs: composer-install
+    needs: call-composer-install
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
