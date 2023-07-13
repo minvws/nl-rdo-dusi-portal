@@ -9,7 +9,7 @@ use App\Models\Enums\VersionStatus;
 use App\Models\Form;
 use App\Models\Subsidy;
 use App\Repositories\SubsidyRepository;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -19,7 +19,7 @@ use Tests\TestCase;
  */
 class SubsidyRepositoryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseMigrations;
     use WithFaker;
 
     protected array $connectionsToTransact = [Connection::FORM];
