@@ -12,7 +12,7 @@ jobs:
     secrets:
       REPO_READ_ONLY_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
 
-  laravel-tests:
+  php-tests:
     needs:
       - call-composer-install
     runs-on: ubuntu-20.04
@@ -72,13 +72,13 @@ jobs:
         with:
           workflow: .github/workflows/php-tests.yml # this file
           branch: main
-          name: coverage-report
-          path: tests/base
+          name: php-tests
+          path: tests/base/coverage.xml
 
       - if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v3
         with:
-          name: coverage-report
+          name: php-tests
           path: tests/coverage.xml
 
       - name: Coverage Report as Comment (Clover)
