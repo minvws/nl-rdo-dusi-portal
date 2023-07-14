@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read ?string $description
  * @property-read FieldType $type
  * @property-read ?array $params
+ * @property-read bool $is_required
  */
 class Field extends Model
 {

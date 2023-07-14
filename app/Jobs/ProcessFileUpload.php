@@ -2,26 +2,27 @@
 
 namespace App\Jobs;
 
-use Exception;
+use App\Services\ApplicationService;
+use App\Shared\Models\Application\FileUpload;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class ProcessFileUpload implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public string $formId, public string $fileId, public string $data)
-    {
+    public function __construct(public readonly FileUpload $fileUpload) {
     }
 
     /**
-     * @throws Exception
+     * @throws Throwable
      */
-    public function handle(): void
+    public function handle(ApplicationService $applicationService): void
     {
-        echo "Received ProcessFileUpload job for form \"{$this->formId}\" with file id \"{$this->fileId}\"\n";
+        $applicationService->processFileUpload($this->fileUpload);
     }
 }

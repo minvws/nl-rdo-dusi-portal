@@ -7,9 +7,7 @@ use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\FieldType;
 use App\Shared\Models\Definition\Form;
 use App\Models\Submission\FieldValue;
-use App\Models\Submission\FormSubmit;
 use App\Repositories\FormRepository;
-use Exception;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\JSON\JSONDecoder;
 use Throwable;
@@ -18,19 +16,6 @@ readonly class FormDecodingService
 {
     public function __construct(private FormRepository $formRepository)
     {
-    }
-
-    /**
-     * @throws Throwable
-     */
-    private function getForm(string $formId): Form
-    {
-        $form = $this->formRepository->getForm($formId);
-        if ($form === null) {
-            throw new Exception('Form not found!');
-        }
-
-        return $form;
     }
 
     /**
@@ -54,21 +39,21 @@ readonly class FormDecodingService
     }
 
     /**
+     * @return array<string, FieldValue>
      * @throws Throwable
      */
-    public function decodeFormSubmit(string $formId, string $data): FormSubmit
+    public function decodeFormValues(Form $form, string $data): array
     {
-        $form = $this->getForm($formId);
-
         $decoder = new JSONDecoder();
         $container = $decoder->decode($data);
 
         $values = [];
-        foreach ($form->fields as $field) {
+        $fields = $this->formRepository->getFields($form);
+        foreach ($fields as $field) {
             $fieldContainer = $container->nestedContainer($field->code);
             $values[$field->code] = $this->decodeFieldValue($field, $fieldContainer);
         }
 
-        return new FormSubmit($form, $values);
+        return $values;
     }
 }

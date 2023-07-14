@@ -30,6 +30,5 @@ class FormRepositoryTest extends TestCase
         $repository = $this->app->get(FormRepository::class);
         $form = $repository->getForm($form->id);
         $this->assertNotNull($form);
-        $this->assertTrue($form->relationLoaded('fields'));
     }
 }
