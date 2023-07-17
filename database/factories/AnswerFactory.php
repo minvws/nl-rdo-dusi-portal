@@ -14,7 +14,6 @@ class AnswerFactory extends Factory
             'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'field_id' => $this->faker->uuid,
             'encrypted_answer' => $this->faker->text,
-            'encryption_key_id' => $this->faker->uuid,
         ];
     }
 }
