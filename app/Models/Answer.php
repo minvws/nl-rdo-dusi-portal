@@ -27,7 +27,6 @@ class Answer extends Model
     protected $fillable = [
         'field_id',
         'encrypted_answer',
-        'encryption_key_id',
     ];
 
     public function application(): BelongsTo
