@@ -10,10 +10,7 @@
 
 <header>
     <a href="#main-content" class="button focus-only">Ga direct naar inhoud</a>
-    <a href="/" class="ro-logo">
-        <img src="/img/ro-logo.svg" alt="Logo Rijksoverheid">
-        Rijksoverheid
-    </a>
+    <x-header />
 
     <nav aria-label="Hoofdnavigatie">
         <div>
@@ -27,7 +24,7 @@
         @if (Request::is('/'))
         <a href="{{ route('login') }}" class="button ro-icon ro-icon-user">Inloggen</a>
         @endif
-        
+
     </div>
     </nav>
 </header>
