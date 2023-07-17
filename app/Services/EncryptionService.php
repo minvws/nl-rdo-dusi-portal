@@ -13,9 +13,16 @@ class EncryptionService
         return $encryptedData;
     }
 
-    public function encryptFieldValue(FieldValue $value): ?string
+    public function decryptFileUpload(string $encryptedData): string
+    {
+        // TODO: currently not encrypted yet
+        return $encryptedData;
+    }
+
+    public function encryptFieldValue(string $json): string
     {
         // TODO: encrypt
-        return $value->value === null ? null : json_encode($value->value);
+        return $json;
     }
+
 }

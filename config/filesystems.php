@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Disk;
+
 return [
 
     /*
@@ -56,6 +58,11 @@ return [
             'throw' => false,
         ],
 
+        Disk::ApplicationFiles => [
+            'driver' => env('FILESYSTEM_APPLICATION_FILES_DRIVER', 'local'),
+            'root' => env('FILESYSTEM_APPLICATION_FILES_ROOT', storage_path('application-files')),
+            'throw' => false,
+        ],
     ],
 
     /*

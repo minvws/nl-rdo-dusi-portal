@@ -4,27 +4,27 @@ namespace App\Jobs;
 
 use App\Services\EncryptionService;
 use App\Services\ApplicationService;
-use Exception;
+use App\Shared\Models\Application\FormSubmit;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class ProcessFormSubmit implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public string $id, public string $data)
+    public function __construct(public readonly FormSubmit $formSubmit)
     {
     }
 
     /**
-     * @throws Exception
+     * @throws Throwable
      */
-    public function handle(EncryptionService $encryptionService, ApplicationService $formService): void
+    public function handle(ApplicationService $applicationService): void
     {
-        $data = $encryptionService->decryptFormSubmit($this->data);
-        $formService->processFormSubmit($this->id, $data);
+        $applicationService->processFormSubmit($this->formSubmit);
     }
 }

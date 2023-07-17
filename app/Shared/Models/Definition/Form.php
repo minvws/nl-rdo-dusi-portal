@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 
 /**
  * @property-read string $id
  * @property-read VersionStatus $status
  * @property-read int $version
  * @property-read ?FormUI $publishedUI
+ * @property-read Collection<Field> $fields
  */
 class Form extends Model
 {

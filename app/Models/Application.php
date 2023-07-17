@@ -2,10 +2,21 @@
 
 namespace App\Models;
 
+use App\Shared\Models\Application\Identity;
+use App\Shared\Models\Application\IdentityType;
+use App\Shared\Models\Definition\Form;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $id
+ * @property string $form_id
+ * @property Form $form
+ * @property Identity $identity
+ * @property ApplicationStatus $status
+ */
 class Application extends Model
 {
     use HasFactory;
@@ -13,24 +24,10 @@ class Application extends Model
 
     protected $connection = Connection::Application;
 
-    const UPDATED_AT = NULL;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'form_id'
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
+        'identity_type' => IdentityType::class,
         'locked_from' => 'timestamp',
+        'status' => ApplicationStatus::class
     ];
 
     public function applicationHashes()
@@ -46,5 +43,19 @@ class Application extends Model
     public function answers()
     {
         return $this->hasMany(Answer::class, 'application_id', 'id');
+    }
+
+    protected function identity(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => new Identity(
+                IdentityType::from($attributes['identity_type']),
+                $attributes['identity_identifier']
+            ),
+            set: fn (Identity $identity) => [
+                'identity_type' => $identity->type,
+                'identity_identifier' => $identity->identifier
+            ]
+        );
     }
 }

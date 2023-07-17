@@ -10,7 +10,14 @@ use App\Shared\Models\Definition\Form;
 
 readonly class ApplicationRepository
 {
-    public function makeApplication(Form $form): Application
+    public function getApplication(string $applicationId): ?Application
+    {
+        $application = Application::query()->find($applicationId);
+        assert($application === null || $application instanceof Application);
+        return $application;
+    }
+
+    public function makeApplicationForForm(Form $form): Application
     {
         $application = new Application();
         $application->form_id = $form->id;
@@ -33,5 +40,17 @@ readonly class ApplicationRepository
     public function saveAnswer(Answer $answer): void
     {
         $answer->save();
+    }
+
+    public function getAnswer(Application $application, Field $field): ?Answer
+    {
+        $answer =
+            Answer::query()
+                ->where('application_id', '=', $application->id)
+                ->where('field_id', '=', $field->id)
+                ->first();
+
+        assert($answer === null || $answer instanceof Answer);
+        return $answer;
     }
 }
