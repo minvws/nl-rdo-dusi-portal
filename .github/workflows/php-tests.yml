@@ -63,7 +63,7 @@ jobs:
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
           DB_SSLMODE: prefer
-        run: vendor/bin/phpunit --coverage-clover tests/coverage.xml
+        run: vendor/bin/sail phpunit --coverage-clover tests/coverage.xml
 
       - if: ${{ github.event_name == 'pull_request' }}
         name: Download artifact
