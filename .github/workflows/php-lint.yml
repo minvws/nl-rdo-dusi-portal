@@ -2,9 +2,9 @@ name: PHP Linting
 
 on:
   push:
-    branches: main
+    branches: [main]
   pull_request:
-    branches: main
+    branches: [main]
 
 jobs:
   call-composer-install:
@@ -24,7 +24,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: vendor/${{ steps.composer-cache.outputs.dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Install PHP
@@ -48,7 +48,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: vendor/${{ steps.composer-cache.outputs.dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Install PHP
@@ -70,7 +70,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: vendor/${{ steps.composer-cache.outputs.dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Install PHP
@@ -92,7 +92,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: vendor/${{ steps.composer-cache.outputs.dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Install PHP
@@ -122,14 +122,9 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: vendor/${{ steps.composer-cache.outputs.dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Mess detection
         run: vendor/bin/phpmd app/ text ruleset.phpmd.xml
