@@ -22,7 +22,7 @@ services:
             - '.:/var/www/html'
         networks:
             form-admin-web:
-            nl-rdo-dusi-user-admin-web_sail:
+            user-admin-web:
         depends_on:
             - pgsql
 
@@ -45,7 +45,7 @@ services:
 networks:
     form-admin-web:
         name: form-admin-web
-    nl-rdo-dusi-user-admin-web_sail:
+    user-admin-web:
         external: true
 
 volumes:
