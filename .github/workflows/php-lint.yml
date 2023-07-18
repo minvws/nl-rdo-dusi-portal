@@ -44,7 +44,7 @@ jobs:
         run: php artisan ide-helper:generate
 
       - name: Static analysis with Psalm
-        run: vendor/bin/psalm
+        run: psalm --output-format=github
 
   php-linting-psr12:
     needs: call-composer-install
