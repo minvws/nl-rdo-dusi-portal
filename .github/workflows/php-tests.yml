@@ -83,7 +83,7 @@ jobs:
 
       - name: Coverage Report as Comment (Clover)
         if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
-        uses: lucassabreu/comment-coverage-clover@main
+        uses: lucassabreu/comment-coverage-clover@v0.10.2
         with:
           file: tests/coverage.xml
           base-file: tests/base/coverage.xml
