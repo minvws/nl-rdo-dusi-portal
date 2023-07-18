@@ -109,7 +109,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Static analysis with PHPStan
-        run: vendor/bin/phpstan analyse
+        run: phpstan analyse
 
   php-linting-cve:
     needs: call-composer-install
