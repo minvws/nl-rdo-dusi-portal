@@ -23,6 +23,8 @@ services:
         networks:
             form-admin-web:
             nl-rdo-dusi-user-admin-web_sail:
+        depends_on:
+            - pgsql
 
     pgsql:
         environment:
@@ -36,7 +38,7 @@ services:
         networks:
             form-admin-web:
                 aliases:
-                    - form-admin-web-pgsql
+                    - pgsql_form
         ports:
             - ${POSTGRES_PORT:-9301}:5432
 
