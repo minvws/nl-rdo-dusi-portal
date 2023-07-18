@@ -58,7 +58,6 @@ jobs:
         with:
           php-version: '8.2'
           extensions: zip
-          tools: cs2pr, phpcs
 
       - name: Get composer cache directory
         id: composer-cache
@@ -76,13 +75,8 @@ jobs:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Check PHP code style
-        id: phpcs
-        run: phpcs --report-full --report-checkstyle=./phpcs-report.xml
-
-      - name: Show PHPCS results in PR
-        if: ${{ always() && steps.phpcs.outcome == 'failure' }}
-        run: cs2pr ./phpcs-report.xml
+      - name: Coding style PSR12 Check
+        run: vendor/bin/phpcs -n
 
   php-linting-stan:
     needs: call-composer-install
