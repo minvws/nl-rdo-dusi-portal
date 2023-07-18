@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Shared\Models\Application\FormSubmit;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,7 +14,7 @@ class ProcessFormSubmit implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public string $id, public string $data)
+    public function __construct(public readonly FormSubmit $formSubmit)
     {
     }
 

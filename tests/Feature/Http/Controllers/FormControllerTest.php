@@ -39,7 +39,6 @@ class FormControllerTest extends TestCase
         $this->form = Form::factory()->create(['subsidy_id' => $this->subsidy->id, 'status' => VersionStatus::Published]);
         $this->field = Field::factory()->create(['form_id' => $this->form->id]);
 
-
         $ui = [
             "type" => "CustomGroupControl",
             "options" => [
@@ -60,7 +59,6 @@ class FormControllerTest extends TestCase
         ];
 
         $this->ui = FormUI::factory()->create(['form_id' => $this->form->id, 'status' => VersionStatus::Published, 'ui' => $ui]);
-
 
         $this->app->get(CacheService::class)->cacheForm($this->form);
     }

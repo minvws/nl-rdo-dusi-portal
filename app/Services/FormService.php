@@ -3,31 +3,25 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Helpers\CacheKeyHelper;
-use App\Jobs\ProcessFileUpload;
-use App\Jobs\ProcessFormSubmit;
-use App\Repositories\CacheRepository;
+use App\Models\FormData;
+use App\Services\Exceptions\FormNotFoundException;
 
-class FormService
+readonly class FormService
 {
     public function __construct(
-        private readonly CacheRepository $cacheRepository,
-        private readonly CacheKeyHelper  $cacheKeyHelper
+        private CacheService $cacheService
     ) {
     }
 
-    public function getForm(string $id): ?string
+    /**
+     * @throws FormNotFoundException
+     */
+    public function getForm(string $id): FormData
     {
-        return $this->cacheRepository->get($this->cacheKeyHelper->keyForFormId($id));
-    }
-
-    public function submitForm(string $id, string $data): void
-    {
-        ProcessFormSubmit::dispatch($id, $data);
-    }
-
-    public function uploadFile(string $formId, string $fileId, string $data): void
-    {
-        ProcessFileUpload::dispatch($formId, $fileId, $data);
+        $form = $this->cacheService->getCachedForm($id);
+        if ($form === null) {
+            throw new FormNotFoundException();
+        }
+        return $form;
     }
 }
