@@ -1,4 +1,5 @@
-version: '3'
+version: '3.9'
+
 services:
     laravel.test:
         build:
@@ -20,7 +21,7 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-            - sail
+            - user-admin-web
         depends_on:
             - pgsql
     pgsql:
@@ -36,7 +37,7 @@ services:
             - 'sail-pgsql:/var/lib/postgresql/data'
             - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
         networks:
-            sail:
+            user-admin-web:
                 aliases:
                     - pgsql_user
         healthcheck:
@@ -51,8 +52,8 @@ services:
             retries: 3
             timeout: 5s
 networks:
-    sail:
-        driver: bridge
+    user-admin-web:
+        name: user-admin-web
 volumes:
     sail-pgsql:
         driver: local
