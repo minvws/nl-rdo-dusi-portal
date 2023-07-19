@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace Tests\Feature\Services;
 
 use App\Models\Application;
-use App\Models\ApplicationStatus;
 use App\Models\Disk;
+use App\Models\Enums\ApplicationStatus;
+use App\Services\ApplicationService;
 use App\Services\Exceptions\FileNotFoundException;
 use App\Shared\Models\Application\ApplicationMetadata;
 use App\Shared\Models\Application\FileUpload;
@@ -17,7 +18,6 @@ use App\Shared\Models\Definition\FieldType;
 use App\Shared\Models\Definition\Form;
 use App\Shared\Models\Definition\Subsidy;
 use App\Shared\Models\Definition\VersionStatus;
-use App\Services\ApplicationService;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;

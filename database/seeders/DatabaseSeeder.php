@@ -6,6 +6,8 @@ use App\Models\Answer;
 use App\Models\Application;
 use App\Models\ApplicationHash;
 use App\Models\ApplicationReview;
+use App\Models\ApplicationStage;
+use App\Models\ApplicationVersion;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,10 +17,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Application::factory(100)
-            ->has(ApplicationReview::factory(10))
-            ->has(ApplicationHash::factory(10))
-            ->has(Answer::factory(18))
+        Application::factory(1)
+            ->has(ApplicationHash::factory(1))
+            ->has(ApplicationVersion::factory(1)
+                ->has(ApplicationStage::factory(1)
+                    ->has(Answer::factory(1))
+                )
+            )
+
             ->create();
     }
 }

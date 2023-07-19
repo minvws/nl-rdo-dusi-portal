@@ -14,7 +14,7 @@ class ApplicationHash extends Model
 
     protected $connection = Connection::Application;
 
-    protected $primaryKey = ['form_hash_id', 'application_id'];
+    protected $primaryKey = ['subsidy_stage_id', 'application_id'];
 
     public $timestamps = false;
 
@@ -24,7 +24,7 @@ class ApplicationHash extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'form_hash_id',
+        'subsidy_stage_id',
         'application_id',
         'hash'
     ];

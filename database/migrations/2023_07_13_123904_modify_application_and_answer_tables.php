@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\ApplicationStatus;
+use App\Models\Enums\ApplicationStatus;
 use App\Shared\Models\Application\IdentityType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

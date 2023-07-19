@@ -4,19 +4,11 @@ namespace App\Models;
 
 use App\Shared\Models\Application\Identity;
 use App\Shared\Models\Application\IdentityType;
-use App\Shared\Models\Definition\Form;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @property string $id
- * @property string $form_id
- * @property Form $form
- * @property Identity $identity
- * @property ApplicationStatus $status
- */
 class Application extends Model
 {
     use HasFactory;
@@ -27,7 +19,14 @@ class Application extends Model
     protected $casts = [
         'identity_type' => IdentityType::class,
         'locked_from' => 'timestamp',
-        'status' => ApplicationStatus::class
+        'final_review_deadline' => 'timestamp',
+    ];
+
+    protected $fillable = [
+        'subsidy_version_id',
+        'application_title',
+        'final_review_deadline',
+        'locked_from'
     ];
 
     public function applicationHashes()
@@ -35,15 +34,12 @@ class Application extends Model
         return $this->hasMany(ApplicationHash::class, 'application_id', 'id');
     }
 
-    public function applicationReviews()
+    public function applicationVersions()
     {
-        return $this->hasMany(ApplicationReview::class, 'application_id', 'id');
+        return $this->hasMany(ApplicationVersion::class, 'application_id', 'id');
     }
 
-    public function answers()
-    {
-        return $this->hasMany(Answer::class, 'application_id', 'id');
-    }
+
 
     protected function identity(): Attribute
     {
