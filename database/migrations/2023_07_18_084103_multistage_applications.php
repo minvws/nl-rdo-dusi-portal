@@ -42,6 +42,7 @@ return new class extends Migration
             $table->renameColumn('form_id', 'subsidy_version_id');
             $table->string('application_title');
             $table->timestamp('final_review_deadline')->nullable();
+            $table->dropColumn('status');
         });
 
         Schema::drop('application_reviews');
