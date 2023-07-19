@@ -23,6 +23,7 @@ return new class extends Migration
         Schema::create('application_stages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('application_version_id')->constrained();
+            $table->uuid('subsidy_stage_id');
             $table->timestamps();
             $table->uuid('user_id');
             $table->string('status');
