@@ -24,5 +24,3 @@ jobs:
       - run: npm run lint
       - run: npm run check-browser-compat
       - run: npm run audit
-
-

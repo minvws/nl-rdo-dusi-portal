@@ -11,4 +11,5 @@ vendor/bin/sail artisan ide-helper:generate
 vendor/bin/psalm
 vendor/bin/phpcs
 vendor/bin/phpstan analyse
+vendor/bin/phpmd app/ text ruleset.phpmd.xml
 php artisan security-check:now
