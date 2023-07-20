@@ -34,7 +34,7 @@ class FormRepository
 
     public function getField(SubsidyStage $subsidyStage, string $fieldCode): ?Field
     {
-        $field = $subsidyStage->fields()->find($fieldCode);
+        $field = $subsidyStage->fields()->where('code', '=', $fieldCode)->first();
         if ($field instanceof Field === false) {
             throw new \InvalidArgumentException('Field not found');
         }

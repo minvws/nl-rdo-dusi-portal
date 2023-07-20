@@ -10,6 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
+/**
+ * @property string $id
+ * @property string $form_id
+ * @property Form $form
+ * @property Identity $identity
+ * @property ApplicationStatus $status
+ */
 class Application extends Model
 {
     use HasFactory;

@@ -47,13 +47,15 @@ readonly class ApplicationRepository
         return $applicationStageVersion;
     }
 
-    public function getAnswer(string $answerId): ?Answer
+    public function getAnswer(ApplicationStageVersion $applicationStageVersion, Field $field): ?Answer
     {
-        try {
-            $answer = Answer::query()->findOrFail($answerId);
-        } catch (ModelNotFoundException) {
-            throw new \InvalidArgumentException('Answer not found');
-        }
+        $answer =
+            Answer::query()
+            ->where('application_stage_version_id', '=', $applicationStageVersion->id)
+            ->where('field_id', '=', $field->id)
+            ->first();
+
+        assert($answer === null || $answer instanceof Answer);
         return $answer;
     }
 
