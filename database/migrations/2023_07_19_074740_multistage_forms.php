@@ -38,10 +38,10 @@ return new class extends Migration
             $table->foreignUuid('subsidy_version_id')->constrained();
             $table->string('title');
             $table->string('subject_role');
-            $table->string('subject_organisation');
+            $table->string('subject_organisation')->nullable();
             $table->integer('stage');
             $table->timestamp('final_review_deadline')->nullable();
-            $table->integer('final_review_in_s_after_submission')->nullable();
+            $table->integer('final_review_time_in_s_after_submission')->nullable();
         });
 
         Schema::table('subsidy_stage_hashes', function (Blueprint $table) {
