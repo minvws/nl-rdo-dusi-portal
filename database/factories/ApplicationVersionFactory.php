@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Application;
-use App\Models\ApplicationVersion;
+use App\Models\ApplicationStage;
+use App\Models\ApplicationStageVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 
 /**
- * @extends Factory<ApplicationVersion>
+ * @extends Factory<ApplicationStageVersion>
  */
-class ApplicationVersionFactory extends Factory
+class ApplicationStageVersionFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -20,7 +20,7 @@ class ApplicationVersionFactory extends Factory
     public function definition(): array
     {
         return [
-            'application_id' => Application::factory(),
+            'application_stages_id' => ApplicationStage::factory(),
             'created_at' => $this->faker->dateTimeBetween('-1 year'),
             'version' => $this->faker->randomDigitNotZero(),
         ];

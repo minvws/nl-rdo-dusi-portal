@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ApplicationVersion extends Model
+class ApplicationStageVersion extends Model
 {
     use HasFactory;
     use HasUuids;
@@ -21,15 +21,13 @@ class ApplicationVersion extends Model
 
     const UPDATED_AT = NULL;
 
-    public function application(): BelongsTo
+    public function applicationStage(): BelongsTo
     {
-        return $this->belongsTo(Application::class, 'application_id', 'id');
+        return $this->belongsTo(ApplicationStage::class, 'application_stages_id', 'id');
     }
 
-    public function applicationStages(): HasMany
+    public function answers(): HasMany
     {
-        return $this->hasMany(ApplicationStage::class, 'application_version_id', 'id');
+        return $this->hasMany(Answer::class, 'application_stage_version_id', 'id');
     }
-
-
 }

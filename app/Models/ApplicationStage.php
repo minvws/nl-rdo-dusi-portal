@@ -26,14 +26,13 @@ class ApplicationStage extends Model
     ];
 
 
-    public function applicationVersion(): BelongsTo
+    public function application(): BelongsTo
     {
-        return $this->belongsTo(ApplicationVersion::class, 'application_version_id', 'id');
+        return $this->belongsTo(Application::class, 'application_id', 'id');
     }
 
-    public function answers(): HasMany
+    public function applicationStageVersions(): HasMany
     {
-        return $this->hasMany(Answer::class, 'application_stages_id', 'id');
+        return $this->hasMany(ApplicationStageVersion::class, 'application_stages_id', 'id');
     }
-
 }

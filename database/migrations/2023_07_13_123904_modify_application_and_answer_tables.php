@@ -17,11 +17,7 @@ return new class extends Migration
             $table->enum('identity_type', [IdentityType::EncryptedCitizenServiceNumber->value]);
             $table->string('identity_identifier', 200);
             $table->enum('status', [ApplicationStatus::Draft->value, ApplicationStatus::Submitted->value]);
-            $table->dropColumn('created_at');
-        });
-
-        Schema::table('applications', function (Blueprint $table) {
-            $table->timestamps();
+            $table->timestamp('updated_at')->useCurrent();
         });
 
         Schema::table('answers', function (Blueprint $table) {

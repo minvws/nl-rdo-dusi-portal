@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Enums\ApplicationStatus;
+
 
 return new class extends Migration
 {
@@ -11,30 +13,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('application_versions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('application_id')->constrained();
-            $table->timestamp('created_at')->useCurrent();
-            $table->integer('version');
-        });
+        Schema::drop('application_reviews');
 
-        Schema::create('application_stages', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('application_version_id')->constrained();
-            $table->uuid('subsidy_stage_id');
-            $table->timestamps();
-            $table->uuid('user_id');
-            $table->string('status');
-        });
-
-        Schema::table('answers', function (Blueprint $table) {
-            $table->foreignUuid('application_stages_id')->constrained();
-            $table->dropColumn('application_id');
-        });
-
-        Schema::table('application_hashes', function (Blueprint $table) {
-            $table->renameColumn('form_hash_id', 'subsidy_stage_hash_id');
-        });
+        Schema::drop('judgements');
 
         Schema::table('applications', function (Blueprint $table) {
             $table->renameColumn('form_id', 'subsidy_version_id');
@@ -43,9 +24,30 @@ return new class extends Migration
             $table->dropColumn('status');
         });
 
-        Schema::drop('application_reviews');
+        Schema::table('application_hashes', function (Blueprint $table) {
+            $table->renameColumn('form_hash_id', 'subsidy_stage_hash_id');
+        });
 
-        Schema::drop('judgements');
+        Schema::create('application_stages', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('application_id')->constrained();
+            $table->uuid('subsidy_stage_id');
+            $table->timestamps();
+            $table->uuid('user_id');
+            $table->string('status');
+        });
+
+        Schema::create('application_stage_versions', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('application_stages_id')->constrained();
+            $table->timestamp('created_at')->useCurrent();
+            $table->integer('version');
+        });
+
+        Schema::table('answers', function (Blueprint $table) {
+            $table->foreignUuid('application_stage_version_id')->constrained();
+            $table->dropColumn('application_id');
+        });
     }
 
     /**
@@ -53,20 +55,24 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::drop('application_versions');
-        Schema::drop('application_stages');
         Schema::table('answers', function (Blueprint $table) {
-            $table->dropForeign('answers_application_stages_id_foreign');
-            $table->dropColumn('application_stages_id');
+            $table->dropForeign('answers_application_stage_version_id_foreign');
+            $table->dropColumn('application_stage_version_id');
             $table->foreignUuid('application_id')->constrained();
         });
+        Schema::drop('application_stage_versions');
+        Schema::drop('application_stages');
         Schema::table('application_hashes', function (Blueprint $table) {
             $table->renameColumn('subsidy_stage_hash_id', 'form_hash_id');
         });
         Schema::table('applications', function (Blueprint $table) {
             $table->renameColumn('subsidy_version_id', 'form_id');
+            $table->enum('status', [ApplicationStatus::Draft->value, ApplicationStatus::Submitted->value]);
             $table->dropColumn('application_title');
             $table->dropColumn('final_review_deadline');
+        });
+        Schema::create('judgements', function (Blueprint $table) {
+            $table->string('judgement')->primary();
         });
         Schema::create('application_reviews', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -77,9 +83,6 @@ return new class extends Migration
             $table->text('encrypted_comment');
             $table->string('encryption_key_id');
             $table->foreign('judgement')->references('judgement')->on('judgements');
-        });
-        Schema::create('judgements', function (Blueprint $table) {
-            $table->string('judgement')->primary();
         });
     }
 };

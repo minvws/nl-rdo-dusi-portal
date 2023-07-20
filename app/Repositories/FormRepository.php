@@ -1,30 +1,48 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Shared\Models\Definition\SubsidyStage;
+use App\Shared\Models\Definition\SubsidyVersion;
 use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\Form;
+
+
+
 use Illuminate\Support\Collection;
 
 class FormRepository
 {
-    public function getForm(string $id): ?Form
+    public function getSubsidyVersion(string $subsidyVersionId)
     {
-        $form = Form::query()->open()->find($id);
-        assert($form === null || $form instanceof Form);
-        return $form;
+        $subsidyVersion = SubsidyVersion::query()->find($subsidyVersionId);
+        if ($subsidyVersion instanceof SubsidyVersion === false) {
+            throw new \InvalidArgumentException('Subsidy version not found');
+        }
+        return $subsidyVersion;
     }
 
-    public function getField(Form $form, string $fieldCode): ?Field
+    public function getSubsidyStage(string $subsidyStageId)
     {
-        $field = $form->fields()->where('code', '=', $fieldCode)->first();
-        assert($field === null || $field instanceof Field);
+        $subsidyStage = SubsidyStage::query()->find($subsidyStageId);
+        if ($subsidyStage instanceof SubsidyStage === false) {
+            throw new \InvalidArgumentException('Subsidy stage not found');
+        }
+        return $subsidyStage;
+    }
+
+    public function getField(SubsidyStage $subsidyStage, string $fieldCode): ?Field
+    {
+        $field = $subsidyStage->fields()->find($fieldCode);
+        if ($field instanceof Field === false) {
+            throw new \InvalidArgumentException('Field not found');
+        }
         return $field;
     }
 
-    public function getFields(Form $form): Collection
+    public function getFields(SubsidyStage $subsidyStage): Collection
     {
-        return $form->fields;
+        return $subsidyStage->fields;
     }
 }

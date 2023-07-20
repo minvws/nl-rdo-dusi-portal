@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Application extends Model
 {
@@ -29,22 +30,20 @@ class Application extends Model
         'locked_from'
     ];
 
-    public function applicationHashes()
+    public function applicationHashes(): HasMany
     {
         return $this->hasMany(ApplicationHash::class, 'application_id', 'id');
     }
 
-    public function applicationVersions()
+    public function applicationStages(): HasMany
     {
-        return $this->hasMany(ApplicationVersion::class, 'application_id', 'id');
+        return $this->hasMany(ApplicationStage::class, 'application_id', 'id');
     }
-
-
 
     protected function identity(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attributes) => new Identity(
+            get: fn (array $attributes) => new Identity(
                 IdentityType::from($attributes['identity_type']),
                 $attributes['identity_identifier']
             ),

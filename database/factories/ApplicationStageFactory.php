@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ApplicationStage;
-use App\Models\ApplicationVersion;
+use App\Models\Application;
 use App\Models\Enums\ApplicationStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,7 +20,7 @@ class ApplicationStageFactory extends Factory
     public function definition(): array
     {
         return [
-            'application_version_id' => ApplicationVersion::factory(),
+            'application_id' => Application::factory(),
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
             'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
             'status' => ApplicationStatus::Draft->value,

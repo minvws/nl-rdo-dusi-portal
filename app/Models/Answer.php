@@ -29,8 +29,8 @@ class Answer extends Model
         'encrypted_answer',
     ];
 
-    public function applicationStage(): BelongsTo
+    public function applicationStageVersion(): BelongsTo
     {
-        return $this->belongsTo(ApplicationStage::class, 'application_stages_id', 'id');
+        return $this->belongsTo(ApplicationStageVersion::class, 'application_stage_version_id', 'id');
     }
 }
