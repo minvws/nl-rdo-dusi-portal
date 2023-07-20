@@ -96,6 +96,57 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop new tables
+        Schema::dropIfExists('field_group_uis');
+        Schema::dropIfExists('field_groups');
+        Schema::dropIfExists('field_group_purposes');
 
+        // Restoring the 'subsidy_stage_hashes' table
+        Schema::table('subsidy_stage_hashes', function (Blueprint $table) {
+            $table->dropTimestamps();
+            $table->renameColumn('description', 'short_description');
+            $table->renameColumn('subsidy_stage_id', 'form_id');
+            $table->dropColumn('name');
+        });
+
+        // Restoring the 'subsidy_stage_hash_fields' table
+        Schema::table('subsidy_stage_hash_fields', function (Blueprint $table) {
+            $table->renameColumn('subsidy_stage_hash_id', 'form_hash_id');
+        });
+
+        // Restoring the 'fields' table
+        Schema::table('fields', function (Blueprint $table) {
+            $table->renameColumn('subsidy_stage_id', 'form_id');
+        });
+
+        // Restoring the 'subsidy_stage_uis' table
+        Schema::table('subsidy_stage_uis', function (Blueprint $table) {
+            $table->renameColumn('subsidy_stage_id', 'form_id');
+        });
+
+        // Restoring the previous state of the tables
+        Schema::table('subsidy_stages', function (Blueprint $table) {
+            $table->dropColumn('title');
+            $table->dropColumn('subject_role');
+            $table->dropColumn('subject_organisation');
+            $table->dropColumn('stage');
+            $table->dropColumn('final_review_deadline');
+            $table->dropColumn('final_review_time_in_s_after_submission');
+            $table->dropForeign(['subsidy_version_id']);
+            $table->dropColumn('subsidy_version_id');
+            $table->unsignedTinyInteger('version');
+            $table->string('status');
+            $table->uuid('subsidy_id')->constrained('subsidies')->restrictOnDelete();
+            $table->string('updated_at');
+        });
+
+        // Dropping the 'subsidy_versions' table
+        Schema::dropIfExists('subsidy_versions');
+
+        // Reverting the table renames from 'up()' method
+        Schema::rename('subsidy_stage_uis', 'form_uis');
+        Schema::rename('subsidy_stage_hash_fields', 'form_hash_fields');
+        Schema::rename('subsidy_stage_hashes', 'form_hashes');
+        Schema::rename('subsidy_stages', 'forms');
     }
 };
