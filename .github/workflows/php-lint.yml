@@ -1,26 +1,154 @@
-name: Continuous Integration
+name: PHP Linting
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  composer-install:
-    uses: ./.github/workflows/php-composer-install.yml
+  call-composer-install:
+    uses: ./.github/workflows/composer-install.yml
     secrets:
       REPO_READ_ONLY_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
 
+  php-linting-psalm:
+    needs: call-composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+          tools: psalm
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Generate _ide_helper file
+        run: php artisan ide-helper:generate
+
+      - name: Static analysis with Psalm
+        run: psalm --output-format=github
+
+  php-linting-psr12:
+    needs: call-composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+          tools: cs2pr
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Coding style PSR12 Check
+        run: vendor/bin/phpcs -q --report=checkstyle | cs2pr
+
+  php-linting-stan:
+    needs: call-composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+          tools: phpstan
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Static analysis with PHPStan
+        run: phpstan analyse
+
+  php-linting-cve:
+    needs: call-composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Check for known CVE vulnerabilities
+        run: php artisan security-check:now
   phpmd:
-    needs: composer-install
+    needs: call-composer-install
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup PHP
+      - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
@@ -44,59 +172,3 @@ jobs:
 
       - name: Mess detection
         run: vendor/bin/phpmd app/ text ruleset.phpmd.xml
-
-  coverage:
-    needs: composer-install
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          coverage: pcov
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
-      - name: Execute tests with Code Coverage
-        run: vendor/bin/phpunit --coverage-clover tests/coverage.xml
-
-      - if: ${{ github.event_name == 'pull_request' }}
-        name: Download artifact
-        uses: dawidd6/action-download-artifact@v2.27.0
-        continue-on-error: true
-        with:
-          workflow: .github/workflows/php-lint.yml # this file
-          branch: main
-          name: coverage-report
-          path: tests/base
-
-      - if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: tests/coverage.xml
-
-      - name: Coverage Report as Comment (Clover)
-        if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
-        uses: lucassabreu/comment-coverage-clover@v0.10.1
-        with:
-          file: tests/coverage.xml
-          base-file: tests/base/coverage.xml

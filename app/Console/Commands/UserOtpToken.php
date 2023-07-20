@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException;
 use PragmaRX\Google2FA\Exceptions\InvalidCharactersException;
 use PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException;
@@ -52,7 +53,7 @@ class UserOtpToken extends Command
 
             $email = $this->choice(
                 'Which user do you want to get the OTP token for?',
-                User::all()->pluck('email')->toArray()
+                DB::table('users')->pluck('email')->toArray()
             );
         }
 

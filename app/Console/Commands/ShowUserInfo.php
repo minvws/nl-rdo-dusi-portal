@@ -47,7 +47,7 @@ class ShowUserInfo extends Command
             return 1;
         }
 
-        $this->info($user);
+        $this->info($user->toJson());
 
         return 0;
     }
