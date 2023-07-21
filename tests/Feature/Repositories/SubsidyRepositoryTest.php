@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tests\Feature\Repositories;
 
 use App\Models\Connection;
+use App\Models\Enums\FieldSource;
+use App\Models\Enums\FieldType;
 use App\Models\Enums\VersionStatus;
+use App\Models\Field;
 use App\Models\SubsidyStage;
 use App\Models\Subsidy;
 use App\Models\SubsidyVersion;
@@ -13,7 +16,9 @@ use App\Repositories\SubsidyRepository;
 use Database\Factories\SubsidyVersionFactory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
+use function PHPUnit\Framework\assertNotNull;
 
 /**
  * @group form
@@ -42,6 +47,19 @@ class SubsidyRepositoryTest extends TestCase
                 'stage' => 1
             ]
         );
+        $field = Field::factory()->create(
+            attributes: [
+                'type' => FieldType::Text,
+                'source' => FieldSource::User,
+                'params' => '{}',
+                'code' => 'field_code',
+                'description' => 'field_description',
+                'is_required' => true,
+            ]
+        );
+        Log::info("hier!!!");
+        assertNotNull($field->id);
+        $subsidyStage->fields()->attach($field->id);
 
 //        $repository = $this->app->get(SubsidyRepository::class);
 //        $form = $repository->getSubsidy($form->subsidy_id);

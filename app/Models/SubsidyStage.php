@@ -51,7 +51,7 @@ class SubsidyStage extends Model
 
     public function fields(): BelongsToMany
     {
-        return $this->belongsToMany(Field::class, 'subsidy_stage_id', 'id');
+        return $this->belongsToMany(Field::class, 'subsidy_stages_fields');
     }
 
     public function uis(): HasMany

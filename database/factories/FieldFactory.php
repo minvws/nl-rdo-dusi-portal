@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @extends Factory<SubsidyStage>
+ * @extends Factory<Field>
  */
 class FieldFactory extends Factory
 {

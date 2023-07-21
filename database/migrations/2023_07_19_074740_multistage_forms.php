@@ -123,8 +123,9 @@ return new class extends Migration
         });
 
         // Restoring the 'fields' table
-        Schema::table('fields', function (Blueprint $table) {
-            $table->foreignUuid('form_id')->constrained();
+        Schema::table('fields', function (Blueprint $table)
+        {
+            $table->foreignUuid('form_id')->references('id')->on('subsidy_stages');
         });
 
         // Restoring the 'subsidy_stage_uis' table
@@ -146,7 +147,6 @@ return new class extends Migration
             $table->unsignedTinyInteger('version');
             $table->string('status');
             $table->uuid('subsidy_id')->constrained('subsidies')->restrictOnDelete();
-            $table->string('updated_at');
             $table->timestamp('updated_at')->useCurrent();
         });
 

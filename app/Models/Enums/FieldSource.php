@@ -6,5 +6,5 @@ namespace App\Models\Enums;
 
 enum FieldSource: string
 {
-    case Source = 'source';
+    case User = 'user';
 }
