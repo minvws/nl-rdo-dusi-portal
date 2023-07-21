@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Models\Enums\FieldType;
 use App\Models\Enums\VersionStatus;
 use App\Models\Field;
-use App\Models\Form;
+use App\Models\SubsidyStage;
 use App\Models\Subsidy;
 use App\Repositories\FormRepository;
 use DateTimeInterface;
@@ -42,14 +42,14 @@ class FormService
     }
 
     public function createField(
-        Form $form,
-        string $title,
-        string $description,
-        FieldType $type,
-        array $params,
-        bool $isRequired,
-        string $code,
-        string $source
+        SubsidyStage $form,
+        string       $title,
+        string       $description,
+        FieldType    $type,
+        array        $params,
+        bool         $isRequired,
+        string       $code,
+        string       $source
     ): void {
         $field = $this->formRepository->makeField($form);
         $field->title = $title;
@@ -62,7 +62,7 @@ class FormService
         $this->formRepository->saveField($field);
     }
 
-    public function createFormUI(Form $form, int $version, VersionStatus $status, array $uiArray): void
+    public function createFormUI(SubsidyStage $form, int $version, VersionStatus $status, array $uiArray): void
     {
         $formUI = $this->formRepository->makeFormUI($form);
         $formUI->version = $version;
@@ -71,7 +71,7 @@ class FormService
         $this->formRepository->saveFormUI($formUI);
     }
 
-    public function updateForm(Form $form, string $subsidyId, string $version, string $status): void
+    public function updateForm(SubsidyStage $form, string $subsidyId, string $version, string $status): void
     {
         $form->update([
             'subsidy_id' => $subsidyId,
@@ -81,9 +81,9 @@ class FormService
         $this->formRepository->saveForm($form);
     }
 
-    public function deleteForm(Form $form): void
+    public function deleteForm(SubsidyStage $form): void
     {
         Field::query()->where('form_id', $form->id)->delete();
-        Form::destroy($form->id);
+        SubsidyStage::destroy($form->id);
     }
 }

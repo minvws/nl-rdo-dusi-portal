@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Enums\FieldSource;
@@ -8,11 +10,28 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property string $id
+ * @property string $form_id
+ * @property string $code
+ * @property string $title
+ * @property string $description
+ * @property FieldType $type
+ * @property array $params
+ * @property bool $is_required
+ * @property string $source
+ */
 class Field extends Model
 {
     use HasFactory;
     use HasUuids;
+
+    /**
+     * @var string|null
+     */
+    protected $connection = Connection::FORM;
 
     public $timestamps = false;
 
@@ -33,14 +52,14 @@ class Field extends Model
         'source',
     ];
 
-    public function subsidyStage(): BelongsTo
+    public function subsidyStages(): BelongsToMany
     {
-        return $this->belongsTo(SubsidyStage::class, 'subsidy_stage_id', 'id');
+        return $this->belongsToMany(SubsidyStage::class, 'subsidy_stage_id', 'id');
     }
 
-    public function fieldGroups()
+    public function fieldGroups(): BelongsTo
     {
-        return $this->HasMany(FieldGroup::class, 'field_id', 'id');
+        return $this->belongsTo(FieldGroup::class, 'field_group_id', 'id');
     }
 
     public function subsidyStageHashFields()

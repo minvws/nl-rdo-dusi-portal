@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Field;
-use App\Models\Form;
+use App\Models\SubsidyStage;
 use App\Models\FormUI;
 use App\Models\Subsidy;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,7 +21,7 @@ class FormRepository
 
     public function getForm(string $id): Model|Collection|Builder|array|null
     {
-        return Form::query()->find($id);
+        return SubsidyStage::query()->find($id);
     }
 
     public function getField(string $id): Model|Collection|Builder|array|null
@@ -38,19 +38,19 @@ class FormRepository
         $subsidy->save();
     }
 
-    public function makeForm(Subsidy $subsidy): Form
+    public function makeForm(Subsidy $subsidy): SubsidyStage
     {
-        $form = new Form();
+        $form = new SubsidyStage();
         $form->subsidy()->associate($subsidy);
         return $form;
     }
 
-    public function saveForm(Form $form): void
+    public function saveForm(SubsidyStage $form): void
     {
         $form->save();
     }
 
-    public function makeFormUI(Form $form): FormUI
+    public function makeFormUI(SubsidyStage $form): FormUI
     {
         $formUI = new FormUI();
         $formUI->form()->associate($form);
@@ -62,7 +62,7 @@ class FormRepository
         $formUI->save();
     }
 
-    public function makeField(Form $form): Field
+    public function makeField(SubsidyStage $form): Field
     {
         $field = new Field();
         $field->form()->associate($form);

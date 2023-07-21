@@ -39,6 +39,7 @@ services:
             form-admin-web:
                 aliases:
                     - pgsql_form
+                    - form-admin-web-pgsql
         ports:
             - ${POSTGRES_PORT:-9301}:5432
 

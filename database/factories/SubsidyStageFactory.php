@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Field;
 use App\Models\SubsidyStage;
+use App\Models\Enums\VersionStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
  * @extends Factory<SubsidyStage>
  */
-class FieldFactory extends Factory
+class SubsidyStageFactory extends Factory
 {
-    protected $model = Field::class;
+    protected $model = SubsidyStage::class;
 
     /**
      * Define the model's default state.
@@ -23,10 +23,11 @@ class FieldFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
-            'code' => $this->faker->word,
-            'title' => $this->faker->words(3, true),
-            'type' => 'text',
-            'is_required' => true
+            'title' => $this->faker->sentence,
+            'subject_role' => 'applicant',
+            'stage' => 1,
+            'final_review_deadline' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'final_review_time_in_s_after_submission' => 60 * 60 * 24 * 7,
         ];
     }
 }

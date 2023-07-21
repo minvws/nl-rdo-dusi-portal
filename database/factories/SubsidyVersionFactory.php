@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Form;
-use App\Models\Enums\VersionStatus;
+use App\Models\Subsidy;
+use App\Models\SubsidyVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @extends Factory<Form>
+ * @extends Factory<SubsidyVersion>
  */
-class FormFactory extends Factory
+class SubsidyVersionFactory extends Factory
 {
-    protected $model = Form::class;
+    protected $model = SubsidyVersion::class;
 
     /**
      * Define the model's default state.
@@ -23,8 +23,6 @@ class FormFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
-            'version' => 1,
-            'status' => VersionStatus::Draft
         ];
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Form;
+use App\Models\SubsidyStage;
 use App\Models\Subsidy;
 use App\Services\FormService;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ class FormController extends Controller
     public function index(?Request $request): View|Factory
     {
         return view('form.index')->with([
-            'forms' => $request ? Form::query()->where('subsidy_id', $request->input('subsidy_id'))->get() : [],
+            'forms' => $request ? SubsidyStage::query()->where('subsidy_id', $request->input('subsidy_id'))->get() : [],
             'subsidies' => Subsidy::all(),
         ]);
     }
@@ -54,7 +54,7 @@ class FormController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Form $form): View|Factory
+    public function show(SubsidyStage $form): View|Factory
     {
         return view('form.show', [
             'form' => $form,
@@ -64,7 +64,7 @@ class FormController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Form $form): View|Factory
+    public function edit(SubsidyStage $form): View|Factory
     {
         return view('form.edit', [
             'form' => $form,
@@ -74,7 +74,7 @@ class FormController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Form $form): RedirectResponse
+    public function update(Request $request, SubsidyStage $form): RedirectResponse
     {
         $this->formService->updateForm(
             $form,
@@ -89,7 +89,7 @@ class FormController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Form $form): RedirectResponse
+    public function destroy(SubsidyStage $form): RedirectResponse
     {
 
         $this->formService->deleteForm($form);

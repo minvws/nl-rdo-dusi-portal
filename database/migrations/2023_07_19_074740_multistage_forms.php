@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ApplicationStatus;
+use App\Models\SubsidyStage;
 use App\Shared\Models\Application\IdentityType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -56,7 +57,7 @@ return new class extends Migration
         });
 
         Schema::table('fields', function (Blueprint $table) {
-            $table->renameColumn('form_id', 'subsidy_stage_id');
+            $table->dropColumn('form_id');
         });
 
         Schema::table('subsidy_stage_uis', function (Blueprint $table) {
@@ -89,6 +90,11 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('subsidy_stages_fields', function(Blueprint $table){
+            $table->primary(['subsidy_stage_id', 'field_id']);
+            $table->foreignUuid('subsidy_stage_id')->constrained();
+            $table->foreignUuid('field_id')->constrained();
+        });
     }
 
     /**
@@ -100,6 +106,8 @@ return new class extends Migration
         Schema::dropIfExists('field_group_uis');
         Schema::dropIfExists('field_groups');
         Schema::dropIfExists('field_group_purposes');
+        Schema::dropIfExists('subsidy_stages_fields');
+
 
         // Restoring the 'subsidy_stage_hashes' table
         Schema::table('subsidy_stage_hashes', function (Blueprint $table) {
@@ -116,7 +124,7 @@ return new class extends Migration
 
         // Restoring the 'fields' table
         Schema::table('fields', function (Blueprint $table) {
-            $table->renameColumn('subsidy_stage_id', 'form_id');
+            $table->foreignUuid('form_id')->constrained();
         });
 
         // Restoring the 'subsidy_stage_uis' table
@@ -124,6 +132,7 @@ return new class extends Migration
             $table->renameColumn('subsidy_stage_id', 'form_id');
         });
 
+        SubsidyStage::truncate();
         // Restoring the previous state of the tables
         Schema::table('subsidy_stages', function (Blueprint $table) {
             $table->dropColumn('title');
@@ -138,15 +147,20 @@ return new class extends Migration
             $table->string('status');
             $table->uuid('subsidy_id')->constrained('subsidies')->restrictOnDelete();
             $table->string('updated_at');
+            $table->timestamp('updated_at')->useCurrent();
         });
 
         // Dropping the 'subsidy_versions' table
         Schema::dropIfExists('subsidy_versions');
 
+        Schema::table('subsidies', function (Blueprint $table) {
+            $table->dropTimestamps();
+        });
         // Reverting the table renames from 'up()' method
         Schema::rename('subsidy_stage_uis', 'form_uis');
         Schema::rename('subsidy_stage_hash_fields', 'form_hash_fields');
         Schema::rename('subsidy_stage_hashes', 'form_hashes');
         Schema::rename('subsidy_stages', 'forms');
+
     }
 };

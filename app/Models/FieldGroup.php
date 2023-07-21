@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Enums\FieldSource;
 use App\Models\Enums\FieldStatus;
 use App\Models\Enums\FieldType;
+use App\Models\Enums\VersionStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,20 +17,19 @@ class FieldGroup extends Model
     use HasFactory;
     use HasUuids;
 
+    /**
+     * @var string|null
+     */
+    protected $connection = Connection::FORM;
+
     protected $casts = [
-        'type' => FieldType::class,
-        'source' => FieldSource::class,
-        'status' => FieldStatus::class,
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
+        'status' => VersionStatus::class,
     ];
 
     protected $fillable = [
         'version',
         'status',
         'title',
-        'created_at',
-        'updated_at'
     ];
 
     public function fields(): HasMany
