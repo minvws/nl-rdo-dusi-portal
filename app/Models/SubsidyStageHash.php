@@ -1,15 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Subsidy extends Model
+class SubsidyStageHash extends Model
 {
     use HasFactory;
     use HasUuids;
@@ -17,22 +16,21 @@ class Subsidy extends Model
     protected $casts = [
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
-        'valid_from' => 'timestamp',
-        'valid_to' => 'timestamp',
     ];
-
     protected $fillable = [
-        'title',
         'description',
-        'valid_from',
-        'valid_to',
+        'name',
         'created_at',
-        'updated_at',
+        'updated_at'
     ];
 
-    public function subsidyVersions(): HasMany
+    public function subsidyStage(): BelongsTo
     {
-        return $this->hasMany(SubsidyVersion::class, 'subsidy_id', 'id');
+        return $this->belongsTo(SubsidyStage::class, 'subsidy_stage_id', 'id');
+    }
+
+    public function subsidyStageHashFields(): HasMany
+    {
+        return $this->HasMany(SubsidyStageHashField::class, 'subsidy_stage_hash_id', 'id');
     }
 }
-
