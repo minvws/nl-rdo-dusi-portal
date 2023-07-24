@@ -31,7 +31,7 @@ trait CreateField
             'is_required' => $isRequired,
         ]);
 
-        DB::table('subsidy_stages_fields')->insert([
+        DB::table('field_subsidy_stage')->insert([
             'subsidy_stage_id' => $subsidyStageId,
             'field_id' => $id,
         ]);

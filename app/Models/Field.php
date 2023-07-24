@@ -54,7 +54,7 @@ class Field extends Model
 
     public function subsidyStages(): BelongsToMany
     {
-        return $this->belongsToMany(SubsidyStage::class, 'subsidy_stage_id', 'id');
+        return $this->belongsToMany(SubsidyStage::class);
     }
 
     public function fieldGroups(): BelongsTo

@@ -12,11 +12,8 @@ use App\Models\Field;
 use App\Models\SubsidyStage;
 use App\Models\Subsidy;
 use App\Models\SubsidyVersion;
-use App\Repositories\SubsidyRepository;
-use Database\Factories\SubsidyVersionFactory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertNotNull;
 
@@ -47,6 +44,8 @@ class SubsidyRepositoryTest extends TestCase
                 'stage' => 1
             ]
         );
+        assertNotNull($subsidyStage->id);
+
         $field = Field::factory()->create(
             attributes: [
                 'type' => FieldType::Text,
@@ -57,13 +56,10 @@ class SubsidyRepositoryTest extends TestCase
                 'is_required' => true,
             ]
         );
-        Log::info("hier!!!");
-        assertNotNull($field->id);
-        $subsidyStage->fields()->attach($field->id);
 
-//        $repository = $this->app->get(SubsidyRepository::class);
-//        $form = $repository->getSubsidy($form->subsidy_id);
-//        $this->assertNotNull($form);
-//        $this->assertTrue($form->relationLoaded('forms'));
+        $subsidyStage->fields()->attach($field);
+        $expectedId = $field->id->toString();
+        $actualId = SubsidyStage::find($subsidyStage->id)->first()->fields()->first()->id;
+        $this->assertSame($expectedId, $actualId);
     }
 }
