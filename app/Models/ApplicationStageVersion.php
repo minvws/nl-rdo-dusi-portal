@@ -13,7 +13,7 @@ class ApplicationStageVersion extends Model
     use HasFactory;
     use HasUuids;
 
-    protected $connection = Connection::Application;
+    protected $connection = Connection::APPLICATION;
 
     protected $fillable = [
         'version'

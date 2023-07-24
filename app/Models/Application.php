@@ -11,19 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
-/**
- * @property string $id
- * @property string $form_id
- * @property Form $form
- * @property Identity $identity
- * @property ApplicationStatus $status
- */
+
 class Application extends Model
 {
     use HasFactory;
     use HasUuids;
 
-    protected $connection = Connection::Application;
+    protected $connection = Connection::APPLICATION;
 
     protected $casts = [
         'identity_type' => IdentityType::class,
@@ -51,7 +45,7 @@ class Application extends Model
     protected function identity(): Attribute
     {
         return Attribute::make(
-            get: fn (array $attributes) => new Identity(
+            get: fn (mixed $value,array $attributes) => new Identity(
                 IdentityType::from($attributes['identity_type']),
                 $attributes['identity_identifier']
             ),

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Submission\FieldValue;
+use App\Shared\Models\Definition\Submission\FieldValue;
 
 class EncryptionService
 {

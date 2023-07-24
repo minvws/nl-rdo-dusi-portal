@@ -6,10 +6,10 @@ namespace App\Services;
 
 use App\Models\Application;
 use App\Models\ApplicationStage;
+
 use App\Models\ApplicationStageVersion;
 use App\Models\Disk;
-use App\Models\Enums\ApplicationStatus;
-use App\Models\Submission\FieldValue;
+use App\Models\Enums\ApplicationStageStatus;
 use App\Repositories\ApplicationRepository;
 use App\Repositories\FormRepository;
 use App\Services\Exceptions\ApplicationIdentityMismatchException;
@@ -18,22 +18,24 @@ use App\Services\Exceptions\FieldNotFoundException;
 use App\Services\Exceptions\FieldTypeMismatchException;
 use App\Services\Exceptions\FileNotFoundException;
 use App\Services\Exceptions\FormNotFoundException;
-use App\Shared\Models\Application\ApplicationMetadata;
-use App\Shared\Models\Application\FileUpload;
+
 use App\Shared\Models\Application\FormSubmit;
 use App\Shared\Models\Application\Identity;
-use App\Shared\Models\Connection;
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\FieldType;
-use App\Shared\Models\Definition\Form;
-use App\Shared\Models\Definition\Subsidy;
-use App\Shared\Models\Definition\SubsidyVersion;
-use App\Shared\Models\Definition\SubsidyStage;
+use App\Shared\Models\Application\ApplicationMetadata;
+use App\Shared\Models\Application\FileUpload;
 
+use App\Shared\Models\Definition\SubsidyStage;
+use App\Shared\Models\Definition\Field;
+use App\Shared\Models\Definition\Enums\FieldType;
+use App\Shared\Models\Definition\Submission\FieldValue;
+
+
+use App\Shared\Models\Connection;
 
 use Exception;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 use Throwable;
 
 
@@ -54,11 +56,12 @@ readonly class ApplicationService
     }
 
     /**
-     * @throws ApplicationMetadataMismatchException|ApplicationIdentityMismatchException
+     * @throws ApplicationMetadataMismatchException
+     * @throws ApplicationIdentityMismatchException
      */
     private function validateIdentityAndApplicationMetadata(Identity $identity, ApplicationMetadata $applicationMetadata, ApplicationStage $applicationStage): void
     {
-        if ($applicationStage->application->identity_type !== $identity->type || $applicationStage->application->identity_identifier !== $identity->identifier) {
+        if ($applicationStage->application->identity->type !== $identity->type || $applicationStage->application->identity->identifier !== $identity->identifier) {
             throw new ApplicationIdentityMismatchException(sprintf('Identity mismatch for application with identifier "%s"', $applicationStage->id));
         }
 
@@ -74,7 +77,7 @@ readonly class ApplicationService
     {
         $subsidyStage = $this->formRepository->getSubsidyStage($subsidyStageId);
         if ($subsidyStage === null) {
-            throw new \Exception(sprintf('Form with identifier "%s" does not exist!', $subsidyStageId));
+            throw new FormNotFoundException(sprintf('Form with identifier "%s" does not exist!', $subsidyStageId));
         }
         return $subsidyStage;
     }
@@ -84,7 +87,6 @@ readonly class ApplicationService
         $application = $this->applicationRepository->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
         $application->application_title = $subsidyStage->title;
         $application->identity = $identity;
-        $application->status = ApplicationStatus::Draft;
         $this->applicationRepository->saveApplication($application);
         return $application;
     }
@@ -94,6 +96,8 @@ readonly class ApplicationService
         $application = $this->createApplication($identity, $subsidyStage);
         $applicationStage = $this->applicationRepository->makeApplicationStage($application, $subsidyStage);
         $applicationStage->id = $applicationMetadataId;
+        $applicationStage->status = ApplicationStageStatus::Draft;
+        $applicationStage->user_id = Uuid::uuid4()->toString();
         $this->applicationRepository->saveApplicationStage($applicationStage);
         return $applicationStage;
     }
@@ -107,11 +111,11 @@ readonly class ApplicationService
     }
 
     /**
-     * @return array{Application, Form}
      * @throws Throwable
      */
     private function loadOrCreateApplicationStageWithSubsidyStage(Identity $identity, ApplicationMetadata $applicationMetadata): array
     {
+
         $applicationStage = $this->loadApplicationStageIfExists($applicationMetadata->applicationStageId);
 
         if ($applicationStage !== null) {
@@ -139,9 +143,9 @@ readonly class ApplicationService
         return $field;
     }
 
-    private function getFilePath(ApplicationStage $applicationStage, ApplicationStageVersion $applicationStageVersion, Field $field): string
+    private function getFilePath(ApplicationStage $applicationStage, Field $field): string
     {
-        return sprintf('%s/%s/%s', $applicationStage->id, $applicationStageVersion->id, $field->code);
+        return sprintf('%s/%s', $applicationStage->id, $field->code);
     }
 
     /**
@@ -154,7 +158,7 @@ readonly class ApplicationService
             throw new FileNotFoundException("Answer for file not found!");
         }
 
-        $path = $this->getFilePath($applicationStage, $applicationStageVersion, $field);
+        $path = $this->getFilePath($applicationStage, $field);
         if (!$this->filesystemManager->disk(Disk::ApplicationFiles)->exists($path)) {
             throw new FileNotFoundException("File not found!");
         }
@@ -190,10 +194,10 @@ readonly class ApplicationService
      */
     private function validateFieldValue(ApplicationStage $applicationStage, ApplicationStageVersion $applicationStageVersion, FieldValue $value): void
     {
+        // answer for file already exists at this point
         if ($value->field->type === FieldType::Upload) {
             $this->validateFileAnswer($applicationStage, $applicationStageVersion, $value->field);
         }
-
         // TODO: validate format of certain fields
     }
 
@@ -210,25 +214,30 @@ readonly class ApplicationService
     /**
      * @throws Throwable
      */
-    public function processFormSubmit(FormSubmit $formSubmit): Application
+    public function processFormSubmit(FormSubmit $formSubmit): ApplicationStage
     {
-        $applicationStage = DB::connection(Connection::Application)->transaction(function () use ($formSubmit) {
-            [$applicationStage, $form] = $this->loadOrCreateApplicationStageWithSubsidyStage($formSubmit->identity, $formSubmit->applicationMetadata);
+
+        $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
+
+
+            [$applicationStage, $subsidyStage] = $this->loadOrCreateApplicationStageWithSubsidyStage($formSubmit->identity, $formSubmit->applicationMetadata);
+
 
             $json = $formSubmit->encryptedData; // TODO: decrypt
-            $values = $this->decodingService->decodeFormValues($form, $json);
+            $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
             $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
 
             $this->validateFieldValues($applicationStage, $applicationStageVersion, $values);
-            $this->processFieldValues($applicationStage, $values);
+            $this->processFieldValues($applicationStageVersion, $values);
 
-            $applicationStage->status = ApplicationStatus::Submitted;
+
+            $applicationStage->status = ApplicationStageStatus::Submitted;
             $this->applicationRepository->saveApplicationStage($applicationStage);
 
             return $applicationStage;
         });
 
-        assert($applicationStage instanceof Application);
+        assert($applicationStage instanceof ApplicationStage);
         return $applicationStage;
     }
 
@@ -263,7 +272,7 @@ readonly class ApplicationService
             $value
         );
 
-        $path = $this->getFilePath($applicationStage, $applicationStageVersion, $field);
+        $path = $this->getFilePath($applicationStage, $field);
         $result = $this->filesystemManager->disk(Disk::ApplicationFiles)->put($path, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
@@ -275,6 +284,6 @@ readonly class ApplicationService
      */
     public function processFileUpload(FileUpload $fileUpload): void
     {
-        DB::connection(Connection::Application)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
+        DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
     }
 }

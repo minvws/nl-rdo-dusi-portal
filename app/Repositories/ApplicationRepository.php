@@ -13,48 +13,50 @@ use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\SubsidyVersion;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Str;
 
 readonly class ApplicationRepository
 {
-    public function getApplication(string $applicationId): ?Application
+
+    // Helper function to check if a string is a valid UUID
+    private function validateUuid(string $uuid): void
     {
-        try {
-            $application = Application::query()->findOrFail($applicationId);
-        } catch (ModelNotFoundException) {
-            throw new \InvalidArgumentException('Application not found');
+        if (!Str::isUuid($uuid)) {
+            throw new \InvalidArgumentException('Invalid UUID');
         }
+    }
+
+    public function getApplication(string $applicationId): Application
+    {
+        $this->validateUuid($applicationId);
+        $application = Application::query()->findOrFail($applicationId);
+        assert($application === null || $application instanceof Application);
         return $application;
     }
 
     public function getApplicationStage(string $applicationStageId): ?ApplicationStage
     {
-        try {
-            $applicationStage = ApplicationStage::query()->findOrFail($applicationStageId);
-        } catch (ModelNotFoundException) {
-            throw new \InvalidArgumentException('Application stage not found');
+        $this->validateUuid($applicationStageId);
+        $applicationStage = ApplicationStage::query()->find($applicationStageId);
+        if($applicationStage === null) {
+            return null;
         }
         return $applicationStage;
     }
 
-    public function getApplicationStageVersion(string $applicationStageVersionId): ?ApplicationStageVersion
+    public function getApplicationStageVersion(string $applicationStageVersionId): ApplicationStageVersion
     {
-        try {
-            $applicationStageVersion = ApplicationStageVersion::query()->findOrFail($applicationStageVersionId);
-        } catch (ModelNotFoundException) {
-            throw new \InvalidArgumentException('Application version not found');
-        }
+        $this->validateUuid($applicationStageVersionId);
+        $applicationStageVersion = ApplicationStageVersion::query()->findOrFail($applicationStageVersionId);
+        assert($applicationStageVersion instanceof ApplicationStageVersion);
         return $applicationStageVersion;
     }
 
     public function getAnswer(ApplicationStageVersion $applicationStageVersion, Field $field): ?Answer
     {
-        $answer =
-            Answer::query()
-            ->where('application_stage_version_id', '=', $applicationStageVersion->id)
-            ->where('field_id', '=', $field->id)
-            ->first();
-
+        $answer = Answer::query()
+            ->where('application_stage_version_id', $applicationStageVersion->id)
+            ->where('field_id', $field->id)->first();
         assert($answer === null || $answer instanceof Answer);
         return $answer;
     }

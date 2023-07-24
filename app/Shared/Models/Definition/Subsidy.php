@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Models\Definition;
 
 use App\Shared\Models\Connection;
 use App\Shared\Models\Definition\Factories\SubsidyFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Shared\Models\Definition\Enums\VersionStatus;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,42 +16,50 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property-read string $id
- * @property-read string $title
- * @property-read string $description
- * @property-read DateTimeInterface $valid_from
- * @property-read ?DateTimeInterface $valid_to
+ * @property string $title
+ * @property string $description
+ * @property DateTimeInterface $valid_from
+ * @property DateTimeInterface $valid_to
  */
+
 class Subsidy extends Model
 {
     use HasFactory;
+    use HasUuids;
 
-    public $timestamps = false;
-    protected $connection = Connection::Form;
-    protected $keyType = 'string';
-    protected $casts = [
-        'valid_from' => 'date',
-        'valid_to' => 'date'
+    /**
+     * @var string|null
+     */
+    protected $connection = Connection::FORM;
+
+    protected $fillable = [
+        'title',
+        'description',
+        'valid_from',
+        'valid_to',
+        'created_at',
+        'updated_at',
     ];
 
-    public function forms(): HasMany
+    protected $casts = [
+        'status' => VersionStatus::class,
+        'valid_from' => 'timestamp',
+        'valid_to' => 'timestamp',
+    ];
+
+    public function subsidyVersions(): HasMany
     {
-        return $this->hasMany(Form::class);
+        return $this->hasMany(SubsidyVersion::class, 'subsidy_id', 'id');
     }
 
-    public function publishedForm(): HasOne
+    public function publishedVersion(): HasOne
     {
-        return $this->hasOne(Form::class)->where('status', '=', 'published');
+        return $this->hasOne(SubsidyVersion::class)->where('status', '=', 'published');
     }
 
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('title');
-    }
-
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->whereRelation('forms', fn (Builder $subQuery) => $subQuery->open());
     }
 
     protected static function newFactory(): SubsidyFactory

@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 
 class FormRepository
 {
-    public function getSubsidyVersion(string $subsidyVersionId)
+    public function getSubsidyVersion(string $subsidyVersionId) : ?SubsidyVersion
     {
         $subsidyVersion = SubsidyVersion::query()->find($subsidyVersionId);
         if ($subsidyVersion instanceof SubsidyVersion === false) {
@@ -23,7 +23,7 @@ class FormRepository
         return $subsidyVersion;
     }
 
-    public function getSubsidyStage(string $subsidyStageId)
+    public function getSubsidyStage(string $subsidyStageId): ?SubsidyStage
     {
         $subsidyStage = SubsidyStage::query()->find($subsidyStageId);
         if ($subsidyStage instanceof SubsidyStage === false) {

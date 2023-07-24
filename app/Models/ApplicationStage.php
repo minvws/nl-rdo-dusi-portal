@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Enums\ApplicationStatus;
+use App\Models\Enums\ApplicationStageStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,10 +14,10 @@ class ApplicationStage extends Model
     use HasFactory;
     use HasUuids;
 
-    protected $connection = Connection::Application;
+    protected $connection = Connection::APPLICATION;
 
     protected $casts = [
-        'status' => ApplicationStatus::class,
+        'status' => ApplicationStageStatus::class,
     ];
     protected $fillable = [
         'subsidy_stage_id',

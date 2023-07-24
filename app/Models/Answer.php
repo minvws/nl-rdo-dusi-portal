@@ -15,7 +15,7 @@ class Answer extends Model
     use HasFactory;
     use HasUuids;
 
-    protected $connection = Connection::Application;
+    protected $connection = Connection::APPLICATION;
 
     const UPDATED_AT = NULL;
 

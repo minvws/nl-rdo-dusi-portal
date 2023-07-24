@@ -12,7 +12,7 @@ class ApplicationHash extends Model
     use HasFactory;
     use HasCompositePrimaryKey;
 
-    protected $connection = Connection::Application;
+    protected $connection = Connection::APPLICATION;
 
     protected $primaryKey = ['subsidy_stage_id', 'application_id'];
 

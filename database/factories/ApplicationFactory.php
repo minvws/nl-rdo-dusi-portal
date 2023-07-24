@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Application;
 use App\Shared\Models\Application\IdentityType;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Ramsey\Uuid\Uuid;
 
 
 /**
@@ -20,6 +21,7 @@ class ApplicationFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => $this->faker->uuid,
             'created_at' => $this->faker->dateTimeBetween('-1 year'),
             'subsidy_version_id' => $this->faker->uuid,
             'identity_type' => IdentityType::EncryptedCitizenServiceNumber->value,

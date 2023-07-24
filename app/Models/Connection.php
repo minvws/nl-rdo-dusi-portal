@@ -5,8 +5,8 @@ namespace App\Models;
 
 final readonly class Connection
 {
-    public const Form = 'pgsql-form';
-    public const Application = 'pgsql-application';
+    public const FORM = 'pgsql_form';
+    public const APPLICATION = 'pgsql_application';
 
     private function __construct()
     {

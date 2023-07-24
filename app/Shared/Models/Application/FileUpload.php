@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Models\Application;
 
+use Ramsey\Uuid\Uuid;
+
 readonly class FileUpload
 {
     public function __construct(

@@ -2,12 +2,13 @@
 
 namespace App\Shared\Models\Definition\Factories;
 
+use App\Shared\Models\Definition\Enums\FieldType;
 use App\Shared\Models\Definition\Field;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Shared\Models\Definition\Form>
+ * @extends Factory<Field>
  */
 class FieldFactory extends Factory
 {
@@ -21,11 +22,12 @@ class FieldFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => Uuid::uuid4(),
-            'code' => $this->faker->word,
+            'id' => $this->faker->uuid,
             'title' => $this->faker->words(3, true),
-            'type' => 'text',
-            'is_required' => true
-        ];
+            'type' => FieldType::Text,
+            'params' => [],
+            'is_required' => true,
+            'code' => $this->faker->word,
+            ];
     }
 }

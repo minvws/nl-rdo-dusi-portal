@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Shared\Models\Definition\Subsidy>
+ * @extends Factory<Subsidy>
  */
 class SubsidyFactory extends Factory
 {
@@ -21,11 +21,11 @@ class SubsidyFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => Uuid::uuid4(),
-            'title' => $this->faker->words(asText: true),
+            'id' => $this->faker->uuid,
+            'title' => $this->faker->words(3, true),
             'description' => $this->faker->paragraph,
-            'valid_from' => $this->faker->dateTimeBetween('3 years ago', '3 months ago'),
-            'valid_to' => $this->faker->dateTimeBetween('next month', 'now + 3 years'),
+            'valid_from' => $this->faker->dateTimeBetween('-1 year', '+1 year'),
+            'valid_to' => $this->faker->dateTimeBetween('-1 year', '+1 year'),
         ];
     }
 }
