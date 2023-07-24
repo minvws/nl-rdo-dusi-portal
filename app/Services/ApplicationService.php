@@ -56,8 +56,7 @@ readonly class ApplicationService
     }
 
     /**
-     * @throws ApplicationMetadataMismatchException
-     * @throws ApplicationIdentityMismatchException
+     * @throws ApplicationMetadataMismatchException|ApplicationIdentityMismatchException
      */
     private function validateIdentityAndApplicationMetadata(Identity $identity, ApplicationMetadata $applicationMetadata, ApplicationStage $applicationStage): void
     {
@@ -194,10 +193,10 @@ readonly class ApplicationService
      */
     private function validateFieldValue(ApplicationStage $applicationStage, ApplicationStageVersion $applicationStageVersion, FieldValue $value): void
     {
-        // answer for file already exists at this point
         if ($value->field->type === FieldType::Upload) {
             $this->validateFileAnswer($applicationStage, $applicationStageVersion, $value->field);
         }
+
         // TODO: validate format of certain fields
     }
 
@@ -229,7 +228,6 @@ readonly class ApplicationService
 
             $this->validateFieldValues($applicationStage, $applicationStageVersion, $values);
             $this->processFieldValues($applicationStageVersion, $values);
-
 
             $applicationStage->status = ApplicationStageStatus::Submitted;
             $this->applicationRepository->saveApplicationStage($applicationStage);

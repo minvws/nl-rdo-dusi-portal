@@ -65,6 +65,8 @@ class ApplicationServiceTest extends TestCase
 
     public function testProcessFileUpload(): void
     {
+        Storage::fake(Disk::ApplicationFiles);
+
         $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
         $fileField->subsidyStages()->attach($this->subsidyStage->id);
 
@@ -147,9 +149,7 @@ class ApplicationServiceTest extends TestCase
         $applicationService->processFormSubmit($formSubmit);
     }
 
-    /**
-     * @throws Throwable
-     */
+
     public function testProcessFormSubmitInvalidForm(): void
     {
         $formSubmit = new FormSubmit(
@@ -166,8 +166,9 @@ class ApplicationServiceTest extends TestCase
 
     public function testProcessFormSubmitMissingFile(): void
     {
-        $this->subsidyStage->fields()->detach();
         Storage::fake(Disk::ApplicationFiles);
+
+        $this->subsidyStage->fields()->detach();
 
         $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
         $fileField->subsidyStages()->attach($this->subsidyStage->id);
