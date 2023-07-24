@@ -67,6 +67,7 @@ class ApplicationServiceTest extends TestCase
     {
         Storage::fake(Disk::ApplicationFiles);
 
+        $this->subsidyStage->fields()->detach();
         $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
         $fileField->subsidyStages()->attach($this->subsidyStage->id);
 
