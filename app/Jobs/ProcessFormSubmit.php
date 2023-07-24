@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Services\EncryptionService;
 use App\Services\ApplicationService;
 use App\Shared\Models\Application\FormSubmit;
 use Illuminate\Bus\Queueable;

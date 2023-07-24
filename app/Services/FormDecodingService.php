@@ -5,7 +5,7 @@ namespace App\Services;
 
 use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\Enums\FieldType;
-use App\Shared\Models\Definition\Submission\FieldValue;
+use App\Models\Submission\FieldValue;
 use App\Repositories\FormRepository;
 use App\Shared\Models\Definition\SubsidyStage;
 use MinVWS\Codable\Decoding\DecodingContainer;
@@ -45,8 +45,7 @@ readonly class FormDecodingService
     public function decodeFormValues(SubsidyStage $subsidyStage, string $data): array
     {
         $decoder = new JSONDecoder();
-        $container = $decoder->decode($data);
-
+        $container = $decoder->decode($data, );
         $values = [];
         $fields = $this->formRepository->getFields($subsidyStage);
         foreach ($fields as $field) {

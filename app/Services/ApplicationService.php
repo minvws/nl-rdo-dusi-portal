@@ -27,7 +27,7 @@ use App\Shared\Models\Application\FileUpload;
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\Enums\FieldType;
-use App\Shared\Models\Definition\Submission\FieldValue;
+use App\Models\Submission\FieldValue;
 
 
 use App\Shared\Models\Connection;

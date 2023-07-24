@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Models\Definition\Submission;
+namespace App\Models\Submission;
 
 use App\Shared\Models\Definition\Field;
 

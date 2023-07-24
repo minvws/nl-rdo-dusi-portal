@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Shared\Models\Definition\Enums\ApplicationStageStatus;
+use App\Models\Enums\ApplicationStageStatus;
 
 
 return new class extends Migration
