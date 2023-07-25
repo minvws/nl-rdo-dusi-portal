@@ -6,6 +6,6 @@ namespace App\Models\Enums;
 
 enum ApplicationStageStatus: string
 {
-    case DRAFT = 'DRAFT';
+    case Draft = 'Draft';
     case Submitted = 'submitted';
 }

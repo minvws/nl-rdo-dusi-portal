@@ -25,7 +25,7 @@ class SubsidyVersionFactory extends Factory
         return [
             'id' => $this->faker->uuid,
             'version' => $this->faker->numberBetween(1, 10),
-            'status' => VersionStatus::DRAFT,
+            'status' => VersionStatus::Draft,
         ];
     }
 }

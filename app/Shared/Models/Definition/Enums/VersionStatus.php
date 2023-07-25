@@ -6,7 +6,7 @@ namespace App\Shared\Models\Definition\Enums;
 
 enum VersionStatus: string
 {
-    case DRAFT = 'DRAFT';
+    case Draft = 'Draft';
     case Published = 'published';
     case Archived = 'archived';
 
@@ -17,6 +17,6 @@ enum VersionStatus: string
 
     public static function getDefault(): VersionStatus
     {
-        return VersionStatus::DRAFT;
+        return VersionStatus::Draft;
     }
 }

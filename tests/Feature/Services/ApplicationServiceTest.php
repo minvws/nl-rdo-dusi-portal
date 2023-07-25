@@ -94,7 +94,7 @@ class ApplicationServiceTest extends TestCase
             ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
         $applicationStage = ApplicationStage::query()->find($fileUpload->applicationMetadata->applicationStageId);
         $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $this->assertEquals(ApplicationStagestatus::DRAFT, $applicationStage->status);
+        $this->assertEquals(ApplicationStagestatus::Draft, $applicationStage->status);
     }
 
     /**

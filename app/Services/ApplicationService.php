@@ -112,7 +112,7 @@ readonly class ApplicationService
         $app = $this->createApplication($identity, $subsidyStage);
         $appStage = $this->appRepo->makeApplicationStage($app, $subsidyStage);
         $appStage->id = $appMetadataId;
-        $appStage->status = ApplicationStageStatus::DRAFT;
+        $appStage->status = ApplicationStageStatus::Draft;
         $appStage->user_id = Uuid::uuid4()->toString();
         $this->appRepo->saveApplicationStage($appStage);
         return $appStage;
