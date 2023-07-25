@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $id
@@ -62,7 +63,7 @@ class Field extends Model
         return $this->belongsTo(FieldGroup::class, 'field_group_id', 'id');
     }
 
-    public function subsidyStageHashFields()
+    public function subsidyStageHashFields(): HasMany
     {
         return $this->HasMany(SubsidyStageHashField::class, 'field_id', 'id');
     }

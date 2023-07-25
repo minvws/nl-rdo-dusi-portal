@@ -43,13 +43,13 @@ class FormService
 
     public function createField(
         SubsidyStage $form,
-        string       $title,
-        string       $description,
-        FieldType    $type,
-        array        $params,
-        bool         $isRequired,
-        string       $code,
-        string       $source
+        string $title,
+        string $description,
+        FieldType $type,
+        array $params,
+        bool $isRequired,
+        string $code,
+        string $source
     ): void {
         $field = $this->formRepository->makeField($form);
         $field->title = $title;

@@ -16,6 +16,6 @@ enum SubjectRole: string
 
     public static function getDefault(): SubjectRole
     {
-        return SubjectRole::Draft;
+        return SubjectRole::Applicant;
     }
 }

@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\FormUI;
 use App\Models\Enums\VersionStatus;
+use App\Models\SubsidyStageUI;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @extends Factory<FormUI>
+ * @extends Factory<SubsidyStageUI>
  */
-class FormUIFactory extends Factory
+class SubsidyStageUIFactory extends Factory
 {
-    protected $model = FormUI::class;
+    protected $model = SubsidyStageUI::class;
 
     /**
      * Define the model's default state.

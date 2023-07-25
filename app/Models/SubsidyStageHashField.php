@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Traits\HasCompositePrimaryKey;
@@ -12,6 +14,10 @@ class SubsidyStageHashField extends Model
 
     public $timestamps = false;
 
+    /*
+     * @var array
+     */
+    /** @phpstan-ignore-next-line */
     protected $primaryKey = ['subsidy_stage_hash_id', 'field_id'];
 
     public function subsidyStageHash(): BelongsTo
