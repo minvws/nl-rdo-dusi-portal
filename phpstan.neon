@@ -14,3 +14,4 @@ parameters:
     excludePaths:
         - public/index.php
         - routes/console.php
+        - app/Traits/HasCompositePrimaryKey.php

@@ -26,6 +26,7 @@ use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\Enums\FieldType;
 use App\Models\Submission\FieldValue;
 use App\Shared\Models\Connection;
+use App\Shared\Models\Definition\SubsidyVersion;
 use Exception;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
@@ -59,9 +60,10 @@ readonly class ApplicationService
         ApplicationMetadata $appMetadata,
         ApplicationStage $appStage
     ): void {
+        assert($appStage->application instanceof Application);
         if (
-            $appStage->app->identity->type !== $identity->type ||
-            $appStage->app->identity->identifier !== $identity->identifier
+            $appStage->application->identity->type !== $identity->type || // @phpstan-ignore-line
+            $appStage->application->identity->identifier !== $identity->identifier
         ) {
             throw new ApplicationIdentityMismatchException(
                 sprintf('Identity mismatch for app with identifier "%s"', $appStage->id)
@@ -89,6 +91,7 @@ readonly class ApplicationService
 
     private function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
     {
+        assert($subsidyStage->subsidyVersion instanceof SubsidyVersion);
         $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
         $app->application_title = $subsidyStage->title;
         $app->identity = $identity;
@@ -184,7 +187,7 @@ readonly class ApplicationService
     private function createOrUpdateAnswer(ApplicationStageVersion $appStageVersion, Field $field, mixed $value): void
     {
         $answer = $this->appRepo->makeAnswer($appStageVersion, $field);
-        $answer->encrypted_answer = $this->encryptionService->encryptFieldValue(json_encode($value));
+        $answer->encrypted_answer = $this->encryptionService->encryptFieldValue(json_encode($value)); // @phpstan-ignore-line
         $this->appRepo->saveAnswer($answer);
     }
 

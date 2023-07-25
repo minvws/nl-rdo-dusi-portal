@@ -27,7 +27,7 @@ readonly class ApplicationRepository
     {
         $this->validateUuid($appId);
         $application = Application::query()->findOrFail($appId);
-        assert($application === null || $application instanceof Application);
+        assert($application instanceof Application);
         return $application;
     }
 
@@ -55,7 +55,7 @@ readonly class ApplicationRepository
         $answer = Answer::query()
             ->where('application_stage_version_id', $appStageVersion->id)
             ->where('field_id', $field->id)->first();
-        assert($answer === null || $answer instanceof Answer);
+        assert($answer instanceof Answer);
         return $answer;
     }
 
