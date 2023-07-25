@@ -17,7 +17,9 @@ trait HasCompositePrimaryKey
     protected function setKeysForSaveQuery($query)
     {
         $keys = $this->getKeyName();
-        return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(function ($q) use ($keys) {
+        // @phpstan-ignore-next-line
+        assert(is_array($keys), 'Composite primary key must be an array');
+        return $query->where(function ($q) use ($keys) {
             foreach ($keys as $key) {
                 $q->where($key, '=', $this->getAttribute($key));
             }
@@ -38,7 +40,11 @@ trait HasCompositePrimaryKey
     }
 
     /**
-     * @return false
+     *
+     * Get if the IDs are incrementing.
+     *
+     * @SuppressWarnings(PHPMD)
+     * @return boolean
      */
     public function getIncrementing()
     {
@@ -53,6 +59,7 @@ trait HasCompositePrimaryKey
     public function getKey()
     {
         $fields = $this->getKeyName();
+        // @phpstan-ignore-next-line
         assert(is_array($fields), 'Composite primary key must be an array');
         $keys = [];
         array_map(function ($key) use (&$keys) {
@@ -72,6 +79,7 @@ trait HasCompositePrimaryKey
         $modelClass = self::class;
         $model = new $modelClass();
         $keys = $model->primaryKey;
+        // @phpstan-ignore-next-line
         assert(is_array($keys), 'Composite primary key must be an array');
 
         return $model->where(function ($query) use ($ids, $keys) {

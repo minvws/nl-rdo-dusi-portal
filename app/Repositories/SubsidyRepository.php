@@ -8,6 +8,7 @@ use App\Models\Field;
 use App\Models\SubsidyStage;
 use App\Models\Subsidy;
 use App\Models\SubsidyStageUI;
+use App\Models\SubsidyVersion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
