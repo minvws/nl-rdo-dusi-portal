@@ -9,15 +9,13 @@ enum SubjectRole: string
     case Applicant = 'applicant';
     case Assessor = 'assessor';
 
-    public const DRAFT = 'DRAFT';
-
     public static function getValues(): array
     {
         return array_column(SubjectRole::cases(), 'value');
     }
 
-    public static function getDefault(): string
+    public static function getDefault(): SubjectRole
     {
-        return SubjectRole::DRAFT;
+        return SubjectRole::Applicant;
     }
 }
