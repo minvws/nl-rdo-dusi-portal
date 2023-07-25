@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -36,6 +40,7 @@ use Throwable;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+
 readonly class ApplicationService
 {
     public function __construct(
@@ -187,7 +192,8 @@ readonly class ApplicationService
     private function createOrUpdateAnswer(ApplicationStageVersion $appStageVersion, Field $field, mixed $value): void
     {
         $answer = $this->appRepo->makeAnswer($appStageVersion, $field);
-        $answer->encrypted_answer = $this->encryptionService->encryptFieldValue(json_encode($value)); // @phpstan-ignore-line
+        $answer->encrypted_answer = $this->encryptionService
+            ->encryptFieldValue(json_encode($value)); // @phpstan-ignore-line
         $this->appRepo->saveAnswer($answer);
     }
 
