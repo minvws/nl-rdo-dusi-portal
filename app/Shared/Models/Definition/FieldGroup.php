@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Models\Definition;
 
 use App\Shared\Models\Connection;
-
 use App\Shared\Models\Definition\Enums\VersionStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,5 +41,4 @@ class FieldGroup extends Model
     {
         return $this->belongsTo(FieldGroupPurpose::class, 'purpose', 'id');
     }
-
 }

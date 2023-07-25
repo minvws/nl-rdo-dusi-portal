@@ -9,7 +9,7 @@ enum SubjectRole: string
     case Applicant = 'applicant';
     case Assessor = 'assessor';
 
-    const Draft = 'draft';
+    public const DRAFT = 'DRAFT';
 
     public static function getValues(): array
     {
@@ -18,6 +18,6 @@ enum SubjectRole: string
 
     public static function getDefault(): string
     {
-        return SubjectRole::Draft;
+        return SubjectRole::DRAFT;
     }
 }

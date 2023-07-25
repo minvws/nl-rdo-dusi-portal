@@ -8,16 +8,13 @@ use App\Models\Answer;
 use App\Models\Application;
 use App\Models\ApplicationStage;
 use App\Models\ApplicationStageVersion;
-
 use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\SubsidyVersion;
-
 use Illuminate\Support\Str;
 
 readonly class ApplicationRepository
 {
-
     // Helper function to check if a string is a valid UUID
     private function validateUuid(string $uuid): void
     {
@@ -38,7 +35,7 @@ readonly class ApplicationRepository
     {
         $this->validateUuid($applicationStageId);
         $applicationStage = ApplicationStage::query()->find($applicationStageId);
-        if($applicationStage === null) {
+        if ($applicationStage === null) {
             return null;
         }
         return $applicationStage;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Disk;
 
 return [
@@ -41,7 +43,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -58,7 +60,7 @@ return [
             'throw' => false,
         ],
 
-        Disk::ApplicationFiles => [
+        Disk::APPLICATIONFILES => [
             'driver' => env('FILESYSTEM_APPLICATION_FILES_DRIVER', 'local'),
             'root' => env('FILESYSTEM_APPLICATION_FILES_ROOT', storage_path('application-files')),
             'throw' => false,

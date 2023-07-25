@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Tests\Feature\Repositories;
 
 use App\Repositories\ApplicationRepository;
 use App\Models\Application;
@@ -10,7 +13,6 @@ use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\Subsidy;
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\SubsidyVersion;
-
 use Tests\TestCase;
 
 class ApplicationRepositoryTest extends TestCase
@@ -82,7 +84,6 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertInstanceOf(Answer::class, $foundAnswer);
 
         $this->assertNull($this->repository->getAnswer($applicationStageVersion, Field::factory()->create()));
-
     }
 
     public function testMakeApplicationForSubsidyVersion()

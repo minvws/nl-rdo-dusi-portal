@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Models\Definition\Factories;
 
 use App\Shared\Models\Definition\Enums\FieldType;
 use App\Shared\Models\Definition\Field;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @extends Factory<Field>

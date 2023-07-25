@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Models\Definition\Factories;
 
 use App\Shared\Models\Definition\Subsidy;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @extends Factory<Subsidy>

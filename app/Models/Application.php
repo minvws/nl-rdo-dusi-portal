@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Shared\Models\Application\Identity;
@@ -43,7 +45,7 @@ class Application extends Model
     protected function identity(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value,array $attributes) => new Identity(
+            get: fn (mixed $value, array $attributes) => new Identity(
                 IdentityType::from($attributes['identity_type']),
                 $attributes['identity_identifier']
             ),

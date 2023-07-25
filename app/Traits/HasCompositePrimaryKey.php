@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait HasCompositePrimaryKey
 {
-
     /**
      * Set the keys for a save update query.
      *
@@ -16,8 +17,8 @@ trait HasCompositePrimaryKey
     protected function setKeysForSaveQuery($query)
     {
         $keys = $this->getKeyName();
-        return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(function($q) use($keys) {
-            foreach($keys as $key){
+        return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(function ($q) use ($keys) {
+            foreach ($keys as $key) {
                 $q->where($key, '=', $this->getAttribute($key));
             }
         });
@@ -53,7 +54,7 @@ trait HasCompositePrimaryKey
     {
         $fields = $this->getKeyName();
         $keys = [];
-        array_map(function($key) use(&$keys) {
+        array_map(function ($key) use (&$keys) {
             $keys[] = $this->getAttribute($key);
         }, $fields);
         return $keys;
@@ -70,7 +71,7 @@ trait HasCompositePrimaryKey
         $modelClass = self::class;
         $model = new $modelClass();
         $keys = $model->primaryKey;
-        return $model->where(function($query) use($ids, $keys) {
+        return $model->where(function ($query) use ($ids, $keys) {
             foreach ($keys as $idx => $key) {
                 if (isset($ids[$idx])) {
                     $query->where($key, $ids[$idx]);
@@ -93,7 +94,7 @@ trait HasCompositePrimaryKey
         $model = new $modelClass();
         $record = $model->find($ids);
         if (!$record) {
-            throw new ModelNotFoundException;
+            throw new ModelNotFoundException();
         }
         return $record;
     }

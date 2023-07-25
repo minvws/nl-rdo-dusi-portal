@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Shared\Models\Definition;
 
 use App\Shared\Models\Definition\Enums\SubjectRole;
-use App\Shared\Models\Definition\Enums\VersionStatus;
 use App\Shared\Models\Connection;
 use App\Shared\Models\Definition\Factories\SubsidyStageFactory;
 use Illuminate\Database\Eloquent\Builder;

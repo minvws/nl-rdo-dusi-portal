@@ -67,7 +67,7 @@ return new class extends Migration
         });
         Schema::table('applications', function (Blueprint $table) {
             $table->renameColumn('subsidy_version_id', 'form_id');
-            $table->enum('status', [ApplicationStageStatus::Draft->value, ApplicationStageStatus::Submitted->value]);
+            $table->enum('status', [ApplicationStageStatus::DRAFT->value, ApplicationStageStatus::Submitted->value]);
             $table->dropColumn('application_title');
             $table->dropColumn('final_review_deadline');
         });

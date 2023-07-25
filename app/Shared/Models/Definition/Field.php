@@ -6,8 +6,6 @@ namespace App\Shared\Models\Definition;
 
 use App\Shared\Models\Definition\Enums\FieldType;
 use App\Shared\Models\Definition\Enums\FieldSource;
-
-
 use App\Shared\Models\Connection;
 use App\Shared\Models\Definition\Factories\FieldFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;

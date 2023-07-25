@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Shared\Models\Connection;
 
 return [
@@ -48,7 +50,7 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
-        Connection::FORM=> [
+        Connection::FORM => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_FORM_URL'),
             'host' => env('DB_FORM_HOST', '127.0.0.1'),

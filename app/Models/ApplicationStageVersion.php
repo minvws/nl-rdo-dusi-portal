@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -19,7 +21,7 @@ class ApplicationStageVersion extends Model
         'version'
     ];
 
-    const UPDATED_AT = NULL;
+    public const UPDATED_AT = null;
 
     public function applicationStage(): BelongsTo
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Feature\Services;
@@ -18,7 +19,6 @@ use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\Enums\FieldType;
 use App\Shared\Models\Definition\Subsidy;
 use App\Shared\Models\Definition\Enums\VersionStatus;
-
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\SubsidyVersion;
 use Generator;
@@ -48,7 +48,8 @@ class ApplicationServiceTest extends TestCase
     {
         parent::setUp();
         $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);
+        $subsidyVersion = SubsidyVersion::factory()
+            ->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);
         $this->subsidyStage = SubsidyStage::factory()->create(
             [
                 'subsidy_version_id' => $subsidyVersion->id,
@@ -68,7 +69,7 @@ class ApplicationServiceTest extends TestCase
 
     public function testProcessFileUpload(): void
     {
-        Storage::fake(Disk::ApplicationFiles);
+        Storage::fake(Disk::APPLICATIONFILES);
 
         $this->subsidyStage->fields()->detach();
         $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
@@ -89,10 +90,11 @@ class ApplicationServiceTest extends TestCase
         assert($applicationService instanceof ApplicationService);
         $applicationService->processFileUpload($fileUpload);
 
-        $this->assertTrue(Storage::disk(Disk::ApplicationFiles)->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
+        $this->assertTrue(Storage::disk(Disk::APPLICATIONFILES)
+            ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
         $applicationStage = ApplicationStage::query()->find($fileUpload->applicationMetadata->applicationStageId);
         $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $this->assertEquals(ApplicationStagestatus::Draft, $applicationStage->status);
+        $this->assertEquals(ApplicationStagestatus::DRAFT, $applicationStage->status);
     }
 
     /**
@@ -170,7 +172,7 @@ class ApplicationServiceTest extends TestCase
 
     public function testProcessFormSubmitMissingFile(): void
     {
-        Storage::fake(Disk::ApplicationFiles);
+        Storage::fake(Disk::APPLICATIONFILES);
 
         $this->subsidyStage->fields()->detach();
 

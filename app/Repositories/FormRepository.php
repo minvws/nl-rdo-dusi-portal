@@ -7,14 +7,11 @@ namespace App\Repositories;
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\SubsidyVersion;
 use App\Shared\Models\Definition\Field;
-
-
-
 use Illuminate\Support\Collection;
 
 class FormRepository
 {
-    public function getSubsidyVersion(string $subsidyVersionId) : ?SubsidyVersion
+    public function getSubsidyVersion(string $subsidyVersionId): ?SubsidyVersion
     {
         $subsidyVersion = SubsidyVersion::query()->find($subsidyVersionId);
         if ($subsidyVersion instanceof SubsidyVersion === false) {
