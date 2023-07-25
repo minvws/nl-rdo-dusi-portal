@@ -53,6 +53,7 @@ trait HasCompositePrimaryKey
     public function getKey()
     {
         $fields = $this->getKeyName();
+        assert(is_array($fields), 'Composite primary key must be an array');
         $keys = [];
         array_map(function ($key) use (&$keys) {
             $keys[] = $this->getAttribute($key);
@@ -71,6 +72,8 @@ trait HasCompositePrimaryKey
         $modelClass = self::class;
         $model = new $modelClass();
         $keys = $model->primaryKey;
+        assert(is_array($keys), 'Composite primary key must be an array');
+
         return $model->where(function ($query) use ($ids, $keys) {
             foreach ($keys as $idx => $key) {
                 if (isset($ids[$idx])) {

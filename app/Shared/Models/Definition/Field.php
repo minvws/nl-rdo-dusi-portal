@@ -49,16 +49,6 @@ class Field extends Model
         return $this->belongsToMany(SubsidyStage::class);
     }
 
-    public function fieldGroups(): BelongsTo
-    {
-        return $this->belongsTo(FieldGroup::class, 'field_group_id', 'id');
-    }
-
-    public function subsidyStageHashFields(): HasMany
-    {
-        return $this->HasMany(SubsidyStageHashField::class, 'field_id', 'id');
-    }
-
     protected static function newFactory(): FieldFactory
     {
         return new FieldFactory();

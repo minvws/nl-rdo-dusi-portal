@@ -49,16 +49,6 @@ class SubsidyStage extends Model
         return $this->belongsToMany(Field::class);
     }
 
-    public function uis(): HasMany
-    {
-        return $this->hasMany(SubsidyStageUi::class, 'subsidy_stage_id', 'id');
-    }
-
-    public function publishedUI(): HasOne
-    {
-        return $this->hasOne(SubsidyStageUi::class)->where('status', '=', 'published');
-    }
-
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('stage');

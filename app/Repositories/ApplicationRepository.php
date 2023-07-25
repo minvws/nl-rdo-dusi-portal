@@ -38,6 +38,7 @@ readonly class ApplicationRepository
         if ($applicationStage === null) {
             return null;
         }
+        assert($applicationStage instanceof ApplicationStage);
         return $applicationStage;
     }
 

@@ -40,7 +40,7 @@ readonly class FormDecodingService
     }
 
     /**
-     * @return array<string, FieldValue>
+     * @return array<int|string, FieldValue>
      * @throws Throwable
      */
     public function decodeFormValues(SubsidyStage $subsidyStage, string $data): array
