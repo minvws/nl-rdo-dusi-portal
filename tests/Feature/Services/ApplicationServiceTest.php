@@ -61,6 +61,9 @@ class ApplicationServiceTest extends TestCase
         $this->numericField = Field::factory()->create([
             'type' => FieldType::TextNumeric,
             'code' => 'number']);
+
+        $this->subsidyStage->fields()->attach($this->textField);
+        $this->subsidyStage->fields()->attach($this->numericField);
     }
 
     public function testProcessFileUpload(): void
