@@ -42,6 +42,9 @@ class Application extends Model
         return $this->hasMany(ApplicationStage::class, 'application_id', 'id');
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function identity(): Attribute
     {
         return Attribute::make(

@@ -23,10 +23,10 @@ readonly class ApplicationRepository
         }
     }
 
-    public function getApplication(string $applicationId): Application
+    public function getApplication(string $appId): Application
     {
-        $this->validateUuid($applicationId);
-        $application = Application::query()->findOrFail($applicationId);
+        $this->validateUuid($appId);
+        $application = Application::query()->findOrFail($appId);
         assert($application === null || $application instanceof Application);
         return $application;
     }
@@ -41,18 +41,18 @@ readonly class ApplicationRepository
         return $applicationStage;
     }
 
-    public function getApplicationStageVersion(string $applicationStageVersionId): ApplicationStageVersion
+    public function getApplicationStageVersion(string $appStageVersionId): ApplicationStageVersion
     {
-        $this->validateUuid($applicationStageVersionId);
-        $applicationStageVersion = ApplicationStageVersion::query()->findOrFail($applicationStageVersionId);
-        assert($applicationStageVersion instanceof ApplicationStageVersion);
-        return $applicationStageVersion;
+        $this->validateUuid($appStageVersionId);
+        $appStageVersion = ApplicationStageVersion::query()->findOrFail($appStageVersionId);
+        assert($appStageVersion instanceof ApplicationStageVersion);
+        return $appStageVersion;
     }
 
-    public function getAnswer(ApplicationStageVersion $applicationStageVersion, Field $field): ?Answer
+    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): ?Answer
     {
         $answer = Answer::query()
-            ->where('application_stage_version_id', $applicationStageVersion->id)
+            ->where('application_stage_version_id', $appStageVersion->id)
             ->where('field_id', $field->id)->first();
         assert($answer === null || $answer instanceof Answer);
         return $answer;
@@ -79,15 +79,15 @@ readonly class ApplicationRepository
 
     public function makeApplicationStageVersion(ApplicationStage $applicationStage): ApplicationStageVersion
     {
-        $applicationStageVersion = new ApplicationStageVersion();
-        $applicationStageVersion->applicationStage()->associate($applicationStage);
-        return $applicationStageVersion;
+        $appStageVersion = new ApplicationStageVersion();
+        $appStageVersion->applicationStage()->associate($applicationStage);
+        return $appStageVersion;
     }
 
-    public function makeAnswer(ApplicationStageVersion $applicationStageVersion, Field $field): Answer
+    public function makeAnswer(ApplicationStageVersion $appStageVersion, Field $field): Answer
     {
         $answer = new Answer();
-        $answer->applicationStageVersion()->associate($applicationStageVersion);
+        $answer->applicationStageVersion()->associate($appStageVersion);
         $answer->field_id = $field->id;
         return $answer;
     }
@@ -99,9 +99,9 @@ readonly class ApplicationRepository
         $application->save();
     }
 
-    public function saveApplicationStageVersion(ApplicationStageVersion $applicationStageVersion): void
+    public function saveApplicationStageVersion(ApplicationStageVersion $appStageVersion): void
     {
-        $applicationStageVersion->save();
+        $appStageVersion->save();
     }
 
     public function saveApplicationStage(ApplicationStage $applicationStage): void

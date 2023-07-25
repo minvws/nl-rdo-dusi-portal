@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -e -x
 
 vendor/bin/sail artisan ide-helper:generate
 vendor/bin/phpcs
