@@ -21,8 +21,8 @@ class FieldGroupUI extends Model
     protected $connection = Connection::FORM;
 
     protected $casts = [
-        'default_input_ui' => 'json',
-        'default_review_ui' => 'json',
+        'default_input_ui' => 'array',
+        'default_review_ui' => 'array',
         'status' => VersionStatus::class
     ];
 
