@@ -13,6 +13,7 @@ use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\Subsidy;
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\SubsidyVersion;
+use Illuminate\Database\QueryException;
 use Tests\TestCase;
 
 class ApplicationRepositoryTest extends TestCase
@@ -36,7 +37,7 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertInstanceOf(Application::class, $foundApplication);
 
         // Test invalid application
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(QueryException::class);
         $this->repository->getApplication('invalid_application_id');
     }
 
@@ -50,7 +51,7 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertInstanceOf(ApplicationStage::class, $foundApplicationStage);
 
         // Test invalid application stage
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(QueryException::class);
         $this->repository->getApplicationStage('invalid_application_stage_id');
     }
 
@@ -64,7 +65,7 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertInstanceOf(ApplicationStageVersion::class, $foundApplicationStageVersion);
 
         // Test invalid application stage version
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(QueryException::class);
         $this->repository->getApplicationStageVersion('invalid_application_stage_version_id');
     }
 
@@ -73,13 +74,11 @@ class ApplicationRepositoryTest extends TestCase
         // Create test models
         $applicationStageVersion = ApplicationStageVersion::factory()->create();
         $field = Field::factory()->create();
-        $ans = Answer::factory()->create([
+        Answer::factory()->create([
             'application_stage_version_id' => $applicationStageVersion->id,
             'field_id' => $field->id,
         ]);
 
-        echo "\n" . $ans->application_stage_version_id . "\n" . "\n";
-        echo $ans->field_id . "\n" . "\n";
         $foundAnswer = $this->repository->getAnswer($applicationStageVersion, $field);
         $this->assertInstanceOf(Answer::class, $foundAnswer);
 

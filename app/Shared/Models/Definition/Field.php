@@ -14,9 +14,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
+ * @property string $title
+ * @property string $description
  * @property FieldType $type
  * @property boolean $is_required
  * @property string $code
+ * @property FieldSource $source
+ * @property array $params
+ * @property string $id
  */
 class Field extends Model
 {

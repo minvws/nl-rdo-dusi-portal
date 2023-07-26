@@ -6,7 +6,7 @@ namespace App\Models;
 
 final readonly class Disk
 {
-    public const APPLICATIONFILES = 'application-files';
+    public const APPLICATION_FILES = 'application-files';
 
     private function __construct()
     {

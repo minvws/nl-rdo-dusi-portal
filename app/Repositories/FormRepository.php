@@ -7,35 +7,26 @@ namespace App\Repositories;
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\SubsidyVersion;
 use App\Shared\Models\Definition\Field;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as Col;
 
 class FormRepository
 {
-    public function getSubsidyVersion(string $subsidyVersionId): ?SubsidyVersion
+    public function getSubsidyVersion(string $subsidyVersionId): Builder|array|Col|Model
     {
-        $subsidyVersion = SubsidyVersion::query()->find($subsidyVersionId);
-        if ($subsidyVersion instanceof SubsidyVersion === false) {
-            throw new \InvalidArgumentException('Subsidy version not found');
-        }
-        return $subsidyVersion;
+        return SubsidyVersion::query()->find($subsidyVersionId); // @phpstan-ignore-line
     }
 
-    public function getSubsidyStage(string $subsidyStageId): ?SubsidyStage
+    public function getSubsidyStage(string $subsidyStageId): Builder|array|Col|Model
     {
-        $subsidyStage = SubsidyStage::query()->find($subsidyStageId);
-        if ($subsidyStage instanceof SubsidyStage === false) {
-            throw new \InvalidArgumentException('Subsidy stage not found');
-        }
-        return $subsidyStage;
+        return SubsidyStage::query()->find($subsidyStageId); // @phpstan-ignore-line
     }
 
     public function getField(SubsidyStage $subsidyStage, string $fieldCode): ?Field
     {
-        $field = $subsidyStage->fields()->where('code', '=', $fieldCode)->first();
-        if ($field instanceof Field === false) {
-            throw new \InvalidArgumentException('Field not found');
-        }
-        return $field;
+        return $subsidyStage->fields()->where('code', '=', $fieldCode)->first();
     }
 
     public function getFields(SubsidyStage $subsidyStage): Collection

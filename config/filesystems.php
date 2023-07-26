@@ -60,7 +60,7 @@ return [
             'throw' => false,
         ],
 
-        Disk::APPLICATIONFILES => [
+        Disk::APPLICATION_FILES => [
             'driver' => env('FILESYSTEM_APPLICATION_FILES_DRIVER', 'local'),
             'root' => env('FILESYSTEM_APPLICATION_FILES_ROOT', storage_path('application-files')),
             'throw' => false,

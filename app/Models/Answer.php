@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * @property string $id
  * @property string $encrypted_answer
+ * @property string $field_id
  */
 class Answer extends Model
 {

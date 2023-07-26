@@ -11,55 +11,34 @@ use App\Models\ApplicationStageVersion;
 use App\Shared\Models\Definition\Field;
 use App\Shared\Models\Definition\SubsidyStage;
 use App\Shared\Models\Definition\SubsidyVersion;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 readonly class ApplicationRepository
 {
-    // Helper function to check if a string is a valid UUID
-    private function validateUuid(string $uuid): void
+    public function getApplication(string $appId): Builder|array|Collection|Model|null
     {
-        if (!Str::isUuid($uuid)) {
-            throw new \InvalidArgumentException('Invalid UUID');
-        }
+        return Application::query()->find($appId);
     }
 
-    public function getApplication(string $appId): Application
+    public function getApplicationStage(string $applicationStageId): Builder|array|Collection|Model|null
     {
-        $this->validateUuid($appId);
-        $application = Application::query()->findOrFail($appId);
-        assert($application instanceof Application);
-        return $application;
+        return ApplicationStage::query()->find($applicationStageId);
     }
 
-    public function getApplicationStage(string $applicationStageId): ?ApplicationStage
+    public function getApplicationStageVersion(string $appStageVersionId): Builder|array|Collection|Model|null
     {
-        $this->validateUuid($applicationStageId);
-        $applicationStage = ApplicationStage::query()->find($applicationStageId);
-        if ($applicationStage === null) {
-            return null;
-        }
-        assert($applicationStage instanceof ApplicationStage);
-        return $applicationStage;
+        return ApplicationStageVersion::query()->find($appStageVersionId);
     }
 
-    public function getApplicationStageVersion(string $appStageVersionId): ApplicationStageVersion
+    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): Model|Builder|null
     {
-        $this->validateUuid($appStageVersionId);
-        $appStageVersion = ApplicationStageVersion::query()->findOrFail($appStageVersionId);
-        assert($appStageVersion instanceof ApplicationStageVersion);
-        return $appStageVersion;
-    }
-
-    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): ?Answer
-    {
-        $answer = Answer::query()
+        return Answer::query()
             ->where('application_stage_version_id', $appStageVersion->id)
-            ->where('field_id', $field->id)->first();
-        assert($answer instanceof Answer);
-        return $answer;
+            ->where('field_id', $field->id)
+            ->first();
     }
-
-    // ==================================================
 
     public function makeApplicationForSubsidyVersion(SubsidyVersion $subsidyVersion): Application
     {
@@ -67,8 +46,6 @@ readonly class ApplicationRepository
         $application->subsidy_version_id = $subsidyVersion->id;
         return $application;
     }
-
-    // ====================================================
 
     public function makeApplicationStage(Application $application, SubsidyStage $subsidyStage): ApplicationStage
     {
@@ -92,8 +69,6 @@ readonly class ApplicationRepository
         $answer->field_id = $field->id;
         return $answer;
     }
-
-    // ====================================================
 
     public function saveApplication(Application $application): void
     {

@@ -13,7 +13,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
+ * @property string $id
+ * @property string $subsidy_version_id
+ * @property string $application_title
+ * @property string $identity_type
+ * @property string $identity_identifier
  * @property Identity $identity
+ * @property int $locked_from
+ * @property int $final_review_deadline
  */
 class Application extends Model
 {

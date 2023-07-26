@@ -69,7 +69,7 @@ class ApplicationServiceTest extends TestCase
 
     public function testProcessFileUpload(): void
     {
-        Storage::fake(Disk::APPLICATIONFILES);
+        Storage::fake(Disk::APPLICATION_FILES);
 
         $this->subsidyStage->fields()->detach();
         $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
@@ -90,7 +90,7 @@ class ApplicationServiceTest extends TestCase
         assert($applicationService instanceof ApplicationService);
         $applicationService->processFileUpload($fileUpload);
 
-        $this->assertTrue(Storage::disk(Disk::APPLICATIONFILES)
+        $this->assertTrue(Storage::disk(Disk::APPLICATION_FILES)
             ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
         $applicationStage = ApplicationStage::query()->find($fileUpload->applicationMetadata->applicationStageId);
         $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
@@ -172,7 +172,7 @@ class ApplicationServiceTest extends TestCase
 
     public function testProcessFormSubmitMissingFile(): void
     {
-        Storage::fake(Disk::APPLICATIONFILES);
+        Storage::fake(Disk::APPLICATION_FILES);
 
         $this->subsidyStage->fields()->detach();
 

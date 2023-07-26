@@ -8,6 +8,7 @@ use App\Shared\Models\Definition\Enums\SubjectRole;
 use App\Shared\Models\Connection;
 use App\Shared\Models\Definition\Factories\SubsidyStageFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
+ * @property string $id
  * @property string $title
+ * @property SubjectRole $subject_role
+ * @property string $subject_organisation
+ * @property int $stage
+ * @property int $final_review_deadline
+ * @property int $final_review_time_in_s_after_submission
+ * @property subsidyVersion $subsidyVersion
+ * @property Collection $fields
  */
 class SubsidyStage extends Model
 {
