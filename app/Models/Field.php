@@ -39,7 +39,7 @@ class Field extends Model
     protected $casts = [
         'type' => FieldType::class,
         'source' => FieldSource::class,
-        'params' => 'json',
+        'params' => 'array',
         'is_required' => 'boolean',
     ];
 
