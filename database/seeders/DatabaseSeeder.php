@@ -12,11 +12,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SubsidyVersionsTableSeeder::class);
         $this->call(SubsidyStagesTableSeeder::class);
         $this->call(FieldsTableSeeder::class);
-//
-//        $this->call(FormsTableSeeder::class);
-//        $this->call(FieldsTableSeeder::class);
-//        $this->call(FormUIsTableSeeder::class);
-        //$this->call(FormHashesTableSeeder::class);
-        //$this->call(FormHashFieldsTableSeeder::class);
+        $this->call(SubsidyStageUIsTableSeeder::class);
     }
 }

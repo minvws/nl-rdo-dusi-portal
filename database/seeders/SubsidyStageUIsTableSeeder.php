@@ -244,9 +244,9 @@ class SubsidyStageUIsTableSeeder extends Seeder
             ]
         ];
 
-        DB::table('form_uis')->insert([
+        DB::table('subsidy_stage_uis')->insert([
             'id' => self::BTV_V1_UUID,
-            'form_id' => SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             'version' => 1,
             'status' => 'published',
             'ui' => json_encode($ui)
