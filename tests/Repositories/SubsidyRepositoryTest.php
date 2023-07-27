@@ -14,14 +14,13 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use PHPUnit\Framework\TestCase;
+use Orchestra\Testbench\TestCase;
 use function PHPUnit\Framework\assertNotNull;
 
 
 class SubsidyRepositoryTest extends TestCase
 {
     use DatabaseMigrations;
-    use WithFaker;
 
     protected array $connectionsToTransact = [Connection::FORM];
 
