@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MinVWS\DUSi\Shared\Subsidy\Database\Factories\FieldFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 
@@ -66,5 +67,10 @@ class Field extends Model
     public function subsidyStageHashFields(): HasMany
     {
         return $this->HasMany(SubsidyStageHashField::class, 'field_id', 'id');
+    }
+
+    protected static function newFactory(): FieldFactory
+    {
+        return new FieldFactory();
     }
 }

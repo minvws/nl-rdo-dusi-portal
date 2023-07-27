@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageUIFactory;
 
 class SubsidyStageUI extends Model
 {
@@ -30,5 +31,10 @@ class SubsidyStageUI extends Model
     public function subsidyStage(): BelongsTo
     {
         return $this->belongsTo(SubsidyStage::class, 'subsidy_stage_id', 'id');
+    }
+
+    protected static function newFactory(): SubsidyStageUIFactory
+    {
+        return new SubsidyStageUIFactory();
     }
 }

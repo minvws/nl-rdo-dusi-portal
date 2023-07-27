@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
+use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use Illuminate\Database\Eloquent\Builder;
@@ -67,5 +68,10 @@ class SubsidyStage extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('stage');
+    }
+
+    protected static function newFactory(): SubsidyStageFactory
+    {
+        return new SubsidyStageFactory();
     }
 }

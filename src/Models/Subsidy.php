@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
@@ -59,5 +60,10 @@ class Subsidy extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('title');
+    }
+
+    protected static function newFactory(): SubsidyFactory
+    {
+        return new SubsidyFactory();
     }
 }

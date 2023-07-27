@@ -23,7 +23,8 @@
     },
     "autoload": {
         "psr-4": {
-            "MinVWS\\DUSi\\Shared\\Subsidy\\": "src/"
+            "MinVWS\\DUSi\\Shared\\Subsidy\\": "src/",
+            "MinVWS\\DUSi\\Shared\\Subsidy\\Database\\Factories\\": "src/database/factories/"
         }
     },
     "autoload-dev": {
