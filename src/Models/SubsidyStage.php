@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -24,6 +25,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class SubsidyStage extends Model
 {
     use HasUuids;
+    use HasFactory;
+
 
     protected $connection = Connection::FORM;
 

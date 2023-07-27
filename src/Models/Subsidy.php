@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -24,6 +25,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 class Subsidy extends Model
 {
     use HasUuids;
+    use HasFactory;
+
 
     /**
      * @var string|null

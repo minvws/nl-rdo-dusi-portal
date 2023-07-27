@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -12,6 +13,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 class FieldGroupUI extends Model
 {
     use HasUuids;
+    use HasFactory;
+
 
     /**
      * @var string|null
