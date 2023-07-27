@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\SubsidyModel\Models;
+namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
-use MinVWS\SubsidyModel\Models\Enums\FieldSource;
-use MinVWS\SubsidyModel\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

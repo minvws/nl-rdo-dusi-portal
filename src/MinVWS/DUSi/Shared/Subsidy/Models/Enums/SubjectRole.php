@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\SubsidyModel\Models\Enums;
+namespace MinVWS\DUSi\Shared\Subsidy\Models\Enums;
 
 enum SubjectRole: string
 {

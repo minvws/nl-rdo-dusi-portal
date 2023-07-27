@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\SubsidyModel\Repositories;
+namespace MinVWS\DUSi\Shared\Subsidy\Repositories;
 
-use MinVWS\SubsidyModel\Models\Field;
-use MinVWS\SubsidyModel\Models\SubsidyStage;
-use MinVWS\SubsidyModel\Models\Subsidy;
-use MinVWS\SubsidyModel\Models\SubsidyStageUI;
-use MinVWS\SubsidyModel\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageUI;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;

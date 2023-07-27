@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\SubsidyModel\Traits;
+namespace MinVWS\DUSi\Shared\Subsidy\Traits;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

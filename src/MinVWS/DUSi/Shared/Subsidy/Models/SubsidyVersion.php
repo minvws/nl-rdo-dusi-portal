@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\SubsidyModel\Models;
+namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
-use MinVWS\SubsidyModel\Models\Connection;
-use MinVWS\SubsidyModel\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;

@@ -23,9 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MinVWS\\SubsidyModel\\": "src/MinVWS/SubsidyModel/",
-            "MinVWS\\SubsidyModel\\Database\\Factories\\": "src/MinVWS/SubsidyModel/database/factories/",
-            "MinVWS\\SubsidyModel\\Database\\Seeders\\": "src/MinVWS/SubsidyModel/database/seeders/"
+            "MinVWS\\DUSi\\Shared\\Subsidy\\": "src/MinVWS/DUSi/Shared/Subsidy/"
         }
     },
     "autoload-dev": {
@@ -36,7 +34,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MinVWS\\SubsidyModel\\SubsidyModelServiceProvider"
+                "MinVWS\\DUSi\\Shared\\Subsidy\\SubsidyServiceProvider"
             ]
         }
     },

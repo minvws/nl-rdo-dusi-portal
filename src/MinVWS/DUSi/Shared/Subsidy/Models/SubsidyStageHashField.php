@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\SubsidyModel\Models;
+namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
-use MinVWS\SubsidyModel\Traits\HasCompositePrimaryKey;
+use MinVWS\DUSi\Shared\Subsidy\Traits\HasCompositePrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

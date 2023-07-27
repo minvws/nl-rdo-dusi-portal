@@ -2,7 +2,7 @@
 // phpcs:ignoreFile
 declare(strict_types=1);
 
-namespace MinVWS\SubsidyModel\Models;
+namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 final readonly class Connection
 {
