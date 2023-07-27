@@ -18,10 +18,10 @@ On Mac:
 
 On Linux and Windows Subsystem for Linux use your package manager.
 
-This service depends on services from the `nl-rdo-dusi-portal-backend` and `nl-rdo-dusi-form-web` repositories. Make
+This service depends on services from the `nl-rdo-dusi-portal-backend` and `nl-rdo-dusi-form-admin-web` repositories. Make
 sure to install these first.
 
-After cloning `nl-rdo-dusi-form-web` inside the `nl-rdo-dusi-form-web` directory:
+After cloning `nl-rdo-dusi-form-admin-web` inside the `nl-rdo-dusi-form-admin-web` directory:
 ```sh
 # 1. Copy the .env.example to .env and start the application
 ./init.sh
@@ -43,7 +43,7 @@ And finally for `nl-rdo-dusi-portal-web` inside the `nl-rdo-dusi-portal-web` dir
 # 1. Copy the .env.example to .env and start the application
 ./init.sh
 
-# 2. Cache forms (re-run this command if you re-seed the form-web database)
+# 2. Cache forms (re-run this command if you re-seed the form-admin-web database)
 vendor/bin/sail artisan cache:all
 
 # 3. Connect to portal
