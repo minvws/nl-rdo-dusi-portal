@@ -5,21 +5,20 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
  * @property string $title
  * @property string $description
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
- * @property Form[] $forms
+ * @property subsidyVersion[] $forms
  */
 
 class Subsidy extends Model

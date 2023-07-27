@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
-use MinVWS\DUSi\Shared\Subsidy\Traits\HasCompositePrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use MinVWS\DUSi\Shared\Subsidy\Traits\HasCompositePrimaryKey;
 
 class SubsidyStageHashField extends Model
 {

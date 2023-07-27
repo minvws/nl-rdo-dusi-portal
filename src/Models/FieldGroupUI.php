@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
-class FieldGroup extends Model
+class FieldGroupUI extends Model
 {
     use HasFactory;
     use HasUuids;
@@ -22,22 +21,21 @@ class FieldGroup extends Model
     protected $connection = Connection::FORM;
 
     protected $casts = [
-        'status' => VersionStatus::class,
+        'default_input_ui' => 'array',
+        'default_review_ui' => 'array',
+        'status' => VersionStatus::class
     ];
 
     protected $fillable = [
+        'field_group_id',
         'version',
         'status',
-        'title',
+        'default_input_ui',
+        'default_review_ui',
     ];
 
-    public function fields(): HasMany
+    public function fieldGroup(): BelongsTo
     {
-        return $this->hasMany(Field::class, 'field_group_id', 'id');
-    }
-
-    public function fieldGroupPurpose(): BelongsTo
-    {
-        return $this->belongsTo(FieldGroupPurpose::class, 'purpose', 'id');
+        return $this->belongsTo(FieldGroup::class, 'field_group_id', 'id');
     }
 }
