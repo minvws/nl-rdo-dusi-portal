@@ -25,6 +25,6 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
         }
         # TODO: Log login to Calvin?
         Auth::setUser($user);
-        return new RedirectResponse(config('app.frontend_base_url'));
+        return new RedirectResponse(config('app.frontend_base_url').'/login-callback');
     }
 }
