@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
+ * @property uuid $id
  * @property string $title
  * @property string $description
  * @property DateTimeInterface $valid_from
@@ -65,5 +66,10 @@ class Subsidy extends Model
     protected static function newFactory(): SubsidyFactory
     {
         return new SubsidyFactory();
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereRelation('SubsidyVersions', fn (Builder $subQuery) => $subQuery->open());
     }
 }

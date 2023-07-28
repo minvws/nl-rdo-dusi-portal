@@ -15,6 +15,10 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 class SubsidyRepository
 {
+    public function getActiveSubsidies(): \Illuminate\Support\Collection
+    {
+        return Subsidy::query()->active()->ordered()->with('subsidyVersions.subsidyStages')->get();
+    }
     public function getSubsidy(string $id): Model|Collection|Builder|array|null
     {
         return Subsidy::query()->with('subsidyVersions.subsidyStages')->find($id);

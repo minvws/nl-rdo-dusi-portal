@@ -15,6 +15,8 @@ use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyVersionFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
+ * @property uuid $id
+ * @property uuid $subsidy_id
  * @property string $title
  * @property string $description
  * @property DateTimeInterface $valid_from
@@ -58,6 +60,12 @@ class SubsidyVersion extends Model
     {
         return $this->hasMany(SubsidyStage::class, 'subsidy_version_id', 'id');
     }
+
+    public function scopeOpen(Builder $query): Builder
+    {
+        return $query->whereIn('status', [VersionStatus::Published, VersionStatus::Archived]);
+    }
+
 
     protected static function newFactory(): SubsidyVersionFactory
     {
