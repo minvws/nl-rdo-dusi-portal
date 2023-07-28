@@ -1,1 +1,2 @@
-Auto-generated README for nl-rdo-dusi-application-model
+# Application model
+Application model for the models and repositories of portal-backend.
