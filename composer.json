@@ -54,7 +54,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "..\\nl-rdo-dusi-subsidy-model"
+            "url": "https://github.com/minvws/nl-rdo-dusi-subsidy-model"
         }
     ]
 }

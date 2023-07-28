@@ -1307,12 +1307,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-subsidy-model.git",
-                "reference": "d257fec366a114e8db7672e05d57127b8ea1efa4"
+                "reference": "ac28d80346cbb77008005fb1240c0f69267cd324"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/d257fec366a114e8db7672e05d57127b8ea1efa4",
-                "reference": "d257fec366a114e8db7672e05d57127b8ea1efa4",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/ac28d80346cbb77008005fb1240c0f69267cd324",
+                "reference": "ac28d80346cbb77008005fb1240c0f69267cd324",
                 "shasum": ""
             },
             "require": {
@@ -1368,7 +1368,7 @@
                 "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/feature/base",
                 "issues": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/issues"
             },
-            "time": "2023-07-28T09:59:22+00:00"
+            "time": "2023-07-28T15:57:28+00:00"
         },
         {
             "name": "monolog/monolog",

@@ -10,10 +10,10 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Definition\Field;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Definition\Subsidy;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Definition\SubsidyStage;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Definition\SubsidyVersion;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Application\Tests\Feature\TestCase;
 
 class ApplicationRepositoryTest extends TestCase
