@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Subsidy\Tests\Repositories;
+namespace MinVWS\DUSi\Shared\Subsidy\Tests\Feature\Repositories;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\WithFaker;
-use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -14,14 +11,10 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use MinVWS\DUSi\Shared\Subsidy\Tests\DbBaseTestCase;
-use Orchestra\Testbench\TestCase;
+use MinVWS\DUSi\Shared\Subsidy\Tests\Feature\TestCase;
 use function PHPUnit\Framework\assertNotNull;
-use Illuminate\Contracts\Config\Repository;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
-
-class SubsidyRepositoryTest extends DbBaseTestCase
+class SubsidyRepositoryTest extends TestCase
 {
     public function testGetSubsidy(): void
     {

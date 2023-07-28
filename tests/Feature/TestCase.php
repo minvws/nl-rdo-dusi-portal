@@ -1,12 +1,12 @@
 <?php
 
-namespace MinVWS\DUSi\Shared\Subsidy\Tests;
+namespace MinVWS\DUSi\Shared\Subsidy\Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Orchestra\Testbench\TestCase;
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 
-class DbBaseTestCase extends TestCase
+class TestCase extends BaseTestCase
 {
     use DatabaseMigrations;
 
