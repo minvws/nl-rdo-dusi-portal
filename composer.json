@@ -24,13 +24,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MinVWS\\DUSi\\Shared\\Subsidy\\": "src/",
-            "MinVWS\\DUSi\\Shared\\Subsidy\\Database\\Factories\\": "src/database/factories/"
+            "MinVWS\\DUSi\\Shared\\Subsidy\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MinVWS\\Tests\\SubsidyModel\\": "tests/"
+            "MinVWS\\DUSi\\Shared\\Subsidy\\Database\\Factories\\": "database/factories/"
         }
     },
     "extra": {
@@ -40,7 +39,6 @@
             ]
         }
     },
-
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyze -c phpstan.neon.dist",
         "phpcs": "vendor/bin/phpcs"

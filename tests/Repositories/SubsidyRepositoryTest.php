@@ -17,13 +17,31 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Orchestra\Testbench\TestCase;
 use function PHPUnit\Framework\assertNotNull;
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
 class SubsidyRepositoryTest extends TestCase
 {
     use DatabaseMigrations;
-
+//    use RefreshDatabase;
 //    protected array $connectionsToTransact = [Connection::FORM];
+
+    public function setUp() :void {
+//        parent::setUp();
+//        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+//
+//        $this->artisan('migrate',
+//            ['--database' => 'pgsql_form'])->run();//        $this->runDatabaseMigrations();
+//        $this->artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
+//        $this->artisan('migrate')->run();
+    }
+
+//    protected function getPackageProviders($app)
+//    {
+//        return [
+//            'MinVWS\DUSi\Shared\Subsidy\SubsidyServiceProvider',
+//        ];
+//    }
 
     protected function defineEnvironment($app): void
     {

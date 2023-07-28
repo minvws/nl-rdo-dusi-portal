@@ -1,7 +1,8 @@
 <?php
 
-namespace MinVWS\DUSi\Shared\Subsidy;
+declare(strict_types=1);
 
+namespace MinVWS\DUSi\Shared\Subsidy;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -13,8 +14,9 @@ class SubsidyServiceProvider extends ServiceProvider
     }
 
 
-    public function boot()
+    public function boot(): void
     {
-        //
+        dd('boot');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 }

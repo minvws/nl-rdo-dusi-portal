@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use DateTimeInterface;
+use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+
 
 /**
  * @property string $title
@@ -66,5 +67,10 @@ class Subsidy extends Model
     protected static function newFactory(): SubsidyFactory
     {
         return new SubsidyFactory();
+//        dump(\factories\SubsidyFactory::class);
+//        $bla =  new \factories\SubsidyFactory();
+//        dump($bla);
+//        return $bla;
+//        return null;
     }
 }

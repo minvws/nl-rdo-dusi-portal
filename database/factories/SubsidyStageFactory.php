@@ -1,6 +1,6 @@
 <?php
 
-namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
+namespace factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;

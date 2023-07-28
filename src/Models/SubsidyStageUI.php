@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
+use factories\SubsidyStageUIFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageUIFactory;
 
 class SubsidyStageUI extends Model
 {
