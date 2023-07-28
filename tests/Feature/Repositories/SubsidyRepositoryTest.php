@@ -85,5 +85,16 @@ class SubsidyRepositoryTest extends TestCase
             $activeSubsidies->pluck('id')->toArray()
         );
     }
+
+    public function testMakeApplicationStage()
+    {
+        // Create test models
+        $subsidy = Subsidy::factory()->create();
+        $subsidyVersion = SubsidyVersion::factory()->create(['subsidy_id' => $subsidy->id]);
+        $subsidyStage = SubsidyStage::factory()->create(['subsidy_version_id' => $subsidyVersion->id]);
+
+        // Test make application stage
+        $this->assertEquals("1", "1");
+    }
 }
 

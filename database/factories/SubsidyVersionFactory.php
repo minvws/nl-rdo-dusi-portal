@@ -3,6 +3,7 @@
 namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Ramsey\Uuid\Uuid;
 
@@ -22,6 +23,8 @@ class SubsidyVersionFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
+            'version' => $this->faker->randomDigitNotZero(),
+            'status' => VersionStatus::Draft->value,
         ];
     }
 }

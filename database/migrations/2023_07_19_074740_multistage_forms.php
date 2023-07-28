@@ -7,6 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 return new class extends Migration
 {
@@ -103,6 +104,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+
         // Drop new tables
         Schema::dropIfExists('field_group_uis');
         Schema::dropIfExists('field_groups');
@@ -122,7 +124,7 @@ return new class extends Migration
             $table->renameColumn('subsidy_stage_hash_id', 'form_hash_id');
         });
 
-        Field::truncate();
+        Field::query()->truncate();
 
         // Restoring the 'fields' table
         Schema::table('fields', function (Blueprint $table) {
@@ -134,7 +136,7 @@ return new class extends Migration
             $table->renameColumn('subsidy_stage_id', 'form_id');
         });
 
-        SubsidyStage::truncate();
+        SubsidyStage::query()->truncate();
         // Restoring the previous state of the tables
         Schema::table('subsidy_stages', function (Blueprint $table) {
             $table->dropColumn('title');
