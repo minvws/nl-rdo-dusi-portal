@@ -27,6 +27,8 @@ class SubsidyRepositoryTest extends TestCase
 //    protected array $connectionsToTransact = [Connection::FORM];
 
     public function setUp() :void {
+        parent::setUp();
+
 //        parent::setUp();
 //        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
 //
