@@ -16,7 +16,6 @@ class SubsidyServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        dd('boot');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 }

@@ -14,15 +14,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
-
 /**
  * @property string $title
  * @property string $description
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
- * @property subsidyVersion[] $forms
+ * @property SubsidyVersion[] $forms
  */
-
 class Subsidy extends Model
 {
     use HasUuids;
@@ -67,10 +65,5 @@ class Subsidy extends Model
     protected static function newFactory(): SubsidyFactory
     {
         return new SubsidyFactory();
-//        dump(\factories\SubsidyFactory::class);
-//        $bla =  new \factories\SubsidyFactory();
-//        dump($bla);
-//        return $bla;
-//        return null;
     }
 }

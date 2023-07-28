@@ -38,12 +38,12 @@ class SubsidyRepositoryTest extends TestCase
 //        $this->artisan('migrate')->run();
     }
 
-//    protected function getPackageProviders($app)
-//    {
-//        return [
-//            'MinVWS\DUSi\Shared\Subsidy\SubsidyServiceProvider',
-//        ];
-//    }
+    protected function getPackageProviders($app)
+    {
+        return [
+            'MinVWS\DUSi\Shared\Subsidy\SubsidyServiceProvider',
+        ];
+    }
 
     protected function defineEnvironment($app): void
     {
@@ -70,7 +70,7 @@ class SubsidyRepositoryTest extends TestCase
     public function testGetSubsidy(): void
     {
         $subsidy = Subsidy::factory()->create();
-        dd(config('database'));
+//        dd(config('database'));
 
         $subsidyVersion = SubsidyVersion::factory()->create(
             [

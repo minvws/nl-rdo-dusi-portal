@@ -1,12 +1,12 @@
 <?php
 
-use App\Models\ApplicationStatus;
-use App\Models\Field;
-use App\Models\SubsidyStage;
-use App\Shared\Models\Application\IdentityType;
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 return new class extends Migration
 {
@@ -91,7 +91,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('field_subsidy_stage', function(Blueprint $table){
+        Schema::create('field_subsidy_stage', function (Blueprint $table){
             $table->primary(['field_id', 'subsidy_stage_id']);
             $table->foreignUuid('field_id')->constrained();
             $table->foreignUuid('subsidy_stage_id')->constrained();
@@ -125,8 +125,7 @@ return new class extends Migration
         Field::truncate();
 
         // Restoring the 'fields' table
-        Schema::table('fields', function (Blueprint $table)
-        {
+        Schema::table('fields', function (Blueprint $table) {
             $table->foreignUuid('form_id')->references('id')->on('subsidy_stages');
         });
 
@@ -163,6 +162,5 @@ return new class extends Migration
         Schema::rename('subsidy_stage_hash_fields', 'form_hash_fields');
         Schema::rename('subsidy_stage_hashes', 'form_hashes');
         Schema::rename('subsidy_stages', 'forms');
-
     }
 };
