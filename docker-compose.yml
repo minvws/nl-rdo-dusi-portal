@@ -11,7 +11,7 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
-            - '${APP_PORT:-9080}:80'
+            - '${APP_PORT:-8002}:80'
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
@@ -24,13 +24,13 @@ services:
         networks:
             portal-backend:
             form-admin-web:
-            nl-rdo-dusi-user-admin-web_sail:
+            user-admin-web:
 
 
 networks:
     portal-backend:
         external: true
-    nl-rdo-dusi-user-admin-web_sail:
+    user-admin-web:
         external: true
     form-admin-web:
         external: true

@@ -41,6 +41,7 @@ trait HasCompositePrimaryKey
 
     /**
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIncrementing(): bool
     {
