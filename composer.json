@@ -1,5 +1,5 @@
 {
-    "name": "minvws/dusi--model",
+    "name": "minvws/dusi-application-model",
     "description": "Models and repositories for portal-backend",
     "type": "library",
     "license": "MIT",
