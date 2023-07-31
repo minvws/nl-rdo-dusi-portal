@@ -44,8 +44,8 @@ class Subsidy extends Model
 
     protected $casts = [
         'status' => VersionStatus::class,
-        'valid_from' => 'timestamp',
-        'valid_to' => 'timestamp',
+        'valid_from' => 'date',
+        'valid_to' => 'date',
     ];
 
     public function subsidyVersions(): HasMany
