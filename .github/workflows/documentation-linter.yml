@@ -1,4 +1,4 @@
-name: lint documentation
+name: Lint Documentation
 on:
   pull_request:
     paths:
