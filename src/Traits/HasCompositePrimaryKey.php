@@ -83,7 +83,7 @@ trait HasCompositePrimaryKey
         // @phpstan-ignore-next-line
         assert(is_array($keys), 'Composite primary key must be an array');
 
-        return $model->where(function ($query) use ($ids, $keys) {
+        return $model::query()->where(function ($query) use ($ids, $keys) {
             foreach ($keys as $idx => $key) {
                 if (isset($ids[$idx])) {
                     $query->where($key, $ids[$idx]);

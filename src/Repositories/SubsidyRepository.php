@@ -17,6 +17,7 @@ class SubsidyRepository
 {
     public function getActiveSubsidies(): \Illuminate\Support\Collection
     {
+ //@phpstan-ignore-next-line
         return Subsidy::query()->active()->ordered()->with('publishedVersion.subsidyStages')->get();
     }
     public function getSubsidy(string $id): Model|Collection|Builder|array|null

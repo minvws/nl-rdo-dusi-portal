@@ -1,6 +1,6 @@
 <?php
 // phpcs:ignoreFile
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 

@@ -13,13 +13,18 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\DUSi\Shared\Subsidy\Tests\Feature\TestCase;
+
 use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertNull;
 
 class SubsidyRepositoryTest extends TestCase
 {
     public function testGetSubsidy(): void
     {
         $subsidy = Subsidy::factory()->create();
+
+        assertNull($subsidy->publishedVersion()->first());
+
 
         $subsidyVersion = SubsidyVersion::factory()->create(
             [
@@ -28,6 +33,10 @@ class SubsidyRepositoryTest extends TestCase
                 'version' => 1,
             ]
         );
+
+        assertNotNull($subsidy->publishedVersion()->first());
+
+
         $subsidyStage = SubsidyStage::factory()->create(
             [
                 'subsidy_version_id' => $subsidyVersion->id,
@@ -97,4 +106,3 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals("1", "1");
     }
 }
-

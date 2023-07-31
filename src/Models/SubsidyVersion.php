@@ -53,6 +53,7 @@ class SubsidyVersion extends Model
 
     public function scopeOrdered(Builder $query): Builder
     {
+  //@phpstan-ignore-next-line
         return $query->orderBy('created_at');
     }
 
@@ -63,9 +64,14 @@ class SubsidyVersion extends Model
 
     public function scopeOpen(Builder $query): Builder
     {
+ //@phpstan-ignore-next-line
         return $query->whereIn('status', [VersionStatus::Published, VersionStatus::Archived]);
     }
 
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', 'published');
+    }
 
     protected static function newFactory(): SubsidyVersionFactory
     {

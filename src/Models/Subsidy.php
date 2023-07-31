@@ -21,12 +21,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
  * @property SubsidyVersion[] $forms
+ * @method static SubsidyVersion|Builder publishedVersion()
  */
 class Subsidy extends Model
 {
     use HasUuids;
     use HasFactory;
-
 
     /**
      * @var string|null
@@ -55,11 +55,12 @@ class Subsidy extends Model
 
     public function publishedVersion(): HasOne
     {
-        return $this->hasOne(SubsidyVersion::class)->where('status', '=', 'published');
+ //@phpstan-ignore-next-line
+        return $this->hasOne(SubsidyVersion::class)->published();
     }
-
     public function scopeOrdered(Builder $query): Builder
     {
+ //@phpstan-ignore-next-line
         return $query->orderBy('title');
     }
 
@@ -70,6 +71,7 @@ class Subsidy extends Model
 
     public function scopeActive(Builder $query): Builder
     {
+ //@phpstan-ignore-next-line
         return $query->whereRelation('SubsidyVersions', fn (Builder $subQuery) => $subQuery->open());
     }
 }
