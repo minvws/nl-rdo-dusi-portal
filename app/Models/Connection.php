@@ -6,7 +6,7 @@ namespace App\Models;
 
 final readonly class Connection
 {
-    public const FORM = 'form-admin-web-pgsql';
+    public const FORM = 'pgsql_form';
     public const APPLICATION = 'pgsql_application';
     public const USER = 'pgsql_user';
 

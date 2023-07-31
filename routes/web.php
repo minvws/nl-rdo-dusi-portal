@@ -36,18 +36,18 @@ Route::get('ChangeLanguage/{locale}', function ($locale) {
 })->name('changelang');
 
 // Ony out of Auth for testing reasons
-Route::get(
-    '/applications',
-    [ApplicationController::class, 'index']
-)->name('applications.index');
-Route::get(
-    '/applications/{application}',
-    [ApplicationController::class, 'show']
-)->name('applications.show');
-Route::post(
-    '/applications/{application}/update',
-    [ApplicationController::class, 'update']
-)->name('applications.update');
+//Route::get(
+//    '/applications',
+//    [ApplicationController::class, 'index']
+//)->name('applications.index');
+//Route::get(
+//    '/applications/{application}',
+//    [ApplicationController::class, 'show']
+//)->name('applications.show');
+//Route::post(
+//    '/applications/{application}/update',
+//    [ApplicationController::class, 'update']
+//)->name('applications.update');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {

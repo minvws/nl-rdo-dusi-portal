@@ -1,88 +1,75 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use DateTime;
+use DB;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\UpdateApplicationRequest;
-use App\Models\Judgement;
-use App\Models\Application;
-use App\Models\ApplicationReview;
-use Ramsey\Uuid\Rfc4122\UuidV4;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
-class ApplicationController extends BaseController
+class ApplicationController extends Controller
 {
-    public function __construct()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(): JsonResponse
     {
+        // Retrieve all applications and return them as JSON
+        $results = Application::all();
+        return response()->json($results);
     }
 
     /**
-     * Index applications
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\View
+     * Display a listing of applications with filters on specific fields.
      */
-    public function index(Request $request)
+    public function getFilteredApplications(Request $request): JsonResponse
     {
-        $applications = Application::query();
-
-        if ($request->has('judgement')) {
-            $applications->where('judgement', $request->validate([
-                'judgement' => 'required|in:pending,rejected,approved',
-            ])['judgement']);
-        } else {
-            $applications->where('judgement', 'pending');
+        $query = Application::query();
+        if ($request->has('final_review_deadline')) {
+            $query->where('final_review_deadline', '>=' , $request->final_review_deadline);
         }
 
-        $applications = $applications->get();
-
-        return view('applications.index')
-            ->with('applications', $applications)
-            ->with('judgements', Judgement::all()->pluck('judgement'));
-    }
-
-    /**
-     * show application
-     *
-     * @param Application $application
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function show(Application $application)
-    {
-        return view('applications.show')
-            ->with('application', $application)
-            ->with('answers', $application->answers);
-    }
-
-    /**
-     * Update application
-     *
-     * @param Application $application
-     * @param UpdateApplicationRequest $request
-     *
-     * @return \Illuminate\Routing\Redirector | \Illuminate\Http\RedirectResponse
-     */
-    public function update(Application $application, UpdateApplicationRequest $request)
-    {
-        $judgement = $request->validated('judgement-select');
-        $reasons = $request->validated('reason');
-
-        if ($judgement == 'rejected') {
-            ApplicationReview::create([
-                'application_id' => $application->id,
-                'encrypted_comment' => $reasons,
-                'user_id' => UuidV4::uuid4(),
-                'judgement' => $judgement,
-                'encryption_key_id' => UuidV4::uuid4(),
-            ]);
+        if ($request->has('status')) {
+            $query->whereHas('applicationStages', function ($q) use ($request) {
+                $q->where('status', $request->status);
+            });
         }
 
-        $application->judgement = $judgement;
-        $application->save();
+        if ($request->has('user_id')) {
+            $query->whereHas('applicationStages', function ($q) use ($request) {
+                $q->where('user_id', $request->user_id);
+            });
+        }
 
-        return redirect()->route('applications.show', $application);
+        if ($request->has('subsidy_title')) {
+            SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($request) {
+                $q->where('title', $request->subsidy_title);
+            });
+            SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($request) {
+                $q->where('title', $request->subsidy_title);
+            });
+        }
+
+        if ($request->has('application_title')) {
+            $query->where('application_title', (string)$request->application_title);
+        }
+
+        // Get the final results after applying filters
+        $data = $query->get();
+
+        return response()->json($data);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Application $application): JsonResponse
+    {
+        // Return the specific application as JSON
+        return response()->json($application);
     }
 }
