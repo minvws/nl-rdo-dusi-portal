@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
- * @property uuid $id
+ * @property string $id
  * @property string $title
  * @property string $description
  * @property DateTimeInterface $valid_from

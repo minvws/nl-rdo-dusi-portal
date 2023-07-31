@@ -15,8 +15,8 @@ use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyVersionFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
- * @property uuid $id
- * @property uuid $subsidy_id
+ * @property string $id
+ * @property string $subsidy_id
  * @property string $title
  * @property string $description
  * @property DateTimeInterface $valid_from
