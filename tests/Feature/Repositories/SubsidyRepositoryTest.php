@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Tests\Feature\Repositories;
 
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -73,6 +74,21 @@ class SubsidyRepositoryTest extends TestCase
         );
     }
 
+    private function addSubsidyStageToSubsidyVersion(
+        SubsidyVersion $subsidyVersion,
+        SubjectRole $subjectRole,
+        int $stage,
+    ): SubsidyStage {
+        return SubsidyStage::factory()->create(
+            [
+                'subsidy_version_id' => $subsidyVersion->id,
+                'stage' => 1,
+                'subject_role' => $subjectRole,
+                'stage' => $stage,
+            ]
+        );
+    }
+
     public function testGetActiveSubsidies()
     {
         $aSubsidy = Subsidy::factory()->create(['title' => 'A subsidy']);
@@ -94,6 +110,36 @@ class SubsidyRepositoryTest extends TestCase
             $activeSubsidies->pluck('id')->toArray()
         );
     }
+
+    public function testGetSubsidiesWithSubsidyStagesForSubjectRole()
+    {
+        $repository = $this->app->make(SubsidyRepository::class);
+
+        $aSubsidy = Subsidy::factory()->create(['title' => 'A subsidy']);
+        $bSubsidy = Subsidy::factory()->create(['title' => 'B subsidy']);
+        $cSubsidy = Subsidy::factory()->create(['title' => 'C subsidy']);
+
+        $this->addSubsidyVersionToSubsidy($aSubsidy, VersionStatus::Draft);
+        $this->addSubsidyVersionToSubsidy($aSubsidy, VersionStatus::Archived);
+        $this->addSubsidyVersionToSubsidy($aSubsidy, VersionStatus::Published);
+        $aPublishedSubsidyVersion = $this->addSubsidyVersionToSubsidy($aSubsidy, VersionStatus::Published);
+        $this->addSubsidyStageToSubsidyVersion($aPublishedSubsidyVersion, SubjectRole::Assessor, 1);
+
+        $this->addSubsidyVersionToSubsidy($bSubsidy, VersionStatus::Draft);
+        $bPublishedSubsidyVersion = $this->addSubsidyVersionToSubsidy($bSubsidy, VersionStatus::Published);
+        $this->addSubsidyStageToSubsidyVersion($bPublishedSubsidyVersion, SubjectRole::Applicant, 1);
+        $this->addSubsidyStageToSubsidyVersion($bPublishedSubsidyVersion, SubjectRole::Assessor, 2);
+
+        $this->addSubsidyVersionToSubsidy($cSubsidy, VersionStatus::Draft);
+
+        $subsidyWithStageForSubjects = $repository->getSubsidiesWithSubsidyStagesForSubjectRole(SubjectRole::Applicant);
+        $this->assertSame(1, $subsidyWithStageForSubjects->count());
+        $subsidyWithStageForSubject = $subsidyWithStageForSubjects->first();
+        $this->assertSame($bSubsidy->id, $subsidyWithStageForSubject->id);
+        $this->assertSame(SubjectRole::Applicant,
+            $subsidyWithStageForSubject->publishedVersion->subsidyStages->first()->subject_role);
+    }
+
 
     public function testMakeApplicationStage()
     {

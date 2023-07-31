@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
@@ -43,6 +44,7 @@ class Subsidy extends Model
     ];
 
     protected $casts = [
+        'id' => 'string',
         'status' => VersionStatus::class,
         'valid_from' => 'date',
         'valid_to' => 'date',
@@ -55,12 +57,12 @@ class Subsidy extends Model
 
     public function publishedVersion(): HasOne
     {
- //@phpstan-ignore-next-line
+        //@phpstan-ignore-next-line
         return $this->hasOne(SubsidyVersion::class)->published();
     }
     public function scopeOrdered(Builder $query): Builder
     {
- //@phpstan-ignore-next-line
+        //@phpstan-ignore-next-line
         return $query->orderBy('title');
     }
 
@@ -71,7 +73,12 @@ class Subsidy extends Model
 
     public function scopeActive(Builder $query): Builder
     {
- //@phpstan-ignore-next-line
-        return $query->whereRelation('SubsidyVersions', fn (Builder $subQuery) => $subQuery->open());
+        //@phpstan-ignore-next-line
+        return $query->whereRelation('subsidyVersions', fn (Builder $subQuery) => $subQuery->open());
+    }
+
+    public function scopeSubjectRole(Builder $query, SubjectRole $role): Builder
+    {
+        return $query->whereRelation('subsidyVersions', fn (Builder $subQuery) => $subQuery->subjectRole($role));
     }
 }

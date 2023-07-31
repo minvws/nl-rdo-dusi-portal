@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyVersionFactory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
@@ -53,7 +54,7 @@ class SubsidyVersion extends Model
 
     public function scopeOrdered(Builder $query): Builder
     {
-  //@phpstan-ignore-next-line
+    //@phpstan-ignore-next-line
         return $query->orderBy('created_at');
     }
 
@@ -64,13 +65,18 @@ class SubsidyVersion extends Model
 
     public function scopeOpen(Builder $query): Builder
     {
- //@phpstan-ignore-next-line
+    //@phpstan-ignore-next-line
         return $query->whereIn('status', [VersionStatus::Published, VersionStatus::Archived]);
     }
 
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', 'published');
+    }
+
+    public function scopeSubjectRole(Builder $query, SubjectRole $role): Builder
+    {
+        return $query->whereRelation('subsidyStages', fn (Builder $subQuery) => $subQuery->subjectRole($role));
     }
 
     protected static function newFactory(): SubsidyVersionFactory

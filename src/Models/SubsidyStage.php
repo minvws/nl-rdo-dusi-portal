@@ -73,6 +73,11 @@ class SubsidyStage extends Model
         return $query->orderBy('stage');
     }
 
+    public function scopeSubjectRole(Builder $query, SubjectRole $subjectRole): Builder
+    {
+        return $query->whereIn('subject_role', [$subjectRole]);
+    }
+
     protected static function newFactory(): SubsidyStageFactory
     {
         return new SubsidyStageFactory();
