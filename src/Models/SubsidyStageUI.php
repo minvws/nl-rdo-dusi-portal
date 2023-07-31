@@ -15,6 +15,8 @@ class SubsidyStageUI extends Model
     use HasUuids;
     use HasFactory;
 
+    protected $table = 'subsidy_stage_uis';
+
     protected $casts = [
         'updated_at' => 'timestamp',
         'created_at' => 'timestamp',
