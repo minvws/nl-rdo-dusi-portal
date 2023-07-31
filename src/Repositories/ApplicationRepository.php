@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
+
 
 declare(strict_types=1);
 
@@ -32,7 +33,7 @@ readonly class ApplicationRepository
         return ApplicationStageVersion::query()->find($appStageVersionId);
     }
 
-    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): Model|Builder|null
+    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): object|null
     {
         return Answer::query()
             ->where('application_stage_version_id', $appStageVersion->id)

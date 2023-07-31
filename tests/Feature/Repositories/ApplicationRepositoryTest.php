@@ -179,6 +179,5 @@ class ApplicationRepositoryTest extends TestCase
 
         $this->assertDatabaseHas('answers', ['id' => $answer->id]);
 //        dd(Answer::all());
-
     }
 }
