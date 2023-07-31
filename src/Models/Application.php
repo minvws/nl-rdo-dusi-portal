@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Models;
 
+use DateTimeInterface;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\Identity;
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
@@ -20,8 +21,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $identity_type
  * @property string $identity_identifier
  * @property Identity $identity
- * @property int $locked_from
- * @property int $final_review_deadline
+ * @property DateTimeInterface $locked_from
+ * @property DateTimeInterface $final_review_deadline
  */
 class Application extends Model
 {
@@ -32,8 +33,8 @@ class Application extends Model
 
     protected $casts = [
         'identity_type' => IdentityType::class,
-        'locked_from' => 'timestamp',
-        'final_review_deadline' => 'timestamp',
+        'locked_from' => 'datetime',
+        'final_review_deadline' => 'date',
     ];
 
     protected $fillable = [
