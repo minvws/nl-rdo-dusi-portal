@@ -18,6 +18,6 @@ class CacheAll extends Command
 
         $this->newLine();
 
-        return $this->call('cache:forms');
+        return $this->call('cache:subsidy-stages');
     }
 }

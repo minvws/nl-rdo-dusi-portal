@@ -2,12 +2,12 @@
 
 namespace App\Http\Resources;
 
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\FieldType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
-class FormResource extends JsonResource
+class SubsidyStageResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -23,11 +23,11 @@ class FormResource extends JsonResource
         return [
             'id' => $this->id,
             'subsidy' => [
-                'id' => $this->subsidy->id,
-                'title' => $this->subsidy->title,
-                'description' => $this->subsidy->description,
-                'validFrom' => $this->subsidy->valid_from->format('Y-m-d'),
-                'validTo' => $this->subsidy->valid_to?->format('Y-m-d')
+                'id' => $this->subsidyVersion->subsidy->id,
+                'title' => $this->subsidyVersion->subsidy->title,
+                'description' => $this->subsidyVersion->subsidy->description,
+                'validFrom' => $this->subsidyVersion->subsidy->valid_from->format('Y-m-d'),
+                'validTo' => $this->subsidyVersion->subsidy->valid_to?->format('Y-m-d')
             ]
         ];
     }

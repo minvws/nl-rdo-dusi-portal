@@ -6,7 +6,7 @@ namespace App\Services;
 use App\Jobs\ProcessFileUpload;
 use App\Jobs\ProcessFormSubmit;
 use App\Models\Application;
-use App\Models\FormData;
+use App\Models\SubsidyStageData;
 use App\Models\DraftApplication;
 use App\Services\Exceptions\ApplicationNotFoundException;
 use App\Shared\Models\Application\FileUpload;
@@ -21,7 +21,6 @@ readonly class ApplicationService
     ) {
     }
 
-
     /**
      * @throws ApplicationNotFoundException
      */
@@ -34,10 +33,10 @@ readonly class ApplicationService
         return $application;
     }
 
-    public function createDraft(FormData $form): string
+    public function createDraft(SubsidyStageData $subsidyStageData): string
     {
         $id = Uuid::uuid4()->toString();
-        $application = new DraftApplication($id, $form->id);;
+        $application = new DraftApplication($id, $subsidyStageData->id);;
         $this->stateService->registerDraftApplication($application);
         return $application->id;
     }

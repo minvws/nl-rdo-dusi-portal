@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Repositories\SubsidyRepository;
 use App\Services\CacheService;
 use Illuminate\Console\Command;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 class CacheSubsidies extends Command
 {

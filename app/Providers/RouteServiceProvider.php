@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Services\ApplicationService;
 use App\Services\Exceptions\ApplicationNotFoundException;
-use App\Services\Exceptions\FormNotFoundException;
-use App\Services\FormService;
+use App\Services\Exceptions\SubsidyStageNotFoundException;
+use App\Services\SubsidyStageService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -43,8 +43,8 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::bind('form', function (string $id) {
             try {
-                return app()->get(FormService::class)->getForm($id);
-            } catch (FormNotFoundException $e) {
+                return app()->get(SubsidyStageService::class)->getSubsidyStage($id);
+            } catch (SubsidyStageNotFoundException $e) {
                 abort(404, $e->getMessage());
             }
         });

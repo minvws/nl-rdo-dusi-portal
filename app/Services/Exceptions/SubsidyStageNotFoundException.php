@@ -5,7 +5,7 @@ namespace App\Services\Exceptions;
 
 use Exception;
 
-class FormNotFoundException extends Exception
+class SubsidyStageNotFoundException extends Exception
 {
     public function __construct()
     {
