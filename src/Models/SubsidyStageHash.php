@@ -15,6 +15,7 @@ class SubsidyStageHash extends Model
     use HasUuids;
     use HasFactory;
 
+    protected $connection = Connection::FORM;
 
     protected $casts = [
         'created_at' => 'timestamp',

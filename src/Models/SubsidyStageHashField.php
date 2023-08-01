@@ -12,6 +12,8 @@ class SubsidyStageHashField extends Model
 {
     use HasCompositePrimaryKey;
 
+    protected $connection = Connection::FORM;
+
     public $timestamps = false;
 
     /*
