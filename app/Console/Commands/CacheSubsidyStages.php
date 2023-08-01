@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Services\CacheService;
@@ -41,7 +43,8 @@ class CacheSubsidyStages extends Command
             if (count($subsidyStages) > 0) {
                 $this->info('Caching forms for subsidy...');
                 $this->withProgressBar(
-                    $subsidyStages, function (SubsidyStage $subsidyStage) use ($cacheService) {
+                    $subsidyStages,
+                    function (SubsidyStage $subsidyStage) use ($cacheService) {
                         $cacheService->cacheSubsidyStage($subsidyStage);
                     }
                 );

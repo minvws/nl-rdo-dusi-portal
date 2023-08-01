@@ -2,8 +2,9 @@
 
 set -xe
 
-vendor/bin/phpcs app routes
+#vendor/bin/sail artisan ide-helper:generate
+vendor/bin/psalm
+vendor/bin/phpcs
 vendor/bin/phpmd app/ text ruleset.phpmd.xml
-vendor/bin/psalm --no-cache
-vendor/bin/phpstan analyse --memory-limit=-1
+vendor/bin/phpstan analyse app routes
 php artisan security-check:now

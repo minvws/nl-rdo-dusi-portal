@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Services\ApplicationService;
@@ -44,7 +46,8 @@ class RouteServiceProvider extends ServiceProvider
     private function registerBindings(): void
     {
         Route::bind(
-            'form', function (string $id) {
+            'form',
+            function (string $id) {
                 try {
                     return app()->get(SubsidyStageService::class)->getSubsidyStage($id);
                 } catch (SubsidyStageNotFoundException $e) {
@@ -54,7 +57,8 @@ class RouteServiceProvider extends ServiceProvider
         );
 
         Route::bind(
-            'application', function (string $id) {
+            'application',
+            function (string $id) {
                 try {
                     return app()->get(ApplicationService::class)->getApplication($id);
                 } catch (ApplicationNotFoundException $e) {
@@ -67,7 +71,8 @@ class RouteServiceProvider extends ServiceProvider
     protected function configureRateLimiting()
     {
         RateLimiter::for(
-            'api', function (Request $request) {
+            'api',
+            function (Request $request) {
                 return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
             }
         );

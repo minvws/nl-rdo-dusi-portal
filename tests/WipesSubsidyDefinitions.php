@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use App\Shared\Models\Connection;
@@ -7,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 trait WipesSubsidyDefinitions
 {
-
     // add tables in an order that foreign keys won't complain!
     private const SUBSIDY_TABLES = [
         'fields',

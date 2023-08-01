@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
 
 use App\Shared\Models\Application\ApplicationMetadata;
 
-readonly class DraftApplication implements Application
+class DraftApplication implements Application
 {
     public function __construct(
         public string $id,

@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 
 class SubsidyResource extends JsonResource
 {
+    /**
+     * @var \MinVWS\DUSi\Shared\Subsidy\Models\Subsidy
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function toArray(Request $request): array
     {
         $data = [
@@ -19,7 +25,9 @@ class SubsidyResource extends JsonResource
             'validTo' => $this->valid_to?->format('Y-m-d')
         ];
 
-        $applicantStage = $this->publishedVersion->subsidyStages->filter(fn ($stage) => $stage->subject_role === SubjectRole::Applicant)->first();
+        $applicantStage = $this->publishedVersion->subsidyStages->filter(
+            fn ($stage) => $stage->subject_role === SubjectRole::Applicant
+        )->first();
 
         if (!isset($applicantStage)) {
             return $data;

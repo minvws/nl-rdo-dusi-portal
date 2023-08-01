@@ -63,7 +63,8 @@ trait HasCompositePrimaryKey
         array_map(
             function ($key) use (&$keys) {
                 $keys[] = $this->getAttribute($key);
-            }, $fields
+            },
+            $fields
         );
         return $keys;
     }

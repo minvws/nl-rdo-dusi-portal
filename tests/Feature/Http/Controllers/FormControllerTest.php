@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Services\CacheService;
@@ -20,11 +22,11 @@ use Tests\WipesSubsidyDefinitions;
  */
 class FormControllerTest extends TestCase
 {
-    protected array $connectionsToTransact = [Connection::Form];
-
     use DatabaseTransactions;
     use WipesSubsidyDefinitions;
     use WithFaker;
+
+    protected array $connectionsToTransact = [Connection::Form];
 
     private Subsidy $subsidy;
     private Form $form;
@@ -36,7 +38,9 @@ class FormControllerTest extends TestCase
         parent::setUp();
 
         $this->subsidy = Subsidy::factory()->create();
-        $this->form = Form::factory()->create(['subsidy_id' => $this->subsidy->id, 'status' => VersionStatus::Published]);
+        $this->form = Form::factory()->create(
+            ['subsidy_id' => $this->subsidy->id, 'status' => VersionStatus::Published]
+        );
         $this->field = Field::factory()->create(['form_id' => $this->form->id]);
 
         $ui = [
@@ -58,7 +62,9 @@ class FormControllerTest extends TestCase
             ]
         ];
 
-        $this->ui = FormUI::factory()->create(['form_id' => $this->form->id, 'status' => VersionStatus::Published, 'ui' => $ui]);
+        $this->ui = FormUI::factory()->create(
+            ['form_id' => $this->form->id, 'status' => VersionStatus::Published, 'ui' => $ui]
+        );
 
         $this->app->get(CacheService::class)->cacheForm($this->form);
     }

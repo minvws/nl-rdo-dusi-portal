@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -8,15 +9,14 @@ use App\Http\Resources\SubsidyStageResource;
 use App\Http\Resources\SubsidyResource;
 use App\Models\SubsidyStageData;
 use App\Repositories\CacheRepository;
-use App\Services\Exceptions\SubsidyStageNotFoundException;
 use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
-readonly class CacheService
+class CacheService
 {
     public function __construct(
         private CacheRepository $cacheRepository,
-        private CacheKeyHelper  $cacheKeyHelper
+        private CacheKeyHelper $cacheKeyHelper
     ) {
     }
 

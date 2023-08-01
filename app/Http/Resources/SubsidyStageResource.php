@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -9,6 +11,11 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 class SubsidyStageResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -34,6 +41,7 @@ class SubsidyStageResource extends JsonResource
 
     private function createDataSchema(): array
     {
+        $result = [];
         $result['type'] = 'object';
         $result['properties'] = [];
 

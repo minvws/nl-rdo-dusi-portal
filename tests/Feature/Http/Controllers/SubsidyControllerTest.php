@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Repositories\SubsidyRepository;
@@ -19,11 +21,11 @@ use Tests\WipesSubsidyDefinitions;
  */
 class SubsidyControllerTest extends TestCase
 {
-    protected array $connectionsToTransact = [Connection::Form];
-
     use DatabaseTransactions;
     use WipesSubsidyDefinitions;
     use WithFaker;
+
+    protected array $connectionsToTransact = [Connection::Form];
 
     private Subsidy $subsidy1;
     private Subsidy $subsidy2;
@@ -60,6 +62,9 @@ class SubsidyControllerTest extends TestCase
         $response->assertJsonPath('1.validTo', $this->subsidy1->valid_to?->format('Y-m-d'));
 
         // check form link
-        $this->assertEquals(route('api.form-show', $this->subsidy2->publishedForm->id), $response->json('0._links.form.href'));
+        $this->assertEquals(
+            route('api.form-show', $this->subsidy2->publishedForm->id),
+            $response->json('0._links.form.href')
+        );
     }
 }

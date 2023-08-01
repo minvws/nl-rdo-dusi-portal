@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Models\Application;
 
-readonly class FileUpload
+class FileUpload
 {
     public function __construct(
         public Identity $identity,

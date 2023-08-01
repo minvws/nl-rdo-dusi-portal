@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -6,7 +7,7 @@ namespace App\Services;
 use App\Models\SubsidyStageData;
 use App\Services\Exceptions\SubsidyStageNotFoundException;
 
-readonly class SubsidyStageService
+class SubsidyStageService
 {
     public function __construct(
         private CacheService $cacheService

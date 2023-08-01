@@ -37,6 +37,11 @@ class PortalUserGuard implements Guard
         return $this->session->get(self::SESSION_KEY);
     }
 
+    /**
+     * @return string
+     *
+     * @SuppressWarnings(PHPMD.ShortMethodName)
+     */
     public function id()
     {
         if (!$this->check()) {
@@ -46,6 +51,11 @@ class PortalUserGuard implements Guard
         return $this->user()->bsn;
     }
 
+    /**
+     * @param array $credentials
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function validate(array $credentials = [])
     {
         throw new \RuntimeException('Not implemented UziAuthGuard::validate() method');

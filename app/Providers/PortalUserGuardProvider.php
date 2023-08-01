@@ -23,13 +23,16 @@ class PortalUserGuardProvider extends ServiceProvider
      * Register any authentication / authorization services.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function boot()
     {
         $this->registerPolicies();
 
         Auth::extend(
-            'oidc', function ($app, $name, array $config) {
+            'oidc',
+            function ($app, $name, array $config) {
                 return new PortalUserGuard($app->make('session')->driver());
             }
         );

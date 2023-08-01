@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Jobs\ProcessFileUpload;
@@ -30,11 +32,11 @@ use Tests\WipesSubsidyDefinitions;
  */
 class ApplicationControllerTest extends TestCase
 {
-    protected array $connectionsToTransact = [Connection::Form];
-
     use DatabaseTransactions;
     use WipesSubsidyDefinitions;
     use WithFaker;
+
+    protected array $connectionsToTransact = [Connection::Form];
 
     private Subsidy $subsidy;
     private Form $form;
@@ -46,7 +48,9 @@ class ApplicationControllerTest extends TestCase
         parent::setUp();
 
         $this->subsidy = Subsidy::factory()->create();
-        $this->form = Form::factory()->create(['subsidy_id' => $this->subsidy->id, 'status' => VersionStatus::Published]);
+        $this->form = Form::factory()->create(
+            ['subsidy_id' => $this->subsidy->id, 'status' => VersionStatus::Published]
+        );
         $this->field = Field::factory()->create(['form_id' => $this->form->id]);
         $this->ui = FormUI::factory()->create(['form_id' => $this->form->id, 'status' => VersionStatus::Published]);
         $this->app->get(CacheService::class)->cacheForm($this->form);
@@ -72,9 +76,13 @@ class ApplicationControllerTest extends TestCase
 
         $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
-        $fakeFile = UploadedFile::fake()->createWithContent('id.pdf', 'This should be an encrypted string');
+        $fakeFile = UploadedFile::fake()
+            ->createWithContent('id.pdf', 'This should be an encrypted string');
         $data = ['fieldCode' => $this->field->code, 'file' => $fakeFile];
-        $response = $this->actingAs($user)->postJson(route('api.application-upload-file', ['application' => $applicationId]), $data);
+        $response = $this->actingAs($user)->postJson(
+            route('api.application-upload-file', ['application' => $applicationId]),
+            $data
+        );
         $this->assertEquals(202, $response->status());
 
         $fileId = $response->json('id');
@@ -119,7 +127,8 @@ class ApplicationControllerTest extends TestCase
         $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $data['data'] = 'This should be an encrypted string';
-        $response = $this->actingAs($user)->putJson(route('api.application-submit', ['application' => $applicationId]), $data);
+        $response = $this->actingAs($userl)
+            ->putJson(route('api.application-submit', ['application' => $applicationId]), $data);
         $this->assertEquals(202, $response->status());
 
         Queue::assertPushed(ProcessFormSubmit::class);

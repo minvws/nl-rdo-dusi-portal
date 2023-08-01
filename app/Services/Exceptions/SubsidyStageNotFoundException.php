@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Exceptions;
@@ -12,4 +13,3 @@ class SubsidyStageNotFoundException extends Exception
         parent::__construct('Form not found!');
     }
 }
-

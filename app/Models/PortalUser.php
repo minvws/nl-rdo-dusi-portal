@@ -94,6 +94,8 @@ class PortalUser implements Authenticatable
      *
      * @param  string $value
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setRememberToken($value): void
     {

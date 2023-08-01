@@ -8,7 +8,6 @@ use App\Models\PortalUser;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use MinVWS\OpenIDConnectLaravel\Http\Responses\LoginResponseHandlerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,6 +24,6 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
         }
         // TODO: Log login to Calvin?
         Auth::setUser($user);
-        return new RedirectResponse(config('app.frontend_base_url').'/login-callback');
+        return new RedirectResponse(config('app.frontend_base_url') . '/login-callback');
     }
 }

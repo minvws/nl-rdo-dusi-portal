@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -14,7 +15,7 @@ use App\Shared\Models\Application\FormSubmit;
 use Illuminate\Http\UploadedFile;
 use Ramsey\Uuid\Uuid;
 
-readonly class ApplicationService
+class ApplicationService
 {
     public function __construct(
         private StateService $stateService
@@ -36,7 +37,8 @@ readonly class ApplicationService
     public function createDraft(SubsidyStageData $subsidyStageData): string
     {
         $id = Uuid::uuid4()->toString();
-        $application = new DraftApplication($id, $subsidyStageData->id);;
+        $application = new DraftApplication($id, $subsidyStageData->id);
+        ;
         $this->stateService->registerDraftApplication($application);
         return $application->id;
     }

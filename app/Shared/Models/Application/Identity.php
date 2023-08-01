@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Models\Application;
 
-readonly class Identity
+class Identity
 {
     public function __construct(
         public IdentityType $type,
