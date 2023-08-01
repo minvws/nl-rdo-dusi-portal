@@ -16,42 +16,82 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 class SubsidyRepository
 {
-    public function getActiveSubsidies(): \Illuminate\Support\Collection
+    /*
+     * @return Collection<Subsidy>
+     */
+    public function getActiveSubsidies(): Collection
     {
- //@phpstan-ignore-next-line
         return Subsidy::query()->active()->ordered()->with('publishedVersion.subsidyStages')->get();
     }
 
-    public function getSubsidiesWithSubsidyStagesForSubjectRole(SubjectRole $subjectRole): \Illuminate\Support\Collection
+    /*
+     * @param SubjectRole $subjectRole
+     * @return Collection<Subsidy>
+     */
+    public function getSubsidiesWithSubsidyStagesForSubjectRole(SubjectRole $subjectRole): Collection
     {
         return Subsidy::query()->subjectRole($subjectRole)->ordered()->with('publishedVersion.subsidyStages')->get();
     }
 
-    public function getSubsidy(string $id): Model|Collection|Builder|array|null
+    /*
+     * @param string $id
+     * @return ?Subsidy
+     */
+    public function getSubsidy(string $id): ?Subsidy
     {
-        return Subsidy::query()->with('subsidyVersions.subsidyStages')->find($id);
+        $subsidy = Subsidy::query()->with('subsidyVersions.subsidyStages')->find($id);
+        if ($subsidy instanceof Subsidy) {
+            return $subsidy;
+        }
+        return null;
     }
 
-    public function getSubsidyStage(string $id): Model|Collection|Builder|array|null
+    /*
+     * @param string $id
+     * @return ?SubsidyStage
+     */
+    public function getSubsidyStage(string $id): ?SubsidyStage
     {
-        return SubsidyStage::query()->find($id);
+        $subsidyStage = SubsidyStage::find($id);
+        if ($subsidyStage instanceof SubsidyStage) {
+            return $subsidyStage;
+        }
+        return null;
     }
 
-    public function getField(string $id): Model|Collection|Builder|array|null
+    /*
+     * @param string $id
+     * @return ?Field
+     */
+    public function getField(string $id): ?Field
     {
-        return Field::query()->find($id);
+        $field = Field::find($id);
+        if ($field instanceof Field) {
+            return $field;
+        }
+        return null;
     }
 
+    /*
+     * @return Subsidy
+     */
     public function makeSubsidy(): Subsidy
     {
         return new Subsidy();
     }
 
+    /*
+     * @param Subsidy $subsidy
+     */
     public function saveSubsidy(Subsidy $subsidy): void
     {
         $subsidy->save();
     }
 
+    /*
+     * @param Subsidy $subsidy
+     * @return SubsidyVersion
+     */
     public function makeSubsidyVersion(Subsidy $subsidy): SubsidyVersion
     {
         $subsidyVersion = new SubsidyVersion();
@@ -59,6 +99,10 @@ class SubsidyRepository
         return $subsidyVersion;
     }
 
+    /*
+     * @param SubsidyVersion $subsidyVersion
+     * @return SubsidyStage
+     */
     public function makeSubsidyStage(SubsidyVersion $subsidyVersion): SubsidyStage
     {
         $subsidyStage = new SubsidyStage();
@@ -66,11 +110,18 @@ class SubsidyRepository
         return $subsidyStage;
     }
 
+    /*
+     * @param SubsidyStage $subsidyStage
+     */
     public function saveSubsidyStage(SubsidyStage $subsidyStage): void
     {
         $subsidyStage->save();
     }
 
+    /*
+     * @param SubsidyVersion $subsidyVersion
+     * @return SubsidyStageUI
+     */
     public function makeSubsidyStageUI(SubsidyStage $subsidyStage): SubsidyStageUI
     {
         $subsidyStageUI = new SubsidyStageUI();
@@ -78,11 +129,18 @@ class SubsidyRepository
         return $subsidyStageUI;
     }
 
+    /*
+     * @param SubsidyStageUI $subsidyStageUI
+     */
     public function saveSubsidyStageUI(SubsidyStageUI $subsidyStageUI): void
     {
         $subsidyStageUI->save();
     }
 
+    /*
+     * @param SubsidyStage $subsidyStage
+     * @return Field
+     */
     public function makeField(SubsidyStage $subsidyStage): Field
     {
         $field = new Field();
@@ -90,6 +148,9 @@ class SubsidyRepository
         return $field;
     }
 
+    /*
+     * @param Field $field
+     */
     public function saveField(Field $field): void
     {
         $field->save();
