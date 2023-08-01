@@ -106,7 +106,7 @@ class SubsidyRepositoryTest extends TestCase
         $activeSubsidies = $repository->getActiveSubsidies();
         $this->assertSame(2, $activeSubsidies->count());
         $this->assertSame(
-            [$aSubsidy->id->toString(), $bSubsidy->id->toString()],
+            [$aSubsidy->id, $bSubsidy->id],
             $activeSubsidies->pluck('id')->toArray()
         );
     }
