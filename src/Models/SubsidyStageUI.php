@@ -20,6 +20,7 @@ class SubsidyStageUI extends Model
     protected $table = 'subsidy_stage_uis';
 
     protected $casts = [
+        'id' => 'string',
         'updated_at' => 'timestamp',
         'created_at' => 'timestamp',
         'ui' => 'json'

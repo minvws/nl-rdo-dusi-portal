@@ -41,6 +41,7 @@ class SubsidyStage extends Model
     ];
 
     protected $casts = [
+        'id' => 'string',
         'subject_role' => SubjectRole::class,
         'final_review_deadline' => 'timestamp',
     ];

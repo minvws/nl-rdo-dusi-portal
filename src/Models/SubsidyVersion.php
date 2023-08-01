@@ -44,6 +44,7 @@ class SubsidyVersion extends Model
     ];
 
     protected $casts = [
+        'id' => 'string',
         'status' => VersionStatus::class
     ];
 

@@ -18,6 +18,7 @@ class SubsidyStageHash extends Model
     protected $connection = Connection::FORM;
 
     protected $casts = [
+        'id' => 'string',
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
     ];

@@ -23,6 +23,7 @@ class FieldGroup extends Model
     protected $connection = Connection::FORM;
 
     protected $casts = [
+        'id' => 'string',
         'status' => VersionStatus::class,
     ];
 

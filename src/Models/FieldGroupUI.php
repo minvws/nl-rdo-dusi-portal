@@ -14,14 +14,14 @@ class FieldGroupUI extends Model
 {
     use HasUuids;
     use HasFactory;
-
-
+    
     /**
      * @var string|null
      */
     protected $connection = Connection::FORM;
 
     protected $casts = [
+        'id' => 'string',
         'default_input_ui' => 'array',
         'default_review_ui' => 'array',
         'status' => VersionStatus::class

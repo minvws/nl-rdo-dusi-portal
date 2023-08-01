@@ -38,6 +38,7 @@ class Field extends Model
     public $timestamps = false;
 
     protected $casts = [
+        'id' => 'string',
         'type' => FieldType::class,
         'source' => FieldSource::class,
         'params' => 'array',
