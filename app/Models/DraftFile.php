@@ -12,6 +12,6 @@ readonly class DraftFile
         public ?string $extension,
         public ApplicationMetadata $applicationMetadata,
         public string $fieldCode
-    )
-    {}
+    ) {
+    }
 }

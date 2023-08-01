@@ -16,8 +16,10 @@ class DigidMockController extends Controller
 
     public function login()
     {
-        return $this->loginResponseHandler->handleLoginResponse((object)[
+        return $this->loginResponseHandler->handleLoginResponse(
+            (object)[
             "bsn" => "942424242",
-        ]);
+            ]
+        );
     }
 }

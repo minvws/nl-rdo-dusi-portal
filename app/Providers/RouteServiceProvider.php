@@ -29,39 +29,47 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->registerBindings();
 
-        $this->routes(function () {
-            Route::middleware('web')
+        $this->routes(
+            function () {
+                Route::middleware('web')
                 ->group(base_path('routes/web.php'));
-            Route::middleware('api')
-                ->prefix('api')
-                ->as('api.')
-                ->group(base_path('routes/api.php'));
-        });
+                Route::middleware('api')
+                    ->prefix('api')
+                    ->as('api.')
+                    ->group(base_path('routes/api.php'));
+            }
+        );
     }
 
     private function registerBindings(): void
     {
-        Route::bind('form', function (string $id) {
-            try {
-                return app()->get(SubsidyStageService::class)->getSubsidyStage($id);
-            } catch (SubsidyStageNotFoundException $e) {
-                abort(404, $e->getMessage());
+        Route::bind(
+            'form', function (string $id) {
+                try {
+                    return app()->get(SubsidyStageService::class)->getSubsidyStage($id);
+                } catch (SubsidyStageNotFoundException $e) {
+                    abort(404, $e->getMessage());
+                }
             }
-        });
+        );
 
-        Route::bind('application', function (string $id) {
-            try {
-                return app()->get(ApplicationService::class)->getApplication($id);
-            } catch (ApplicationNotFoundException $e) {
-                abort(404, $e->getMessage());
+        Route::bind(
+            'application', function (string $id) {
+                try {
+                    return app()->get(ApplicationService::class)->getApplication($id);
+                } catch (ApplicationNotFoundException $e) {
+                    abort(404, $e->getMessage());
+                }
             }
-        });
+        );
     }
 
     protected function configureRateLimiting()
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for(
+            'api', function (Request $request) {
+                return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            }
+        );
     }
 }

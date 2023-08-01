@@ -27,8 +27,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Auth::extend('oidc', function ($app, $name, array $config) {
-            return new PortalUserGuard($app->make('session')->driver());
-        });
+        Auth::extend(
+            'oidc', function ($app, $name, array $config) {
+                return new PortalUserGuard($app->make('session')->driver());
+            }
+        );
     }
 }

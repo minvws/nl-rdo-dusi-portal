@@ -14,17 +14,19 @@ trait HasCompositePrimaryKey
     /**
      * Set the keys for a save update query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     protected function setKeysForSaveQuery($query)
     {
         $keys = $this->getKeyName();
-        return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(function ($q) use ($keys) {
-            foreach ($keys as $key) {
-                $q->where($key, '=', $this->getAttribute($key));
+        return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(
+            function ($q) use ($keys) {
+                foreach ($keys as $key) {
+                    $q->where($key, '=', $this->getAttribute($key));
+                }
             }
-        });
+        );
     }
 
     /**
@@ -58,16 +60,18 @@ trait HasCompositePrimaryKey
         $fields = $this->getKeyName();
         assert(is_array($fields), 'Composite primary key must be an array');
         $keys = [];
-        array_map(function ($key) use (&$keys) {
-            $keys[] = $this->getAttribute($key);
-        }, $fields);
+        array_map(
+            function ($key) use (&$keys) {
+                $keys[] = $this->getAttribute($key);
+            }, $fields
+        );
         return $keys;
     }
 
     /**
      * Finds model by primary keys
      *
-     * @param array $ids
+     * @param  array $ids
      * @return mixed
      */
     public static function find(array $ids)
@@ -77,21 +81,23 @@ trait HasCompositePrimaryKey
         $keys = $model->primaryKey;
         assert(is_array($keys), 'Composite primary key must be an array');
 
-        return $model->where(function ($query) use ($ids, $keys) {
-            foreach ($keys as $idx => $key) {
-                if (isset($ids[$idx])) {
-                    $query->where($key, $ids[$idx]);
-                } else {
-                    $query->whereNull($key);
+        return $model->where(
+            function ($query) use ($ids, $keys) {
+                foreach ($keys as $idx => $key) {
+                    if (isset($ids[$idx])) {
+                        $query->where($key, $ids[$idx]);
+                    } else {
+                        $query->whereNull($key);
+                    }
                 }
             }
-        })->first();
+        )->first();
     }
 
     /**
      * Find model by primary key or throws ModelNotFoundException
      *
-     * @param array $ids
+     * @param  array $ids
      * @return mixed
      */
     public static function findOrFail(array $ids)

@@ -23,7 +23,7 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
         if ($user === null) {
             throw new AuthorizationException("Empty userinfo");
         }
-        # TODO: Log login to Calvin?
+        // TODO: Log login to Calvin?
         Auth::setUser($user);
         return new RedirectResponse(config('app.frontend_base_url').'/login-callback');
     }

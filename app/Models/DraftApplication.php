@@ -10,8 +10,8 @@ readonly class DraftApplication implements Application
     public function __construct(
         public string $id,
         public string $formId
-    )
-    {}
+    ) {
+    }
 
     public function getMetadata(): ApplicationMetadata
     {

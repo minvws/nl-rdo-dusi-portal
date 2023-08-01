@@ -16,9 +16,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(CacheRepository::class, function (Application $app) {
-            return new CacheRepository($app->get(CacheManager::class)->store('form'), config('form.cache_ttl'));
-        });
+        $this->app->singleton(
+            CacheRepository::class, function (Application $app) {
+                return new CacheRepository($app->get(CacheManager::class)->store('form'), config('form.cache_ttl'));
+            }
+        );
     }
 
     /**

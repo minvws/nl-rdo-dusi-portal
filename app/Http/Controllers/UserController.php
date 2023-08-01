@@ -12,9 +12,11 @@ class UserController extends Controller
     {
         $user = Auth::user();
         return JsonResponse::fromJsonString(
-            json_encode([
+            json_encode(
+                [
                 'logged_in' => $user !== null,
-            ])
+                ]
+            )
         );
     }
 
