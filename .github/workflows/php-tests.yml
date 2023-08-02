@@ -57,7 +57,7 @@ jobs:
 
       - name: Generate key
         run: php artisan key:generate
-        
+
       - name: Execute tests with Code Coverage
         env:
           DB_FORM_HOST: 127.0.0.1
