@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use Carbon\Carbon;
@@ -56,7 +58,8 @@ class ApplicationApiTest extends TestCase
 
         $response->assertJsonFragment([
             'application_title' => $this->application->application_title,
-            'id' => $this->application->applicationStages()->where('status', $this->applicationStage->status->value)->first()->application_id,
+            'id' => $this->application->applicationStages()
+                ->where('status', $this->applicationStage->status->value)->first()->application_id,
             'subsidy_version_id' => $this->subsidyVersion->id,
             'final_review_deadline' => Carbon::tomorrow()->toISOString(),
         ]);
