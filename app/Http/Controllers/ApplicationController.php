@@ -9,7 +9,9 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use Ramsey\Uuid\Uuid;
 
 class ApplicationController extends Controller
 {
@@ -40,18 +42,21 @@ class ApplicationController extends Controller
         }
 
         if ($request->has('user_id')) {
+            if(Uuid::isValid($request->user_id) === false)
+            {
+                return response()->json(['error' => 'Invalid user UUID'], 400);
+            }
             $query->whereHas('applicationStages', function ($q) use ($request) {
                 $q->where('user_id', $request->user_id);
             });
         }
 
         if ($request->has('subsidy_title')) {
-            SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($request) {
-                $q->where('title', $request->subsidy_title);
-            });
-            SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($request) {
-                $q->where('title', $request->subsidy_title);
-            });
+            $subVersions = SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($request) {
+                $q->where('title', (string)$request->subsidy_title);
+            })->pluck('id');
+
+            $query->whereIn('subsidy_version_id', $subVersions);
         }
 
         if ($request->has('application_title')) {
@@ -69,7 +74,6 @@ class ApplicationController extends Controller
      */
     public function show(Application $application): JsonResponse
     {
-        // Return the specific application as JSON
         return response()->json($application);
     }
 }
