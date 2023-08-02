@@ -9,7 +9,7 @@ return new class extends Migration
 {
     protected $connection = Connection::FORM;
     
-    public function up()
+    public function up(): void
     {
         Schema::create('subsidies', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -56,7 +56,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('form_hash_fields');
         Schema::drop('form_hashes');
