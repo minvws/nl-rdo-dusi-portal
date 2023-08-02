@@ -8,6 +8,8 @@ source .env
 
 composer install
 
+npm install
+
 vendor/bin/sail up -d --remove-orphans
 vendor/bin/sail artisan key:generate
 vendor/bin/sail artisan migrate
