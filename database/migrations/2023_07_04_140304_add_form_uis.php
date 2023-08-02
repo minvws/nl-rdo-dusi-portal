@@ -4,9 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 return new class extends Migration
 {
+    protected $connection = Connection::FORM;
+
     public function up()
     {
         Schema::table('subsidies', function (Blueprint $table) {

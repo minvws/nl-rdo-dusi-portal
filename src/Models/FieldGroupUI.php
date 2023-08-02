@@ -14,7 +14,7 @@ class FieldGroupUI extends Model
 {
     use HasUuids;
     use HasFactory;
-    
+
     /**
      * @var string|null
      */
