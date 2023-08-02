@@ -1,1 +1,2 @@
-Auto-generated README for nl-rdo-dusi-subsidy-model
+# Subsidy model
+Subsidy model for the models and repositories of form-admin-web.
