@@ -66,6 +66,20 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Execute tests with Code Coverage
+        env:
+          DB_HOST: localhost
+          DB_DATABASE: portal_backend_testing
+          DB_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+          DB_SSLMODE: prefer
+
+          DB_FORM_HOST: localhost
+          DB_FORM_DATABASE: form_admin_web_testing
+          DB_FORM_PORT: 5433
+          DB_FORM_USERNAME: postgres
+          DB_FORM_PASSWORD: password
+          DB_FORM_SSLMODE: prefer
         run: vendor/bin/phpunit --coverage-clover tests/coverage.xml
 
       - if: ${{ github.event_name == 'pull_request' }}
