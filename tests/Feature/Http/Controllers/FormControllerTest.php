@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers;
 
 use App\Services\CacheService;
-use App\Shared\Models\Connection;
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\Form;
-use App\Shared\Models\Definition\FormUI;
-use App\Shared\Models\Definition\Subsidy;
-use App\Shared\Models\Definition\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageUI;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Tests\TestCase;
 use Tests\WipesSubsidyDefinitions;
 
@@ -26,22 +27,29 @@ class FormControllerTest extends TestCase
     use WipesSubsidyDefinitions;
     use WithFaker;
 
-    protected array $connectionsToTransact = [Connection::Form];
+    protected array $connectionsToTransact = [Connection::FORM];
 
     private Subsidy $subsidy;
-    private Form $form;
+    private SubsidyStage $subsidyStage;
     private Field $field;
-    private FormUI $formUI;
+    private SubsidyStageUI $subsidyStageUI;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->subsidy = Subsidy::factory()->create();
-        $this->form = Form::factory()->create(
-            ['subsidy_id' => $this->subsidy->id, 'status' => VersionStatus::Published]
-        );
-        $this->field = Field::factory()->create(['form_id' => $this->form->id]);
+        $this->subsidy = Subsidy::factory()->create(['title' => 'B']);
+        $this->subsidyVersion = SubsidyVersion::factory()->create([
+            'subsidy_id' => $this->subsidy->id,
+            'status' => VersionStatus::Published
+        ]);
+        $this->subsidyStage = SubsidyStage::factory()->create([
+            'subsidy_version_id' => $this->subsidyVersion->id,
+            'subject_role' => 'applicant'
+        ]);
+
+        $this->field = Field::factory()->create();
+        $this->subsidyStage->fields()->attach($this->field);
 
         $ui = [
             "type" => "CustomGroupControl",
@@ -62,19 +70,19 @@ class FormControllerTest extends TestCase
             ]
         ];
 
-        $this->ui = FormUI::factory()->create(
-            ['form_id' => $this->form->id, 'status' => VersionStatus::Published, 'ui' => $ui]
+        $this->ui = SubsidyStageUI::factory()->create(
+            ['subsidy_stage_id' => $this->subsidyStage->id, 'status' => VersionStatus::Published, 'ui' => $ui]
         );
 
-        $this->app->get(CacheService::class)->cacheForm($this->form);
+        $this->app->get(CacheService::class)->cacheSubsidyStage($this->subsidyStage);
     }
 
     public function testShowFormShouldReturnTheFormSchema(): void
     {
-        $response = $this->getJson(route('api.form-show', $this->form->id));
+        $response = $this->getJson(route('api.form-show', $this->subsidyStage->id));
         $this->assertEquals(200, $response->status());
 
-        $response->assertJsonPath('metadata.id', $this->form->id);
+        $response->assertJsonPath('metadata.id', $this->subsidyStage->id);
         $response->assertJsonPath('metadata.subsidy.id', $this->subsidy->id);
         $response->assertJsonPath('metadata.subsidy.title', $this->subsidy->title);
 

@@ -1808,12 +1808,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-subsidy-model.git",
-                "reference": "abb66530aa4acae3eb912cde371e1b2ad8f37836"
+                "reference": "b7a8449995482a9fcad17d2844efab4375d9850a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/abb66530aa4acae3eb912cde371e1b2ad8f37836",
-                "reference": "abb66530aa4acae3eb912cde371e1b2ad8f37836",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/b7a8449995482a9fcad17d2844efab4375d9850a",
+                "reference": "b7a8449995482a9fcad17d2844efab4375d9850a",
                 "shasum": ""
             },
             "require": {
@@ -1875,7 +1875,7 @@
                 "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/feature/base",
                 "issues": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/issues"
             },
-            "time": "2023-08-01T09:34:33+00:00"
+            "time": "2023-08-01T14:18:01+00:00"
         },
         {
             "name": "minvws/openid-connect-php-laravel",

@@ -9,22 +9,22 @@ use App\Jobs\ProcessFormSubmit;
 use App\Models\PortalUser;
 use App\Services\ApplicationService;
 use App\Services\CacheService;
-use App\Services\FormService;
 use App\Services\StateService;
+use App\Services\SubsidyStageService;
 use App\Shared\Models\Application\IdentityType;
-use App\Shared\Models\Connection;
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\Form;
-use App\Shared\Models\Definition\FormUI;
-use App\Shared\Models\Definition\Subsidy;
-use App\Shared\Models\Definition\VersionStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageUI;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 use Tests\WipesSubsidyDefinitions;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 /**
  * @group application
@@ -36,45 +36,64 @@ class ApplicationControllerTest extends TestCase
     use WipesSubsidyDefinitions;
     use WithFaker;
 
-    protected array $connectionsToTransact = [Connection::Form];
+    protected array $connectionsToTransact = [Connection::FORM];
 
+    private PortalUser $user;
     private Subsidy $subsidy;
-    private Form $form;
+    private SubsidyStage $subsidyStage;
     private Field $field;
-    private FormUI $formUI;
+    private SubsidyStageUI $formUI;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->subsidy = Subsidy::factory()->create();
-        $this->form = Form::factory()->create(
-            ['subsidy_id' => $this->subsidy->id, 'status' => VersionStatus::Published]
+        $this->user = new PortalUser(
+            base64_encode(openssl_random_pseudo_bytes(32)),
+            Uuid::uuid4()->toString(),
+            null
         );
-        $this->field = Field::factory()->create(['form_id' => $this->form->id]);
-        $this->ui = FormUI::factory()->create(['form_id' => $this->form->id, 'status' => VersionStatus::Published]);
-        $this->app->get(CacheService::class)->cacheForm($this->form);
+        $this->subsidy = Subsidy::factory()->create();
+        $this->subsidyVersion = $this->subsidy
+            ->subsidyVersions()
+            ->create(['status' => VersionStatus::Published, 'version' => 1]);
+        $this->subsidyStage = SubsidyStage::factory()->create(
+            ['subsidy_version_id' => $this->subsidyVersion->id]
+        );
+        $this->field = Field::factory()->create();
+        $this->subsidyStage->fields()->attach($this->field);
+        $this->ui = SubsidyStageUI::factory()->create([
+            'subsidy_stage_id' => $this->subsidyStage->id,
+            'status' => VersionStatus::Published
+        ]);
+        $this->app->get(CacheService::class)->cacheSubsidyStage($this->subsidyStage);
     }
 
     public function testCreateDraft(): void
     {
-        $response = $this->postJson(route('api.application-create-draft', ['form' => $this->form->id]));
+        $response = $this
+            ->be($this->user)
+            ->postJson(route('api.application-create-draft', ['form' => $this->subsidyStage->id]));
         $this->assertEquals(202, $response->status());
         $applicationId = $response->json('id');
         $this->assertIsString($applicationId);
         $application = $this->app->get(StateService::class)->getDraftApplication($applicationId);
         $this->assertNotNull($application);
         $this->assertEquals($applicationId, $application->id);
-        $this->assertEquals($this->form->id, $application->formId);
+        $this->assertEquals($this->subsidyStage->id, $application->formId);
     }
 
     public function testFileUpload(): void
     {
         Queue::fake();
 
-        $user = new PortalUser(base64_encode(openssl_random_pseudo_bytes(32)), Uuid::uuid4(), null);
+        $user = new PortalUser(
+            base64_encode(openssl_random_pseudo_bytes(32)),
+            Uuid::uuid4()->toString(),
+            null
+        );
 
-        $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
+        $cachedForm = $this->app->get(SubsidyStageService::class)->getSubsidyStage($this->subsidyStage->id);
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $fakeFile = UploadedFile::fake()
             ->createWithContent('id.pdf', 'This should be an encrypted string');
@@ -96,8 +115,8 @@ class ApplicationControllerTest extends TestCase
         $this->assertInstanceOf(ProcessFileUpload::class, $job);
         $this->assertEquals($fileId, $job->fileUpload->id);
         $this->assertEquals(IdentityType::EncryptedCitizenServiceNumber, $job->fileUpload->identity->type);
-        $this->assertEquals($applicationId, $job->fileUpload->applicationMetadata->id);
-        $this->assertEquals($this->form->id, $job->fileUpload->applicationMetadata->formId);
+        $this->assertEquals($applicationId, $job->fileUpload->applicationMetadata->applicationStageId);
+        $this->assertEquals($this->subsidyStage->id, $job->fileUpload->applicationMetadata->subsidyStageId);
         $this->assertEquals($this->field->code, $job->fileUpload->fieldCode);
         $this->assertEquals('pdf', $job->fileUpload->extension);
         $this->assertEquals('application/pdf', $job->fileUpload->mimeType);
@@ -108,7 +127,7 @@ class ApplicationControllerTest extends TestCase
     {
         Queue::fake();
 
-        $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
+        $cachedForm = $this->app->get(SubsidyStageService::class)->getSubsidyStage($this->subsidyStage->id);
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $fakeFile = UploadedFile::fake()->createWithContent('id.pdf', 'This should be an encrypted string');
         $data = ['fieldCode' => $this->field->code, 'file' => $fakeFile];
@@ -122,12 +141,16 @@ class ApplicationControllerTest extends TestCase
     {
         Queue::fake();
 
-        $user = new PortalUser(base64_encode(openssl_random_pseudo_bytes(32)), Uuid::uuid4(), null);
+        $user = new PortalUser(
+            base64_encode(openssl_random_pseudo_bytes(32)),
+            Uuid::uuid4()->toString(),
+            null
+        );
 
-        $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
+        $cachedForm = $this->app->get(SubsidyStageService::class)->getSubsidyStage($this->subsidyStage->id);
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $data['data'] = 'This should be an encrypted string';
-        $response = $this->actingAs($userl)
+        $response = $this->actingAs($user)
             ->putJson(route('api.application-submit', ['application' => $applicationId]), $data);
         $this->assertEquals(202, $response->status());
 
@@ -138,8 +161,8 @@ class ApplicationControllerTest extends TestCase
         $job = $jobs->first();
         $this->assertInstanceOf(ProcessFormSubmit::class, $job);
         $this->assertEquals(IdentityType::EncryptedCitizenServiceNumber, $job->formSubmit->identity->type);
-        $this->assertEquals($applicationId, $job->formSubmit->applicationMetadata->id);
-        $this->assertEquals($this->form->id, $job->formSubmit->applicationMetadata->formId);
+        $this->assertEquals($applicationId, $job->formSubmit->applicationMetadata->applicationStageId);
+        $this->assertEquals($this->subsidyStage->id, $job->formSubmit->applicationMetadata->subsidyStageId);
         $this->assertEquals(base64_encode($data['data']), $job->formSubmit->encryptedData);
     }
 
@@ -147,7 +170,7 @@ class ApplicationControllerTest extends TestCase
     {
         Queue::fake();
 
-        $cachedForm = $this->app->get(FormService::class)->getForm($this->form->id);
+        $cachedForm = $this->app->get(SubsidyStageService::class)->getSubsidyStage($this->subsidyStage->id);
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $data['data'] = 'This should be an encrypted string';
         $response = $this->putJson(route('api.application-submit', ['application' => $applicationId]), $data);
