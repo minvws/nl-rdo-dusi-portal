@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class SubsidiesTableSeeder extends Seeder
 {
     public const BTV_UUID = '00f26400-7232-475f-922c-6b569b7e421a';
-
+    //TODO: Meer subsidies
     /**
      * Run the database seeds.
      */
