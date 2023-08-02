@@ -38,7 +38,6 @@ class ApplicationService
     {
         $id = Uuid::uuid4()->toString();
         $application = new DraftApplication($id, $subsidyStageData->id);
-        ;
         $this->stateService->registerDraftApplication($application);
         return $application->id;
     }
