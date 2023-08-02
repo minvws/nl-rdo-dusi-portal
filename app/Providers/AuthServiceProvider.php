@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
@@ -22,13 +24,18 @@ class AuthServiceProvider extends ServiceProvider
      * Register any authentication / authorization services.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function boot()
     {
         $this->registerPolicies();
 
-        Auth::extend('oidc', function ($app, $name, array $config) {
-            return new PortalUserGuard($app->make('session')->driver());
-        });
+        Auth::extend(
+            'oidc',
+            function ($app, $name, array $config) {
+                return new PortalUserGuard($app->make('session')->driver());
+            }
+        );
     }
 }

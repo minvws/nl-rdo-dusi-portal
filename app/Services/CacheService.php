@@ -1,22 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
 
 use App\Helpers\CacheKeyHelper;
-use App\Http\Resources\FormResource;
+use App\Http\Resources\SubsidyStageResource;
 use App\Http\Resources\SubsidyResource;
-use App\Models\FormData;
+use App\Models\SubsidyStageData;
 use App\Repositories\CacheRepository;
-use App\Services\Exceptions\FormNotFoundException;
-use App\Shared\Models\Definition\Form;
 use Illuminate\Support\Collection;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
-readonly class CacheService
+class CacheService
 {
     public function __construct(
         private CacheRepository $cacheRepository,
-        private CacheKeyHelper  $cacheKeyHelper
+        private CacheKeyHelper $cacheKeyHelper
     ) {
     }
 
@@ -28,16 +28,16 @@ readonly class CacheService
         return $result ? $key : false;
     }
 
-    public function getCachedForm(string $formId): ?FormData
+    public function getCachedSubsidyStage(string $subsidyStageId): ?SubsidyStageData
     {
-        $json = $this->cacheRepository->get($this->cacheKeyHelper->keyForFormId($formId));
-        return $json === null ? null : new FormData($formId, $json);
+        $json = $this->cacheRepository->get($this->cacheKeyHelper->keyForSubsidyStageId($subsidyStageId));
+        return $json === null ? null : new SubsidyStageData($subsidyStageId, $json);
     }
 
-    public function cacheForm(Form $form): string|false
+    public function cacheSubsidyStage(SubsidyStage $subsidyStage): string|false
     {
-        $key = $this->cacheKeyHelper->keyForForm($form);
-        $resource = new FormResource($form);
+        $key = $this->cacheKeyHelper->keyForSubsidyStage($subsidyStage);
+        $resource = new SubsidyStageResource($subsidyStage);
         $json = $resource->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         $result = $this->cacheRepository->store($key, $json);
         return $result ? $key : false;

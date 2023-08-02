@@ -1,24 +1,25 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Helpers;
 
-use App\Shared\Models\Definition\Form;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 class CacheKeyHelper
 {
     public function keyForActiveSubsidies(): string
     {
-        return 'form_list';
+        return 'subsidy_list';
     }
 
-    public function keyForFormId(string $id): string
+    public function keyForSubsidyStageId(string $id): string
     {
-        return 'form_' . $id;
+        return 'subsidy_stage_' . $id;
     }
 
-    public function keyForForm(Form $form): string
+    public function keyForSubsidyStage(SubsidyStage $subsidyStage): string
     {
-        return $this->keyForFormId($form->id);
+        return $this->keyForSubsidyStageId($subsidyStage->id);
     }
 }

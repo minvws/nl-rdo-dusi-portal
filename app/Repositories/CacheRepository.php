@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repositories;
 
 use Illuminate\Cache\Repository as LaravelCacheRepository;
 
-readonly class CacheRepository
+class CacheRepository
 {
     private const TAGS = ['form'];
 

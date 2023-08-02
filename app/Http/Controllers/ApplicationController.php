@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationSubmitRequest;
 use App\Http\Requests\ApplicationUploadFileRequest;
 use App\Models\Application;
-use App\Models\FormData;
+use App\Models\SubsidyStageData;
 use App\Services\ApplicationService;
-use App\Services\Exceptions\FormNotFoundException;
+use App\Services\Exceptions\SubsidyStageNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
@@ -16,12 +18,14 @@ use Throwable;
 
 class ApplicationController extends Controller
 {
-    public function createDraft(FormData $form, ApplicationService $applicationService): JsonResponse
-    {
+    public function createDraft(
+        SubsidyStageData $subsidyStageData,
+        ApplicationService $applicationService
+    ): JsonResponse {
         try {
-            $id = $applicationService->createDraft($form);
+            $id = $applicationService->createDraft($subsidyStageData);
             return response()->json(['id' => $id], status: 202);
-        } catch (FormNotFoundException $e) {
+        } catch (SubsidyStageNotFoundException $e) {
             abort(404, $e->getMessage());
         }
     }
@@ -29,8 +33,11 @@ class ApplicationController extends Controller
     /**
      * @throws Throwable
      */
-    public function uploadFile(Application $application, ApplicationUploadFileRequest $request, ApplicationService $applicationService): JsonResponse
-    {
+    public function uploadFile(
+        Application $application,
+        ApplicationUploadFileRequest $request,
+        ApplicationService $applicationService
+    ): JsonResponse {
         $fieldCode = $request->safe()['fieldCode'];
         assert(is_string($fieldCode));
         $file = $request->safe()['file'];
@@ -39,8 +46,11 @@ class ApplicationController extends Controller
         return response()->json(['id' => $id], status: 202);
     }
 
-    public function submit(Application $application, ApplicationSubmitRequest $request, ApplicationService $applicationService): Response|ResponseFactory
-    {
+    public function submit(
+        Application $application,
+        ApplicationSubmitRequest $request,
+        ApplicationService $applicationService
+    ): Response|ResponseFactory {
         $encryptedData = $request->safe()['data'];
         assert(is_string($encryptedData));
         $applicationService->submit($application, $encryptedData);

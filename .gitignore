@@ -21,3 +21,4 @@ yarn-error.log
 *.crt
 *.cert
 *.pub
+_ide_helper.php

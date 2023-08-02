@@ -1,9 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Models\Application;
 
-readonly class FileUpload
+class FileUpload
 {
     public function __construct(
         public Identity $identity,
@@ -13,6 +14,6 @@ readonly class FileUpload
         public string $mimeType,
         public ?string $extension,
         public string $encryptedContents
-    )
-    {}
+    ) {
+    }
 }

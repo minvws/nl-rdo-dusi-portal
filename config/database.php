@@ -1,6 +1,8 @@
 <?php
 
-use App\Shared\Models\Connection;
+declare(strict_types=1);
+
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 return [
 
@@ -15,7 +17,7 @@ return [
     |
     */
 
-    'default' => null,
+    'default' => Connection::FORM,
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +36,7 @@ return [
     */
 
     'connections' => [
-        Connection::Form => [
+        Connection::FORM => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_FORM_URL'),
             'host' => env('DB_FORM_HOST', '127.0.0.1'),

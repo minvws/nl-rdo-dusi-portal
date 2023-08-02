@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -16,8 +18,10 @@ class DigidMockController extends Controller
 
     public function login()
     {
-        return $this->loginResponseHandler->handleLoginResponse((object)[
+        return $this->loginResponseHandler->handleLoginResponse(
+            (object)[
             "bsn" => "942424242",
-        ]);
+            ]
+        );
     }
 }

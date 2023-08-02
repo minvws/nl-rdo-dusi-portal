@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
-use App\Repositories\SubsidyRepository;
 use App\Services\CacheService;
-use App\Shared\Models\Connection;
-use App\Shared\Models\Definition\Form;
-use App\Shared\Models\Definition\Subsidy;
-use App\Shared\Models\Definition\VersionStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Tests\TestCase;
 use Tests\WipesSubsidyDefinitions;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 /**
  * @group subsidy
@@ -19,11 +22,11 @@ use Tests\WipesSubsidyDefinitions;
  */
 class SubsidyControllerTest extends TestCase
 {
-    protected array $connectionsToTransact = [Connection::Form];
-
     use DatabaseTransactions;
     use WipesSubsidyDefinitions;
     use WithFaker;
+
+    protected array $connectionsToTransact = [Connection::FORM];
 
     private Subsidy $subsidy1;
     private Subsidy $subsidy2;
@@ -33,10 +36,21 @@ class SubsidyControllerTest extends TestCase
         parent::setUp();
 
         $this->subsidy1 = Subsidy::factory()->create(['title' => 'B']);
-        Form::factory()->create(['subsidy_id' => $this->subsidy1->id, 'status' => VersionStatus::Published]);
+        $this->subsidyVersion1 = SubsidyVersion::factory()->create([
+            'subsidy_id' => $this->subsidy1->id,
+            'status' => VersionStatus::Published
+        ]);
+        SubsidyStage::factory()->create(['subsidy_version_id' => $this->subsidyVersion1->id]);
 
         $this->subsidy2 = Subsidy::factory()->create(['title' => 'A']);
-        Form::factory()->create(['subsidy_id' => $this->subsidy2->id, 'status' => VersionStatus::Published]);
+        $this->subsidyVersion2 = SubsidyVersion::factory()->create([
+            'subsidy_id' => $this->subsidy2->id,
+            'status' => VersionStatus::Published
+        ]);
+        SubsidyStage::factory()->create([
+            'subsidy_version_id' => $this->subsidyVersion2->id,
+            'subject_role' => 'applicant'
+        ]);
 
         $activeSubsidies = $this->app->get(SubsidyRepository::class)->getActiveSubsidies();
         $this->app->get(CacheService::class)->cacheActiveSubsidies($activeSubsidies);
@@ -60,6 +74,9 @@ class SubsidyControllerTest extends TestCase
         $response->assertJsonPath('1.validTo', $this->subsidy1->valid_to?->format('Y-m-d'));
 
         // check form link
-        $this->assertEquals(route('api.form-show', $this->subsidy2->publishedForm->id), $response->json('0._links.form.href'));
+        $this->assertEquals(
+            route('api.form-show', $this->subsidy2->publishedVersion->subsidyStages->first()->id),
+            $response->json('0._links.form.href')
+        );
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -18,6 +20,6 @@ class CacheAll extends Command
 
         $this->newLine();
 
-        return $this->call('cache:forms');
+        return $this->call('cache:subsidy-stages');
     }
 }

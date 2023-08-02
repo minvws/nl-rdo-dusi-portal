@@ -12,8 +12,8 @@ use RuntimeException;
 class PortalUser implements Authenticatable
 {
     /**
-     * @param string $bsn
-     * @param string $id
+     * @param string      $bsn
+     * @param string      $id
      * @param string|null $loaAuthn
      */
     public function __construct(
@@ -94,6 +94,8 @@ class PortalUser implements Authenticatable
      *
      * @param  string $value
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setRememberToken($value): void
     {

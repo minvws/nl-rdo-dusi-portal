@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -11,7 +12,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Session\SessionManager;
 
-readonly class StateService
+class StateService
 {
     private const KEY_APPLICATION = 'application.%s';
     private const KEY_FORM_ID = 'formId';

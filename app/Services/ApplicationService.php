@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -6,7 +7,7 @@ namespace App\Services;
 use App\Jobs\ProcessFileUpload;
 use App\Jobs\ProcessFormSubmit;
 use App\Models\Application;
-use App\Models\FormData;
+use App\Models\SubsidyStageData;
 use App\Models\DraftApplication;
 use App\Services\Exceptions\ApplicationNotFoundException;
 use App\Shared\Models\Application\FileUpload;
@@ -14,13 +15,12 @@ use App\Shared\Models\Application\FormSubmit;
 use Illuminate\Http\UploadedFile;
 use Ramsey\Uuid\Uuid;
 
-readonly class ApplicationService
+class ApplicationService
 {
     public function __construct(
         private StateService $stateService
     ) {
     }
-
 
     /**
      * @throws ApplicationNotFoundException
@@ -34,10 +34,10 @@ readonly class ApplicationService
         return $application;
     }
 
-    public function createDraft(FormData $form): string
+    public function createDraft(SubsidyStageData $subsidyStageData): string
     {
         $id = Uuid::uuid4()->toString();
-        $application = new DraftApplication($id, $form->id);;
+        $application = new DraftApplication($id, $subsidyStageData->id);
         $this->stateService->registerDraftApplication($application);
         return $application->id;
     }
