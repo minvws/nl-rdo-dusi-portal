@@ -24,3 +24,4 @@ yarn-error.log
 *.key
 *.priv
 *.pub
+_ide_helper.php

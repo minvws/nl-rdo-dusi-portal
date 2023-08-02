@@ -29,7 +29,7 @@ trait HasCompositePrimaryKey
 
     /**
      * Get the casts array.
-     *
+     * @psalm-suppress InvalidArrayOffset
      * @return array
      */
     public function getCasts()

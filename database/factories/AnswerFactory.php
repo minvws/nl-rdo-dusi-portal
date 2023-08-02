@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Models\Answer;
 use App\Models\ApplicationStageVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @extends Factory<Answer>
