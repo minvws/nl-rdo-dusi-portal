@@ -21,6 +21,7 @@ trait WipesSubsidyDefinitions
     protected function setUpWipesSubsidyDefinitions(): void
     {
         foreach (self::SUBSIDY_TABLES as $table) {
+            dump(DB::connection(Connection::FORM)->select("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';"));
             DB::connection(Connection::FORM)->delete("DELETE FROM $table");
         }
     }
