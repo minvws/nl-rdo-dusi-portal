@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Repositories;
 
-use App\Models\Connection;
-use App\Models\Enums\FieldSource;
-use App\Models\Enums\FieldType;
-use App\Models\Enums\VersionStatus;
-use App\Models\Field;
-use App\Models\SubsidyStage;
-use App\Models\Subsidy;
-use App\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
@@ -59,7 +59,7 @@ class SubsidyRepositoryTest extends TestCase
         );
 
         $subsidyStage->fields()->attach($field);
-        $expectedId = $field->id->toString();
+        $expectedId = $field->id;
         $actualId = SubsidyStage::find($subsidyStage->id)->first()->fields()->first()->id;
         $this->assertSame($expectedId, $actualId);
     }
