@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
-
-use App\Models\Submission\FieldValue;
 
 class EncryptionService
 {
@@ -24,5 +23,4 @@ class EncryptionService
         // TODO: encrypt
         return $json;
     }
-
 }

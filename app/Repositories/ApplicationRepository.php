@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repositories;
@@ -13,6 +14,7 @@ readonly class ApplicationRepository
     public function getApplication(string $applicationId): ?Application
     {
         $application = Application::query()->find($applicationId);
+        // @phpstan-ignore-next-line
         assert($application === null || $application instanceof Application);
         return $application;
     }
@@ -49,7 +51,7 @@ readonly class ApplicationRepository
                 ->where('application_id', '=', $application->id)
                 ->where('field_id', '=', $field->id)
                 ->first();
-
+        // @phpstan-ignore-next-line
         assert($answer === null || $answer instanceof Answer);
         return $answer;
     }

@@ -1,23 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait HasCompositePrimaryKey
 {
-
     /**
      * Set the keys for a save update query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function setKeysForSaveQuery($query)
+    protected function setKeysForSaveQuery($query): \Illuminate\Database\Eloquent\Builder
     {
         $keys = $this->getKeyName();
-        return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(function($q) use($keys) {
-            foreach($keys as $key){
+        return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(function ($q) use ($keys) {
+            foreach ($keys as $key) {
                 $q->where($key, '=', $this->getAttribute($key));
             }
         });
@@ -25,21 +26,24 @@ trait HasCompositePrimaryKey
 
     /**
      * Get the casts array.
-     *
+     * @psalm-suppress InvalidArrayOffset
      * @return array
      */
     public function getCasts()
     {
+        // @phpstan-ignore-next-line
         if ($this->getIncrementing()) {
+            // @phpstan-ignore-next-line
             return array_merge([$this->getKeyName() => $this->getKeyType()], $this->casts);
         }
         return $this->casts;
     }
 
     /**
-     * @return false
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         return false;
     }
@@ -48,15 +52,20 @@ trait HasCompositePrimaryKey
      * Get the value of the model's primary key.
      *
      * @return mixed
+     * @psalm-suppress NoValue
      */
-    public function getKey()
+    public function getKey(): mixed
     {
         $fields = $this->getKeyName();
         $keys = [];
-        array_map(function($key) use(&$keys) {
-            $keys[] = $this->getAttribute($key);
-        }, $fields);
-        return $keys;
+        if (is_iterable($fields)) { // Check if $fields is iterable (array or object)
+            foreach ($fields as $key) {
+                $keys[] = $this->getAttribute($key);
+            }
+            return $keys;
+        }
+        $key = $this->getAttribute($fields);
+        return $key;
     }
 
     /**
@@ -69,13 +78,15 @@ trait HasCompositePrimaryKey
     {
         $modelClass = self::class;
         $model = new $modelClass();
-        $keys = $model->primaryKey;
-        return $model->where(function($query) use($ids, $keys) {
-            foreach ($keys as $idx => $key) {
-                if (isset($ids[$idx])) {
-                    $query->where($key, $ids[$idx]);
-                } else {
-                    $query->whereNull($key);
+        $keys = $model->getKey();
+        return $model->where(function ($query) use ($ids, $keys) {
+            if (is_iterable($keys)) { // Check if $keys is iterable
+                foreach ($keys as $idx => $key) {
+                    if (isset($ids[$idx])) {
+                        $query->where($key, $ids[$idx]);
+                    } else {
+                        $query->whereNull($key);
+                    }
                 }
             }
         })->first();
@@ -93,7 +104,7 @@ trait HasCompositePrimaryKey
         $model = new $modelClass();
         $record = $model->find($ids);
         if (!$record) {
-            throw new ModelNotFoundException;
+            throw new ModelNotFoundException();
         }
         return $record;
     }

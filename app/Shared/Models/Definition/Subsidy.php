@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Models\Definition;
 
 use App\Shared\Models\Connection;
@@ -23,7 +25,7 @@ class Subsidy extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $connection = Connection::Form;
+    protected $connection = Connection::FORM;
     protected $keyType = 'string';
     protected $casts = [
         'valid_from' => 'date',
@@ -45,10 +47,10 @@ class Subsidy extends Model
         return $query->orderBy('title');
     }
 
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->whereRelation('forms', fn (Builder $subQuery) => $subQuery->open());
-    }
+//    public function scopeActive(Builder $query): Builder
+//    {
+//        return $query->whereRelation('forms', fn (Builder $subQuery) => $subQuery->open());
+//    }
 
     protected static function newFactory(): SubsidyFactory
     {

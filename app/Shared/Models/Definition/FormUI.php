@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Models\Definition;
 
 use App\Shared\Models\Connection;
@@ -19,7 +21,7 @@ class FormUI extends Model
     use HasFactory;
 
     protected $table = 'form_uis';
-    protected $connection = Connection::Form;
+    protected $connection = Connection::FORM;
 
     protected $casts = [
         'status' => VersionStatus::class,

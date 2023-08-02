@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Feature\Services;
@@ -46,15 +47,18 @@ class ApplicationServiceTest extends TestCase
         parent::setUp();
         $subsidy = Subsidy::factory()->create();
         $this->form = Form::factory()->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);
-        $this->textField = Field::factory()->create(['form_id' => $this->form->id, 'type' => FieldType::Text, 'code' => 'text']);
-        $this->numericField = Field::factory()->create(['form_id' => $this->form->id, 'type' => FieldType::TextNumeric, 'code' => 'number']);
+        $this->textField = Field::factory()->create(['form_id' =>
+        $this->form->id, 'type' => FieldType::Text, 'code' => 'text']);
+        $this->numericField = Field::factory()->create(['form_id' =>
+        $this->form->id, 'type' => FieldType::TextNumeric, 'code' => 'number']);
     }
 
     public function testProcessFileUpload(): void
     {
-        Storage::fake(Disk::ApplicationFiles);
+        Storage::fake(Disk::APPLICATION_FILES);
 
-        $fileField = Field::factory()->create(['form_id' => $this->form->id, 'type' => FieldType::Upload, 'code' => 'file']);
+        $fileField = Field::factory()->create(['form_id' =>
+        $this->form->id, 'type' => FieldType::Upload, 'code' => 'file']);
 
         $fileUpload = new FileUpload(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
@@ -70,7 +74,8 @@ class ApplicationServiceTest extends TestCase
         assert($applicationService instanceof ApplicationService);
         $applicationService->processFileUpload($fileUpload);
 
-        $this->assertTrue(Storage::disk(Disk::ApplicationFiles)->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->id, $fileField->code)));
+        $this->assertTrue(Storage::disk(Disk::APPLICATION_FILES)
+            ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->id, $fileField->code)));
         $application = Application::query()->find($fileUpload->applicationMetadata->id);
         $this->assertInstanceOf(Application::class, $application);
         $this->assertEquals(ApplicationStatus::Draft, $application->status);
@@ -149,9 +154,10 @@ class ApplicationServiceTest extends TestCase
 
     public function testProcessFormSubmitMissingFile(): void
     {
-        Storage::fake(Disk::ApplicationFiles);
+        Storage::fake(Disk::APPLICATION_FILES);
 
-        $fileField = Field::factory()->create(['form_id' => $this->form->id, 'type' => FieldType::Upload, 'code' => 'file']);
+        $fileField = Field::factory()->create(['form_id' =>
+        $this->form->id, 'type' => FieldType::Upload, 'code' => 'file']);
 
         $data = [
             $this->textField->code => $this->faker->word,

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -39,7 +40,7 @@ readonly class FormDecodingService
     }
 
     /**
-     * @return array<string, FieldValue>
+     * @return array<int|string, FieldValue>
      * @throws Throwable
      */
     public function decodeFormValues(Form $form, string $data): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Models\Definition;
 
 use App\Shared\Models\Connection;
@@ -23,7 +25,7 @@ class Form extends Model
 {
     use HasFactory;
 
-    protected $connection = Connection::Form;
+    protected $connection = Connection::FORM;
 
     protected $casts = [
         'status' => VersionStatus::class

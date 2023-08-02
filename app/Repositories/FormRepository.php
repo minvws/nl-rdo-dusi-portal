@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repositories;
@@ -12,6 +13,7 @@ class FormRepository
     public function getForm(string $id): ?Form
     {
         $form = Form::query()->open()->find($id);
+        // @phpstan-ignore-next-line
         assert($form === null || $form instanceof Form);
         return $form;
     }
@@ -19,6 +21,7 @@ class FormRepository
     public function getField(Form $form, string $fieldCode): ?Field
     {
         $field = $form->fields()->where('code', '=', $fieldCode)->first();
+        // @phpstan-ignore-next-line
         assert($field === null || $field instanceof Field);
         return $field;
     }

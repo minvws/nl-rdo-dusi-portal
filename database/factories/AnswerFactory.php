@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Application> */
 class AnswerFactory extends Factory
 {
-    public function definition():array
+    public function definition(): array
     {
         return [
             'application_id' => Application::factory(),

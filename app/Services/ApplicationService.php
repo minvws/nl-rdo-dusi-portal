@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * TODO needs to be fixed some other time :)
+ */
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -28,6 +34,10 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * TODO needs to be fixed some other time :)
+ */
 readonly class ApplicationService
 {
     public function __construct(
@@ -47,14 +57,25 @@ readonly class ApplicationService
     /**
      * @throws ApplicationMetadataMismatchException|ApplicationIdentityMismatchException
      */
-    private function validateIdentityAndApplicationMetadata(Identity $identity, ApplicationMetadata $applicationMetadata, Application $application): void
-    {
-        if ($application->identity->type !== $identity->type || $application->identity->identifier !== $identity->identifier) {
-            throw new ApplicationIdentityMismatchException(sprintf('Identity mismatch for application with identifier "%s"', $application->id));
+    private function validateIdentityAndApplicationMetadata(
+        Identity $identity,
+        ApplicationMetadata $applicationMetadata,
+        Application $application
+    ): void {
+        if (
+            // @phpstan-ignore-next-line
+            $application->identity->type !== $identity->type ||
+            $application->identity->identifier !== $identity->identifier
+        ) {
+            throw new ApplicationIdentityMismatchException(
+                sprintf('Identity mismatch for application with identifier "%s"', $application->id)
+            );
         }
 
         if ($application->form_id !== $applicationMetadata->formId) {
-            throw new ApplicationMetadataMismatchException(sprintf('Form mismatch for application with identifier "%s', $application->id));
+            throw new ApplicationMetadataMismatchException(
+                sprintf('Form mismatch for application with identifier "%s', $application->id)
+            );
         }
     }
 
@@ -84,8 +105,10 @@ readonly class ApplicationService
      * @return array{Application, Form}
      * @throws Throwable
      */
-    private function loadOrCreateApplicationWithForm(Identity $identity, ApplicationMetadata $applicationMetadata): array
-    {
+    private function loadOrCreateApplicationWithForm(
+        Identity $identity,
+        ApplicationMetadata $applicationMetadata
+    ): array {
         $application = $this->loadApplicationIfExists($applicationMetadata->id);
 
         if ($application !== null) {
@@ -108,7 +131,9 @@ readonly class ApplicationService
     {
         $field = $this->formRepository->getField($form, $fieldCode);
         if ($field === null) {
-            throw new FieldNotFoundException(sprintf('Field with code "%s" not found for form with identifier "%s"!', $fieldCode, $form->id));
+            throw new FieldNotFoundException(
+                sprintf('Field with code "%s" not found for form with identifier "%s"!', $fieldCode, $form->id)
+            );
         }
         return $field;
     }
@@ -129,7 +154,7 @@ readonly class ApplicationService
         }
 
         $path = $this->getFilePath($application, $field);
-        if (!$this->filesystemManager->disk(Disk::ApplicationFiles)->exists($path)) {
+        if (!$this->filesystemManager->disk(Disk::APPLICATION_FILES)->exists($path)) {
             throw new FileNotFoundException("File not found!");
         }
     }
@@ -137,8 +162,15 @@ readonly class ApplicationService
     private function createOrUpdateAnswer(Application $application, Field $field, mixed $value): void
     {
         $answer = $this->applicationRepository->makeAnswer($application, $field);
-        $answer->encrypted_answer = $this->encryptionService->encryptFieldValue(json_encode($value));
-        $this->applicationRepository->saveAnswer($answer);
+        $json = json_encode($value);
+
+        if ($json !== false) {
+            $answer->encrypted_answer = $this->encryptionService->encryptFieldValue($json);
+            $this->applicationRepository->saveAnswer($answer);
+        }
+        //        else {
+        //            // Handle the case when json_encode() fails, e.g., by logging an error or throwing an exception.
+        //        }
     }
 
     /**
@@ -186,8 +218,11 @@ readonly class ApplicationService
      */
     public function processFormSubmit(FormSubmit $formSubmit): Application
     {
-        $application = DB::connection(Connection::Application)->transaction(function () use ($formSubmit) {
-            [$application, $form] = $this->loadOrCreateApplicationWithForm($formSubmit->identity, $formSubmit->applicationMetadata);
+        $application = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
+            [$application, $form] = $this->loadOrCreateApplicationWithForm(
+                $formSubmit->identity,
+                $formSubmit->applicationMetadata
+            );
 
             $json = $formSubmit->encryptedData; // TODO: decrypt
             $values = $this->decodingService->decodeFormValues($form, $json);
@@ -210,11 +245,19 @@ readonly class ApplicationService
      */
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
-        [$application, $form] = $this->loadOrCreateApplicationWithForm($fileUpload->identity, $fileUpload->applicationMetadata);
+        [$application, $form] = $this->loadOrCreateApplicationWithForm(
+            $fileUpload->identity,
+            $fileUpload->applicationMetadata
+        );
 
         $field = $this->loadField($form, $fileUpload->fieldCode);
         if ($field->type !== FieldType::Upload) {
-            throw new FieldTypeMismatchException(sprintf('Field "%s" type mismatch, expected: %s, actual: %s', $field->code, FieldType::Upload->value, $field->type->value));
+            throw new FieldTypeMismatchException(sprintf(
+                'Field "%s" type mismatch, expected: %s, actual: %s',
+                $field->code,
+                FieldType::Upload->value,
+                $field->type->value
+            ));
         }
 
         $decryptedContents = base64_decode($fileUpload->encryptedContents); // TODO: decrypt
@@ -234,7 +277,7 @@ readonly class ApplicationService
         );
 
         $path = $this->getFilePath($application, $field);
-        $result = $this->filesystemManager->disk(Disk::ApplicationFiles)->put($path, $encryptedContents);
+        $result = $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($path, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
         }
@@ -245,6 +288,6 @@ readonly class ApplicationService
      */
     public function processFileUpload(FileUpload $fileUpload): void
     {
-        DB::connection(Connection::Application)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
+        DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
     }
 }

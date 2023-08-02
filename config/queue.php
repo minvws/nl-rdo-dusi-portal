@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Shared\Models\Connection;
 
 return [
@@ -110,7 +112,7 @@ return [
 
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
-        'database' => env('DB_CONNECTION', Connection::Application),
+        'database' => env('DB_CONNECTION', Connection::APPLICATION),
         'table' => 'failed_jobs',
     ],
 

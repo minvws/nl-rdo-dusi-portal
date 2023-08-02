@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\ApplicationStatus;
 use App\Shared\Models\Application\IdentityType;
 use Illuminate\Database\Migrations\Migration;

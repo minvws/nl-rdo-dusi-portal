@@ -34,7 +34,7 @@ services:
         image: 'postgres:12'
         volumes:
             - 'pgsql:/var/lib/postgresql/data'
-            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+            - './tests/Scripts/create-testing-databases.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
         networks:
             portal-backend:
                 aliases:

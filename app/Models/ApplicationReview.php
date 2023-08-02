@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -12,9 +14,9 @@ class ApplicationReview extends Model
     use HasFactory;
     use HasUuids;
 
-    protected $connection = Connection::Application;
+    protected $connection = Connection::APPLICATION;
 
-    const UPDATED_AT = NULL;
+    public const UPDATED_AT = null;
 
     /**
      * The attributes that are mass assignable.
