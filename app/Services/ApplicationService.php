@@ -281,8 +281,14 @@ readonly class ApplicationService
 
 
             $json = $formSubmit->encryptedData; // TODO: decrypt
+            $json = base64_decode($json);
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
-            $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
+
+            if($applicationStage->applicationStageVersions->first() != null) {
+                $applicationStageVersion = $applicationStage->applicationStageVersions->first();
+            } else {
+                $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
+            }
 
             $this->validateFieldValues($applicationStage, $applicationStageVersion, $values);
             $this->processFieldValues($applicationStageVersion, $values);
@@ -327,7 +333,12 @@ readonly class ApplicationService
             'size' => $size
         ];
 
-        $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
+
+        if($applicationStage->applicationStageVersions->first() != null) {
+            $applicationStageVersion = $applicationStage->applicationStageVersions->first();
+        } else {
+            $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
+        }
 
 
         $this->createOrUpdateAnswer(
