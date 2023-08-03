@@ -20,6 +20,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $id
  * @property string $subsidy_id
  * @property int $version
+ * @property string $title
  * @property VersionStatus $status
  */
 class SubsidyStage extends Model
