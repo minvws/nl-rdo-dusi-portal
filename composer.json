@@ -25,7 +25,7 @@
         "nunomaduro/collision": "^6.1",
         "nunomaduro/larastan": "^2.6",
         "phpmd/phpmd": "^2.13.0",
-        "phpunit/phpunit": "^9.5.10",
+        "phpunit/phpunit": "^10.2.7",
         "psalm/plugin-laravel": "^2.8",
         "slevomat/coding-standard": "^8.13",
         "spatie/laravel-ignition": "^2.0",
