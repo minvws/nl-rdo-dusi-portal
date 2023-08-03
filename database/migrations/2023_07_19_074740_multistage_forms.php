@@ -63,6 +63,7 @@ return new class extends Migration
 
         Schema::table('fields', function (Blueprint $table) {
             $table->dropColumn('form_id');
+            $table->foreignUuid('subsidy_stage_id')->constrained();
         });
 
         Schema::table('subsidy_stage_uis', function (Blueprint $table) {
