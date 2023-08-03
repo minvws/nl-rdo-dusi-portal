@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\ApplicationMetadata;
 
 class DraftFile
