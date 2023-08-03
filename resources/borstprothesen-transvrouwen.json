@@ -1,0 +1,35 @@
+{
+  "title": "Borstprothesen transvrouwen",
+  "intro": "Transvrouwen zijn man-vrouw transgenders met genderdysforie die als man geboren zijn, en in transitie zijn om als vrouw te leven.",
+  "body": "Voor meer informatie bekijk de informatiepagina.",
+  "statusIntro": "Uw aanvraag bevindt zich in stap 1. De huidige status van uw aanvraag staat op Ontvangen. In het onderstaande overzicht ziet u welke stappen van het proces zijn afgerond en welke er nog aan komen. Per stap kunt u zien wat u van ons kunt verwachten en waar nodig wat wij van u verwachten.",
+  "steps": [
+    {
+      "title": "Stap 1: Aanvraag",
+      "content": "<p><strong>Datum indiening:</strong> 4 Juni 2023 11:15</p><p><strong>Eind verwachte reactietermijn:</strong> 26 Augustus 2023</p>",
+      "actions": {
+        "download": true,
+        "edit": true,
+        "cancel": true
+      }
+    },
+    {
+      "title": "Stap 2: Beschikking",
+      "content": "<p>U krijgt van ons een beschikking. Dit is een goedkeuring of afwijzing van de aanvraag.</p><p>Het kan voorkomen dat u om extra informatie gevraagd wordt. De verwachte reactiedatum is 26 Augustus 2023.</p>",
+      "actions": {
+        "download": false,
+        "edit": false,
+        "cancel": false
+      }
+    },
+    {
+      "title": "Stap 3: Uitbetaling",
+      "content": "<p>Op basis van de beschikking ontvangt u van ons wel of geen uitbetaling.</p><p><strong>Bij goedkeuring</strong></p><p>Als we uw subsidieaanvraag goedkeuren, ontvangt u het subsidiebedrag op uw rekening. Dit heet verlenen. We kunnen later controleren of u er daadwerkelijk recht op had. Het is dus eigenlijk een voorschot.</p><p><strong>Bij afwijzing</strong></p><p>Als we uw aanvraag afwijzen, ontvangt u geen subsidie.</p>",
+      "actions": {
+        "download": false,
+        "edit": false,
+        "cancel": false
+      }
+    }
+  ]
+}

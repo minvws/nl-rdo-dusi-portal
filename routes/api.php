@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\MockedResourceController;
 use App\Http\Controllers\SubsidyStageController;
 use App\Http\Controllers\SubsidyController;
 use App\Http\Controllers\UserController;
@@ -31,3 +32,8 @@ Route::middleware('auth')->group(
         Route::post('user/logout', [UserController::class, 'logout'])->name('user-logout');
     }
 );
+
+//TODO: Remove mocked routes when the real API is ready
+Route::get('messages', [MockedResourceController::class, 'messages']);
+Route::get('requests', [MockedResourceController::class, 'requests']);
+Route::get('btv', [MockedResourceController::class, 'btv']);
