@@ -110,7 +110,7 @@ class ApplicationServiceTest extends TestCase
         $formSubmit = new FormSubmit(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
-            json_encode($data)
+            base64_encode(json_encode($data))
         );
 
         $applicationService = $this->app->get(ApplicationService::class);
@@ -146,7 +146,7 @@ class ApplicationServiceTest extends TestCase
         $formSubmit = new FormSubmit(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
-            json_encode($data)
+            base64_encode(json_encode($data))
         );
 
         $applicationService = $this->app->get(ApplicationService::class);
@@ -188,7 +188,7 @@ class ApplicationServiceTest extends TestCase
         $formSubmit = new FormSubmit(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
-            json_encode($data)
+            base64_encode(json_encode($data))
         );
 
         $this->expectException(FileNotFoundException::class);

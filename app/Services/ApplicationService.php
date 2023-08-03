@@ -284,7 +284,7 @@ readonly class ApplicationService
             $json = base64_decode($json);
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
 
-            if($applicationStage->applicationStageVersions->first() != null) {
+            if ($applicationStage->applicationStageVersions->first() != null) {
                 $applicationStageVersion = $applicationStage->applicationStageVersions->first();
             } else {
                 $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
@@ -334,7 +334,7 @@ readonly class ApplicationService
         ];
 
 
-        if($applicationStage->applicationStageVersions->first() != null) {
+        if ($applicationStage->applicationStageVersions->first() != null) {
             $applicationStageVersion = $applicationStage->applicationStageVersions->first();
         } else {
             $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
