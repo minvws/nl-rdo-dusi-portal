@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -70,6 +70,18 @@ class SubsidyRepository
             return $field;
         }
         return null;
+    }
+
+    /*
+     * @param SubsidyStage $subsidyStage
+     * @return Collection<Field>
+     */
+    public function getFields(SubsidyStage $subsidyStage): Collection
+    {
+        return Field::query()
+            ->where('subsidy_stage_id', $subsidyStage->id)
+            ->orderBy('code')
+            ->get();
     }
 
     /*
