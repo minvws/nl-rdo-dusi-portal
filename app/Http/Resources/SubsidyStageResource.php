@@ -62,6 +62,7 @@ class SubsidyStageResource extends JsonResource
 
     private function createFieldDataSchema(Field $field): array
     {
+
         $type = match ($field->type) {
             FieldType::TextNumeric => 'integer',
             FieldType::Checkbox => 'boolean',
@@ -72,6 +73,10 @@ class SubsidyStageResource extends JsonResource
             'type' => $type,
             'title' => $field->title,
         ];
+
+        if ($type === 'integer') {
+            $result['minimum'] = 0;
+        }
 
         if (!empty($field->description)) {
             $result['description'] = $field->description;
