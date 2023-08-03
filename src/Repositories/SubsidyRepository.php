@@ -79,8 +79,10 @@ class SubsidyRepository
      */
     public function getFieldForSubsidyStageAndCode(SubsidyStage $subsidyStage, string $code): ?Field
     {
-        $field = Field::query()
-            ->where('subsidy_stage_id', $subsidyStage->id)
+        $field = Field
+            ::whereHas('subsidyStages', function (Builder $query) use ($subsidyStage) {
+                $query->where('id', $subsidyStage->id);
+            })
             ->where('code', $code)
             ->first();
         if ($field instanceof Field) {
@@ -95,9 +97,10 @@ class SubsidyRepository
      */
     public function getFields(SubsidyStage $subsidyStage): Collection
     {
-        return Field::query()
-            ->where('subsidy_stage_id', $subsidyStage->id)
-            ->orderBy('code')
+        return Field
+            ::whereHas('subsidyStages', function (Builder $query) use ($subsidyStage) {
+                $query->where('id', $subsidyStage->id);
+            })
             ->get();
     }
 
