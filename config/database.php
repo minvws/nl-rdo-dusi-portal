@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 
 return [
 
@@ -52,6 +52,23 @@ return [
             'sslrootcert' => env('DB_FORM_SSLROOTCERT', null),
             'sslcert' => env('DB_FORM_SSLCERT', null),
             'sslkey' => env('DB_FORM_SSLKEY', null),
+        ],
+        Connection::APPLICATION => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_APPLICATION_URL'),
+            'host' => env('DB_APPLICATION_HOST', '127.0.0.1'),
+            'port' => env('DB_APPLICATION_PORT', '5432'),
+            'database' => env('DB_APPLICATION_DATABASE', 'forge'),
+            'username' => env('DB_APPLICATION_USERNAME', 'forge'),
+            'password' => env('DB_APPLICATION_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => env('DB_APPLICATION_SSLMODE', 'prefer'),
+            'sslrootcert' => env('DB_APPLICATION_SSLROOTCERT', null),
+            'sslcert' => env('DB_APPLICATION_SSLCERT', null),
+            'sslkey' => env('DB_APPLICATION_SSLKEY', null),
         ],
     ],
     /*
