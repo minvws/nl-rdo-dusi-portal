@@ -8,65 +8,99 @@ use App\Models\Answer;
 use App\Models\Application;
 use App\Models\ApplicationStage;
 use App\Models\ApplicationStageVersion;
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\SubsidyStage;
-use App\Shared\Models\Definition\SubsidyVersion;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Enums\ApplicationStageVersionStatus;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 readonly class ApplicationRepository
 {
-    public function getApplication(string $appId): Builder|array|Collection|Model|null
+    public function getApplication(string $appId): ?Application
     {
-        return Application::query()->find($appId);
+        $application = Application::find($appId);
+        if ($application instanceof Application) {
+            return $application;
+        }
+        return null;
     }
 
-    public function getApplicationStage(string $applicationStageId): Builder|array|Collection|Model|null
+    public function getApplicationStage(string $applicationStageId): ?ApplicationStage
     {
-        return ApplicationStage::query()->find($applicationStageId);
+        $applicationStage = ApplicationStage::find($applicationStageId);
+        if ($applicationStage instanceof ApplicationStage) {
+            return $applicationStage;
+        }
+        return null;
     }
 
-    public function getApplicationStageVersion(string $appStageVersionId): Builder|array|Collection|Model|null
+    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection
     {
-        return ApplicationStageVersion::query()->find($appStageVersionId);
+        return ApplicationStageVersion::query()
+            ->where('application_stage_id', $applicationStage->id)
+            ->orderBy('version', 'desc')
+            ->get();
     }
 
-    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): Model|Builder|null
+    public function getLatestApplicationStageVersion(ApplicationStage $applicationStage): ?ApplicationStageVersion
     {
-        return Answer::query()
+        return ApplicationStageVersion::query()
+            ->where('application_stage_id', $applicationStage->id)
+            ->orderBy('version', 'asc')
+            ->first();
+    }
+    public function getApplicationStageVersion(string $appStageVersionId): ?ApplicationStageVersion
+    {
+        $applicationStageVersion = ApplicationStageVersion::find($appStageVersionId);
+        if ($applicationStageVersion instanceof ApplicationStageVersion) {
+            return $applicationStageVersion;
+        }
+        return null;
+    }
+
+    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): ?Answer
+    {
+        $answer = Answer::query()
             ->where('application_stage_version_id', $appStageVersion->id)
             ->where('field_id', $field->id)
             ->first();
+        if ($answer instanceof Answer) {
+            return $answer;
+        }
+        return null;
     }
 
     public function makeApplicationForSubsidyVersion(SubsidyVersion $subsidyVersion): Application
     {
-        $application = new Application();
+        $application = Application::make();
         $application->subsidy_version_id = $subsidyVersion->id;
         return $application;
     }
 
     public function makeApplicationStage(Application $application, SubsidyStage $subsidyStage): ApplicationStage
     {
-        $applicationStage = new ApplicationStage();
+        $applicationStage = ApplicationStage::make();
         $applicationStage->application()->associate($application);
         $applicationStage->subsidy_stage_id = $subsidyStage->id;
         return $applicationStage;
     }
 
-    public function makeApplicationStageVersion(ApplicationStage $applicationStage): ApplicationStageVersion
-    {
-        $appStageVersion = new ApplicationStageVersion();
-        $appStageVersion->applicationStage()->associate($applicationStage);
-        return $appStageVersion;
+    public function makeApplicationStageVersion(
+        ApplicationStage $applicationStage
+    ): ApplicationStageVersion {
+        $applicationStageVersion = ApplicationStageVersion::make([
+            'status' => ApplicationStageVersionStatus::Draft->value,
+        ]);
+        $applicationStageVersion->applicationStage()->associate($applicationStage);
+        return $applicationStageVersion;
     }
 
     public function makeAnswer(ApplicationStageVersion $appStageVersion, Field $field): Answer
     {
-        $answer = new Answer();
+        $answer = Answer::make([
+            'field_id' => $field->id,
+        ]);
         $answer->applicationStageVersion()->associate($appStageVersion);
-        $answer->field_id = $field->id;
         return $answer;
     }
 

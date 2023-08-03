@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
+use Illuminate\Support\Facades\Log;
 
 class ProcessFileUpload implements ShouldQueue
 {
@@ -29,6 +30,12 @@ class ProcessFileUpload implements ShouldQueue
      */
     public function handle(ApplicationService $applicationService): void
     {
-        $applicationService->processFileUpload($this->fileUpload);
+        try{
+            $applicationService->processFileUpload($this->fileUpload);
+            dd("processed");
+        } catch(Throwable $e) {
+            Log::error($e);
+//            dd($e);
+        }
     }
 }

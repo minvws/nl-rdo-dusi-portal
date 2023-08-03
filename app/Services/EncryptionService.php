@@ -9,7 +9,7 @@ class EncryptionService
     public function decryptFormSubmit(string $encryptedData): string
     {
         // TODO: currently not encrypted yet
-        return $encryptedData;
+        return base64_decode($encryptedData);
     }
 
     public function decryptFileUpload(string $encryptedData): string

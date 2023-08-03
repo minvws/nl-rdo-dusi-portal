@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8003a74fdb87457a935c2ca35c86b2a9",
+    "content-hash": "b1e775d23c85d77fa496ccf727725739",
     "packages": [
         {
             "name": "brick/math",
@@ -1751,16 +1751,16 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.11.0",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "ff6248ea87a9f116e78edd6002e39e5128a0d4dd"
+                "reference": "c7f2872fb273bf493811473dafc88d60ae829f48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/ff6248ea87a9f116e78edd6002e39e5128a0d4dd",
-                "reference": "ff6248ea87a9f116e78edd6002e39e5128a0d4dd",
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/c7f2872fb273bf493811473dafc88d60ae829f48",
+                "reference": "c7f2872fb273bf493811473dafc88d60ae829f48",
                 "shasum": ""
             },
             "require": {
@@ -1791,7 +1791,7 @@
             "description": "Mime-type detection for Flysystem",
             "support": {
                 "issues": "https://github.com/thephpleague/mime-type-detection/issues",
-                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.11.0"
+                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.12.0"
             },
             "funding": [
                 {
@@ -1803,7 +1803,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-17T13:12:02+00:00"
+            "time": "2023-08-03T07:14:11+00:00"
         },
         {
             "name": "minvws/codable",
@@ -1863,6 +1863,81 @@
                 "issues": "https://github.com/minvws/nl-rdo-php-codable/issues"
             },
             "time": "2023-06-26T09:41:39+00:00"
+        },
+        {
+            "name": "minvws/dusi-subsidy-model",
+            "version": "dev-feature/base",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:minvws/nl-rdo-dusi-subsidy-model.git",
+                "reference": "d804efdbff7f1ee1161cc19d3d0752792e82a6dc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/d804efdbff7f1ee1161cc19d3d0752792e82a6dc",
+                "reference": "d804efdbff7f1ee1161cc19d3d0752792e82a6dc",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^10.16",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.23",
+                "orchestra/testbench": "^8.0",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^10.2",
+                "slevomat/coding-standard": "^8.13",
+                "squizlabs/php_codesniffer": "^3.7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MinVWS\\DUSi\\Shared\\Subsidy\\SubsidyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MinVWS\\DUSi\\Shared\\Subsidy\\": "src/",
+                    "MinVWS\\DUSi\\Shared\\Subsidy\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "MinVWS\\DUSi\\Shared\\Subsidy\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "phpstan": [
+                    "vendor/bin/phpstan analyze -c phpstan.neon.dist"
+                ],
+                "phpcs": [
+                    "vendor/bin/phpcs"
+                ],
+                "phpcbf": [
+                    "vendor/bin/phpcbf"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "thomas-samoht",
+                    "email": "54805624+thomas-samoht@users.noreply.github.com"
+                }
+            ],
+            "description": "Models and repositories for form-admin-web",
+            "support": {
+                "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/feature/base",
+                "issues": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/issues"
+            },
+            "time": "2023-08-03T07:26:24+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -12030,7 +12105,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "minvws/codable": 20
+        "minvws/codable": 20,
+        "minvws/dusi-subsidy-model": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

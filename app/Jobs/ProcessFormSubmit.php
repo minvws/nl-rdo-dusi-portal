@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class ProcessFormSubmit implements ShouldQueue
@@ -29,6 +30,12 @@ class ProcessFormSubmit implements ShouldQueue
      */
     public function handle(ApplicationService $applicationService): void
     {
-        $applicationService->processFormSubmit($this->formSubmit);
+        try{
+            $applicationService->processFormSubmit($this->formSubmit);
+            dd("processed");
+        } catch(Throwable $e) {
+            Log::error($e);
+            dd($e);
+        }
     }
 }

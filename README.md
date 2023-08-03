@@ -28,6 +28,9 @@ By default the portal is accessable at http://localhost:8001
 This application has been developed in Laravel, please see the [Laravel docs][laravel-docs]
 for Laravel specific details.
 
+todo: migrate beschrijven
+vendor/bin/sail artisan migrate:fresh --path database/migrations
+
 ### Users
 
 ### Docker compose

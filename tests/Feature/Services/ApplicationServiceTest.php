@@ -7,7 +7,7 @@ namespace Tests\Feature\Services;
 use App\Models\Application;
 use App\Models\ApplicationStage;
 use App\Models\Disk;
-use App\Models\Enums\ApplicationStageStatus;
+use App\Models\Enums\ApplicationStageVersionStatus;
 use App\Services\ApplicationService;
 use App\Services\Exceptions\FileNotFoundException;
 use App\Shared\Models\Application\ApplicationMetadata;
@@ -94,7 +94,7 @@ class ApplicationServiceTest extends TestCase
             ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
         $applicationStage = ApplicationStage::query()->find($fileUpload->applicationMetadata->applicationStageId);
         $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $this->assertEquals(ApplicationStagestatus::Draft, $applicationStage->status);
+        $this->assertEquals(ApplicationStageVersionStatus::Draft, $applicationStage->status);
     }
 
     /**
@@ -117,11 +117,11 @@ class ApplicationServiceTest extends TestCase
         assert($applicationService instanceof ApplicationService);
         $applicationStage = $applicationService->processFormSubmit($formSubmit);
         $this->assertNotNull($applicationStage);
-        $this->assertEquals(ApplicationStageStatus::Submitted, $applicationStage->status);
+        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStage->status);
 
         $applicationStage = ApplicationStage::query()->find($formSubmit->applicationMetadata->applicationStageId);
         $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $this->assertEquals(ApplicationStageStatus::Submitted, $applicationStage->status);
+        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStage->status);
     }
 
 

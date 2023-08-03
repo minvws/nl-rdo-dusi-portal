@@ -11,7 +11,8 @@
         "laravel/framework": "^10.17",
         "laravel/tinker": "^2.8",
         "minvws/codable": "dev-feature/base as 1.0.x-dev",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
+        "minvws/dusi-subsidy-model": "dev-feature/base"
     },
     "require-dev": {
         "ext-openssl": "*",
@@ -77,6 +78,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/minvws/nl-rdo-php-codable.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "https://github.com/minvws/nl-rdo-dusi-subsidy-model.git"
         }
     ]
 }

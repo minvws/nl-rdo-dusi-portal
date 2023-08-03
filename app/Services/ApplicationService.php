@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Answer;
 use App\Models\Application;
 use App\Models\ApplicationStage;
 use App\Models\ApplicationStageVersion;
 use App\Models\Disk;
-use App\Models\Enums\ApplicationStageStatus;
+use App\Models\Enums\ApplicationStageVersionStatus;
 use App\Repositories\ApplicationRepository;
-use App\Repositories\FormRepository;
 use App\Services\Exceptions\ApplicationIdentityMismatchException;
 use App\Services\Exceptions\ApplicationMetadataMismatchException;
 use App\Services\Exceptions\FieldNotFoundException;
@@ -25,20 +25,18 @@ use App\Shared\Models\Application\FormSubmit;
 use App\Shared\Models\Application\Identity;
 use App\Shared\Models\Application\ApplicationMetadata;
 use App\Shared\Models\Application\FileUpload;
-use App\Shared\Models\Definition\SubsidyStage;
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\Enums\FieldType;
 use App\Models\Submission\FieldValue;
 use App\Shared\Models\Connection;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Ramsey\Uuid\Uuid;
 use Throwable;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -48,11 +46,11 @@ use Throwable;
 readonly class ApplicationService
 {
     public function __construct(
-        private FormRepository $formRepo,
-        private FormDecodingService $decodingService,
-        private EncryptionService $encryptionService,
+        private SubsidyRepository     $subsidyRepository,
+        private FormDecodingService   $decodingService,
+        private EncryptionService     $encryptionService,
         private ApplicationRepository $appRepo,
-        private FilesystemManager $filesystemManager
+        private FilesystemManager     $filesystemManager
     ) {
     }
 
@@ -63,7 +61,7 @@ readonly class ApplicationService
         }
     }
 
-    private function loadApplicationStageIfExists(string $applicationStageId): array|Builder|Collection|Model|null
+    private function loadApplicationStageIfExists(string $applicationStageId): ?ApplicationStage
     {
         $this->validateUuid($applicationStageId);
         return $this->appRepo->getApplicationStage($applicationStageId);
@@ -97,10 +95,10 @@ readonly class ApplicationService
     /**
      * @throws FormNotFoundException
      */
-    private function loadSubsidyStage(string $subsidyStageId): array|Builder|Collection|Model
+    private function loadSubsidyStage(string $subsidyStageId): ?SubsidyStage
     {
         $this->validateUuid($subsidyStageId);
-        return $this->formRepo->getSubsidyStage($subsidyStageId);
+        return $this->subsidyRepository->getSubsidyStage($subsidyStageId);
     }
 
     private function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
@@ -121,16 +119,37 @@ readonly class ApplicationService
         $app = $this->createApplication($identity, $subsidyStage);
         $applicationStage = $this->appRepo->makeApplicationStage($app, $subsidyStage);
         $applicationStage->id = $appMetadataId;
-        $applicationStage->status = ApplicationStageStatus::Draft;
-        $applicationStage->user_id = Uuid::uuid4()->toString();
         $this->appRepo->saveApplicationStage($applicationStage);
         return $applicationStage;
     }
 
-    private function createApplicationStageVersion(ApplicationStage $applicationStage): ApplicationStageVersion
+    private function loadOrCreateApplicationStageVersion(ApplicationStage $applicationStage): ApplicationStageVersion
     {
+        $latestApplicationStageVersion = $this->appRepo->getLatestApplicationStageVersion($applicationStage);
+        if (!isset($latestApplicationStageVersion)) {
+            $applicationStageVersion = $this->appRepo->makeApplicationStageVersion($applicationStage);
+            $applicationStageVersion->version = 0;
+            $applicationStageVersion->status = ApplicationStageVersionStatus::Draft;
+            $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
+            return $applicationStageVersion;
+        }
+        if ($latestApplicationStageVersion->status === ApplicationStageVersionStatus::Draft) {
+            return $latestApplicationStageVersion;
+        }
         $applicationStageVersion = $this->appRepo->makeApplicationStageVersion($applicationStage);
-        $applicationStageVersion->version = 0;
+        $applicationStageVersion->version = $latestApplicationStageVersion->version + 1;
+        $applicationStageVersion->status = ApplicationStageVersionStatus::Draft;
+
+        $answers = array_map(
+            $latestApplicationStageVersion->answers(),
+            function (Answer $answer) use ($applicationStageVersion) {
+                $replicatedAnswer = $answer->replicate(['id']);
+                $replicatedAnswer->ApplicationStageVersion()->associate($applicationStageVersion);
+                $this->appRepo->saveAnswer($replicatedAnswer);
+                return $replicatedAnswer;
+            }
+        );
+        $applicationStageVersion->answers()->saveMany($answers);
         $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
         return $applicationStageVersion;
     }
@@ -140,15 +159,13 @@ readonly class ApplicationService
      */
     private function loadOrCreateAppStageWithSubsidyStage(Identity $identity, ApplicationMetadata $appMetadata): array
     {
-
         $applicationStage = $this->loadApplicationStageIfExists($appMetadata->applicationStageId);
         $subsidyStage = $this->loadSubsidyStage($appMetadata->subsidyStageId);
-
-        if ($subsidyStage instanceof SubsidyStage === false) {
-            throw new Exception('SubsidyStage is not an instance of SubsidyStage');
+        if (!isset($subsidyStage)) {
+            throw new Exception('SubsidyStage is not set');
         }
 
-        if ($applicationStage === null) {
+        if (!isset($applicationStage)) {
             $applicationStage = $this->createApplicationStage(
                 $appMetadata->applicationStageId,
                 $identity,
@@ -171,7 +188,7 @@ readonly class ApplicationService
      */
     private function loadField(SubsidyStage $subsidyStage, string $fieldCode): Field
     {
-        $field = $this->formRepo->getField($subsidyStage, $fieldCode);
+        $field = $this->subsidyRepository->getFieldForSubsidyStageAndCode($subsidyStage, $fieldCode);
         if ($field === null) {
             throw new FieldNotFoundException(
                 sprintf(
@@ -197,9 +214,13 @@ readonly class ApplicationService
         ApplicationStageVersion $applicationStageVersion,
         Field $field
     ): void {
+        Log::debug('Getting file for ', [
+            $applicationStageVersion->id,
+            $field->code,
+        ]);
         $answer = $this->appRepo->getAnswer($applicationStageVersion, $field);
         if ($answer === null) {
-            throw new FileNotFoundException("Answer for file not found!");
+            throw new FileNotFoundException("Answer for file {$field->code} not found!");
         }
 
         $path = $this->getFilePath($applicationStage, $field);
@@ -213,10 +234,8 @@ readonly class ApplicationService
         Field $field,
         mixed $value
     ): void {
-        $answer = $this->appRepo->makeAnswer($applicationStageVersion, $field);
-        $answer->encrypted_answer = $this->encryptionService
-            ->encryptFieldValue(json_encode($value)); // @phpstan-ignore-line
-        $this->appRepo->saveAnswer($answer);
+        $this->appRepo->createAnswer($applicationStageVersion, $field, $this->encryptionService
+            ->encryptFieldValue(json_encode($value)));
     }
 
     /**
@@ -273,27 +292,20 @@ readonly class ApplicationService
 
         $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
 
-
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
                 $formSubmit->identity,
                 $formSubmit->applicationMetadata
             );
 
+            $json = $this->encryptionService->decryptFormSubmit($formSubmit->encryptedData);
 
-            $json = $formSubmit->encryptedData; // TODO: decrypt
-            $json = base64_decode($json);
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
-
-            if ($applicationStage->applicationStageVersions->first() != null) {
-                $applicationStageVersion = $applicationStage->applicationStageVersions->first();
-            } else {
-                $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
-            }
+            $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
             $this->validateFieldValues($applicationStage, $applicationStageVersion, $values);
             $this->processFieldValues($applicationStageVersion, $values);
 
-            $applicationStage->status = ApplicationStageStatus::Submitted;
+            $applicationStage->status = ApplicationStageVersionStatus::Submitted;
             $this->appRepo->saveApplicationStage($applicationStage);
 
             return $applicationStage;
@@ -310,7 +322,6 @@ readonly class ApplicationService
             $fileUpload->identity,
             $fileUpload->applicationMetadata
         );
-
         $field = $this->loadField($subsidyStage, $fileUpload->fieldCode);
         if ($field->type !== FieldType::Upload) {
             throw new FieldTypeMismatchException(
@@ -333,13 +344,17 @@ readonly class ApplicationService
             'size' => $size
         ];
 
+        $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
-        if ($applicationStage->applicationStageVersions->first() != null) {
-            $applicationStageVersion = $applicationStage->applicationStageVersions->first();
-        } else {
-            $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
-        }
-
+        [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
+            $fileUpload->identity,
+            $fileUpload->applicationMetadata
+        );
+        $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
+        [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
+            $fileUpload->identity,
+            $fileUpload->applicationMetadata
+        );
 
         $this->createOrUpdateAnswer(
             $applicationStageVersion,

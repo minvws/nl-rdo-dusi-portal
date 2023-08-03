@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Submission;
 
-use App\Shared\Models\Definition\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 readonly class FieldValue
 {

@@ -6,7 +6,7 @@ namespace Database\Factories;
 
 use App\Models\ApplicationStage;
 use App\Models\Application;
-use App\Models\Enums\ApplicationStageStatus;
+use App\Models\Enums\ApplicationStageVersionStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
@@ -27,7 +27,6 @@ class ApplicationStageFactory extends Factory
             'application_id' => Application::factory(),
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
             'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
-            'status' => ApplicationStageStatus::Draft->value,
             'subsidy_stage_id' => $this->faker->uuid,
             'user_id' => $this->faker->uuid,
         ];

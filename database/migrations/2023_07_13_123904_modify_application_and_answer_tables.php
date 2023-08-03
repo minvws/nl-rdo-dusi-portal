@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Enums\ApplicationStageStatus;
+use App\Models\Enums\ApplicationStageVersionStatus;
 use App\Shared\Models\Application\IdentityType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::table('applications', function (Blueprint $table) {
             $table->enum('identity_type', [IdentityType::EncryptedCitizenServiceNumber->value]);
             $table->string('identity_identifier', 200);
-            $table->enum('status', [ApplicationStageStatus::Draft->value, ApplicationStageStatus::Submitted->value]);
+            $table->enum('status', [ApplicationStageVersionStatus::Draft->value, ApplicationStageVersionStatus::Submitted->value]);
             $table->timestamp('updated_at')->useCurrent();
         });
 
