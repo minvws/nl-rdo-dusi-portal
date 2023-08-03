@@ -36,7 +36,7 @@ class ApplicationStage extends Model
 
     public function applicationStageVersions(): HasMany
     {
-        return $this->hasMany(ApplicationStageVersion::class, 'application_stages_id', 'id');
+        return $this->hasMany(ApplicationStageVersion::class, 'application_stage_id', 'id');
     }
 
     protected static function newFactory(): ApplicationStageFactory
