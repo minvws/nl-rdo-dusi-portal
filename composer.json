@@ -20,7 +20,7 @@
         "laravel/sail": "^1.23.1",
         "laravel/tinker": "^2.8.1",
         "mockery/mockery": "^1.6.2",
-        "nunomaduro/collision": "^6.4.0",
+        "nunomaduro/collision": "^7.7.0",
         "nunomaduro/larastan": "^2.6.3",
         "phpmd/phpmd": "^2.13.0",
         "phpunit/phpunit": "^10.2.7",
