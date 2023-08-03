@@ -63,12 +63,12 @@ jobs:
 
       - name: Execute tests with Code Coverage
         env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 5432
-          DB_DATABASE: ci_db_test
-          DB_USERNAME: postgres
-          DB_PASSWORD: postgres
-          DB_SSLMODE: prefer
+          DB_FORM_HOST: 127.0.0.1
+          DB_FORM_PORT: 5432
+          DB_FORM_DATABASE: ci_db_test
+          DB_FORM_USERNAME: postgres
+          DB_FORM_PASSWORD: postgres
+          DB_FORM_SSLMODE: prefer
         run: vendor/bin/phpunit --coverage-clover tests/coverage.xml
 
       - if: ${{ github.event_name == 'pull_request' }}

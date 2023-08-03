@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\Connection as UserConnection;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 return [
