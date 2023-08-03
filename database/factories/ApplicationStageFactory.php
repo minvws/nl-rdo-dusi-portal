@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Factories;
+
+use App\Models\ApplicationStage;
+use App\Models\Application;
+use App\Models\Enums\ApplicationStageVersionStatus;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Ramsey\Uuid\Uuid;
+
+/**
+ * @extends Factory<ApplicationStage>
+ */
+class ApplicationStageFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'id' =>$this->faker->uuid,
+            'application_id' => Application::factory(),
+            'created_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
+            'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
+            'subsidy_stage_id' => $this->faker->uuid,
+            'user_id' => $this->faker->uuid,
+        ];
+    }
+}

@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\FieldType;
-use App\Shared\Models\Definition\Form;
 use App\Models\Submission\FieldValue;
-use App\Repositories\FormRepository;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\JSON\JSONDecoder;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use Throwable;
 
 readonly class FormDecodingService
 {
-    public function __construct(private FormRepository $formRepository)
+    public function __construct(private SubsidyRepository $subsidyRepository)
     {
     }
 
@@ -43,18 +43,16 @@ readonly class FormDecodingService
      * @return array<int|string, FieldValue>
      * @throws Throwable
      */
-    public function decodeFormValues(Form $form, string $data): array
+    public function decodeFormValues(SubsidyStage $subsidyStage, string $data): array
     {
         $decoder = new JSONDecoder();
         $container = $decoder->decode($data);
-
         $values = [];
-        $fields = $this->formRepository->getFields($form);
+        $fields = $this->subsidyRepository->getFields($subsidyStage);
         foreach ($fields as $field) {
             $fieldContainer = $container->nestedContainer($field->code);
             $values[$field->code] = $this->decodeFieldValue($field, $fieldContainer);
         }
-
         return $values;
     }
 }

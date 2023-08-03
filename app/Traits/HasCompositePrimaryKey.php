@@ -1,5 +1,8 @@
 <?php
 
+// @phpstan-ignore-file
+
+
 declare(strict_types=1);
 
 namespace App\Traits;
@@ -14,7 +17,7 @@ trait HasCompositePrimaryKey
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function setKeysForSaveQuery($query): \Illuminate\Database\Eloquent\Builder
+    protected function setKeysForSaveQuery($query)
     {
         $keys = $this->getKeyName();
         return !is_array($keys) ? parent::setKeysForSaveQuery($query) : $query->where(function ($q) use ($keys) {
@@ -31,19 +34,16 @@ trait HasCompositePrimaryKey
      */
     public function getCasts()
     {
-        // @phpstan-ignore-next-line
         if ($this->getIncrementing()) {
-            // @phpstan-ignore-next-line
             return array_merge([$this->getKeyName() => $this->getKeyType()], $this->casts);
         }
         return $this->casts;
     }
 
     /**
-     * @return bool
-     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     * @return false
      */
-    public function getIncrementing(): bool
+    public function getIncrementing()
     {
         return false;
     }
@@ -52,20 +52,16 @@ trait HasCompositePrimaryKey
      * Get the value of the model's primary key.
      *
      * @return mixed
-     * @psalm-suppress NoValue
      */
-    public function getKey(): mixed
+    public function getKey()
     {
         $fields = $this->getKeyName();
+        assert(is_array($fields), 'Composite primary key must be an array');
         $keys = [];
-        if (is_iterable($fields)) { // Check if $fields is iterable (array or object)
-            foreach ($fields as $key) {
-                $keys[] = $this->getAttribute($key);
-            }
-            return $keys;
-        }
-        $key = $this->getAttribute($fields);
-        return $key;
+        array_map(function ($key) use (&$keys) {
+            $keys[] = $this->getAttribute($key);
+        }, $fields);
+        return $keys;
     }
 
     /**
@@ -78,15 +74,15 @@ trait HasCompositePrimaryKey
     {
         $modelClass = self::class;
         $model = new $modelClass();
-        $keys = $model->getKey();
+        $keys = $model->primaryKey;
+        assert(is_array($keys), 'Composite primary key must be an array');
+
         return $model->where(function ($query) use ($ids, $keys) {
-            if (is_iterable($keys)) { // Check if $keys is iterable
-                foreach ($keys as $idx => $key) {
-                    if (isset($ids[$idx])) {
-                        $query->where($key, $ids[$idx]);
-                    } else {
-                        $query->whereNull($key);
-                    }
+            foreach ($keys as $idx => $key) {
+                if (isset($ids[$idx])) {
+                    $query->where($key, $ids[$idx]);
+                } else {
+                    $query->whereNull($key);
                 }
             }
         })->first();

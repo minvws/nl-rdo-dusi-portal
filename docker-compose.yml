@@ -38,7 +38,6 @@ services:
         networks:
             portal-backend:
                 aliases:
-                    - pgsql_application
                     - portal-backend-pgsql
         ports:
             - ${POSTGRES_PORT:-9101}:5432

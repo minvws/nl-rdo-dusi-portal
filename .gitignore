@@ -19,4 +19,9 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+*.cert
+*.crt
+*.key
+*.priv
+*.pub
 _ide_helper.php

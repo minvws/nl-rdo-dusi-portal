@@ -6,7 +6,6 @@ namespace App\Models;
 
 use App\Shared\Models\Application\Identity;
 use App\Shared\Models\Application\IdentityType;
-use App\Shared\Models\Definition\Form;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,10 +14,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $id
- * @property string $form_id
- * @property Form $form
+ * @property string $subsidy_version_id
+ * @property string $application_title
+ * @property string $identity_type
+ * @property string $identity_identifier
  * @property Identity $identity
- * @property ApplicationStatus $status
+ * @property int $locked_from
+ * @property int $final_review_deadline
  */
 class Application extends Model
 {
@@ -30,7 +32,14 @@ class Application extends Model
     protected $casts = [
         'identity_type' => IdentityType::class,
         'locked_from' => 'timestamp',
-        'status' => ApplicationStatus::class
+        'final_review_deadline' => 'timestamp',
+    ];
+
+    protected $fillable = [
+        'subsidy_version_id',
+        'application_title',
+        'final_review_deadline',
+        'locked_from'
     ];
 
     public function applicationHashes(): HasMany
@@ -38,14 +47,9 @@ class Application extends Model
         return $this->hasMany(ApplicationHash::class, 'application_id', 'id');
     }
 
-    public function applicationReviews(): HasMany
+    public function applicationStages(): HasMany
     {
-        return $this->hasMany(ApplicationReview::class, 'application_id', 'id');
-    }
-
-    public function answers(): HasMany
-    {
-        return $this->hasMany(Answer::class, 'application_id', 'id');
+        return $this->hasMany(ApplicationStage::class, 'application_id', 'id');
     }
 
     /**

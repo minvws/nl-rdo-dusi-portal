@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tests\Feature\Repositories;
 
 use App\Shared\Models\Connection;
-use App\Shared\Models\Definition\Form;
-use App\Shared\Models\Definition\Subsidy;
-use App\Shared\Models\Definition\VersionStatus;
-use App\Repositories\FormRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Tests\TestCase;
 
 /**
@@ -27,10 +27,15 @@ class FormRepositoryTest extends TestCase
     public function testGetForm(): void
     {
         $subsidy = Subsidy::factory()->create();
-        $form = Form::factory()->create(['status' => VersionStatus::Published, 'subsidy_id' => $subsidy->id]);
+        $subsidyVersion = $subsidy->subsidyVersions()->create([
+            'version' => 1,
+            'status' => VersionStatus::getDefault(),
+        ]);
+        $subsidyStage = SubsidyStage::factory()->create([
+            'subsidy_version_id' => $subsidyVersion->id]);
 
-        $repository = $this->app->get(FormRepository::class);
-        $form = $repository->getForm($form->id);
-        $this->assertNotNull($form);
+        $repository = $this->app->get(SubsidyRepository::class);
+        $subsidyStage = $repository->getSubsidyStage($subsidyStage->id);
+        $this->assertNotNull($subsidyStage);
     }
 }

@@ -8,15 +8,14 @@
         "php": "^8.2",
         "firebase/php-jwt": "^6.8",
         "guzzlehttp/guzzle": "^7.7",
-        "laravel/framework": "^10.16",
+        "laravel/framework": "^10.17",
         "laravel/tinker": "^2.8",
         "minvws/codable": "dev-feature/base as 1.0.x-dev",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
+        "minvws/dusi-subsidy-model": "dev-main"
     },
     "require-dev": {
         "ext-openssl": "*",
-        "barryvdh/laravel-debugbar": "^3.8",
-        "barryvdh/laravel-ide-helper": "^2.13",
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",
         "laravel/pint": "^1.10",
@@ -79,6 +78,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/minvws/nl-rdo-php-codable.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "https://github.com/minvws/nl-rdo-dusi-subsidy-model.git"
         }
     ]
 }

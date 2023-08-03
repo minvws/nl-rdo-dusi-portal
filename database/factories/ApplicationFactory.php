@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Application;
-use App\Models\ApplicationStatus;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Shared\Models\Application\IdentityType;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Ramsey\Uuid\Uuid;
 
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Application>
+ * @extends Factory<Application>
  */
 class ApplicationFactory extends Factory
 {
@@ -23,20 +23,14 @@ class ApplicationFactory extends Factory
     public function definition(): array
     {
         return [
-            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
-            // 'form_id' => $this->faker->uuid,
-            'form_id' => '29a444d8-0f36-4266-8881-489f7cfd2b1c', // BTV_V1_UUID = '29a444d8-0f36-4266-8881-489f7cfd2b1c';
+            'id' => $this->faker->uuid,
+            'created_at' => $this->faker->dateTimeBetween('-1 year'),
+            'subsidy_version_id' => $this->faker->uuid,
             'identity_type' => IdentityType::EncryptedCitizenServiceNumber->value,
             'identity_identifier' => $this->faker->randomNumber(9),
-            'status' => ApplicationStatus::Draft->value,
+            'application_title' => $this->faker->words(3, true),
+            'final_review_deadline' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'locked_from' => null,
         ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterCreating(function (Application $application) {
-            $application->judgement = $application->applicationReviews()->orderByDesc('created_at')->first()->judgement;
-            $application->save();
-        });
     }
 }

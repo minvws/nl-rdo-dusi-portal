@@ -7,7 +7,7 @@ and running is a matter of:
 
 Running the init script
 
-### TL;DR:
+### TL;DR
 
 If you already know how all of this works, this should be all the information
 you need:
@@ -22,11 +22,13 @@ By default the portal is accessable at http://localhost:8001
 
 ## Usage
 
-
 ## Development
 
 This application has been developed in Laravel, please see the [Laravel docs][laravel-docs]
 for Laravel specific details.
+
+todo migrate beschrijven.
+`vendor/bin/sail artisan migrate:fresh --path database/migrations`
 
 ### Users
 
@@ -36,13 +38,17 @@ for Laravel specific details.
 
 - Whenever something changes in the docker setup, don't forget to re-build the
   containers:
+
   ```sh
   docker-compose up --build --remove-orphans
   ```
 
-- A script that checks the develop environment is run when `docker-compose up` is run.
-  This script will report any problems and try to make suggestions on how to resolve things.
-  These suggestions can usually be run inside the Docker container (using `docker-compose exec assessment-web some-command`).
+- A script that checks the develop environment is run when `docker-compose up`
+is run.
+- This script will report any problems and try to make suggestions
+on how to resolve things.
+- These suggestions can usually be run inside the Docker container
+ (using `docker-compose exec assessment-web some-command`).
 
 - Docker-compose might show this warning:
   ```WARNING: The [...] variable is not set. Defaulting to a blank string.```

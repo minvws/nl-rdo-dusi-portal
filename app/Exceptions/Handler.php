@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -39,13 +40,12 @@ class Handler extends ExceptionHandler
 
     /**
      * Register the exception handling callbacks for the application.
-     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @return void
      */
-    // public function register()
-    // {
-    //     $this->reportable(function (Throwable $e) {
-    //         //
-    //     });
-    // }
+    public function register()
+    {
+        $this->reportable(function (Throwable $e) {
+        });
+    }
 }

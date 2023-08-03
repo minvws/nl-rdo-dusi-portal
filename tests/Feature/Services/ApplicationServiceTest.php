@@ -5,26 +5,29 @@ declare(strict_types=1);
 namespace Tests\Feature\Services;
 
 use App\Models\Application;
-use App\Models\ApplicationStatus;
+use App\Models\ApplicationStage;
 use App\Models\Disk;
+use App\Models\Enums\ApplicationStageVersionStatus;
+use App\Repositories\ApplicationRepository;
+use App\Services\ApplicationService;
 use App\Services\Exceptions\FileNotFoundException;
 use App\Shared\Models\Application\ApplicationMetadata;
 use App\Shared\Models\Application\FileUpload;
 use App\Shared\Models\Application\FormSubmit;
 use App\Shared\Models\Application\Identity;
 use App\Shared\Models\Application\IdentityType;
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\FieldType;
-use App\Shared\Models\Definition\Form;
-use App\Shared\Models\Definition\Subsidy;
-use App\Shared\Models\Definition\VersionStatus;
-use App\Services\ApplicationService;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\Exceptions\ValueNotFoundException;
 use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 use Throwable;
@@ -38,7 +41,7 @@ class ApplicationServiceTest extends TestCase
     use DatabaseTransactions;
     use WithFaker;
 
-    private Form $form;
+    private SubsidyStage $subsidyStage;
     private Field $textField;
     private Field $numericField;
 
@@ -46,23 +49,37 @@ class ApplicationServiceTest extends TestCase
     {
         parent::setUp();
         $subsidy = Subsidy::factory()->create();
-        $this->form = Form::factory()->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);
-        $this->textField = Field::factory()->create(['form_id' =>
-        $this->form->id, 'type' => FieldType::Text, 'code' => 'text']);
-        $this->numericField = Field::factory()->create(['form_id' =>
-        $this->form->id, 'type' => FieldType::TextNumeric, 'code' => 'number']);
+        $subsidyVersion = SubsidyVersion::factory()
+            ->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);
+        $this->subsidyStage = SubsidyStage::factory()->create(
+            [
+                'subsidy_version_id' => $subsidyVersion->id,
+            ]
+        );
+        $this->textField = Field::factory()->create([
+            'type' => FieldType::Text,
+            'code' => 'text',
+        ]);
+        $this->numericField = Field::factory()->create([
+            'type' => FieldType::TextNumeric,
+            'code' => 'number']);
+
+        $this->subsidyStage->fields()->attach($this->textField);
+        $this->subsidyStage->fields()->attach($this->numericField);
     }
 
     public function testProcessFileUpload(): void
     {
         Storage::fake(Disk::APPLICATION_FILES);
 
-        $fileField = Field::factory()->create(['form_id' =>
-        $this->form->id, 'type' => FieldType::Upload, 'code' => 'file']);
+        $this->subsidyStage->fields()->detach();
+        $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
+        $fileField->subsidyStages()->attach($this->subsidyStage->id);
+
 
         $fileUpload = new FileUpload(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->form->id),
+            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             $fileField->code,
             Uuid::uuid4()->toString(),
             'application/pdf',
@@ -75,10 +92,11 @@ class ApplicationServiceTest extends TestCase
         $applicationService->processFileUpload($fileUpload);
 
         $this->assertTrue(Storage::disk(Disk::APPLICATION_FILES)
-            ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->id, $fileField->code)));
-        $application = Application::query()->find($fileUpload->applicationMetadata->id);
-        $this->assertInstanceOf(Application::class, $application);
-        $this->assertEquals(ApplicationStatus::Draft, $application->status);
+            ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
+        $applicationStage = ApplicationStage::query()->find($fileUpload->applicationMetadata->applicationStageId);
+        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
+        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        $this->assertEquals(ApplicationStageVersionStatus::Draft, $applicationStageVersion->status);
     }
 
     /**
@@ -93,20 +111,24 @@ class ApplicationServiceTest extends TestCase
 
         $formSubmit = new FormSubmit(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->form->id),
-            json_encode($data)
+            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
+            base64_encode(json_encode($data))
         );
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $application = $applicationService->processFormSubmit($formSubmit);
-        $this->assertNotNull($application);
-        $this->assertEquals(ApplicationStatus::Submitted, $application->status);
+        $applicationStage = $applicationService->processFormSubmit($formSubmit);
+        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        $this->assertNotNull($applicationStage);
+        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStageVersion->status);
 
-        $application = Application::query()->find($formSubmit->applicationMetadata->id);
-        $this->assertInstanceOf(Application::class, $application);
-        $this->assertEquals(ApplicationStatus::Submitted, $application->status);
+        $applicationStage = ApplicationStage::query()->find($formSubmit->applicationMetadata->applicationStageId);
+        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
+        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
+        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStageVersion->status);
     }
+
 
     public static function invalidFormSubmitProvider(): Generator
     {
@@ -122,14 +144,14 @@ class ApplicationServiceTest extends TestCase
     public function testProcessFormSubmitInvalidFieldData(mixed $text, mixed $numeric, string $expectedException): void
     {
         $data = [
-            $this->textField->code => $text,
-            $this->numericField->code => $numeric,
+            $this->textField->code => $text, // Invalid data for a text field
+            $this->numericField->code => $numeric, // Invalid data for a numeric field
         ];
 
         $formSubmit = new FormSubmit(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->form->id),
-            json_encode($data)
+            new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
+            base64_encode(json_encode($data))
         );
 
         $applicationService = $this->app->get(ApplicationService::class);
@@ -138,12 +160,13 @@ class ApplicationServiceTest extends TestCase
         $applicationService->processFormSubmit($formSubmit);
     }
 
+
     public function testProcessFormSubmitInvalidForm(): void
     {
         $formSubmit = new FormSubmit(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->form->id),
-            json_encode([])
+            new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
+            json_encode([]) // Empty data for the form, which should be invalid
         );
 
         $applicationService = $this->app->get(ApplicationService::class);
@@ -156,8 +179,10 @@ class ApplicationServiceTest extends TestCase
     {
         Storage::fake(Disk::APPLICATION_FILES);
 
-        $fileField = Field::factory()->create(['form_id' =>
-        $this->form->id, 'type' => FieldType::Upload, 'code' => 'file']);
+        $this->subsidyStage->fields()->detach();
+
+        $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
+        $fileField->subsidyStages()->attach($this->subsidyStage->id);
 
         $data = [
             $this->textField->code => $this->faker->word,
@@ -167,13 +192,13 @@ class ApplicationServiceTest extends TestCase
 
         $formSubmit = new FormSubmit(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->form->id),
-            json_encode($data)
+            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
+            base64_encode(json_encode($data))
         );
 
         $this->expectException(FileNotFoundException::class);
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $application = $applicationService->processFormSubmit($formSubmit);
+        $applicationService->processFormSubmit($formSubmit);
     }
 }

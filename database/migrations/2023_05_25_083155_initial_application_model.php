@@ -65,10 +65,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::drop('applications');
-        Schema::drop('application_hashes');
-        Schema::drop('judgements');
-        Schema::drop('application_reviews');
         Schema::drop('answers');
+        Schema::drop('application_reviews');
+        Schema::drop('judgements');
+        Schema::drop('application_hashes');
+        Schema::drop('applications');
     }
 };
