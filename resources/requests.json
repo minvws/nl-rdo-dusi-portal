@@ -1,0 +1,20 @@
+[
+  [
+    { "text": "Borstprothesen transvrouwen", "link": "/mijn-dossier/aanvragen/borstprothesen-transvrouwen" },
+    { "text": "4 juni 2023" },
+    { "text": "26 Augustus 2023" },
+    { "text": "Ontvangen" },
+    { "text": "Ja (2)", "link": "#" },
+    { "text": "Ja (2)" },
+    { "text": "asdf", "icon": "chevron-right", "link": "#" }
+  ],
+  [
+    { "text": "Lorem ipsum", "link": "/mijn-dossier/aanvragen/lorem-ipsum" },
+    { "text": "15 Maart 2023" },
+    { "text": "-" },
+    { "text": "Afgekeurd" },
+    { "text": "Nee", "link": "#" },
+    { "text": "Nee" },
+    { "text": "asdf", "icon": "chevron-right", "link": "#" }
+  ]
+]
