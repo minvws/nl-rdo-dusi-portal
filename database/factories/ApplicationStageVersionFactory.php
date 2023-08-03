@@ -5,8 +5,7 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Ramsey\Uuid\Uuid;
-
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 
 /**
  * @extends Factory<ApplicationStageVersion>
@@ -24,8 +23,9 @@ class ApplicationStageVersionFactory extends Factory
     {
         return [
             'id' => $this->faker->uuid,
-            'application_stages_id' => ApplicationStage::factory(),
+            'application_stage_id' => ApplicationStage::factory(),
             'created_at' => $this->faker->dateTimeBetween('-1 year'),
+            'status' => ApplicationStageVersionStatus::Draft->value,
             'version' => $this->faker->randomDigitNotZero(),
         ];
     }

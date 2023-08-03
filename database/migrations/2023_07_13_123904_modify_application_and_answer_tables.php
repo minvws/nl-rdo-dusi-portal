@@ -1,13 +1,17 @@
 <?php
 
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageStatus;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
 
 return new class extends Migration
 {
+    protected $connection = Connection::APPLICATION;
+
     /**
      * Run the migrations.
      */
@@ -16,7 +20,7 @@ return new class extends Migration
         Schema::table('applications', function (Blueprint $table) {
             $table->enum('identity_type', [IdentityType::EncryptedCitizenServiceNumber->value]);
             $table->string('identity_identifier', 200);
-            $table->enum('status', [ApplicationStageStatus::Draft->value, ApplicationStageStatus::Submitted->value]);
+            $table->enum('status', [ApplicationStageVersionStatus::Draft->value, ApplicationStageVersionStatus::Submitted->value]);
             $table->timestamp('updated_at')->useCurrent();
         });
 

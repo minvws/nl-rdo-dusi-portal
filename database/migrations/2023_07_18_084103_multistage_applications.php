@@ -8,11 +8,14 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageStatus;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 
 
 return new class extends Migration
 {
+    protected $connection = Connection::APPLICATION;
+
     /**
      * Run the migrations.
      */
@@ -38,14 +41,14 @@ return new class extends Migration
             $table->foreignUuid('application_id')->constrained();
             $table->uuid('subsidy_stage_id');
             $table->timestamps();
-            $table->uuid('user_id');
-            $table->string('status');
+            $table->uuid('user_id')->nullable();
         });
 
         Schema::create('application_stage_versions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('application_stages_id')->constrained();
+            $table->foreignUuid('application_stage_id')->constrained();
             $table->timestamp('created_at')->useCurrent();
+            $table->string('status');
             $table->integer('version');
         });
 
@@ -78,7 +81,7 @@ return new class extends Migration
         });
         Schema::table('applications', function (Blueprint $table) {
             $table->renameColumn('subsidy_version_id', 'form_id');
-            $table->enum('status', [ApplicationStageStatus::Draft->value, ApplicationStageStatus::Submitted->value]);
+            $table->enum('status', [ApplicationStageVersionStatus::Draft->value, ApplicationStageVersionStatus::Submitted->value]);
             $table->dropColumn('application_title');
             $table->dropColumn('final_review_deadline');
         });

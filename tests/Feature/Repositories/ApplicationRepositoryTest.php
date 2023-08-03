@@ -25,7 +25,6 @@ class ApplicationRepositoryTest extends TestCase
         parent::setUp();
 
         $this->repository = new ApplicationRepository();
-        $this->loadEnvironmentVariables = true;
     }
 
     public function testGetApplication()
@@ -174,10 +173,10 @@ class ApplicationRepositoryTest extends TestCase
     {
         // Create a test answer
         $answer = Answer::factory()->make();
+
         // Test save answer
         $this->repository->saveAnswer($answer);
 
         $this->assertDatabaseHas('answers', ['id' => $answer->id]);
-//        dd(Answer::all());
     }
 }

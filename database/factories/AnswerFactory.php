@@ -5,7 +5,6 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @extends Factory<Answer>

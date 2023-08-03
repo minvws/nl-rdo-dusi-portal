@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationStageVersionFactory;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 
 /**
  * @property string $id
@@ -22,7 +23,12 @@ class ApplicationStageVersion extends Model
 
     protected $connection = Connection::APPLICATION;
 
+    protected $casts = [
+        'status' => ApplicationStageVersionStatus::class,
+    ];
+
     protected $fillable = [
+        'status',
         'version'
     ];
 
@@ -30,7 +36,7 @@ class ApplicationStageVersion extends Model
 
     public function applicationStage(): BelongsTo
     {
-        return $this->belongsTo(ApplicationStage::class, 'application_stages_id', 'id');
+        return $this->belongsTo(ApplicationStage::class, 'application_stage_id', 'id');
     }
 
     public function answers(): HasMany
