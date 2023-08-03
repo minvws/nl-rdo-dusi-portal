@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Models\Connection;
+use App\Models\Connection as UserConnection;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 return [
 
@@ -36,7 +37,7 @@ return [
     */
 
     'connections' => [
-        Connection::USER => [
+        UserConnection::USER => [
             'driver' => 'pgsql',
             'url' => env('USER_DATABASE_URL'),
             'host' => env('USER_DB_HOST', '127.0.0.1'),

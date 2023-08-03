@@ -11,7 +11,7 @@ use Ramsey\Uuid\Uuid;
 trait CreateField
 {
     private function createField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         string $type,
@@ -23,7 +23,6 @@ trait CreateField
 
         DB::table('fields')->insert([
             'id' => $id,
-            'form_id' => $formId,
             'code' => $code,
             'title' => $title,
             'description' => $description,
@@ -32,11 +31,16 @@ trait CreateField
             'is_required' => $isRequired,
         ]);
 
+        DB::table('field_subsidy_stage')->insert([
+            'subsidy_stage_id' => $subsidyStageId,
+            'field_id' => $id,
+        ]);
+
         return $id;
     }
 
     private function createTextField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         ?string $description = null,
@@ -45,7 +49,7 @@ trait CreateField
         bool $isRequired = true
     ): string {
         return $this->createField(
-            formId: $formId,
+            subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
@@ -56,14 +60,14 @@ trait CreateField
     }
 
     private function createCheckboxField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         ?string $description = null,
         bool $isRequired = true
     ): string {
         return $this->createField(
-            formId: $formId,
+            subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
@@ -73,7 +77,7 @@ trait CreateField
     }
 
     private function createSelectField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         array $options,
@@ -81,7 +85,7 @@ trait CreateField
         bool $isRequired = true
     ): string {
         return $this->createField(
-            formId: $formId,
+            subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
@@ -92,14 +96,14 @@ trait CreateField
     }
 
     private function createTextAreaField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         ?string $description = null,
         bool $isRequired = true
     ): string {
         return $this->createField(
-            formId: $formId,
+            subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
@@ -109,14 +113,14 @@ trait CreateField
     }
 
     private function createPostalCodeField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         ?string $description = null,
         bool $isRequired = true
     ): string {
         return $this->createField(
-            formId: $formId,
+            subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
@@ -126,14 +130,14 @@ trait CreateField
     }
 
     private function createCountryField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         ?string $description = null,
         bool $isRequired = true
     ): string {
         return $this->createField(
-            formId: $formId,
+            subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
@@ -143,14 +147,14 @@ trait CreateField
     }
 
     private function createBankAccountField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         ?string $description = null,
         bool $isRequired = true
     ): string {
         return $this->createField(
-            formId: $formId,
+            subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
@@ -160,14 +164,14 @@ trait CreateField
     }
 
     private function createUploadField(
-        string $formId,
+        string $subsidyStageId,
         string $code,
         string $title,
         ?string $description = null,
         bool $isRequired = true
     ): string {
         return $this->createField(
-            formId: $formId,
+            subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
