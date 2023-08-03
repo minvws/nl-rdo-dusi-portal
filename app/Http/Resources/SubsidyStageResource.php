@@ -74,7 +74,7 @@ class SubsidyStageResource extends JsonResource
             'title' => $field->title,
         ];
 
-        if($type === 'integer') {
+        if ($type === 'integer') {
             $result['minimum'] = 0;
         }
 
