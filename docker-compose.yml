@@ -28,9 +28,9 @@ services:
 
     pgsql:
         environment:
-            POSTGRES_PASSWORD: '${DB_PASSWORD}'
-            POSTGRES_USER: '${DB_USERNAME}'
-            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_PASSWORD: '${DB_FORM_PASSWORD}'
+            POSTGRES_USER: '${DB_FORM_USERNAME}'
+            POSTGRES_DB: '${DB_FORM_DATABASE}'
         image: 'postgres:12'
         volumes:
             - 'pgsql:/var/lib/postgresql/data'
