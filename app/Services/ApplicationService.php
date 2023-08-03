@@ -46,11 +46,11 @@ use Illuminate\Support\Facades\Log;
 readonly class ApplicationService
 {
     public function __construct(
-        private SubsidyRepository     $subsidyRepository,
-        private FormDecodingService   $decodingService,
-        private EncryptionService     $encryptionService,
+        private SubsidyRepository $subsidyRepository,
+        private FormDecodingService $decodingService,
+        private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
-        private FilesystemManager     $filesystemManager
+        private FilesystemManager $filesystemManager
     ) {
     }
 
@@ -101,8 +101,14 @@ readonly class ApplicationService
         return $this->subsidyRepository->getSubsidyStage($subsidyStageId);
     }
 
+    /**
+     * @throws Exception
+     */
     private function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
     {
+        if (!isset($subsidyStage->subsidyVersion)) {
+            throw new Exception('SubsidyVersion is not set');
+        }
         $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
         $app->application_title = $subsidyStage->title;
         $app->identity = $identity;
@@ -143,13 +149,13 @@ readonly class ApplicationService
         $applicationStageVersion->status = ApplicationStageVersionStatus::Draft;
 
         $answers = array_map(
-            $latestApplicationStageVersion->answers(),
             function (Answer $answer) use ($applicationStageVersion) {
                 $replicatedAnswer = $answer->replicate(['id']);
                 $replicatedAnswer->ApplicationStageVersion()->associate($applicationStageVersion);
                 $this->appRepo->saveAnswer($replicatedAnswer);
                 return $replicatedAnswer;
-            }
+            },
+            $latestApplicationStageVersion->answers()->get()->all()
         );
         $applicationStageVersion->answers()->saveMany($answers);
         $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
@@ -174,13 +180,7 @@ readonly class ApplicationService
                 $subsidyStage
             );
         }
-
-        if ($applicationStage instanceof ApplicationStage) {
-            $this->validateIdentityAndApplicationMetadata($identity, $appMetadata, $applicationStage);
-        } else {
-            throw new Exception('ApplicationStage is not an instance of ApplicationStage');
-        }
-
+        $this->validateIdentityAndApplicationMetadata($identity, $appMetadata, $applicationStage);
 
         return [$applicationStage, $subsidyStage];
     }
@@ -231,14 +231,21 @@ readonly class ApplicationService
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function createOrUpdateAnswer(
         ApplicationStageVersion $applicationStageVersion,
         Field $field,
         mixed $value
     ): void {
         $answer = $this->appRepo->makeAnswer($applicationStageVersion, $field);
+        $json = json_encode($value);
+        if (!is_string($json)) {
+            throw new Exception('JSON encoding failed. Invalid data provided.');
+        }
         $answer->encrypted_answer = $this->encryptionService
-            ->encryptFieldValue(json_encode($value));
+            ->encryptFieldValue($json);
         $this->appRepo->saveAnswer($answer);
     }
 
@@ -268,7 +275,11 @@ readonly class ApplicationService
         ApplicationStageVersion $applicationStageVersion,
         FieldValue $value
     ): void {
-        Log::info('validatingField', ['applicationStageVersion'=>$applicationStageVersion->id, 'applicationStage'=>$applicationStage->id, 'value'=>$value]);
+        Log::info(
+            'validatingField',
+            ['applicationStageVersion' => $applicationStageVersion->id,
+                'applicationStage' => $applicationStage->id, 'value' => $value]
+        );
         if ($value->field->type === FieldType::Upload) {
             $this->validateFileAnswer($applicationStage, $applicationStageVersion, $value->field);
         }
@@ -302,7 +313,10 @@ readonly class ApplicationService
                 $formSubmit->applicationMetadata
             );
 
-            Log::info('processFormSubmit', ['applicationStage'=>$applicationStage->id, 'subsidyStage'=>$subsidyStage->id]);
+            Log::info(
+                'processFormSubmit',
+                ['applicationStage' => $applicationStage->id, 'subsidyStage' => $subsidyStage->id]
+            );
             //ea1cea2e-d5c3-4859-baca-ee385c8ad4fc
             //ea1cea2e-d5c3-4859-baca-ee385c8ad4fc
             $json = $this->encryptionService->decryptFormSubmit($formSubmit->encryptedData);

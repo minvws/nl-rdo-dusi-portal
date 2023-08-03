@@ -12,7 +12,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
-use Illuminate\Support\Facades\Log;
 
 class ProcessFileUpload implements ShouldQueue
 {

@@ -9,11 +9,11 @@ use App\Models\Application;
 use App\Models\ApplicationStage;
 use App\Models\ApplicationStageVersion;
 use App\Models\Answer;
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\Subsidy;
-use App\Shared\Models\Definition\SubsidyStage;
-use App\Shared\Models\Definition\SubsidyVersion;
 use Illuminate\Database\QueryException;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Tests\TestCase;
 
 class ApplicationRepositoryTest extends TestCase

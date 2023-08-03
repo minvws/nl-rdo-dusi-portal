@@ -11,7 +11,6 @@ use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 readonly class FormDecodingService

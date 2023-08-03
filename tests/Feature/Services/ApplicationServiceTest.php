@@ -8,6 +8,7 @@ use App\Models\Application;
 use App\Models\ApplicationStage;
 use App\Models\Disk;
 use App\Models\Enums\ApplicationStageVersionStatus;
+use App\Repositories\ApplicationRepository;
 use App\Services\ApplicationService;
 use App\Services\Exceptions\FileNotFoundException;
 use App\Shared\Models\Application\ApplicationMetadata;
@@ -15,18 +16,18 @@ use App\Shared\Models\Application\FileUpload;
 use App\Shared\Models\Application\FormSubmit;
 use App\Shared\Models\Application\Identity;
 use App\Shared\Models\Application\IdentityType;
-use App\Shared\Models\Definition\Field;
-use App\Shared\Models\Definition\Enums\FieldType;
-use App\Shared\Models\Definition\Subsidy;
-use App\Shared\Models\Definition\Enums\VersionStatus;
-use App\Shared\Models\Definition\SubsidyStage;
-use App\Shared\Models\Definition\SubsidyVersion;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\Exceptions\ValueNotFoundException;
 use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 use Throwable;
@@ -94,7 +95,8 @@ class ApplicationServiceTest extends TestCase
             ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
         $applicationStage = ApplicationStage::query()->find($fileUpload->applicationMetadata->applicationStageId);
         $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Draft, $applicationStage->status);
+        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        $this->assertEquals(ApplicationStageVersionStatus::Draft, $applicationStageVersion->status);
     }
 
     /**
@@ -116,12 +118,15 @@ class ApplicationServiceTest extends TestCase
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
         $applicationStage = $applicationService->processFormSubmit($formSubmit);
+        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
         $this->assertNotNull($applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStage->status);
+        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStageVersion->status);
 
         $applicationStage = ApplicationStage::query()->find($formSubmit->applicationMetadata->applicationStageId);
         $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStage->status);
+        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
+        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStageVersion->status);
     }
 
 

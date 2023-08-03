@@ -34,7 +34,7 @@ readonly class ApplicationRepository
         return null;
     }
 
-    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection
+    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection|array
     {
         return ApplicationStageVersion::query()
             ->where('application_stage_id', $applicationStage->id)
@@ -72,14 +72,14 @@ readonly class ApplicationRepository
 
     public function makeApplicationForSubsidyVersion(SubsidyVersion $subsidyVersion): Application
     {
-        $application = Application::make();
+        $application = new Application();
         $application->subsidy_version_id = $subsidyVersion->id;
         return $application;
     }
 
     public function makeApplicationStage(Application $application, SubsidyStage $subsidyStage): ApplicationStage
     {
-        $applicationStage = ApplicationStage::make();
+        $applicationStage = new ApplicationStage();
         $applicationStage->application()->associate($application);
         $applicationStage->subsidy_stage_id = $subsidyStage->id;
         return $applicationStage;
@@ -88,7 +88,7 @@ readonly class ApplicationRepository
     public function makeApplicationStageVersion(
         ApplicationStage $applicationStage
     ): ApplicationStageVersion {
-        $applicationStageVersion = ApplicationStageVersion::make([
+        $applicationStageVersion = new ApplicationStageVersion([
             'status' => ApplicationStageVersionStatus::Draft->value,
         ]);
         $applicationStageVersion->applicationStage()->associate($applicationStage);
@@ -97,7 +97,7 @@ readonly class ApplicationRepository
 
     public function makeAnswer(ApplicationStageVersion $appStageVersion, Field $field): Answer
     {
-        $answer = Answer::make([
+        $answer = new Answer([
             'field_id' => $field->id,
         ]);
         $answer->applicationStageVersion()->associate($appStageVersion);

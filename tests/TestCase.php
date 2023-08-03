@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Artisan;
 class TestCase extends BaseTestCase
 {
     use CreatesApplication;
-    use RefreshDatabase;
+//    use RefreshDatabase;
 
     protected function SetUp(): void
     {
@@ -24,7 +24,7 @@ class TestCase extends BaseTestCase
         Artisan::call('db:wipe', ['--database' => 'pgsql_form']);
         Artisan::call('db:wipe', ['--database' => 'pgsql_application']);
 
-        Artisan::call('migrate:fresh', ['--path' => 'tests/migrations']);
+        Artisan::call('migrate:fresh', ['--path' => 'vendor/minvws/dusi-subsidy-model/database/migrations']);
         Artisan::call('migrate:fresh', ['--path' => 'database/migrations']);
     }
 }
