@@ -30,11 +30,6 @@ class ProcessFormSubmit implements ShouldQueue
      */
     public function handle(ApplicationService $applicationService): void
     {
-        try{
-            $applicationService->processFormSubmit($this->formSubmit);
-        } catch(Throwable $e) {
-            Log::error($e);
-            dd($e);
-        }
+        $applicationService->processFormSubmit($this->formSubmit);
     }
 }
