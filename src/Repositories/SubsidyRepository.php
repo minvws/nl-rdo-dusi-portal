@@ -74,6 +74,23 @@ class SubsidyRepository
 
     /*
      * @param SubsidyStage $subsidyStage
+     * @param string $code
+     * @return ?Field
+     */
+    public function getFieldForSubsidyStageAndCode(SubsidyStage $subsidyStage, string $code): ?Field
+    {
+        $field = Field::query()
+            ->where('subsidy_stage_id', $subsidyStage->id)
+            ->where('code', $code)
+            ->first();
+        if ($field instanceof Field) {
+            return $field;
+        }
+        return null;
+    }
+
+    /*
+     * @param SubsidyStage $subsidyStage
      * @return Collection<Field>
      */
     public function getFields(SubsidyStage $subsidyStage): Collection
