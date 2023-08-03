@@ -7,7 +7,7 @@ and running is a matter of:
 
 Running the init script
 
-### TL;DR:
+### TL;DR
 
 If you already know how all of this works, this should be all the information
 you need:
@@ -43,9 +43,11 @@ todo migrate beschrijven.
   docker-compose up --build --remove-orphans
   ```
 
-- A script that checks the develop environment is run when `docker-compose up` is run.
-- This script will report any problems and try to make suggestions on how to resolve things.
-- These suggestions can usually be run inside the Docker container <br>
+- A script that checks the develop environment is run when `docker-compose up`
+is run.
+- This script will report any problems and try to make suggestions 
+on how to resolve things.
+- These suggestions can usually be run inside the Docker container
  (using `docker-compose exec assessment-web some-command`).
 
 - Docker-compose might show this warning:
