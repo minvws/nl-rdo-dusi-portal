@@ -32,7 +32,6 @@ class ProcessFormSubmit implements ShouldQueue
     {
         try{
             $applicationService->processFormSubmit($this->formSubmit);
-            dd("processed");
         } catch(Throwable $e) {
             Log::error($e);
             dd($e);

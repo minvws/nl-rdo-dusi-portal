@@ -32,10 +32,9 @@ class ProcessFileUpload implements ShouldQueue
     {
         try{
             $applicationService->processFileUpload($this->fileUpload);
-            dd("processed");
         } catch(Throwable $e) {
             Log::error($e);
-//            dd($e);
+            dd($e);
         }
     }
 }

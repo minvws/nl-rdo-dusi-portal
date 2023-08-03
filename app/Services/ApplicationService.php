@@ -115,11 +115,13 @@ readonly class ApplicationService
         Identity $identity,
         SubsidyStage $subsidyStage
     ): ApplicationStage {
+        Log::info("creating application stage for id: $appMetadataId");
         $this->validateUuid($appMetadataId);
         $app = $this->createApplication($identity, $subsidyStage);
         $applicationStage = $this->appRepo->makeApplicationStage($app, $subsidyStage);
         $applicationStage->id = $appMetadataId;
         $this->appRepo->saveApplicationStage($applicationStage);
+        Log::info("saved application stage for id: $appMetadataId");
         return $applicationStage;
     }
 
@@ -234,8 +236,10 @@ readonly class ApplicationService
         Field $field,
         mixed $value
     ): void {
-        $this->appRepo->createAnswer($applicationStageVersion, $field, $this->encryptionService
-            ->encryptFieldValue(json_encode($value)));
+        $answer = $this->appRepo->makeAnswer($applicationStageVersion, $field);
+        $answer->encrypted_answer = $this->encryptionService
+            ->encryptFieldValue(json_encode($value));
+        $this->appRepo->saveAnswer($answer);
     }
 
     /**
@@ -264,6 +268,7 @@ readonly class ApplicationService
         ApplicationStageVersion $applicationStageVersion,
         FieldValue $value
     ): void {
+        Log::info('validatingField', ['applicationStageVersion'=>$applicationStageVersion->id, 'applicationStage'=>$applicationStage->id, 'value'=>$value]);
         if ($value->field->type === FieldType::Upload) {
             $this->validateFileAnswer($applicationStage, $applicationStageVersion, $value->field);
         }
@@ -297,6 +302,9 @@ readonly class ApplicationService
                 $formSubmit->applicationMetadata
             );
 
+            Log::info('processFormSubmit', ['applicationStage'=>$applicationStage->id, 'subsidyStage'=>$subsidyStage->id]);
+            //ea1cea2e-d5c3-4859-baca-ee385c8ad4fc
+            //ea1cea2e-d5c3-4859-baca-ee385c8ad4fc
             $json = $this->encryptionService->decryptFormSubmit($formSubmit->encryptedData);
 
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
@@ -305,7 +313,8 @@ readonly class ApplicationService
             $this->validateFieldValues($applicationStage, $applicationStageVersion, $values);
             $this->processFieldValues($applicationStageVersion, $values);
 
-            $applicationStage->status = ApplicationStageVersionStatus::Submitted;
+            $applicationStageVersion->status = ApplicationStageVersionStatus::Submitted;
+            $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
             $this->appRepo->saveApplicationStage($applicationStage);
 
             return $applicationStage;
@@ -346,11 +355,6 @@ readonly class ApplicationService
 
         $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
-        [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-            $fileUpload->identity,
-            $fileUpload->applicationMetadata
-        );
-        $applicationStageVersion = $this->createApplicationStageVersion($applicationStage);
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
             $fileUpload->identity,
             $fileUpload->applicationMetadata
