@@ -45,7 +45,7 @@ todo migrate beschrijven.
 
 - A script that checks the develop environment is run when `docker-compose up`
 is run.
-- This script will report any problems and try to make suggestions 
+- This script will report any problems and try to make suggestions
 on how to resolve things.
 - These suggestions can usually be run inside the Docker container
  (using `docker-compose exec assessment-web some-command`).
