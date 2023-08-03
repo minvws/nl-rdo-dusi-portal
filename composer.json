@@ -12,7 +12,9 @@
         "laravel/tinker": "^2.7",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
-        "minvws/dusi-subsidy-model": "dev-feature/base"
+        "minvws/dusi-subsidy-model": "dev-main",
+        "minvws/dusi-application-model": "dev-feature/base"
+
     },
     "require-dev": {
         "ext-openssl": "*",
@@ -84,6 +86,10 @@
         {
             "type": "vcs",
             "url":  "https://github.com/minvws/nl-rdo-dusi-subsidy-model.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "https://github.com/minvws/nl-rdo-dusi-application-model.git"
         }
     ]
 }

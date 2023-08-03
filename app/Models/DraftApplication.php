@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Shared\Models\Application\ApplicationMetadata;
+
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\ApplicationMetadata;
 
 class DraftApplication implements Application
 {
