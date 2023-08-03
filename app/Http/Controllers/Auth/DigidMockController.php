@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use MinVWS\OpenIDConnectLaravel\Http\Responses\LoginResponseHandlerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class DigidMockController extends Controller
 {
@@ -16,7 +17,7 @@ class DigidMockController extends Controller
         $this->loginResponseHandler = $loginResponseHandler;
     }
 
-    public function login()
+    public function login(): Response
     {
         return $this->loginResponseHandler->handleLoginResponse(
             (object)[

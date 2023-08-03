@@ -9,11 +9,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
+/**
+ * @property mixed $publishedUI
+ * @property mixed $id
+ * @property mixed $subsidyVersion
+ * @property mixed $fields
+ */
 class SubsidyStageResource extends JsonResource
 {
     /**
      * @param Request $request
      *
+     * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array

@@ -1856,12 +1856,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-application-model.git",
-                "reference": "e90e42b7bebad05e2804f8d95ac33d66e057d725"
+                "reference": "99d04cd428a9c6dc6add4ba5b2cc2a1af5f90d79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-application-model/zipball/e90e42b7bebad05e2804f8d95ac33d66e057d725",
-                "reference": "e90e42b7bebad05e2804f8d95ac33d66e057d725",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-application-model/zipball/99d04cd428a9c6dc6add4ba5b2cc2a1af5f90d79",
+                "reference": "99d04cd428a9c6dc6add4ba5b2cc2a1af5f90d79",
                 "shasum": ""
             },
             "require": {
@@ -1924,7 +1924,7 @@
                 "source": "https://github.com/minvws/nl-rdo-dusi-application-model/tree/feature/base",
                 "issues": "https://github.com/minvws/nl-rdo-dusi-application-model/issues"
             },
-            "time": "2023-08-03T13:24:16+00:00"
+            "time": "2023-08-03T18:34:29+00:00"
         },
         {
             "name": "minvws/dusi-subsidy-model",

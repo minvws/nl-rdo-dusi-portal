@@ -18,12 +18,22 @@ jobs:
     runs-on: ubuntu-20.04
 
     services:
-      postgres:
+      postgres-form:
         image: postgres:12.5
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ci_db_test
+          POSTGRES_DB: ci_db_test_form
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+      postgres-application:
+        image: postgres:12.5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ci_db_test_application
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -57,7 +67,7 @@ jobs:
 
       - name: Copy .env
         run: cp -n .env.example .env
-        
+
       - name: Generate key
         run: php artisan key:generate
 
@@ -65,10 +75,15 @@ jobs:
         env:
           DB_FORM_HOST: 127.0.0.1
           DB_FORM_PORT: 5432
-          DB_FORM_DATABASE: ci_db_test
+          DB_FORM_DATABASE: ci_db_test_form
           DB_FORM_USERNAME: postgres
           DB_FORM_PASSWORD: postgres
-          DB_SSLMODE: prefer
+
+          DB_APPLICATION_HOST: 127.0.0.1
+          DB_APPLICATION_PORT: 5432
+          DB_APPLICATION_DATABASE: ci_db_test_application
+          DB_APPLICATION_USERNAME: postgres
+          DB_APPLICATION_PASSWORD: postgres
         run: vendor/bin/phpunit --coverage-clover tests/coverage.xml
 
       - if: ${{ github.event_name == 'pull_request' }}

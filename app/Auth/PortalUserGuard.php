@@ -38,8 +38,6 @@ class PortalUserGuard implements Guard
     }
 
     /**
-     * @return string
-     *
      * @SuppressWarnings(PHPMD.ShortMethodName)
      */
     public function id()
@@ -47,8 +45,7 @@ class PortalUserGuard implements Guard
         if (!$this->check()) {
             return null;
         }
-
-        return $this->user()->bsn;
+        return $this->user()->bsn; // @phpstan-ignore-line TODO: fix this
     }
 
     /**

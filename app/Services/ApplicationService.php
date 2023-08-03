@@ -53,6 +53,10 @@ class ApplicationService
 
         $encryptedContents = $file->getContent();
 
+        if ($file->getMimeType() === null) {
+            throw new \Exception('Mime type is null');
+        }
+
         $fileUpload = new FileUpload(
             identity: $this->stateService->getIdentity(),
             applicationMetadata: $application->getMetadata(),
