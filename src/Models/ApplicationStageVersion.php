@@ -15,6 +15,7 @@ use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 /**
  * @property string $id
  * @property integer $version
+ * @property ApplicationStageVersionStatus $status
  */
 class ApplicationStageVersion extends Model
 {
