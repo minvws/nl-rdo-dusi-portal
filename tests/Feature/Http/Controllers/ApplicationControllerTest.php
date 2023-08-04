@@ -56,7 +56,7 @@ class ApplicationControllerTest extends TestCase
         $this->subsidy = Subsidy::factory()->create();
         $this->subsidyVersion = $this->subsidy
             ->subsidyVersions()
-            ->create(['status' => VersionStatus::Published, 'version' => 1]);
+            ->create(['status' => VersionStatus::Published, 'version' => 1, 'subsidy_page_url' => 'https://dus-i.nl']);
         $this->subsidyStage = SubsidyStage::factory()->create(
             ['subsidy_version_id' => $this->subsidyVersion->id]
         );
