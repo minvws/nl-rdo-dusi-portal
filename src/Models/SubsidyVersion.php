@@ -20,6 +20,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $subsidy_id
  * @property string $title
  * @property string $description
+ * @property string $subsidy_page_url
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
  * @property SubsidyStage[] $forms
@@ -41,6 +42,7 @@ class SubsidyVersion extends Model
     protected $fillable = [
         'version',
         'status',
+        'subsidy_page_url',
     ];
 
     protected $casts = [
