@@ -12,7 +12,7 @@
         "laravel/tinker": "^2.8",
         "minvws/codable": "dev-feature/base as 1.0.x-dev",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
-        "minvws/dusi-subsidy-model": "dev-main"
+        "minvws/dusi-subsidy-model": "^0.0.1"
     },
     "require-dev": {
         "ext-openssl": "*",
