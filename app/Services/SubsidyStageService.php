@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\SubsidyStageData;
 use App\Services\Exceptions\SubsidyStageNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class SubsidyStageService
 {
@@ -20,6 +21,7 @@ class SubsidyStageService
     public function getSubsidyStage(string $id): SubsidyStageData
     {
         $subsidyStage = $this->cacheService->getCachedSubsidyStage($id);
+        Log::info('subsidyStage', [$subsidyStage]);
         if ($subsidyStage === null) {
             throw new SubsidyStageNotFoundException();
         }

@@ -22,7 +22,8 @@ class SubsidyResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'validFrom' => $this->valid_from->format('Y-m-d'),
-            'validTo' => $this->valid_to?->format('Y-m-d')
+            'validTo' => $this->valid_to?->format('Y-m-d'),
+            'subsidy_page_url' => $this->publishedVersion->subsidy_page_url,
         ];
 
         $applicantStage = $this->publishedVersion->subsidyStages->filter(
