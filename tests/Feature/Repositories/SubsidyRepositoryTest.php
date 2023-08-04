@@ -136,8 +136,10 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertSame(1, $subsidyWithStageForSubjects->count());
         $subsidyWithStageForSubject = $subsidyWithStageForSubjects->first();
         $this->assertSame($bSubsidy->id, $subsidyWithStageForSubject->id);
-        $this->assertSame(SubjectRole::Applicant,
-            $subsidyWithStageForSubject->publishedVersion->subsidyStages->first()->subject_role);
+        $this->assertSame(
+            SubjectRole::Applicant,
+            $subsidyWithStageForSubject->publishedVersion->subsidyStages->first()->subject_role
+        );
     }
 
 
