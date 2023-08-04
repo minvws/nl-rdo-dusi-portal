@@ -20,6 +20,7 @@ class SubsidyVersionsTableSeeder extends Seeder
             'version' => 1,
             'status' => "published", //TODO should be an enum
             'created_at' => '2019-02-01',
+            'subsidy_page_url' => 'https://www.dus-i.nl/subsidies'
         ]);
     }
 }
