@@ -45,7 +45,7 @@ class PortalUserGuard implements Guard
         if (!$this->check()) {
             return null;
         }
-        return $this->user()->bsn; // @phpstan-ignore-line TODO: fix this
+        return $this->user()?->bsn ?? null;
     }
 
     /**
