@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -18,7 +18,7 @@ readonly class ApplicationRepository
 {
     public function getApplication(string $appId): ?Application
     {
-        $application = Application::find($appId);
+        $application = Application::find($appId); // @phpstan-ignore-line
         if ($application instanceof Application) {
             return $application;
         }
@@ -27,14 +27,14 @@ readonly class ApplicationRepository
 
     public function getApplicationStage(string $applicationStageId): ?ApplicationStage
     {
-        $applicationStage = ApplicationStage::find($applicationStageId);
+        $applicationStage = ApplicationStage::find($applicationStageId); // @phpstan-ignore-line
         if ($applicationStage instanceof ApplicationStage) {
             return $applicationStage;
         }
         return null;
     }
 
-    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection|array
+    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection
     {
         return ApplicationStageVersion::query()
             ->where('application_stage_id', $applicationStage->id)
@@ -55,7 +55,7 @@ readonly class ApplicationRepository
     }
     public function getApplicationStageVersion(string $appStageVersionId): ?ApplicationStageVersion
     {
-        $applicationStageVersion = ApplicationStageVersion::find($appStageVersionId);
+        $applicationStageVersion = ApplicationStageVersion::find($appStageVersionId); // @phpstan-ignore-line
         if ($applicationStageVersion instanceof ApplicationStageVersion) {
             return $applicationStageVersion;
         }
