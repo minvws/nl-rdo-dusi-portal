@@ -13,7 +13,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Tests\TestCase;
-use Tests\WipesSubsidyDefinitions;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 /**

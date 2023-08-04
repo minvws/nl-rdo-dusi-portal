@@ -15,7 +15,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageUI;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Tests\TestCase;
-use Tests\WipesSubsidyDefinitions;
 
 /**
  * @group form

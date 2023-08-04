@@ -23,7 +23,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageUI;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
-use Tests\WipesSubsidyDefinitions;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 /**
