@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,9 +18,11 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
  * @property string $id
+ * @property string $created_at
  * @property string $subsidy_id
  * @property string $title
  * @property string $description
+ * @property string $subsidy_page_url
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
  * @property SubsidyStage[] $forms
@@ -29,6 +32,7 @@ class SubsidyVersion extends Model
 {
     use HasUuids;
     use HasFactory;
+    use HasTimestamps;
 
 
     /**
@@ -41,6 +45,7 @@ class SubsidyVersion extends Model
     protected $fillable = [
         'version',
         'status',
+        'subsidy_page_url',
     ];
 
     protected $casts = [

@@ -58,7 +58,7 @@ class SubsidyRepositoryTest extends TestCase
         );
 
         $subsidyStage->fields()->attach($field);
-        $expectedId = $field->id->toString();
+        $expectedId = $field->id;
         $actualId = SubsidyStage::find($subsidyStage->id)->first()->fields()->first()->id;
         $this->assertSame($expectedId, $actualId);
     }
@@ -136,8 +136,10 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertSame(1, $subsidyWithStageForSubjects->count());
         $subsidyWithStageForSubject = $subsidyWithStageForSubjects->first();
         $this->assertSame($bSubsidy->id, $subsidyWithStageForSubject->id);
-        $this->assertSame(SubjectRole::Applicant,
-            $subsidyWithStageForSubject->publishedVersion->subsidyStages->first()->subject_role);
+        $this->assertSame(
+            SubjectRole::Applicant,
+            $subsidyWithStageForSubject->publishedVersion->subsidyStages->first()->subject_role
+        );
     }
 
 
@@ -150,5 +152,26 @@ class SubsidyRepositoryTest extends TestCase
 
         // Test make application stage
         $this->assertEquals("1", "1");
+    }
+
+    public function testGetSubsidyVersion()
+    {
+        $subsidy = Subsidy::factory()->create();
+        $subsidyVersion = SubsidyVersion::factory()->create([
+            'subsidy_id' => $subsidy->id,
+            'subsidy_page_url' => 'random_url',
+            'status' => 'published',
+            'version' => 1,
+            'created_at' => '2021-01-01 00:00:00',
+        ]);
+
+        $repository = $this->app->make(SubsidyRepository::class);
+        $actualSubsidyVersion = $repository->getSubsidyVersion($subsidyVersion->id);
+        $this->assertEquals($subsidyVersion->id, $actualSubsidyVersion->id);
+        $this->assertEquals($subsidyVersion->subsidy_page_url, $actualSubsidyVersion->subsidy_page_url);
+        $this->assertEquals($subsidyVersion->subsidy_id, $actualSubsidyVersion->subsidy_id);
+        $this->assertEquals($subsidyVersion->status, $actualSubsidyVersion->status);
+        $this->assertEquals($subsidyVersion->version, $actualSubsidyVersion->version);
+        $this->assertEquals($subsidyVersion->created_at, $actualSubsidyVersion->created_at);
     }
 }

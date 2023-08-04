@@ -60,6 +60,19 @@ class SubsidyRepository
 
     /*
      * @param string $id
+     * @return ?SubsidyStageUI
+     */
+    public function getSubsidyVersion(string $id): ?SubsidyVersion
+    {
+        $subsidyVersion = SubsidyVersion::find($id);
+        if ($subsidyVersion instanceof SubsidyVersion) {
+            return $subsidyVersion;
+        }
+        return null;
+    }
+
+    /*
+     * @param string $id
      * @return ?Field
      */
     public function getField(string $id): ?Field

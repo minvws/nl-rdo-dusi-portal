@@ -25,6 +25,7 @@ class SubsidyVersionFactory extends Factory
             'id' => Uuid::uuid4(),
             'version' => $this->faker->randomDigitNotZero(),
             'status' => VersionStatus::Draft->value,
+            'subsidy_page_url' => $this->faker->url(),
         ];
     }
 }
