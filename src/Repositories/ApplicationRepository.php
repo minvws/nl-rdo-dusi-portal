@@ -45,12 +45,12 @@ readonly class ApplicationRepository
 
     public function getLatestApplicationStageVersion(ApplicationStage $applicationStage): ?ApplicationStageVersion
     {
-        $LatestApplicationStageVersion = ApplicationStageVersion::query()
+        $latestApplicationStageVersion = ApplicationStageVersion::query()
             ->where('application_stage_id', $applicationStage->id)
             ->orderBy('version', 'asc')
             ->first();
-        if ($LatestApplicationStageVersion instanceof ApplicationStageVersion) {
-            return $LatestApplicationStageVersion;
+        if ($latestApplicationStageVersion instanceof ApplicationStageVersion) {
+            return $latestApplicationStageVersion;
         }
         return null;
     }

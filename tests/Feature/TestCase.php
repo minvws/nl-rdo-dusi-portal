@@ -23,7 +23,7 @@ class TestCase extends BaseTestCase
     public function defineEnvironment($app): void
     {
         tap($app->make('config'), function (Repository $config) {
-            $config->set('database.default', 'pgsql_form');
+            $config->set('database.default', 'pgsql_application');
             $config->set('database.connections.pgsql_form', [
                 'driver' => 'pgsql',
                 'host' => env('DB_FORM_HOST'),
