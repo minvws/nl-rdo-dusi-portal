@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fa6ec0234185c2760c1f607014cae46d",
+    "content-hash": "33eb90edfe11cb722c0525c1bb84599e",
     "packages": [
         {
             "name": "brick/math",
@@ -1852,16 +1852,16 @@
         },
         {
             "name": "minvws/dusi-subsidy-model",
-            "version": "v0.0.1",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-subsidy-model.git",
-                "reference": "25060b14950935c7e56a5d8873c0bdd8ebd43f3a"
+                "reference": "8f97a9bdbafaebe98f7cf8a5a8958c83b7ec54b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/25060b14950935c7e56a5d8873c0bdd8ebd43f3a",
-                "reference": "25060b14950935c7e56a5d8873c0bdd8ebd43f3a",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/8f97a9bdbafaebe98f7cf8a5a8958c83b7ec54b6",
+                "reference": "8f97a9bdbafaebe98f7cf8a5a8958c83b7ec54b6",
                 "shasum": ""
             },
             "require": {
@@ -1920,10 +1920,10 @@
             ],
             "description": "Models and repositories for form-admin-web",
             "support": {
-                "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/v0.0.1",
+                "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/v0.1.0",
                 "issues": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/issues"
             },
-            "time": "2023-08-03T09:24:41+00:00"
+            "time": "2023-08-04T10:16:02+00:00"
         },
         {
             "name": "minvws/openid-connect-php-laravel",
@@ -8495,38 +8495,35 @@
         },
         {
             "name": "nunomaduro/collision",
-            "version": "v7.7.0",
+            "version": "v7.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nunomaduro/collision.git",
-                "reference": "69a07197d055456d29911116fca3bc2c985f524b"
+                "reference": "1813f0a3470f2ac171443bc37b324c2a693005f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/69a07197d055456d29911116fca3bc2c985f524b",
-                "reference": "69a07197d055456d29911116fca3bc2c985f524b",
+                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/1813f0a3470f2ac171443bc37b324c2a693005f9",
+                "reference": "1813f0a3470f2ac171443bc37b324c2a693005f9",
                 "shasum": ""
             },
             "require": {
-                "filp/whoops": "^2.15.2",
+                "filp/whoops": "^2.15.3",
                 "nunomaduro/termwind": "^1.15.1",
                 "php": "^8.1.0",
-                "symfony/console": "^6.3.0"
-            },
-            "conflict": {
-                "phpunit/phpunit": "<10.1.2"
+                "symfony/console": "^6.3.2"
             },
             "require-dev": {
-                "brianium/paratest": "^7.2.2",
-                "laravel/framework": "^10.14.1",
-                "laravel/pint": "^1.10.3",
-                "laravel/sail": "^1.23.0",
+                "brianium/paratest": "^7.2.4",
+                "laravel/framework": "^10.17.1",
+                "laravel/pint": "^1.10.5",
+                "laravel/sail": "^1.23.1",
                 "laravel/sanctum": "^3.2.5",
                 "laravel/tinker": "^2.8.1",
-                "nunomaduro/larastan": "^2.6.3",
-                "orchestra/testbench-core": "^8.5.8",
-                "pestphp/pest": "^2.8.1",
-                "phpunit/phpunit": "^10.2.2",
+                "nunomaduro/larastan": "^2.6.4",
+                "orchestra/testbench-core": "^8.5.9",
+                "pestphp/pest": "^2.12.1",
+                "phpunit/phpunit": "^10.3.1",
                 "sebastian/environment": "^6.0.1",
                 "spatie/laravel-ignition": "^2.2.0"
             },
@@ -8587,7 +8584,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-06-29T09:10:16+00:00"
+            "time": "2023-08-04T10:26:10+00:00"
         },
         {
             "name": "nunomaduro/larastan",
@@ -9764,16 +9761,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.3.0",
+            "version": "10.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c87ae282d17b256d09cfef0eb4f5db2d09cfd36a"
+                "reference": "d442ce7c4104d5683c12e67e4dcb5058159e9804"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c87ae282d17b256d09cfef0eb4f5db2d09cfd36a",
-                "reference": "c87ae282d17b256d09cfef0eb4f5db2d09cfd36a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d442ce7c4104d5683c12e67e4dcb5058159e9804",
+                "reference": "d442ce7c4104d5683c12e67e4dcb5058159e9804",
                 "shasum": ""
             },
             "require": {
@@ -9845,7 +9842,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.0"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.1"
             },
             "funding": [
                 {
@@ -9861,7 +9858,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-04T03:56:35+00:00"
+            "time": "2023-08-04T06:48:08+00:00"
         },
         {
             "name": "pimple/pimple",

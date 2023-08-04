@@ -12,7 +12,7 @@
         "laravel/tinker": "^2.7",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
-        "minvws/dusi-subsidy-model": "^0.0.1"
+        "minvws/dusi-subsidy-model": "^0.1"
     },
     "require-dev": {
         "ext-openssl": "*",
