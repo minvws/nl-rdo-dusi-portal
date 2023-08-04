@@ -27,7 +27,7 @@ class SubsidiesTableSeeder extends Seeder
         Subsidy::factory()->count(2)
             ->create()
             ->each(function($subsidy){
-                SubsidyVersion::factory(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published])
+                SubsidyVersion::factory(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published, 'subsidy_page_url' => 'https://www.dus-i.nl/subsidies'])
                     ->create()
                     ->each(function($subsidyVersion){
                     SubsidyStage::factory(['subsidy_version_id' => $subsidyVersion->id])->create();
