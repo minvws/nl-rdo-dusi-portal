@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MinVWS\DUSi\Shared\Application\Models\Connection;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 return [
 

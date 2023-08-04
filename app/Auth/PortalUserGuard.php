@@ -40,11 +40,8 @@ class PortalUserGuard implements Guard
     /**
      * @SuppressWarnings(PHPMD.ShortMethodName)
      */
-    public function id()
+    public function id(): int|string|null
     {
-        if (!$this->check()) {
-            return null;
-        }
         return $this->user()?->bsn ?? null;
     }
 
