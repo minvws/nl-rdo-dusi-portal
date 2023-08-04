@@ -33,7 +33,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 class ApplicationControllerTest extends TestCase
 {
     use DatabaseTransactions;
-    use WipesSubsidyDefinitions;
     use WithFaker;
 
     protected array $connectionsToTransact = [Connection::FORM];
@@ -47,6 +46,7 @@ class ApplicationControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->loadCustomMigrations();
 
         $this->user = new PortalUser(
             base64_encode(openssl_random_pseudo_bytes(32)),

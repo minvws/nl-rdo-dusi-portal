@@ -24,7 +24,6 @@ use Tests\WipesSubsidyDefinitions;
 class FormControllerTest extends TestCase
 {
     use DatabaseTransactions;
-    use WipesSubsidyDefinitions;
     use WithFaker;
 
     protected array $connectionsToTransact = [Connection::FORM];
@@ -37,6 +36,7 @@ class FormControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->loadCustomMigrations();
 
         $this->subsidy = Subsidy::factory()->create(['title' => 'B']);
         $this->subsidyVersion = SubsidyVersion::factory()->create([

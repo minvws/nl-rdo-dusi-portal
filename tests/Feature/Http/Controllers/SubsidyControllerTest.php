@@ -23,7 +23,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 class SubsidyControllerTest extends TestCase
 {
     use DatabaseTransactions;
-    use WipesSubsidyDefinitions;
     use WithFaker;
 
     protected array $connectionsToTransact = [Connection::FORM];
@@ -34,6 +33,7 @@ class SubsidyControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->loadCustomMigrations();
 
         $this->subsidy1 = Subsidy::factory()->create(['title' => 'B']);
         $this->subsidyVersion1 = SubsidyVersion::factory()->create([
