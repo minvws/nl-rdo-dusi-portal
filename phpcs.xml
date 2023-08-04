@@ -19,4 +19,9 @@
         </properties>
     </rule>
 
+    <rule ref="PSR1" />
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude name="PSR1.Files.SideEffects"/>
+    </rule>
+
 </ruleset>

@@ -15,6 +15,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Application\Tests\Feature\TestCase;
+
 use function Laravel\Prompts\error;
 
 class ApplicationRepositoryTest extends TestCase

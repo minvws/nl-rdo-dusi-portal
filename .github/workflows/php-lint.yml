@@ -74,7 +74,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Static analysis with PHPStan
-        run: phpstan analyse app routes
+        run: phpstan analyse src
 
   phpmd:
     needs: call-composer-install

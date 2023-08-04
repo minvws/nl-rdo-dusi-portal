@@ -69,13 +69,13 @@ jobs:
         env:
           DB_APPLICATION_HOST: 127.0.0.1
           DB_APPLICATION_PORT: 5433
-          DB_APPLICATION_DATABASE: ci_db_test_application
+          DB_APPLICATION_DATABASE: db_test_application
           DB_APPLICATION_USERNAME: postgres
           DB_APPLICATION_PASSWORD: postgres
 
           DB_FORM_HOST: 127.0.0.1
           DB_FORM_PORT: 5432
-          DB_FORM_DATABASE: ci_db_test_form
+          DB_FORM_DATABASE: db_test_form
           DB_FORM_USERNAME: postgres
           DB_FORM_PASSWORD: postgres
 
