@@ -28,16 +28,6 @@ jobs:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      postgres-application:
-        image: postgres:12.5
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ci_db_test_application
-        ports:
-          - 5433:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -78,12 +68,6 @@ jobs:
           DB_FORM_DATABASE: ci_db_test_form
           DB_FORM_USERNAME: postgres
           DB_FORM_PASSWORD: postgres
-
-          DB_APPLICATION_HOST: 127.0.0.1
-          DB_APPLICATION_PORT: 5433
-          DB_APPLICATION_DATABASE: ci_db_test_application
-          DB_APPLICATION_USERNAME: postgres
-          DB_APPLICATION_PASSWORD: postgres
         run: vendor/bin/phpunit --coverage-clover tests/coverage.xml
 
       - if: ${{ github.event_name == 'pull_request' }}
