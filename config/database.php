@@ -5,7 +5,6 @@ declare(strict_types=1);
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 use Illuminate\Support\Str;
 
-
 return [
 
     /*
