@@ -8,7 +8,8 @@
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17.4",
-        "laravel/framework": "^10.15"
+        "laravel/framework": "^10.15",
+        "predis/predis": "^2.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8.1",
