@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplicationRequest;
 use App\Http\Resources\ApplicationFilterResource;
 use App\Http\Resources\ApplicationResource;
-use ErrorException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
