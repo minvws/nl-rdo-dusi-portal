@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
+use Illuminate\Support\Str;
+
 
 return [
 
@@ -82,5 +84,62 @@ return [
     |
     */
     'migrations' => 'migrations',
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Redis Databases
+    |--------------------------------------------------------------------------
+    |
+    | Redis is an open source, fast, and advanced key-value store that also
+    | provides a richer body of commands than a typical key-value system
+    | such as APC or Memcached. Laravel makes it easy to dig right in.
+    |
+    */
+
+    'redis' => [
+
+        'client' => env('REDIS_CLIENT', 'predis'),
+
+        'options' => [
+            'cluster' => env('REDIS_CLUSTER', 'redis'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
+        ],
+
+        'default' => [
+            'scheme' => env('REDIS_SCHEME', 'tcp'),
+            'url' => env('REDIS_URL'),
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', '6379'),
+            'database' => env('REDIS_DB', '0'),
+            'ssl' => [
+                'peer_name' => env('REDIS_TLS_PEER_NAME', ''),
+                'verify_peer' => env('REDIS_TLS_VERIFY_PEER', true),
+                'verify_peer_name' => env('REDIS_TLS_VERIFY_PEER_NAME', true),
+                'cafile' => env('REDIS_TLS_CAFILE', ''),
+                'local_cert' => env('REDIS_TLS_LOCAL_CERT', ''),
+                'local_pk' => env('REDIS_TLS_LOCAL_PK', ''),
+            ]
+        ],
+
+        'cache' => [
+            'url' => env('REDIS_URL'),
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', '6379'),
+            'database' => env('REDIS_DB', '1'),
+            'ssl' => [
+                'peer_name' => env('REDIS_TLS_PEER_NAME', ''),
+                'verify_peer' => env('REDIS_TLS_VERIFY_PEER', true),
+                'verify_peer_name' => env('REDIS_TLS_VERIFY_PEER_NAME', true),
+                'cafile' => env('REDIS_TLS_CAFILE', ''),
+                'local_cert' => env('REDIS_TLS_LOCAL_CERT', ''),
+                'local_pk' => env('REDIS_TLS_LOCAL_PK', ''),
+            ]
+        ],
+
+    ],
+
 
 ];
