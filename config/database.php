@@ -17,7 +17,7 @@ return [
     |
     */
 
-    //    'default' => '',
+        'default' => Connection::FORM,
 
     /*
     |--------------------------------------------------------------------------
@@ -92,6 +92,6 @@ return [
     //    |
     //    */
     //
-    //    'migrations' => 'migrations',
+        'migrations' => 'migrations',
 
 ];
