@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "content-hash": "fe8d80a8ceb87755cae035c1a603fc58",
+
     "packages": [
         {
             "name": "brick/math",
@@ -1853,6 +1854,7 @@
         {
             "name": "minvws/dusi-application-model",
             "version": "v0.0.1",
+
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-application-model.git",
