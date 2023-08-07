@@ -56,9 +56,6 @@ jobs:
       - name: Clean build
         run: rm -r node_modules .git
 
-      - name: Create public/js folder and dummy files
-        run: mkdir public/js && touch public/js/app.js
-
       - name: Clear config cache
         run: php artisan config:clear
 
