@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Models\Connection;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Ramsey\Uuid\Uuid;
@@ -14,6 +17,9 @@ use Tests\TestCase;
 
 class ApplicationApiTest extends TestCase
 {
+    use DatabaseTransactions;
+
+    protected array $connectionsToTransact = [Connection::APPLICATION, Connection::FORM];
     private Application $application;
     private ApplicationStage $applicationStage;
     protected function setUp(): void
@@ -23,14 +29,16 @@ class ApplicationApiTest extends TestCase
         SubsidyVersion::query()->truncate();
         Application::query()->truncate();
         ApplicationStage::query()->truncate();
+        ApplicationStageVersion::query()->truncate();
 
-        $subsidy = Subsidy::factory()->create();
+        $this->subsidy = Subsidy::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()->create([
-            'subsidy_id' => $subsidy->id,
+            'subsidy_id' => $this->subsidy->id,
         ]);
         $this->application = Application::factory()->create(
             [
                 'subsidy_version_id' => $this->subsidyVersion->id,
+                'created_at' => Carbon::today()->toDateString(),
                 'final_review_deadline' => Carbon::tomorrow()->toDateString(),
             ]
         );
@@ -39,29 +47,37 @@ class ApplicationApiTest extends TestCase
                 'application_id' => $this->application->id,
             ]
         );
+        $this->applicationStageVersion = ApplicationStageVersion::factory()->create(
+            [
+                'application_stage_id' => $this->applicationStage->id,
+            ]
+        );
     }
     public function testFilter()
     {
         $filters = [
-            'final_review_deadline' => Carbon::today()->toDateString(),
-            'status' => $this->applicationStage->status->value,
-            'user_id' => $this->applicationStage->user_id,
-            'subsidy_title' => $this->subsidyVersion->subsidy->title,
             'application_title' => $this->application->application_title,
+            'date_from' => $this->application->created_at->toDateString(),
+            'date_to' => Carbon::tomorrow()->toDateString(),
+            'date_last_modified_from' => $this->application->updated_at->toDateString(),
+            'date_last_modified_to' => Carbon::tomorrow()->toDateString(),
+            'date_final_review_deadline_from' => Carbon::yesterday()->toDateString(),
+            'date_final_review_deadline_to' => Carbon::tomorrow()->toDateString(),
+            'status' => $this->applicationStageVersion->status,
+            'subsidy' => $this->subsidy->title,
         ];
 
         $response = $this->json('GET', '/api/applicationsFilter', $filters);
 
         $response->assertStatus(200);
 
-        assert($response->json()[0]['final_review_deadline'] === Carbon::tomorrow()->toISOString());
 
         $response->assertJsonFragment([
             'application_title' => $this->application->application_title,
-            'id' => $this->application->applicationStages()
-                ->where('status', $this->applicationStage->status->value)->first()->application_id,
-            'subsidy_version_id' => $this->subsidyVersion->id,
-            'final_review_deadline' => Carbon::tomorrow()->toISOString(),
+            'subsidy' => $this->subsidy->title,
+            'status' => $this->applicationStageVersion->status,
+            'final_review_deadline' => $this->application->final_review_deadline,
+            'updated_at' => $this->application->updated_at,
         ]);
     }
 
@@ -69,7 +85,37 @@ class ApplicationApiTest extends TestCase
     {
         yield [
             [
-                'final_review_deadline' => Carbon::tomorrow()->addDays(2)->toDateString(),
+                'application_title' => 'test',
+            ],
+        ];
+        yield [
+            [
+                'date_from' => Carbon::tomorrow()->toDateString(),
+            ],
+        ];
+        yield [
+            [
+                'date_to' => Carbon::yesterday()->toDateString(),
+            ],
+        ];
+        yield [
+            [
+                'date_last_modified_from' => Carbon::tomorrow()->addDays(20)->toDateString(),
+            ],
+        ];
+        yield [
+            [
+                'date_last_modified_to' => Carbon::yesterday()->toDateString(),
+            ],
+        ];
+        yield [
+            [
+                'date_final_review_deadline_from' => Carbon::tomorrow()->addDays(2)->toDateString(),
+            ],
+        ];
+        yield [
+            [
+                'date_final_review_deadline_to' => Carbon::yesterday()->toDateString(),
             ],
         ];
         yield [
@@ -79,17 +125,7 @@ class ApplicationApiTest extends TestCase
         ];
         yield [
             [
-                'user_id' => Uuid::uuid4(),
-            ],
-        ];
-        yield [
-            [
-                'subsidy_title' => 'test123123',
-            ],
-        ];
-        yield [
-            [
-                'application_title' => 'test',
+                'subsidy' => 'test',
             ],
         ];
     }
@@ -101,6 +137,6 @@ class ApplicationApiTest extends TestCase
     {
         $response = $this->json('GET', '/api/applicationsFilter', $filters);
         $response->assertStatus(200);
-        $response->assertContent('[]');
+        $response->assertContent('{"data":[]}');
     }
 }

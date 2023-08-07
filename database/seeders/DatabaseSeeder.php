@@ -2,11 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\Answer;
-use App\Models\Application;
-use App\Models\ApplicationHash;
-use App\Models\ApplicationReview;
+
 use Illuminate\Database\Seeder;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Answer;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,10 +20,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Application::factory(10)
-            ->has(ApplicationReview::factory(10))
-            ->has(ApplicationHash::factory(10))
-            ->has(Answer::factory(18))
-            ->create();
+        Subsidy::factory()->create();
+        SubsidyVersion::factory()->create(['subsidy_id' => Subsidy::all()->first()->id]);
+        SubsidyStage::factory()->create(['subsidy_version_id' => SubsidyVersion::all()->first()->id]);
+        Application::factory()->create(['subsidy_version_id' => SubsidyVersion::all()->first()->id]);
+        ApplicationStage::factory()->create(['application_id' => Application::all()->first()->id, 'subsidy_stage_id' => SubsidyStage::all()->first()->id]);
+        ApplicationStageVersion::factory()->create(['application_stage_id' => ApplicationStage::all()->first()->id]);
+        Answer::factory()->create(['application_stage_version_id' => ApplicationStageVersion::all()->first()->id]);
     }
 }

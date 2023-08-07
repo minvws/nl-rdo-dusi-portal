@@ -4,72 +4,86 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ApplicationRequest;
+use App\Http\Resources\ApplicationFilterResource;
+use App\Http\Resources\ApplicationResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use Ramsey\Uuid\Uuid;
 
 class ApplicationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         // Retrieve all applications and return them as JSON
-        $results = Application::all();
-        return response()->json($results);
+        return ApplicationResource::collection(Application::all());
     }
 
     /**
      * Display a listing of applications with filters on specific fields.
      */
-    public function getFilteredApplications(Request $request): JsonResponse
+    public function getFilteredApplications(ApplicationRequest $request): AnonymousResourceCollection
     {
+        $validatedData = $request->validated();
+
         $query = Application::query();
-        if ($request->has('final_review_deadline')) {
-            $query->where('final_review_deadline', '>=', $request->final_review_deadline);
+
+        if (isset($validatedData['application_title'])) {
+            $query->where('application_title', (string)$validatedData['application_title']);
         }
 
-        if ($request->has('status')) {
-            $query->whereHas('applicationStages', function ($q) use ($request) {
-                $q->where('status', $request->status);
+        if (isset($validatedData['date_from'])) {
+            $query->where('created_at', '>=', $validatedData['date_from']);
+        }
+
+        if (isset($validatedData['date_to'])) {
+            $query->where('created_at', '<=', $validatedData['date_to']);
+        }
+
+        if (isset($validatedData['date_last_modified_from'])) {
+            $query->where('updated_at', '>=', $validatedData['date_last_modified_from']);
+        }
+
+        if (isset($validatedData['date_last_modified_to'])) {
+            $query->where('updated_at', '<=', $validatedData['date_last_modified_to']);
+        }
+
+        if (isset($validatedData['date_final_review_deadline_from'])) {
+            $query->where('final_review_deadline', '>=', $validatedData['date_final_review_deadline_from']);
+        }
+
+        if (isset($validatedData['date_final_review_deadline_to'])) {
+            $query->where('final_review_deadline', '<=', $validatedData['date_final_review_deadline_to']);
+        }
+
+        if (isset($validatedData['status'])) {
+            $query->whereHas('applicationStages.applicationStageVersions', function ($q) use ($validatedData) {
+                $q->where('status', $validatedData['status']);
             });
         }
 
-        if ($request->has('user_id')) {
-            if (Uuid::isValid($request->user_id) === false) {
-                return response()->json(['error' => 'Invalid user UUID'], 400);
-            }
-            $query->whereHas('applicationStages', function ($q) use ($request) {
-                $q->where('user_id', $request->user_id);
-            });
-        }
-
-        if ($request->has('subsidy_title')) {
-            $subVersions = SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($request) {
-                $q->where('title', (string)$request->subsidy_title);
+        if (isset($validatedData['subsidy'])) {
+            $subVersions = SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($validatedData) {
+                $q->where('title', (string)$validatedData['subsidy']);
             })->pluck('id');
 
             $query->whereIn('subsidy_version_id', $subVersions);
         }
 
-        if ($request->has('application_title')) {
-            $query->where('application_title', (string)$request->application_title);
-        }
-
         // Get the final results after applying filters
-        $data = $query->get();
-
-        return response()->json($data);
+        $applications = $query->get();
+        return ApplicationFilterResource::Collection($applications);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Application $application): JsonResponse
+    public function show(Application $application): ApplicationResource
     {
-        return response()->json($application);
+        return new ApplicationResource($application);
     }
 }
