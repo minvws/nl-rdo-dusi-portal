@@ -11,7 +11,7 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    protected function SetUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadCustomMigrations();
