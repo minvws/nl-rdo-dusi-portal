@@ -7,9 +7,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplicationRequest;
 use App\Http\Resources\ApplicationFilterResource;
 use App\Http\Resources\ApplicationResource;
+use ErrorException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Shared\Application\Models\Application;
-use Illuminate\Http\JsonResponse;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 class ApplicationController extends Controller
@@ -32,47 +32,47 @@ class ApplicationController extends Controller
 
         $query = Application::query();
 
-        if (isset($validatedData['application_title'])) {
-            $query->where('application_title', (string)$validatedData['application_title']);
-        }
+        $query->when(isset($validatedData['application_title']), function ($q) use ($validatedData) {
+            $q->where('application_title', (string)$validatedData['application_title']);
+        });
 
-        if (isset($validatedData['date_from'])) {
-            $query->where('created_at', '>=', $validatedData['date_from']);
-        }
+        $query->when(isset($validatedData['date_from']), function ($q) use ($validatedData) {
+            $q->where('created_at', '>=', $validatedData['date_from']);
+        });
 
-        if (isset($validatedData['date_to'])) {
-            $query->where('created_at', '<=', $validatedData['date_to']);
-        }
+        $query->when(isset($validatedData['date_to']), function ($q) use ($validatedData) {
+            $q->where('created_at', '<=', $validatedData['date_to']);
+        });
 
-        if (isset($validatedData['date_last_modified_from'])) {
-            $query->where('updated_at', '>=', $validatedData['date_last_modified_from']);
-        }
+        $query->when(isset($validatedData['date_last_modified_from']), function ($q) use ($validatedData) {
+            $q->where('updated_at', '>=', $validatedData['date_last_modified_from']);
+        });
 
-        if (isset($validatedData['date_last_modified_to'])) {
-            $query->where('updated_at', '<=', $validatedData['date_last_modified_to']);
-        }
+        $query->when(isset($validatedData['date_last_modified_to']), function ($q) use ($validatedData) {
+            $q->where('updated_at', '<=', $validatedData['date_last_modified_to']);
+        });
 
-        if (isset($validatedData['date_final_review_deadline_from'])) {
-            $query->where('final_review_deadline', '>=', $validatedData['date_final_review_deadline_from']);
-        }
+        $query->when(isset($validatedData['date_final_review_deadline_from']), function ($q) use ($validatedData) {
+            $q->where('final_review_deadline', '>=', $validatedData['date_final_review_deadline_from']);
+        });
 
-        if (isset($validatedData['date_final_review_deadline_to'])) {
-            $query->where('final_review_deadline', '<=', $validatedData['date_final_review_deadline_to']);
-        }
+        $query->when(isset($validatedData['date_final_review_deadline_to']), function ($q) use ($validatedData) {
+            $q->where('final_review_deadline', '<=', $validatedData['date_final_review_deadline_to']);
+        });
 
-        if (isset($validatedData['status'])) {
-            $query->whereHas('applicationStages.applicationStageVersions', function ($q) use ($validatedData) {
+        $query->when(isset($validatedData['status']), function ($q) use ($validatedData) {
+            $q->whereHas('applicationStages.applicationStageVersions', function ($q) use ($validatedData) {
                 $q->where('status', $validatedData['status']);
             });
-        }
+        });
 
-        if (isset($validatedData['subsidy'])) {
+        $query->when(isset($validatedData['subsidy']), function ($q) use ($validatedData) {
             $subVersions = SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($validatedData) {
                 $q->where('title', (string)$validatedData['subsidy']);
             })->pluck('id');
 
-            $query->whereIn('subsidy_version_id', $subVersions);
-        }
+            $q->whereIn('subsidy_version_id', $subVersions);
+        });
 
         // Get the final results after applying filters
         $applications = $query->get();

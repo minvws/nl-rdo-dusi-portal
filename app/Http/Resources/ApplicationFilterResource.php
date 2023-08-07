@@ -1,18 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use MinVWS\DUSi\Shared\Application\Models\Application;
 
+/**
+ * @property mixed $subsidy_version_id
+ * @property mixed $application_title
+ * @property mixed $updated_at
+ * @property mixed $final_review_deadline
+ * @property mixed $applicationStages
+ */
 class ApplicationFilterResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array
     {
