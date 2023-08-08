@@ -11,6 +11,5 @@ use App\Http\Controllers\ApplicationController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/applications', [ApplicationController::class, 'index']);
 Route::get('/application/{application}', [ApplicationController::class, 'show']);
-Route::get('/applicationsFilter', [ApplicationController::class, 'getFilteredApplications']);
+Route::get('/applications', [ApplicationController::class, 'getFilteredApplications']);

@@ -37,8 +37,9 @@ class ApplicationApiTest extends TestCase
         $this->application = Application::factory()->create(
             [
                 'subsidy_version_id' => $this->subsidyVersion->id,
-                'created_at' => Carbon::today()->toDateString(),
-                'final_review_deadline' => Carbon::tomorrow()->toDateString(),
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
             ]
         );
         $this->applicationStage = ApplicationStage::factory()->create(
@@ -52,21 +53,23 @@ class ApplicationApiTest extends TestCase
             ]
         );
     }
+
+
     public function testFilter()
     {
         $filters = [
             'application_title' => $this->application->application_title,
-            'date_from' => $this->application->created_at->toDateString(),
-            'date_to' => Carbon::tomorrow()->toDateString(),
-            'date_last_modified_from' => $this->application->updated_at->toDateString(),
-            'date_last_modified_to' => Carbon::tomorrow()->toDateString(),
-            'date_final_review_deadline_from' => Carbon::yesterday()->toDateString(),
-            'date_final_review_deadline_to' => Carbon::tomorrow()->toDateString(),
+            'date_from' => $this->application->created_at,
+            'date_to' => $this->application->created_at,
+            'date_last_modified_from' => $this->application->updated_at,
+            'date_last_modified_to' => $this->application->updated_at,
+            'date_final_review_deadline_from' => $this->application->final_review_deadline,
+            'date_final_review_deadline_to' => $this->application->final_review_deadline,
             'status' => $this->applicationStageVersion->status,
             'subsidy' => $this->subsidy->title,
         ];
 
-        $response = $this->json('GET', '/api/applicationsFilter', $filters);
+        $response = $this->json('GET', '/api/applications', $filters);
 
         $response->assertStatus(200);
 
@@ -84,58 +87,76 @@ class ApplicationApiTest extends TestCase
     {
         yield [
             [
-                'application_title' => 'test',
+                'application_title' => "123test123",
             ],
+            200,
+            '{"data":[]}',
         ];
         yield [
             [
-                'date_from' => Carbon::tomorrow()->toDateString(),
+                'date_from' => Carbon::tomorrow(),
             ],
+            200,
+            '{"data":[]}',
         ];
         yield [
             [
-                'date_to' => Carbon::yesterday()->toDateString(),
+                'date_to' => Carbon::yesterday(),
             ],
+            200,
+            '{"data":[]}',
         ];
         yield [
             [
-                'date_last_modified_from' => Carbon::tomorrow()->addDays(20)->toDateString(),
+                'date_last_modified_from' => Carbon::tomorrow(),
             ],
+            200,
+            '{"data":[]}',
         ];
         yield [
             [
-                'date_last_modified_to' => Carbon::yesterday()->toDateString(),
+                'date_last_modified_to' => Carbon::yesterday(),
             ],
+            200,
+            '{"data":[]}',
         ];
         yield [
             [
-                'date_final_review_deadline_from' => Carbon::tomorrow()->addDays(2)->toDateString(),
+                'date_final_review_deadline_from' => Carbon::tomorrow(),
             ],
+            200,
+            '{"data":[]}',
         ];
         yield [
             [
-                'date_final_review_deadline_to' => Carbon::yesterday()->toDateString(),
+                'date_final_review_deadline_to' => Carbon::yesterday(),
             ],
+            200,
+            '{"data":[]}',
         ];
         yield [
             [
                 'status' => 'test',
             ],
+            422,
+            '{"message":"The selected status is invalid.","errors":{"status":["The selected status is invalid."]}}',
         ];
         yield [
             [
                 'subsidy' => 'test',
             ],
+            200,
+            '{"data":[]}',
         ];
     }
 
     /**
      * @dataProvider noResultFilterProvider
      */
-    public function testNoResultFilter(mixed $filters)
+    public function testNoResultFilter(mixed $filters, mixed $status, mixed $content)
     {
-        $response = $this->json('GET', '/api/applicationsFilter', $filters);
-        $response->assertStatus(200);
-        $response->assertContent('{"data":[]}');
+        $response = $this->json('GET', '/api/applications', $filters);
+        $response->assertStatus($status);
+        $response->assertContent($content);
     }
 }

@@ -78,18 +78,18 @@ jobs:
 
       - name: Execute tests with Code Coverage
         env:
-          FORM_DB_HOST: 127.0.0.1
-          FORM_DB_DATABASE: ci_db_test_form
-          FORM_DB_PORT: 5432
-          FORM_DB_USERNAME: postgres
-          FORM_DB_PASSWORD: postgres
-          FORM_DB_SSLMODE: prefer
-          APPLICATION_DB_HOST: 127.0.0.1
-          APPLICATION_DB_DATABASE: ci_db_test_application
-          APPLICATION_DB_PORT: 5433
-          APPLICATION_DB_USERNAME: postgres
-          APPLICATION_DB_PASSWORD: postgres
-          APPLICATION_DB_SSLMODE: prefer
+          DB_FORM_DATABASE: ci_db_test_form
+          DB_FORM_HOST: 127.0.0.1
+          DB_FORM_PORT: 5432
+          DB_FORM_USERNAME: postgres
+          DB_FORM_PASSWORD: postgres
+          DB_FORM_SSLMODE: prefer
+          DB_APPLICATION_DATABASE: ci_db_test_application
+          DB_APPLICATION_HOST: 127.0.0.1
+          DB_APPLICATION_PORT: 5433
+          DB_APPLICATION_USERNAME: postgres
+          DB_APPLICATION_PASSWORD: postgres
+          DB_APPLICATION_SSLMODE: prefer
 
         run: vendor/bin/phpunit --coverage-clover tests/coverage.xml
 
