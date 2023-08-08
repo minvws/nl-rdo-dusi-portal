@@ -10,11 +10,11 @@
         "laravel/framework": "^10.17",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
-        "minvws/dusi-application-model": "v0.0.1",
-        "minvws/dusi-subsidy-model": "^0.1",
+        "minvws/dusi-application-model": "v0.1",
+        "minvws/dusi-subsidy-model": "^v0.1",
         "minvws/openid-connect-php-laravel": "^0.0.5",
+        "predis/predis": "^2.2",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
-
     },
     "require-dev": {
         "ext-openssl": "*",
