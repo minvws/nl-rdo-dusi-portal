@@ -10,7 +10,9 @@
         "laravel/fortify": "^1.17",
         "laravel/framework": "^10.16",
         "minvws/dusi-subsidy-model": "v0.1",
-        "minvws/dusi-application-model": "v0.0.1"
+        "minvws/dusi-application-model": "v0.0.1",
+        "predis/predis": "^2.2"
+
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
