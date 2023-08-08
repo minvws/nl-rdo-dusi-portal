@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Models;
 
+use DateTime;
+use Illuminate\Database\Eloquent\Builder;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\Identity;
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -12,6 +15,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
  * @property string $id
@@ -20,8 +24,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $identity_type
  * @property string $identity_identifier
  * @property Identity $identity
- * @property int $locked_from
- * @property int $final_review_deadline
+ * @property DateTime $locked_from
+ * @property DateTime $final_review_deadline
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Application extends Model
 {
@@ -32,8 +37,8 @@ class Application extends Model
 
     protected $casts = [
         'identity_type' => IdentityType::class,
-        'locked_from' => 'timestamp',
-        'final_review_deadline' => 'timestamp',
+        'locked_from' => 'datetime',
+        'final_review_deadline' => 'datetime',
     ];
 
     protected $fillable = [
@@ -68,6 +73,57 @@ class Application extends Model
                 'identity_identifier' => $identity->identifier
             ]
         );
+    }
+
+    public function scopeTitle(Builder $query, string $title): Builder
+    {
+        return $query->where('application_title', 'LIKE', '%' . $title . '%');
+    }
+
+    public function scopeCreatedAtFrom(Builder $query, DateTime $timestamp): Builder
+    {
+        return $query->where('created_at', '>=', $timestamp);
+    }
+
+    public function scopeCreatedAtTo(Builder $query, DateTime $timestamp): Builder
+    {
+        return $query->where('created_at', '<=', $timestamp);
+    }
+
+    public function scopeUpdatedAtFrom(Builder $query, DateTime $timestamp): Builder
+    {
+        return $query->where('updated_at', '>=', $timestamp);
+    }
+
+    public function scopeUpdatedAtTo(Builder $query, DateTime $timestamp): Builder
+    {
+        return $query->where('updated_at', '<=', $timestamp);
+    }
+
+    public function scopeFinalReviewDeadlineFrom(Builder $query, DateTime $timestamp): Builder
+    {
+        return $query->where('final_review_deadline', '>=', $timestamp);
+    }
+
+    public function scopeFinalReviewDeadlineTo(Builder $query, DateTime $timestamp): Builder
+    {
+        return $query->where('final_review_deadline', '<=', $timestamp);
+    }
+
+    public function scopeStatus(Builder $query, ApplicationStageVersionStatus $status): Builder
+    {
+        return $query->whereHas('applicationStages.applicationStageVersions', function (Builder $query) use ($status) {
+            $query->where('status', $status);
+        });
+    }
+
+    public function scopeSubsidyTitle(Builder $query, string $title): Builder
+    {
+        $subVersions = SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($title) {
+            $q->where('title', $title);
+        })->pluck('id');
+
+        return $query->whereIn('subsidy_version_id', $subVersions); // @phpstan-ignore-line
     }
 
     protected static function newFactory(): ApplicationFactory

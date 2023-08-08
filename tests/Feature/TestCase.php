@@ -6,11 +6,24 @@ namespace MinVWS\DUSi\Shared\Application\Tests\Feature;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    use DatabaseMigrations;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->loadCustomMigrations();
+    }
+
+    protected function loadCustomMigrations(): void
+    {
+        Artisan::call('db:wipe', ['--database' => 'pgsql_form']);
+        Artisan::call('db:wipe', ['--database' => 'pgsql_application']);
+        Artisan::call('migrate:fresh');
+    }
+
 
     public function getPackageProviders($app): array
     {
