@@ -51,9 +51,14 @@ class ApplicationController extends Controller
             $query->updatedAtTo(Carbon::parse($validatedData['date_last_modified_to']))->get();
         });
 
-        $query->when(isset($validatedData['date_final_review_deadline_from']), function () use ($validatedData, $query) {
-            $query->finalReviewDeadlineFrom(Carbon::parse($validatedData['date_final_review_deadline_from']))->get();
-        });
+        $query->when(
+            isset($validatedData['date_final_review_deadline_from']),
+            function () use ($validatedData, $query) {
+                $query->finalReviewDeadlineFrom(
+                    Carbon::parse($validatedData['date_final_review_deadline_from'])
+                )->get();
+            }
+        );
 
         $query->when(isset($validatedData['date_final_review_deadline_to']), function () use ($validatedData, $query) {
             $query->finalReviewDeadlineTo(Carbon::parse($validatedData['date_final_review_deadline_to']))->get();
