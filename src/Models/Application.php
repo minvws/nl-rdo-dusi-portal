@@ -26,6 +26,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property Identity $identity
  * @property DateTime $locked_from
  * @property DateTime $final_review_deadline
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Application extends Model
 {
