@@ -8,11 +8,10 @@
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
-        "laravel/framework": "^10.16",
-        "minvws/dusi-subsidy-model": "v0.1",
-        "minvws/dusi-application-model": "v0.0.1",
+        "laravel/framework": "^10.17",
+        "minvws/dusi-application-model": "^0.0.1",
+        "minvws/dusi-subsidy-model": "^0.1.0",
         "predis/predis": "^2.2"
-
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
@@ -23,7 +22,7 @@
         "laravel/sail": "^1.23",
         "laravel/tinker": "^2.8",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^7.1",
+        "nunomaduro/collision": "^7.8",
         "nunomaduro/larastan": "^2.6",
         "phpmd/phpmd": "^2.13",
         "phpunit/phpunit": "^9.6",
@@ -32,7 +31,6 @@
         "spatie/laravel-ignition": "^2.2",
         "squizlabs/php_codesniffer": "^3.7",
         "vimeo/psalm": "^5.14"
-
     },
     "autoload": {
         "psr-4": {
