@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
-use DateTime;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
@@ -26,9 +24,54 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
  */
 readonly class ApplicationRepository
 {
-    public function filterApplications(array $validatedData): array|\Illuminate\Database\Eloquent\Collection
+    public function filterApplications(ApplicationsFilter $filter): array|Collection
     {
-        return (new ApplicationsFilter($validatedData))->filterApplications();
+        $query = Application::query();
+        $query->when(
+            isset($filter->validatedData['application_title']),
+            fn () => $query->title($filter->validatedData['application_title'])->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->validatedData['date_from']),
+            fn () =>$query->createdAtFrom($filter->validatedData['date_from'])->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->validatedData['date_to']),
+            fn () =>$query->createdAtTo($filter->validatedData['date_to'])->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->validatedData['date_last_modified_from']),
+            fn () =>$query->updatedAtFrom( // @phpstan-ignore-line
+                $filter->validatedData['date_last_modified_from']
+            )->get()
+        );
+        $query->when(
+            isset($filter->validatedData['date_last_modified_to']),
+            fn () =>$query->updatedAtTo( // @phpstan-ignore-line
+                $filter->validatedData['date_last_modified_to']
+            )->get()
+        );
+        $query->when(
+            isset($filter->validatedData['date_final_review_deadline_from']),
+            fn () =>$query->finalReviewDeadlineFrom( // @phpstan-ignore-line
+                $filter->validatedData['date_final_review_deadline_from']
+            )->get()
+        );
+        $query->when(
+            isset($filter->validatedData['date_final_review_deadline_to']),
+            fn () =>$query->finalReviewDeadlineTo( // @phpstan-ignore-line
+                $filter->validatedData['date_final_review_deadline_to']
+            )->get()
+        );
+        $query->when(
+            isset($filter->validatedData['status']),
+            fn () =>$query->status($filter->validatedData['status'])->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->validatedData['subsidy']),
+            fn () =>$query->subsidyTitle($filter->validatedData['subsidy'])->get() // @phpstan-ignore-line
+        );
+        return $query->get();
     }
 
     public function getApplication(string $appId): ?Application

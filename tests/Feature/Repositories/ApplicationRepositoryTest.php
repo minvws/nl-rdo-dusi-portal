@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Shared\Application\Tests\Feature\Repositories;
 
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -74,16 +75,19 @@ class ApplicationRepositoryTest extends TestCase
             'date_final_review_deadline_to' => Carbon::today(),
             'subsidy' => 'some_subsidy_title',
         ];
-
+        $appFilter = new ApplicationsFilter($filter);
         // Test valid application
-        $foundApplication = $this->repository->filterApplications($filter);
+        $foundApplication = $this->repository->filterApplications($appFilter);
         $this->assertInstanceOf(Application::class, $foundApplication->first());
 
         // Test invalid application
         $filter = [
             'application_title' => 'invalid_application_title',
         ];
-        $foundApplication = $this->repository->filterApplications($filter);
+
+        $appFilter = new ApplicationsFilter($filter);
+
+        $foundApplication = $this->repository->filterApplications($appFilter);
         $this->assertEmpty($foundApplication);
     }
 
