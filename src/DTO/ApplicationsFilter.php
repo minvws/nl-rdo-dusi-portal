@@ -1,188 +1,65 @@
 <?php
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
-
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\Repositories;
+namespace MinVWS\DUSi\Shared\Application\DTO;
 
-use Illuminate\Support\Collection;
-use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
-use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use DateTime;
+use Illuminate\Support\Facades\Date;
+use InvalidArgumentException;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
-readonly class ApplicationRepository
+use function PHPUnit\Framework\isInstanceOf;
+
+class ApplicationsFilter
 {
-    public function filterApplications(ApplicationsFilter $filter): array|Collection
+    public function __construct(
+        public mixed $applicationTitle,
+        public mixed $dateFrom,
+        public mixed $dateTo,
+        public mixed $dateLastModifiedFrom,
+        public mixed $dateLastModifiedTo,
+        public mixed $dateFinalReviewDeadlineFrom,
+        public mixed $dateFinalReviewDeadlineTo,
+        public mixed $status,
+        public mixed $subsidy,
+    ) {
+    }
+
+    /**
+     * @throws \Exception
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    public static function fromArray(array $inputArray): ApplicationsFilter
     {
-        $query = Application::query();
-        $query->when(
-            isset($filter->application_title),
-            fn () => $query->title($filter->application_title)->get() // @phpstan-ignore-line
+        return new ApplicationsFilter(
+            array_key_exists('application_title', $inputArray)
+                ? $inputArray['application_title'] : null,
+            array_key_exists('date_from', $inputArray)
+                ? ($inputArray['date_from'] instanceof DateTime
+                ? $inputArray['date_from'] : new DateTime($inputArray['date_from'])) : null,
+            array_key_exists('date_to', $inputArray)
+                ? ($inputArray['date_to'] instanceof DateTime
+                ? $inputArray['date_to'] : new DateTime($inputArray['date_to'])) : null,
+            array_key_exists('date_last_modified_from', $inputArray)
+                ? ($inputArray['date_last_modified_from'] instanceof DateTime
+                ? $inputArray['date_last_modified_from'] : new DateTime($inputArray['date_last_modified_from'])) : null,
+            array_key_exists('date_last_modified_to', $inputArray)
+                ? ($inputArray['date_last_modified_to'] instanceof DateTime
+                ? $inputArray['date_last_modified_to'] : new DateTime($inputArray['date_last_modified_to'])) : null,
+            array_key_exists('date_final_review_deadline_from', $inputArray)
+                ? ($inputArray['date_final_review_deadline_from'] instanceof DateTime
+                ? $inputArray['date_final_review_deadline_from'] :
+                new DateTime($inputArray['date_final_review_deadline_from'])) : null,
+            array_key_exists('date_final_review_deadline_to', $inputArray)
+                ? ($inputArray['date_final_review_deadline_to'] instanceof DateTime
+                ? $inputArray['date_final_review_deadline_to'] :
+                new DateTime($inputArray['date_final_review_deadline_to'])) : null,
+            array_key_exists('status', $inputArray)
+            ? ($inputArray['status'] instanceof ApplicationStageVersionStatus
+                ? $inputArray['status'] : ApplicationStageVersionStatus::tryFrom($inputArray['status'])) : null,
+            array_key_exists('subsidy', $inputArray)
+                ? $inputArray['subsidy'] : null,
         );
-        $query->when(
-            isset($filter->date_from),
-            fn () => $query->createdAtFrom($filter->date_from)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->date_to),
-            fn () =>$query->createdAtTo($filter->date_to)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->date_last_modified_from),
-            fn () =>$query->updatedAtFrom( // @phpstan-ignore-line
-                $filter->date_last_modified_from
-            )->get()
-        );
-        $query->when(
-            isset($filter->date_last_modified_to),
-            fn () =>$query->updatedAtTo( // @phpstan-ignore-line
-                $filter->date_last_modified_to
-            )->get()
-        );
-        $query->when(
-            isset($filter->date_final_review_deadline_from),
-            fn () =>$query->finalReviewDeadlineFrom( // @phpstan-ignore-line
-                $filter->date_final_review_deadline_from
-            )->get()
-        );
-        $query->when(
-            isset($filter->date_final_review_deadline_to),
-            fn () =>$query->finalReviewDeadlineTo( // @phpstan-ignore-line
-                $filter->date_final_review_deadline_to
-            )->get()
-        );
-        $query->when(
-            isset($filter->status),
-            fn () =>$query->status($filter->status)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->subsidy),
-            fn () =>$query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
-        );
-        return $query->get();
-    }
-
-    public function getApplication(string $appId): ?Application
-    {
-        $application = Application::find($appId); // @phpstan-ignore-line
-        if ($application instanceof Application) {
-            return $application;
-        }
-        return null;
-    }
-
-    public function getApplicationStage(string $applicationStageId): ?ApplicationStage
-    {
-        $applicationStage = ApplicationStage::find($applicationStageId); // @phpstan-ignore-line
-        if ($applicationStage instanceof ApplicationStage) {
-            return $applicationStage;
-        }
-        return null;
-    }
-
-    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection
-    {
-        return ApplicationStageVersion::query()
-            ->where('application_stage_id', $applicationStage->id)
-            ->orderBy('version', 'desc')
-            ->get();
-    }
-
-    public function getLatestApplicationStageVersion(ApplicationStage $applicationStage): ?ApplicationStageVersion
-    {
-        $latestApplicationStageVersion = ApplicationStageVersion::query()
-            ->where('application_stage_id', $applicationStage->id)
-            ->orderBy('version', 'asc')
-            ->first();
-        if ($latestApplicationStageVersion instanceof ApplicationStageVersion) {
-            return $latestApplicationStageVersion;
-        }
-        return null;
-    }
-    public function getApplicationStageVersion(string $appStageVersionId): ?ApplicationStageVersion
-    {
-        $applicationStageVersion = ApplicationStageVersion::find($appStageVersionId); // @phpstan-ignore-line
-        if ($applicationStageVersion instanceof ApplicationStageVersion) {
-            return $applicationStageVersion;
-        }
-        return null;
-    }
-
-    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): ?Answer
-    {
-        $answer = Answer::query()
-            ->where('application_stage_version_id', $appStageVersion->id)
-            ->where('field_id', $field->id)
-            ->first();
-        if ($answer instanceof Answer) {
-            return $answer;
-        }
-        return null;
-    }
-
-    public function makeApplicationForSubsidyVersion(SubsidyVersion $subsidyVersion): Application
-    {
-        $application = new Application();
-        $application->subsidy_version_id = $subsidyVersion->id;
-        return $application;
-    }
-
-    public function makeApplicationStage(Application $application, SubsidyStage $subsidyStage): ApplicationStage
-    {
-        $applicationStage = new ApplicationStage();
-        $applicationStage->application()->associate($application);
-        $applicationStage->subsidy_stage_id = $subsidyStage->id;
-        return $applicationStage;
-    }
-
-    public function makeApplicationStageVersion(
-        ApplicationStage $applicationStage
-    ): ApplicationStageVersion {
-        $applicationStageVersion = new ApplicationStageVersion([
-            'status' => ApplicationStageVersionStatus::Draft->value,
-        ]);
-        $applicationStageVersion->applicationStage()->associate($applicationStage);
-        return $applicationStageVersion;
-    }
-
-    public function makeAnswer(ApplicationStageVersion $appStageVersion, Field $field): Answer
-    {
-        $answer = new Answer([
-            'field_id' => $field->id,
-        ]);
-        $answer->applicationStageVersion()->associate($appStageVersion);
-        return $answer;
-    }
-
-    public function saveApplication(Application $application): void
-    {
-        $application->save();
-    }
-
-    public function saveApplicationStageVersion(ApplicationStageVersion $appStageVersion): void
-    {
-        $appStageVersion->save();
-    }
-
-    public function saveApplicationStage(ApplicationStage $applicationStage): void
-    {
-        $applicationStage->save();
-    }
-
-    public function saveAnswer(Answer $answer): void
-    {
-        $answer->save();
     }
 }

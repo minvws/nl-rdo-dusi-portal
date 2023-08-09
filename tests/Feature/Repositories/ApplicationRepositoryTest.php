@@ -29,6 +29,10 @@ class ApplicationRepositoryTest extends TestCase
 
         $this->repository = new ApplicationRepository();
     }
+
+    /**
+     * @throws \Exception
+     */
     public function testGetApplicationWith()
     {
         $subsidy = Subsidy::factory()->create(
@@ -65,17 +69,16 @@ class ApplicationRepositoryTest extends TestCase
 
         $filter = [
             'application_title' => 'some_application_title',
-            'subsidy_title' => 'some_subsidy_title',
             'status' => ApplicationStageVersionStatus::Submitted,
-            'date_from' => Carbon::today(),
-            'date_to' => Carbon::today(),
-            'date_last_modified_from' => Carbon::today(),
-            'date_last_modified_to' => Carbon::today(),
-            'date_final_review_deadline_from' => Carbon::today(),
-            'date_final_review_deadline_to' => Carbon::today(),
+            'date_from' => Carbon::today()->toString(),
+            'date_to' => Carbon::today()->toString(),
+            'date_last_modified_from' => Carbon::today()->toString(),
+            'date_last_modified_to' => Carbon::today()->toString(),
+            'date_final_review_deadline_from' => Carbon::today()->toString(),
+            'date_final_review_deadline_to' => Carbon::today()->toString(),
             'subsidy' => 'some_subsidy_title',
         ];
-        $appFilter = new ApplicationsFilter($filter);
+        $appFilter = ApplicationsFilter::fromArray($filter);
         // Test valid application
         $foundApplication = $this->repository->filterApplications($appFilter);
         $this->assertInstanceOf(Application::class, $foundApplication->first());
@@ -85,7 +88,7 @@ class ApplicationRepositoryTest extends TestCase
             'application_title' => 'invalid_application_title',
         ];
 
-        $appFilter = new ApplicationsFilter($filter);
+        $appFilter = ApplicationsFilter::fromArray($filter);
 
         $foundApplication = $this->repository->filterApplications($appFilter);
         $this->assertEmpty($foundApplication);

@@ -28,39 +28,39 @@ readonly class ApplicationRepository
     {
         $query = Application::query();
         $query->when(
-            isset($filter->application_title),
-            fn () => $query->title($filter->application_title)->get() // @phpstan-ignore-line
+            isset($filter->applicationTitle),
+            fn () => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
         );
         $query->when(
-            isset($filter->date_from),
-            fn () => $query->createdAtFrom($filter->date_from)->get() // @phpstan-ignore-line
+            isset($filter->dateFrom),
+            fn () => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
         );
         $query->when(
-            isset($filter->date_to),
-            fn () =>$query->createdAtTo($filter->date_to)->get() // @phpstan-ignore-line
+            isset($filter->dateTo),
+            fn () =>$query->createdAtTo($filter->dateTo)->get() // @phpstan-ignore-line
         );
         $query->when(
-            isset($filter->date_last_modified_from),
+            isset($filter->dateLastModifiedFrom),
             fn () =>$query->updatedAtFrom( // @phpstan-ignore-line
-                $filter->date_last_modified_from
+                $filter->dateLastModifiedFrom
             )->get()
         );
         $query->when(
-            isset($filter->date_last_modified_to),
+            isset($filter->dateLastModifiedTo),
             fn () =>$query->updatedAtTo( // @phpstan-ignore-line
-                $filter->date_last_modified_to
+                $filter->dateLastModifiedTo
             )->get()
         );
         $query->when(
-            isset($filter->date_final_review_deadline_from),
+            isset($filter->dateFinalReviewDeadlineFrom),
             fn () =>$query->finalReviewDeadlineFrom( // @phpstan-ignore-line
-                $filter->date_final_review_deadline_from
+                $filter->dateFinalReviewDeadlineFrom
             )->get()
         );
         $query->when(
-            isset($filter->date_final_review_deadline_to),
+            isset($filter->dateFinalReviewDeadlineTo),
             fn () =>$query->finalReviewDeadlineTo( // @phpstan-ignore-line
-                $filter->date_final_review_deadline_to
+                $filter->dateFinalReviewDeadlineTo
             )->get()
         );
         $query->when(
@@ -71,7 +71,6 @@ readonly class ApplicationRepository
             isset($filter->subsidy),
             fn () =>$query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
         );
-        dd($query->get());
         return $query->get();
     }
 
