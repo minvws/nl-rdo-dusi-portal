@@ -21,7 +21,7 @@ return new class extends Migration
     {
         Schema::table('subsidy_stage_uis', function (Blueprint $table) {
             $table->renameColumn('ui', 'input_ui');
-            $table->string('review_ui');
+            $table->json('review_ui');
         });
     }
 
