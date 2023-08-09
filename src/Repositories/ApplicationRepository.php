@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
@@ -16,9 +20,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 readonly class ApplicationRepository
 {
     public function queryApplicationWithTitle(string $title): Builder
