@@ -8,7 +8,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -95,14 +96,13 @@ class ApplicationRepository
         return null;
     }
 
-
     /*
      * @param ApplicationStage $applicationStage
      * @return \Illuminate\Database\Eloquent\Collection<ApplicationStageVersion>
      */
     public function getApplicationStageVersions(
         ApplicationStage $applicationStage
-    ): \Illuminate\Database\Eloquent\Collection {
+    ): Collection {
         return ApplicationStageVersion::query()
             ->where('application_stage_id', $applicationStage->id)
             ->orderBy('version', 'desc')
@@ -119,7 +119,7 @@ class ApplicationRepository
     {
         $latestApplicationStageVersion = ApplicationStageVersion::query()
             ->where('application_stage_id', $applicationStage->id)
-            ->orderBy('version', 'asc')
+            ->orderBy('version', 'desc')
             ->first();
         if ($latestApplicationStageVersion instanceof ApplicationStageVersion) {
             return $latestApplicationStageVersion;

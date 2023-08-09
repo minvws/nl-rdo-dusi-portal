@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b9d7fe74d1e6ff00e4bca769ca6e79e",
+    "content-hash": "da760eb2c37900741f30e8d5f7586267",
     "packages": [
         {
             "name": "brick/math",
@@ -1351,16 +1351,16 @@
         },
         {
             "name": "minvws/dusi-subsidy-model",
-            "version": "v0.1.0",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-subsidy-model.git",
-                "reference": "8f97a9bdbafaebe98f7cf8a5a8958c83b7ec54b6"
+                "reference": "74075f8635f6c9b4a8c106af2f2f7207ce789ab1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/8f97a9bdbafaebe98f7cf8a5a8958c83b7ec54b6",
-                "reference": "8f97a9bdbafaebe98f7cf8a5a8958c83b7ec54b6",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/74075f8635f6c9b4a8c106af2f2f7207ce789ab1",
+                "reference": "74075f8635f6c9b4a8c106af2f2f7207ce789ab1",
                 "shasum": ""
             },
             "require": {
@@ -1369,11 +1369,14 @@
             },
             "require-dev": {
                 "fakerphp/faker": "^1.23",
+                "nunomaduro/larastan": "^2.0",
                 "orchestra/testbench": "^8.0",
+                "phpmd/phpmd": "^2.13",
                 "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^10.2",
                 "slevomat/coding-standard": "^8.13",
-                "squizlabs/php_codesniffer": "^3.7"
+                "squizlabs/php_codesniffer": "^3.7",
+                "vimeo/psalm": "^5.14"
             },
             "type": "library",
             "extra": {
@@ -1419,10 +1422,10 @@
             ],
             "description": "Models and repositories for form-admin-web",
             "support": {
-                "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/v0.1.0",
+                "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/v0.2.0",
                 "issues": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/issues"
             },
-            "time": "2023-08-04T10:16:02+00:00"
+            "time": "2023-08-10T13:22:07+00:00"
         },
         {
             "name": "monolog/monolog",
