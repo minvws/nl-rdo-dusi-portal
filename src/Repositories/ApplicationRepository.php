@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -34,11 +35,11 @@ readonly class ApplicationRepository
         return null;
     }
 
-    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection
+    public function getApplicationStageVersions(ApplicationStage $applicationStage): mixed
     {
         return ApplicationStageVersion::query()
             ->where('application_stage_id', $applicationStage->id)
-            ->orderBy('version', 'desc')
+            ->orderBy('version', 'asc')
             ->get();
     }
 
@@ -46,7 +47,7 @@ readonly class ApplicationRepository
     {
         $latestApplicationStageVersion = ApplicationStageVersion::query()
             ->where('application_stage_id', $applicationStage->id)
-            ->orderBy('version', 'asc')
+            ->orderBy('version', 'desc')
             ->first();
         if ($latestApplicationStageVersion instanceof ApplicationStageVersion) {
             return $latestApplicationStageVersion;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Tests\Feature\Repositories;
 
+use DateTime;
 use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -177,5 +178,33 @@ class ApplicationRepositoryTest extends TestCase
         $this->repository->saveAnswer($answer);
 
         $this->assertDatabaseHas('answers', ['id' => $answer->id]);
+    }
+
+    public function testGetLatestApplicationStageVersion()
+    {
+        // Create test models
+        $applicationStage = ApplicationStage::factory()->create();
+        $now = new DateTime();
+        $expectedApplicationStageVersion = ApplicationStageVersion::factory()->create([
+            'application_stage_id' => $applicationStage->id,
+            'created_at' => $now,
+            'version' => '3',
+        ]);
+        ApplicationStageVersion::factory()->create([
+            'application_stage_id' => $applicationStage->id,
+            'created_at' => $now->modify('+1 day'),
+            'version' => '2',
+        ]);
+        ApplicationStageVersion::factory()->create([
+            'application_stage_id' => $applicationStage->id,
+            'created_at' => $now->modify('+2 day'),
+            'version' => '1',
+        ]);
+
+        // Test get latest application stage version
+        $latestApplicationStageVersion = $this->repository->getLatestApplicationStageVersion($applicationStage);
+        $this->assertInstanceOf(ApplicationStageVersion::class, $latestApplicationStageVersion);
+        $this->assertEquals($expectedApplicationStageVersion->id, $latestApplicationStageVersion->id);
+        $this->assertEquals($expectedApplicationStageVersion->id, $applicationStage->latestApplicationStageVersion->id);
     }
 }

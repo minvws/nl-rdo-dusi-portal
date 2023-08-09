@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationStageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,7 +37,16 @@ class ApplicationStage extends Model
 
     public function applicationStageVersions(): HasMany
     {
-        return $this->hasMany(ApplicationStageVersion::class, 'application_stage_id', 'id');
+        //@phpstan-ignore-next-line
+        return $this->hasMany(ApplicationStageVersion::class, 'application_stage_id', 'id')
+            ->orderBy('version', 'asc');
+    }
+
+    public function latestApplicationStageVersion(): HasOne
+    {
+        //@phpstan-ignore-next-line
+        return $this->hasOne(ApplicationStageVersion::class)
+            ->orderBy('version', 'desc')->limit(1);
     }
 
     protected static function newFactory(): ApplicationStageFactory

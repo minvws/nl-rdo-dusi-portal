@@ -22,7 +22,8 @@
         "squizlabs/php_codesniffer": "^3.7",
         "slevomat/coding-standard": "^8.13",
         "orchestra/testbench": "^8.5",
-        "phpmd/phpmd": "^2.13"
+        "phpmd/phpmd": "^2.13",
+        "vimeo/psalm": "^5.14"
     },
     "autoload": {
         "psr-4": {
