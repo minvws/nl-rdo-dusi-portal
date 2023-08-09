@@ -11,6 +11,7 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -25,48 +26,9 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
  */
 readonly class ApplicationRepository
 {
-    public function queryApplicationWithTitle(Builder $query, string $title): Builder
+    public function filterApplications(array $validatedData): array|\Illuminate\Database\Eloquent\Collection
     {
-        return $query->title($title); // @phpstan-ignore-line
-    }
-    public function queryApplicationWithCreatedAtFrom(Builder $query, DateTime $createdAt): Builder
-    {
-        return $query->createdAtFrom($createdAt); // @phpstan-ignore-line
-    }
-
-    public function queryApplicationWithCreatedAtTo(Builder $query, DateTime $createdAt): Builder
-    {
-        return $query->createdAtTo($createdAt); // @phpstan-ignore-line
-    }
-
-    public function queryApplicationWithUpdatedAtFrom(Builder $query, DateTime $updatedAt): Builder
-    {
-        return $query->updatedAtFrom($updatedAt); // @phpstan-ignore-line
-    }
-
-    public function queryApplicationWithUpdatedAtTo(Builder $query, DateTime $updatedAt): Builder
-    {
-        return $query->updatedAtTo($updatedAt); // @phpstan-ignore-line
-    }
-
-    public function queryApplicationWithFinalReviewDeadlineFrom(Builder $query, DateTime $finalReviewDeadline): Builder
-    {
-        return $query->finalReviewDeadlineFrom($finalReviewDeadline); // @phpstan-ignore-line
-    }
-
-    public function queryApplicationWithFinalReviewDeadlineTo(Builder $query, DateTime $finalReviewDeadline): Builder
-    {
-        return $query->finalReviewDeadlineTo($finalReviewDeadline); // @phpstan-ignore-line
-    }
-
-    public function queryApplicationWithStatus(Builder $query, ApplicationStageVersionStatus $status): Builder
-    {
-        return $query->status($status); // @phpstan-ignore-line
-    }
-
-    public function queryApplicationWithSubsidyTitle(Builder $query, string $title): Builder
-    {
-        return $query->subsidyTitle($title); // @phpstan-ignore-line
+        return (new ApplicationsFilter($validatedData))->filterApplications();
     }
 
     public function getApplication(string $appId): ?Application

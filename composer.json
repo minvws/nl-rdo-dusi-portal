@@ -47,7 +47,8 @@
         "phpstan": "vendor/bin/phpstan analyze -c phpstan.neon.dist",
         "phpcs": "vendor/bin/phpcs",
         "phpcbf": "vendor/bin/phpcbf",
-        "test": "vendor/bin/phpunit"
+        "test": "vendor/bin/phpunit",
+        "phpmd": "vendor/bin/phpmd src/ text ruleset.phpmd.xml"
     },
     "config": {
         "allow-plugins": {

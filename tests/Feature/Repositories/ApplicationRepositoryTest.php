@@ -62,38 +62,29 @@ class ApplicationRepositoryTest extends TestCase
             ]
         )->id;
 
-        $query = Application::query();
+        $filter = [
+            'application_title' => 'some_application_title',
+            'subsidy_title' => 'some_subsidy_title',
+            'status' => ApplicationStageVersionStatus::Submitted,
+            'date_from' => Carbon::today(),
+            'date_to' => Carbon::today(),
+            'date_last_modified_from' => Carbon::today(),
+            'date_last_modified_to' => Carbon::today(),
+            'date_final_review_deadline_from' => Carbon::today(),
+            'date_final_review_deadline_to' => Carbon::today(),
+            'subsidy' => 'some_subsidy_title',
+        ];
 
         // Test valid application
-        $foundApplication = $this->repository->queryApplicationWithTitle($query, 'some_application_title')->get();
+        $foundApplication = $this->repository->filterApplications($filter);
         $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithCreatedAtFrom($query, Carbon::today());
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
-
-        $foundApplication = $this->repository->queryApplicationWithCreatedAtTo($query, Carbon::today());
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
-
-        $foundApplication = $this->repository->queryApplicationWithFinalReviewDeadlineFrom($query, Carbon::today());
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
-
-        $foundApplication = $this->repository->queryApplicationWithFinalReviewDeadlineTo($query, Carbon::today());
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
-
-        $foundApplication = $this->repository->queryApplicationWithUpdatedAtTo($query, Carbon::today());
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
-
-        $foundApplication = $this->repository->queryApplicationWithUpdatedAtFrom($query, Carbon::today());
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
-
-        $foundApplication = $this->repository->queryApplicationWithStatus(
-            $query,
-            ApplicationStageVersionStatus::Submitted
-        );
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
-
-        $foundApplication = $this->repository->queryApplicationWithSubsidyTitle($query, 'some_subsidy_title');
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
+        // Test invalid application
+        $filter = [
+            'application_title' => 'invalid_application_title',
+        ];
+        $foundApplication = $this->repository->filterApplications($filter);
+        $this->assertEmpty($foundApplication);
     }
 
     public function testGetApplication()
