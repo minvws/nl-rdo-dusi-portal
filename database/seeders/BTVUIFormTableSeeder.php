@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class SubsidyStageUIsTableSeeder extends Seeder
+class BTVUIFormTableSeeder extends Seeder
 {
     public const BTV_V1_UUID = '72475863-7987-4375-94d7-21e04ff6552b';
 
@@ -249,7 +249,8 @@ class SubsidyStageUIsTableSeeder extends Seeder
             'subsidy_stage_id' => SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             'version' => 1,
             'status' => 'published',
-            'ui' => json_encode($ui)
+            'input_ui' => json_encode($ui),
+            'review_ui' => json_encode($ui)
         ]);
     }
 }
