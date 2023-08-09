@@ -12,4 +12,4 @@ use App\Http\Controllers\ApplicationController;
 */
 
 Route::get('/application/{application}', [ApplicationController::class, 'show']);
-Route::get('/applications', [ApplicationController::class, 'getFilteredApplications']);
+Route::get('/applications', [ApplicationController::class, 'filterApplications']);
