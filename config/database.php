@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Shared\Models\Connection;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection as SubsidyConnection;
 
 return [
 
@@ -53,7 +54,7 @@ return [
             'sslcert' => env('DB_APPLICATION_SSLCERT', null),
             'sslkey' => env('DB_APPLICATION_SSLKEY', null),
         ],
-        Connection::FORM => [
+        SubsidyConnection::FORM => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_FORM_URL'),
             'host' => env('DB_FORM_HOST', '127.0.0.1'),

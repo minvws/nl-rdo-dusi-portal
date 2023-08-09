@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Answer;
-use App\Models\Application;
-use App\Models\ApplicationHash;
-use App\Models\ApplicationStage;
-use App\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Answer;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

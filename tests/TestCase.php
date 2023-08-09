@@ -25,6 +25,6 @@ class TestCase extends BaseTestCase
         Artisan::call('db:wipe', ['--database' => 'pgsql_application']);
 
         Artisan::call('migrate:fresh', ['--path' => 'vendor/minvws/dusi-subsidy-model/database/migrations']);
-        Artisan::call('migrate:fresh', ['--path' => 'database/migrations']);
+        Artisan::call('migrate:fresh', ['--path' => 'vendor/minvws/dusi-application-model/database/migrations']);
     }
 }

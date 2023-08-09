@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Shared\Models\Connection;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 
 return [
 
