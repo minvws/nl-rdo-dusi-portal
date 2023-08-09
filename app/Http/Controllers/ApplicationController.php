@@ -7,19 +7,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplicationRequest;
 use App\Http\Resources\ApplicationFilterResource;
 use App\Http\Resources\ApplicationResource;
+use App\Http\Resources\ApplicationSubsidyVersionResource;
+use App\Services\ApplicationService;
+use App\Services\ApplicationSubsidyService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 
 class ApplicationController extends Controller
 {
-    private ApplicationRepository $repository;
-
-    public function __construct(ApplicationRepository $repository)
+    public function __construct(
+        private ApplicationSubsidyService $applicationSubsidyService,
+        private ApplicationService $applicationService
+    )
     {
-        $this->repository = $repository;
-    }
+   }
 
     /**
      * Display a listing of the resource.
@@ -35,15 +39,14 @@ class ApplicationController extends Controller
      */
     public function filterApplications(ApplicationRequest $request): AnonymousResourceCollection
     {
-        return ApplicationFilterResource::Collection($this->repository
-            ->filterApplications(ApplicationsFilter::fromArray($request->validated())));
+        return $this->applicationService->getApplications(ApplicationsFilter::fromArray($request->validated));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Application $application): ApplicationResource
+    public function show(Application $application): ApplicationSubsidyVersionResource
     {
-        return new ApplicationResource($application);
+        return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
     }
 }
