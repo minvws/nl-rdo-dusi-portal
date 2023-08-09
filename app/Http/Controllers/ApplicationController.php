@@ -7,12 +7,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplicationRequest;
 use App\Http\Resources\ApplicationFilterResource;
 use App\Http\Resources\ApplicationResource;
+use App\Http\Resources\ApplicationSubsidyVersionResource;
+use App\Services\ApplicationSubsidyService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 class ApplicationController extends Controller
 {
+
+    public function __construct(private ApplicationSubsidyService $applicationSubsidyService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -74,6 +82,7 @@ class ApplicationController extends Controller
         });
 
         // Get the final results after applying filters
+        $query->paginate(10);
         $applications = $query->get();
         return ApplicationFilterResource::Collection($applications);
     }
@@ -81,8 +90,8 @@ class ApplicationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Application $application): ApplicationResource
+    public function show(Application $application): ApplicationSubsidyVersionResource
     {
-        return new ApplicationResource($application);
+        return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
     }
 }
