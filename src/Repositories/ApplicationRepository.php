@@ -28,49 +28,50 @@ readonly class ApplicationRepository
     {
         $query = Application::query();
         $query->when(
-            isset($filter->validatedData['application_title']),
-            fn () => $query->title($filter->validatedData['application_title'])->get() // @phpstan-ignore-line
+            isset($filter->application_title),
+            fn () => $query->title($filter->application_title)->get() // @phpstan-ignore-line
         );
         $query->when(
-            isset($filter->validatedData['date_from']),
-            fn () =>$query->createdAtFrom($filter->validatedData['date_from'])->get() // @phpstan-ignore-line
+            isset($filter->date_from),
+            fn () => $query->createdAtFrom($filter->date_from)->get() // @phpstan-ignore-line
         );
         $query->when(
-            isset($filter->validatedData['date_to']),
-            fn () =>$query->createdAtTo($filter->validatedData['date_to'])->get() // @phpstan-ignore-line
+            isset($filter->date_to),
+            fn () =>$query->createdAtTo($filter->date_to)->get() // @phpstan-ignore-line
         );
         $query->when(
-            isset($filter->validatedData['date_last_modified_from']),
+            isset($filter->date_last_modified_from),
             fn () =>$query->updatedAtFrom( // @phpstan-ignore-line
-                $filter->validatedData['date_last_modified_from']
+                $filter->date_last_modified_from
             )->get()
         );
         $query->when(
-            isset($filter->validatedData['date_last_modified_to']),
+            isset($filter->date_last_modified_to),
             fn () =>$query->updatedAtTo( // @phpstan-ignore-line
-                $filter->validatedData['date_last_modified_to']
+                $filter->date_last_modified_to
             )->get()
         );
         $query->when(
-            isset($filter->validatedData['date_final_review_deadline_from']),
+            isset($filter->date_final_review_deadline_from),
             fn () =>$query->finalReviewDeadlineFrom( // @phpstan-ignore-line
-                $filter->validatedData['date_final_review_deadline_from']
+                $filter->date_final_review_deadline_from
             )->get()
         );
         $query->when(
-            isset($filter->validatedData['date_final_review_deadline_to']),
+            isset($filter->date_final_review_deadline_to),
             fn () =>$query->finalReviewDeadlineTo( // @phpstan-ignore-line
-                $filter->validatedData['date_final_review_deadline_to']
+                $filter->date_final_review_deadline_to
             )->get()
         );
         $query->when(
-            isset($filter->validatedData['status']),
-            fn () =>$query->status($filter->validatedData['status'])->get() // @phpstan-ignore-line
+            isset($filter->status),
+            fn () =>$query->status($filter->status)->get() // @phpstan-ignore-line
         );
         $query->when(
-            isset($filter->validatedData['subsidy']),
-            fn () =>$query->subsidyTitle($filter->validatedData['subsidy'])->get() // @phpstan-ignore-line
+            isset($filter->subsidy),
+            fn () =>$query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
         );
+        dd($query->get());
         return $query->get();
     }
 

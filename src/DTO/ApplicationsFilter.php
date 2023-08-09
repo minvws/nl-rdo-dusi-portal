@@ -1,77 +1,188 @@
 <?php
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\DTO;
+namespace MinVWS\DUSi\Shared\Application\Repositories;
 
-use DateTime;
-use InvalidArgumentException;
+use Illuminate\Support\Collection;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use MinVWS\DUSi\Shared\Application\Models\Answer;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
-class ApplicationsFilter
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+readonly class ApplicationRepository
 {
-    public array $validatedData;
-
-    public function __construct(array $validatedData)
+    public function filterApplications(ApplicationsFilter $filter): array|Collection
     {
-        $this->checkType($validatedData);
-        $this->validatedData = $validatedData;
+        $query = Application::query();
+        $query->when(
+            isset($filter->application_title),
+            fn () => $query->title($filter->application_title)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->date_from),
+            fn () => $query->createdAtFrom($filter->date_from)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->date_to),
+            fn () =>$query->createdAtTo($filter->date_to)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->date_last_modified_from),
+            fn () =>$query->updatedAtFrom( // @phpstan-ignore-line
+                $filter->date_last_modified_from
+            )->get()
+        );
+        $query->when(
+            isset($filter->date_last_modified_to),
+            fn () =>$query->updatedAtTo( // @phpstan-ignore-line
+                $filter->date_last_modified_to
+            )->get()
+        );
+        $query->when(
+            isset($filter->date_final_review_deadline_from),
+            fn () =>$query->finalReviewDeadlineFrom( // @phpstan-ignore-line
+                $filter->date_final_review_deadline_from
+            )->get()
+        );
+        $query->when(
+            isset($filter->date_final_review_deadline_to),
+            fn () =>$query->finalReviewDeadlineTo( // @phpstan-ignore-line
+                $filter->date_final_review_deadline_to
+            )->get()
+        );
+        $query->when(
+            isset($filter->status),
+            fn () =>$query->status($filter->status)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->subsidy),
+            fn () =>$query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
+        );
+        return $query->get();
     }
 
-    private function checkType(array $validatedData): void
+    public function getApplication(string $appId): ?Application
     {
-        $keysToValidate = [
-            'application_title',
-            'date_from',
-            'date_to',
-            'status',
-            'subsidy',
-            'date_last_modified_from',
-            'date_last_modified_to',
-            'date_final_review_deadline_from',
-            'date_final_review_deadline_to',
-        ];
-
-        foreach ($keysToValidate as $key) {
-            if (isset($validatedData[$key])) {
-                $this->validateData($key, $validatedData[$key]);
-            }
+        $application = Application::find($appId); // @phpstan-ignore-line
+        if ($application instanceof Application) {
+            return $application;
         }
+        return null;
     }
 
-    private function validateData(mixed $key, mixed $value): ApplicationStageVersionStatus|DateTime|string
+    public function getApplicationStage(string $applicationStageId): ?ApplicationStage
     {
-        return match ($key) {
-            'application_title', 'subsidy' => $this->validateString($value),
-            'date_from', 'date_to', 'date_last_modified_from', 'date_last_modified_to',
-            'date_final_review_deadline_from',
-            'date_final_review_deadline_to' => $this->validateDateTime($value),
-            'status' => $this->validateStatus($value),
-            default => throw new InvalidArgumentException("Unsupported key: $key"),
-        };
-    }
-
-    private function validateString(mixed $value): string
-    {
-        if (!is_string($value)) {
-            throw new InvalidArgumentException("Invalid data type. Expected string.");
+        $applicationStage = ApplicationStage::find($applicationStageId); // @phpstan-ignore-line
+        if ($applicationStage instanceof ApplicationStage) {
+            return $applicationStage;
         }
-        return $value;
+        return null;
     }
 
-    private function validateDateTime(mixed $value): DateTime
+    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection
     {
-        if (!$value instanceof DateTime) {
-            throw new InvalidArgumentException("Invalid data type. Expected DateTime.");
-        }
-        return $value;
+        return ApplicationStageVersion::query()
+            ->where('application_stage_id', $applicationStage->id)
+            ->orderBy('version', 'desc')
+            ->get();
     }
 
-    private function validateStatus(mixed $value): ApplicationStageVersionStatus
+    public function getLatestApplicationStageVersion(ApplicationStage $applicationStage): ?ApplicationStageVersion
     {
-        if (!$value instanceof ApplicationStageVersionStatus) {
-            throw new InvalidArgumentException("Invalid data type. Expected ApplicationStageVersionStatus.");
+        $latestApplicationStageVersion = ApplicationStageVersion::query()
+            ->where('application_stage_id', $applicationStage->id)
+            ->orderBy('version', 'asc')
+            ->first();
+        if ($latestApplicationStageVersion instanceof ApplicationStageVersion) {
+            return $latestApplicationStageVersion;
         }
-        return $value;
+        return null;
+    }
+    public function getApplicationStageVersion(string $appStageVersionId): ?ApplicationStageVersion
+    {
+        $applicationStageVersion = ApplicationStageVersion::find($appStageVersionId); // @phpstan-ignore-line
+        if ($applicationStageVersion instanceof ApplicationStageVersion) {
+            return $applicationStageVersion;
+        }
+        return null;
+    }
+
+    public function getAnswer(ApplicationStageVersion $appStageVersion, Field $field): ?Answer
+    {
+        $answer = Answer::query()
+            ->where('application_stage_version_id', $appStageVersion->id)
+            ->where('field_id', $field->id)
+            ->first();
+        if ($answer instanceof Answer) {
+            return $answer;
+        }
+        return null;
+    }
+
+    public function makeApplicationForSubsidyVersion(SubsidyVersion $subsidyVersion): Application
+    {
+        $application = new Application();
+        $application->subsidy_version_id = $subsidyVersion->id;
+        return $application;
+    }
+
+    public function makeApplicationStage(Application $application, SubsidyStage $subsidyStage): ApplicationStage
+    {
+        $applicationStage = new ApplicationStage();
+        $applicationStage->application()->associate($application);
+        $applicationStage->subsidy_stage_id = $subsidyStage->id;
+        return $applicationStage;
+    }
+
+    public function makeApplicationStageVersion(
+        ApplicationStage $applicationStage
+    ): ApplicationStageVersion {
+        $applicationStageVersion = new ApplicationStageVersion([
+            'status' => ApplicationStageVersionStatus::Draft->value,
+        ]);
+        $applicationStageVersion->applicationStage()->associate($applicationStage);
+        return $applicationStageVersion;
+    }
+
+    public function makeAnswer(ApplicationStageVersion $appStageVersion, Field $field): Answer
+    {
+        $answer = new Answer([
+            'field_id' => $field->id,
+        ]);
+        $answer->applicationStageVersion()->associate($appStageVersion);
+        return $answer;
+    }
+
+    public function saveApplication(Application $application): void
+    {
+        $application->save();
+    }
+
+    public function saveApplicationStageVersion(ApplicationStageVersion $appStageVersion): void
+    {
+        $appStageVersion->save();
+    }
+
+    public function saveApplicationStage(ApplicationStage $applicationStage): void
+    {
+        $applicationStage->save();
+    }
+
+    public function saveAnswer(Answer $answer): void
+    {
+        $answer->save();
     }
 }
