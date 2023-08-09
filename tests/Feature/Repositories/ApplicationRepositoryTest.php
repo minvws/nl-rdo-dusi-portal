@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Tests\Feature\Repositories;
 
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -25,6 +27,77 @@ class ApplicationRepositoryTest extends TestCase
         parent::setUp();
 
         $this->repository = new ApplicationRepository();
+    }
+    public function testGetApplicationWith()
+    {
+        $subsidy = Subsidy::factory()->create(
+            [
+                'title' => 'some_subsidy_title',
+            ]
+        );
+        $subsidyVersion = SubsidyVersion::factory()->create(
+            [
+                'subsidy_id' => $subsidy->id,
+            ]
+        );
+        // Create a test application
+        $application = Application::factory()->create(
+            [
+                'application_title' => 'some_application_title',
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'subsidy_version_id' => $subsidyVersion->id,
+            ]
+        );
+        $appStageId = ApplicationStage::factory()->create(
+            [
+                'application_id' => $application->id,
+            ]
+        )->id;
+        $appStageVersionId = ApplicationStageVersion::factory()->create(
+            [
+                'application_stage_id' => $appStageId,
+                'status' => ApplicationStageVersionStatus::Submitted,
+            ]
+        )->id;
+
+        // Test valid application
+        $foundApplication = $this->repository->queryApplicationWithTitle('some_application_title');
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+
+        $foundApplication = $this->repository->queryApplicationWithCreatedAtFrom(Carbon::today());
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+
+        $foundApplication = $this->repository->queryApplicationWithCreatedAtTo(Carbon::today());
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+
+        $foundApplication = $this->repository->queryApplicationWithFinalReviewDeadlineFrom(Carbon::today());
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+
+        $foundApplication = $this->repository->queryApplicationWithFinalReviewDeadlineTo(Carbon::today());
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+
+        $foundApplication = $this->repository->queryApplicationWithUpdatedAtTo(Carbon::today());
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+
+        $foundApplication = $this->repository->queryApplicationWithUpdatedAtFrom(Carbon::today());
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+
+        $foundApplication = $this->repository->queryApplicationWithStatus(ApplicationStageVersionStatus::Submitted);
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+
+        $foundApplication = $this->repository->queryApplicationWithSubsidyTitle('some_subsidy_title');
+        $foundApplication = $foundApplication->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
     }
 
     public function testGetApplication()
