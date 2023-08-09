@@ -20,7 +20,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('subsidy_stage_uis', function (Blueprint $table) {
-            $table->rename('ui', 'input_ui');
+            $table->renameColumn('ui', 'input_ui');
             $table->string('review_ui');
         });
     }
@@ -31,7 +31,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('subsidy_versions', function (Blueprint $table) {
-            $table->rename('input_ui', 'ui');
+            $table->renameColumn('input_ui', 'ui');
             $table->dropColumn('review_ui');
         });
     }
