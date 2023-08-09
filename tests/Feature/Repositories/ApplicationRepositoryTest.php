@@ -55,49 +55,45 @@ class ApplicationRepositoryTest extends TestCase
                 'application_id' => $application->id,
             ]
         )->id;
-        $appStageVersionId = ApplicationStageVersion::factory()->create(
+        ApplicationStageVersion::factory()->create(
             [
                 'application_stage_id' => $appStageId,
                 'status' => ApplicationStageVersionStatus::Submitted,
             ]
         )->id;
 
+        $query = Application::query();
+
         // Test valid application
-        $foundApplication = $this->repository->queryApplicationWithTitle('some_application_title');
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithTitle($query, 'some_application_title')->get();
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithCreatedAtFrom(Carbon::today());
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithCreatedAtFrom($query, Carbon::today());
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithCreatedAtTo(Carbon::today());
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithCreatedAtTo($query, Carbon::today());
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithFinalReviewDeadlineFrom(Carbon::today());
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithFinalReviewDeadlineFrom($query, Carbon::today());
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithFinalReviewDeadlineTo(Carbon::today());
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithFinalReviewDeadlineTo($query, Carbon::today());
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithUpdatedAtTo(Carbon::today());
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithUpdatedAtTo($query, Carbon::today());
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithUpdatedAtFrom(Carbon::today());
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithUpdatedAtFrom($query, Carbon::today());
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithStatus(ApplicationStageVersionStatus::Submitted);
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithStatus(
+            $query,
+            ApplicationStageVersionStatus::Submitted
+        );
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
 
-        $foundApplication = $this->repository->queryApplicationWithSubsidyTitle('some_subsidy_title');
-        $foundApplication = $foundApplication->first();
-        $this->assertInstanceOf(Application::class, $foundApplication);
+        $foundApplication = $this->repository->queryApplicationWithSubsidyTitle($query, 'some_subsidy_title');
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
     }
 
     public function testGetApplication()

@@ -20,58 +20,52 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 readonly class ApplicationRepository
 {
-    public function queryApplicationWithTitle(string $title): Builder
+    public function queryApplicationWithTitle(Builder $query, string $title): Builder
     {
-        $query = Application::query();
         return $query->title($title); // @phpstan-ignore-line
     }
-    public function queryApplicationWithCreatedAtFrom(DateTime $createdAt): Builder
+    public function queryApplicationWithCreatedAtFrom(Builder $query, DateTime $createdAt): Builder
     {
-        $query = Application::query();
         return $query->createdAtFrom($createdAt); // @phpstan-ignore-line
     }
 
-    public function queryApplicationWithCreatedAtTo(DateTime $createdAt): Builder
+    public function queryApplicationWithCreatedAtTo(Builder $query, DateTime $createdAt): Builder
     {
-        $query = Application::query();
         return $query->createdAtTo($createdAt); // @phpstan-ignore-line
     }
 
-    public function queryApplicationWithUpdatedAtFrom(DateTime $updatedAt): Builder
+    public function queryApplicationWithUpdatedAtFrom(Builder $query, DateTime $updatedAt): Builder
     {
-        $query = Application::query();
         return $query->updatedAtFrom($updatedAt); // @phpstan-ignore-line
     }
 
-    public function queryApplicationWithUpdatedAtTo(DateTime $updatedAt): Builder
+    public function queryApplicationWithUpdatedAtTo(Builder $query, DateTime $updatedAt): Builder
     {
-        $query = Application::query();
         return $query->updatedAtTo($updatedAt); // @phpstan-ignore-line
     }
 
-    public function queryApplicationWithFinalReviewDeadlineFrom(DateTime $finalReviewDeadline): Builder
+    public function queryApplicationWithFinalReviewDeadlineFrom(Builder $query, DateTime $finalReviewDeadline): Builder
     {
-        $query = Application::query();
         return $query->finalReviewDeadlineFrom($finalReviewDeadline); // @phpstan-ignore-line
     }
 
-    public function queryApplicationWithFinalReviewDeadlineTo(DateTime $finalReviewDeadline): Builder
+    public function queryApplicationWithFinalReviewDeadlineTo(Builder $query, DateTime $finalReviewDeadline): Builder
     {
-        $query = Application::query();
         return $query->finalReviewDeadlineTo($finalReviewDeadline); // @phpstan-ignore-line
     }
 
-    public function queryApplicationWithStatus(ApplicationStageVersionStatus $status): Builder
+    public function queryApplicationWithStatus(Builder $query, ApplicationStageVersionStatus $status): Builder
     {
-        $query = Application::query();
         return $query->status($status); // @phpstan-ignore-line
     }
 
-    public function queryApplicationWithSubsidyTitle(string $title): Builder
+    public function queryApplicationWithSubsidyTitle(Builder $query, string $title): Builder
     {
-        $query = Application::query();
         return $query->subsidyTitle($title); // @phpstan-ignore-line
     }
 
