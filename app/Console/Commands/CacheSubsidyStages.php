@@ -40,7 +40,7 @@ class CacheSubsidyStages extends Command
                 continue;
             }
 
-            if (count($subsidyStages) > 0) {
+            if (!empty($subsidyStages)) {
                 $this->info('Caching forms for subsidy...');
                 $this->withProgressBar(
                     $subsidyStages,
