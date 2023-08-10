@@ -10,9 +10,9 @@ use App\Models\Application;
 use App\Models\SubsidyStageData;
 use App\Models\DraftApplication;
 use App\Services\Exceptions\ApplicationNotFoundException;
-use App\Shared\Models\Application\FileUpload;
-use App\Shared\Models\Application\FormSubmit;
 use Illuminate\Http\UploadedFile;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FileUpload;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FormSubmit;
 use Ramsey\Uuid\Uuid;
 
 class ApplicationService
@@ -52,6 +52,10 @@ class ApplicationService
         }
 
         $encryptedContents = $file->getContent();
+
+        if ($file->getMimeType() === null) {
+            throw new \Exception('Mime type is null');
+        }
 
         $fileUpload = new FileUpload(
             identity: $this->stateService->getIdentity(),

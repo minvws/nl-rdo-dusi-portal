@@ -53,7 +53,7 @@ return [
             'sslrootcert' => env('DB_FORM_SSLROOTCERT', null),
             'sslcert' => env('DB_FORM_SSLCERT', null),
             'sslkey' => env('DB_FORM_SSLKEY', null),
-        ],
+        ]
     ],
     /*
     |--------------------------------------------------------------------------

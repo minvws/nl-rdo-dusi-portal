@@ -9,16 +9,17 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    /**
+     * @throws \Exception
+     */
     public function info(): JsonResponse
     {
         $user = Auth::user();
-        return JsonResponse::fromJsonString(
-            json_encode(
-                [
-                'logged_in' => $user !== null,
-                ]
-            )
-        );
+        $json = json_encode(['logged_in' => $user !== null]);
+        if (is_string($json) === false) {
+            throw new \Exception('Could not encode empty array to JSON');
+        }
+        return JsonResponse::fromJsonString($json);
     }
 
     public function logout(): JsonResponse

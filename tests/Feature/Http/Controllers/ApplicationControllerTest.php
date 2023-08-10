@@ -11,11 +11,11 @@ use App\Services\ApplicationService;
 use App\Services\CacheService;
 use App\Services\StateService;
 use App\Services\SubsidyStageService;
-use App\Shared\Models\Application\IdentityType;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -23,7 +23,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageUI;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
-use Tests\WipesSubsidyDefinitions;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 /**
@@ -33,7 +32,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 class ApplicationControllerTest extends TestCase
 {
     use DatabaseTransactions;
-    use WipesSubsidyDefinitions;
     use WithFaker;
 
     protected array $connectionsToTransact = [Connection::FORM];
@@ -47,6 +45,7 @@ class ApplicationControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->loadCustomMigrations();
 
         $this->user = new PortalUser(
             base64_encode(openssl_random_pseudo_bytes(32)),

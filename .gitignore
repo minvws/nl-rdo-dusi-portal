@@ -22,3 +22,4 @@ yarn-error.log
 *.cert
 *.pub
 _ide_helper.php
+.phpunit.cache

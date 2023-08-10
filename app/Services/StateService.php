@@ -6,11 +6,11 @@ namespace App\Services;
 
 use App\Models\DraftApplication;
 use App\Models\PortalUser;
-use App\Shared\Models\Application\Identity;
-use App\Shared\Models\Application\IdentityType;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Session\SessionManager;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
 
 class StateService
 {

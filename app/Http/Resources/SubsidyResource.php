@@ -8,11 +8,20 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 
+/**
+ * @property mixed $id
+ * @property mixed $title
+ * @property mixed $description
+ * @property mixed $valid_from
+ * @property mixed $valid_to
+ * @property mixed $publishedVersion
+ */
 class SubsidyResource extends JsonResource
 {
     /**
-     * @var \MinVWS\DUSi\Shared\Subsidy\Models\Subsidy
+     * @param Request $request
      *
+     * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array

@@ -23,6 +23,10 @@ class PortalUser implements Authenticatable
     ) {
     }
 
+    /**
+     * @param object $oidcResponse
+     * @return PortalUser|null
+     */
     public static function deserializeFromObject(object $oidcResponse): ?PortalUser
     {
         $requiredKeys = ["bsn"];
@@ -38,8 +42,8 @@ class PortalUser implements Authenticatable
 
         try {
             return new PortalUser(
-                $oidcResponse->bsn,
-                $oidcResponse->bsn,
+                $oidcResponse->bsn, // @phpstan-ignore-line
+                $oidcResponse->bsn, // @phpstan-ignore-line
                 $oidcResponse->loa_authn ?? null
             );
         } catch (Exception $e) {
