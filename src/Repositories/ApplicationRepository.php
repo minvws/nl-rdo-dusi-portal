@@ -15,6 +15,8 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -22,61 +24,62 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-readonly class ApplicationRepository
+class ApplicationRepository
 {
     public function filterApplications(ApplicationsFilter $filter): array|Collection
     {
         $query = Application::query();
-        $query->when(
-            isset($filter->applicationTitle),
-            fn () => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateFrom),
-            fn () => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateTo),
-            fn () =>$query->createdAtTo($filter->dateTo)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateLastModifiedFrom),
-            fn () =>$query->updatedAtFrom( // @phpstan-ignore-line
-                $filter->dateLastModifiedFrom
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateLastModifiedTo),
-            fn () =>$query->updatedAtTo( // @phpstan-ignore-line
-                $filter->dateLastModifiedTo
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateFinalReviewDeadlineFrom),
-            fn () =>$query->finalReviewDeadlineFrom( // @phpstan-ignore-line
-                $filter->dateFinalReviewDeadlineFrom
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateFinalReviewDeadlineTo),
-            fn () =>$query->finalReviewDeadlineTo( // @phpstan-ignore-line
-                $filter->dateFinalReviewDeadlineTo
-            )->get()
-        );
-        $query->when(
-            isset($filter->status),
-            fn () =>$query->status($filter->status)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->subsidy),
-            fn () =>$query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
-        );
+
+        if (isset($filter->applicationTitle)) {
+             $query->title($filter->applicationTitle);
+        }
+
+//        $query->when(
+//            isset($filter->dateFrom),
+//            fn () => $query->createdAtFrom($filter->dateFrom)->get()
+//        );
+//        $query->when(
+//            isset($filter->dateTo),
+//            fn () =>$query->createdAtTo($filter->dateTo)->get()
+//        );
+//        $query->when(
+//            isset($filter->dateLastModifiedFrom),
+//            fn () =>$query->updatedAtFrom(
+//                $filter->dateLastModifiedFrom
+//            )->get()
+//        );
+//        $query->when(
+//            isset($filter->dateLastModifiedTo),
+//            fn () =>$query->updatedAtTo(
+//                $filter->dateLastModifiedTo
+//            )->get()
+//        );
+//        $query->when(
+//            isset($filter->dateFinalReviewDeadlineFrom),
+//            fn () =>$query->finalReviewDeadlineFrom(
+//                $filter->dateFinalReviewDeadlineFrom
+//            )->get()
+//        );
+//        $query->when(
+//            isset($filter->dateFinalReviewDeadlineTo),
+//            fn () =>$query->finalReviewDeadlineTo(
+//                $filter->dateFinalReviewDeadlineTo
+//            )->get()
+//        );
+//        $query->when(
+//            isset($filter->status),
+//            fn () =>$query->status($filter->status)->get()
+//        );
+//        $query->when(
+//            isset($filter->subsidy),
+//            fn () =>$query->subsidyTitle($filter->subsidy)->get()
+//        );
         return $query->get();
     }
 
     public function getApplication(string $appId): ?Application
     {
-        $application = Application::find($appId); // @phpstan-ignore-line
+        $application = Application::find($appId);
         if ($application instanceof Application) {
             return $application;
         }
@@ -85,21 +88,33 @@ readonly class ApplicationRepository
 
     public function getApplicationStage(string $applicationStageId): ?ApplicationStage
     {
-        $applicationStage = ApplicationStage::find($applicationStageId); // @phpstan-ignore-line
+        $applicationStage = ApplicationStage::find($applicationStageId);
         if ($applicationStage instanceof ApplicationStage) {
             return $applicationStage;
         }
         return null;
     }
 
-    public function getApplicationStageVersions(ApplicationStage $applicationStage): Collection
-    {
+
+    /*
+     * @param ApplicationStage $applicationStage
+     * @return \Illuminate\Database\Eloquent\Collection<ApplicationStageVersion>
+     */
+    public function getApplicationStageVersions(
+        ApplicationStage $applicationStage
+    ): \Illuminate\Database\Eloquent\Collection {
         return ApplicationStageVersion::query()
             ->where('application_stage_id', $applicationStage->id)
             ->orderBy('version', 'desc')
-            ->get();
+            ->get()
+            ->filter(fn (ApplicationStageVersion $appStageVersion)
+            => $appStageVersion instanceof ApplicationStageVersion);
     }
 
+    /*
+     * @param ApplicationStage $applicationStage
+     * @return ApplicationStageVersion|null
+     */
     public function getLatestApplicationStageVersion(ApplicationStage $applicationStage): ?ApplicationStageVersion
     {
         $latestApplicationStageVersion = ApplicationStageVersion::query()
@@ -111,9 +126,10 @@ readonly class ApplicationRepository
         }
         return null;
     }
+
     public function getApplicationStageVersion(string $appStageVersionId): ?ApplicationStageVersion
     {
-        $applicationStageVersion = ApplicationStageVersion::find($appStageVersionId); // @phpstan-ignore-line
+        $applicationStageVersion = ApplicationStageVersion::find($appStageVersionId);
         if ($applicationStageVersion instanceof ApplicationStageVersion) {
             return $applicationStageVersion;
         }
