@@ -7,11 +7,10 @@ namespace MinVWS\DUSi\Shared\Application\DTO;
 use DateTime;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 
-
 /**
  * @throws \Exception
  */
-function createDateTimeOrNull($inputArray, $key): ?DateTime
+function createDateTimeOrNull(array $inputArray, mixed $key): ?DateTime
 {
     if (array_key_exists($key, $inputArray)) {
         if ($inputArray[$key] instanceof DateTime) {
@@ -23,7 +22,7 @@ function createDateTimeOrNull($inputArray, $key): ?DateTime
     return null;
 }
 
-function getStatusOrNull($inputArray, $key): ?ApplicationStageVersionStatus
+function getStatusOrNull(array $inputArray, mixed $key): ?ApplicationStageVersionStatus
 {
     if (array_key_exists($key, $inputArray)) {
         if ($inputArray[$key] instanceof ApplicationStageVersionStatus) {
@@ -74,8 +73,7 @@ class ApplicationsFilter
                 $values[] = getStatusOrNull($inputArray, $key);
             } elseif (str_contains('date', $key)) {
                 $values[] = createDateTimeOrNull($inputArray, $key);
-            }
-            else {
+            } else {
                 $values[] = $inputArray[$key] ?? null;
             }
         }

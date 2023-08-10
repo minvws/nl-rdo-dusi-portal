@@ -73,8 +73,10 @@ class ApplicationRepositoryTest extends TestCase
             'date_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
             'date_last_modified_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
             'date_last_modified_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
-            'date_final_review_deadline_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
-            'date_final_review_deadline_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
+            'date_final_review_deadline_from' => (new \DateTime())
+                ->createFromFormat('U', (string)strtotime('yesterday')),
+            'date_final_review_deadline_to' => (new \DateTime())
+                ->createFromFormat('U', (string)strtotime('tomorrow')),
             'status' => ApplicationStageVersionStatus::Submitted,
             'subsidy' => 'some_subsidy_title',
         ];
