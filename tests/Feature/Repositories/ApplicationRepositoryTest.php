@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Tests\Feature\Repositories;
 
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -25,6 +28,72 @@ class ApplicationRepositoryTest extends TestCase
         parent::setUp();
 
         $this->repository = new ApplicationRepository();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function testGetApplicationWith()
+    {
+        $subsidy = Subsidy::factory()->create(
+            [
+                'title' => 'some_subsidy_title',
+            ]
+        );
+        $subsidyVersion = SubsidyVersion::factory()->create(
+            [
+                'subsidy_id' => $subsidy->id,
+            ]
+        );
+        // Create a test application
+        $application = Application::factory()->create(
+            [
+                'application_title' => 'some_application_title',
+                'updated_at' => new \DateTime('now'),
+                'created_at' => new \DateTime('now'),
+                'final_review_deadline' => new \DateTime('now'),
+                'subsidy_version_id' => $subsidyVersion->id,
+            ]
+        );
+        $appStageId = ApplicationStage::factory()->create(
+            [
+                'application_id' => $application->id,
+            ]
+        )->id;
+        ApplicationStageVersion::factory()->create(
+            [
+                'application_stage_id' => $appStageId,
+                'status' => ApplicationStageVersionStatus::Submitted,
+            ]
+        )->id;
+
+        $filter = [
+            'application_title' => 'some_application_title',
+            'date_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
+            'date_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
+            'date_last_modified_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
+            'date_last_modified_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
+            'date_final_review_deadline_from' => (new \DateTime())
+                ->createFromFormat('U', (string)strtotime('yesterday')),
+            'date_final_review_deadline_to' => (new \DateTime())
+                ->createFromFormat('U', (string)strtotime('tomorrow')),
+            'status' => ApplicationStageVersionStatus::Submitted,
+            'subsidy' => 'some_subsidy_title',
+        ];
+        $appFilter = ApplicationsFilter::fromArray($filter);
+        // Test valid application
+        $foundApplication = $this->repository->filterApplications($appFilter);
+        $this->assertInstanceOf(Application::class, $foundApplication->first());
+
+        // Test invalid application
+        $filter = [
+            'application_title' => 'invalid_application_title',
+        ];
+
+        $appFilter = ApplicationsFilter::fromArray($filter);
+
+        $foundApplication = $this->repository->filterApplications($appFilter);
+        $this->assertEmpty($foundApplication);
     }
 
     public function testGetApplication()

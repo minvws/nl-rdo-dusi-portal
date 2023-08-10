@@ -1,10 +1,15 @@
 <?php
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Support\Collection;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -14,8 +19,61 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 readonly class ApplicationRepository
 {
+    public function filterApplications(ApplicationsFilter $filter): array|Collection
+    {
+        $query = Application::query();
+        $query->when(
+            isset($filter->applicationTitle),
+            fn () => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->dateFrom),
+            fn () => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->dateTo),
+            fn () =>$query->createdAtTo($filter->dateTo)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->dateLastModifiedFrom),
+            fn () =>$query->updatedAtFrom( // @phpstan-ignore-line
+                $filter->dateLastModifiedFrom
+            )->get()
+        );
+        $query->when(
+            isset($filter->dateLastModifiedTo),
+            fn () =>$query->updatedAtTo( // @phpstan-ignore-line
+                $filter->dateLastModifiedTo
+            )->get()
+        );
+        $query->when(
+            isset($filter->dateFinalReviewDeadlineFrom),
+            fn () =>$query->finalReviewDeadlineFrom( // @phpstan-ignore-line
+                $filter->dateFinalReviewDeadlineFrom
+            )->get()
+        );
+        $query->when(
+            isset($filter->dateFinalReviewDeadlineTo),
+            fn () =>$query->finalReviewDeadlineTo( // @phpstan-ignore-line
+                $filter->dateFinalReviewDeadlineTo
+            )->get()
+        );
+        $query->when(
+            isset($filter->status),
+            fn () =>$query->status($filter->status)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->subsidy),
+            fn () =>$query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
+        );
+        return $query->get();
+    }
+
     public function getApplication(string $appId): ?Application
     {
         $application = Application::find($appId); // @phpstan-ignore-line
