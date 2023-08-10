@@ -10,7 +10,7 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "minvws/dusi-subsidy-model": "^0.1",
+        "minvws/dusi-subsidy-model": "dev-feat/review-ui",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "predis/predis": "^2.2",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
