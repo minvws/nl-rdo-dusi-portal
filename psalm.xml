@@ -10,7 +10,6 @@
 >
     <projectFiles>
         <directory name="app" />
-        <directory name="database/factories" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>

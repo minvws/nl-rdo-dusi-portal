@@ -4,85 +4,46 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests\UpdateApplicationRequest;
-use App\Models\Judgement;
-use App\Models\Application;
-use App\Models\ApplicationReview;
-use Ramsey\Uuid\Rfc4122\UuidV4;
+use App\Http\Requests\ApplicationRequest;
+use App\Http\Resources\ApplicationFilterResource;
+use App\Http\Resources\ApplicationResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 
-class ApplicationController extends BaseController
+class ApplicationController extends Controller
 {
-    public function __construct()
+    private ApplicationRepository $repository;
+
+    public function __construct(ApplicationRepository $repository)
     {
+        $this->repository = $repository;
     }
 
     /**
-     * Index applications
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\View
+     * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(): AnonymousResourceCollection
     {
-        $applications = Application::query();
-
-        if ($request->has('judgement')) {
-            $applications->where('judgement', $request->validate([
-                'judgement' => 'required|in:pending,rejected,approved',
-            ])['judgement']);
-        } else {
-            $applications->where('judgement', 'pending');
-        }
-
-        $applications = $applications->get();
-
-        return view('applications.index')
-            ->with('applications', $applications)
-            ->with('judgements', Judgement::all()->pluck('judgement'));
+        return ApplicationResource::collection(Application::all());
     }
 
     /**
-     * show application
-     *
-     * @param Application $application
-     *
-     * @return \Illuminate\Contracts\View\View
+     * Display a listing of applications with filters on specific fields.
+     * @throws \Exception
      */
-    public function show(Application $application)
+    public function filterApplications(ApplicationRequest $request): AnonymousResourceCollection
     {
-        return view('applications.show')
-            ->with('application', $application)
-            ->with('answers', $application->answers);
+        return ApplicationFilterResource::Collection($this->repository
+            ->filterApplications(ApplicationsFilter::fromArray($request->validated())));
     }
 
     /**
-     * Update application
-     *
-     * @param Application $application
-     * @param UpdateApplicationRequest $request
-     *
-     * @return \Illuminate\Routing\Redirector | \Illuminate\Http\RedirectResponse
+     * Display the specified resource.
      */
-    public function update(Application $application, UpdateApplicationRequest $request)
+    public function show(Application $application): ApplicationResource
     {
-        $judgement = $request->validated('judgement-select');
-        $reasons = $request->validated('reason');
-
-        if ($judgement == 'rejected') {
-            ApplicationReview::create([
-                'application_id' => $application->id,
-                'encrypted_comment' => $reasons,
-                'user_id' => UuidV4::uuid4(),
-                'judgement' => $judgement,
-                'encryption_key_id' => UuidV4::uuid4(),
-            ]);
-        }
-
-        $application->judgement = $judgement;
-        $application->save();
-
-        return redirect()->route('applications.show', $application);
+        return new ApplicationResource($application);
     }
 }
