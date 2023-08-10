@@ -22,6 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
  * @property SubsidyVersion[] $forms
+ * @property SubsidyVersion $publishedVersion
  * @method static SubsidyVersion|Builder publishedVersion()
  */
 class Subsidy extends Model
@@ -55,14 +56,15 @@ class Subsidy extends Model
         return $this->hasMany(SubsidyVersion::class, 'subsidy_id', 'id');
     }
 
+    /**
+     * @return HasOne
+     */
     public function publishedVersion(): HasOne
     {
-        //@phpstan-ignore-next-line
         return $this->hasOne(SubsidyVersion::class)->published();
     }
     public function scopeOrdered(Builder $query): Builder
     {
-        //@phpstan-ignore-next-line
         return $query->orderBy('title');
     }
 
@@ -79,6 +81,7 @@ class Subsidy extends Model
 
     public function scopeSubjectRole(Builder $query, SubjectRole $role): Builder
     {
+        //@phpstan-ignore-next-line
         return $query->whereRelation('subsidyVersions', fn (Builder $subQuery) => $subQuery->subjectRole($role));
     }
 }

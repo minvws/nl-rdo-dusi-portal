@@ -64,13 +64,11 @@ class SubsidyStage extends Model
 
     public function publishedUI(): HasOne
     {
- //@phpstan-ignore-next-line
         return $this->hasOne(SubsidyStageUI::class)->where('status', '=', 'published');
     }
 
     public function scopeOrdered(Builder $query): Builder
     {
- //@phpstan-ignore-next-line
         return $query->orderBy('stage');
     }
 

@@ -30,7 +30,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('subsidy_versions', function (Blueprint $table) {
+        Schema::table('subsidy_stage_uis', function (Blueprint $table) {
             $table->renameColumn('input_ui', 'ui');
             $table->dropColumn('review_ui');
         });
