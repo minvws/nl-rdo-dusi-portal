@@ -91,7 +91,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('version');
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->json('default_input_ui');
-            $table->json('default_review_ui');
+            $table->json('default_view_ui');
             $table->timestamps();
         });
 

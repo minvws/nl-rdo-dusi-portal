@@ -24,7 +24,7 @@ class SubsidyStageUI extends Model
         'updated_at' => 'timestamp',
         'created_at' => 'timestamp',
         'input_ui' => 'array',
-        'review_ui' => 'array',
+        'view_ui' => 'array',
     ];
     protected $fillable = [
         'id',
@@ -32,7 +32,7 @@ class SubsidyStageUI extends Model
         'version',
         'status',
         'input_ui',
-        'review_ui',
+        'view_ui',
     ];
 
     public function subsidyStage(): BelongsTo
