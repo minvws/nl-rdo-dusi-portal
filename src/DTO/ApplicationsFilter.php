@@ -55,28 +55,18 @@ class ApplicationsFilter
      */
     public static function fromArray(array $inputArray): ApplicationsFilter
     {
-        $keys = [
-            'application_title',
-            'date_from',
-            'date_to',
-            'date_last_modified_from',
-            'date_last_modified_to',
-            'date_final_review_deadline_from',
-            'date_final_review_deadline_to',
-            'status',
-            'subsidy'
-        ];
-
-        $values = [];
-        foreach ($keys as $key) {
-            if ($key === 'status') {
-                $values[] = getStatusOrNull($inputArray, $key);
-            } elseif (str_contains('date', $key)) {
-                $values[] = createDateTimeOrNull($inputArray, $key);
-            } else {
-                $values[] = $inputArray[$key] ?? null;
-            }
-        }
-        return new ApplicationsFilter(...$values);
+        return new ApplicationsFilter(
+            array_key_exists('application_title', $inputArray)
+                ? $inputArray['application_title'] : null,
+            createDateTimeOrNull($inputArray, 'date_from'),
+            createDateTimeOrNull($inputArray, 'date_to'),
+            createDateTimeOrNull($inputArray, 'date_last_modified_from'),
+            createDateTimeOrNull($inputArray, 'date_last_modified_to'),
+            createDateTimeOrNull($inputArray, 'date_final_review_deadline_from'),
+            createDateTimeOrNull($inputArray, 'date_final_review_deadline_to'),
+            getStatusOrNull($inputArray, 'status'),
+            array_key_exists('subsidy', $inputArray)
+                ? $inputArray['subsidy'] : null
+        );
     }
 }
