@@ -56,8 +56,7 @@ class ApplicationsFilter
     public static function fromArray(array $inputArray): ApplicationsFilter
     {
         return new ApplicationsFilter(
-            array_key_exists('application_title', $inputArray)
-                ? $inputArray['application_title'] : null,
+            $inputArray['application_title'] ?? null,
             createDateTimeOrNull($inputArray, 'date_from'),
             createDateTimeOrNull($inputArray, 'date_to'),
             createDateTimeOrNull($inputArray, 'date_last_modified_from'),
@@ -65,8 +64,7 @@ class ApplicationsFilter
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_from'),
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_to'),
             getStatusOrNull($inputArray, 'status'),
-            array_key_exists('subsidy', $inputArray)
-                ? $inputArray['subsidy'] : null
+            $inputArray['subsidy'] ?? null,
         );
     }
 }
