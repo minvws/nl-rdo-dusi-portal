@@ -23,7 +23,7 @@ class FieldGroupUI extends Model
     protected $casts = [
         'id' => 'string',
         'default_input_ui' => 'array',
-        'default_review_ui' => 'array',
+        'default_view_ui' => 'array',
         'status' => VersionStatus::class
     ];
 
@@ -32,7 +32,7 @@ class FieldGroupUI extends Model
         'version',
         'status',
         'default_input_ui',
-        'default_review_ui',
+        'default_view_ui',
     ];
 
     public function fieldGroup(): BelongsTo
