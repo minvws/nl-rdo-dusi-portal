@@ -10,10 +10,10 @@
     <env name="DB_CONNECTION" value="pgsql_form"/>
     <env name="DB_FORM_DATABASE" value="postgres"/>
     <env name="DB_FORM_HOST" value="localhost"/>
-    <env name="DB_FORM_PASSWORD" value="password"/>
     <env name="DB_FORM_PORT" value="5432"/>
-    <env name="DB_FORM_SSLMODE" value="prefer"/>
     <env name="DB_FORM_USERNAME" value="postgres"/>
+    <env name="DB_FORM_PASSWORD" value="postgres"/>
+    <env name="DB_FORM_SSLMODE" value="prefer"/>
   </php>
   <source>
     <include>

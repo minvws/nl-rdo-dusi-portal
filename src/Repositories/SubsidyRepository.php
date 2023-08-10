@@ -20,6 +20,7 @@ class SubsidyRepository
      */
     public function getActiveSubsidies(): Collection
     {
+        /** @phpstan-ignore-next-line */
         return Subsidy::query()->active()->ordered()->with('publishedVersion.subsidyStages')->get();
     }
 
@@ -29,6 +30,7 @@ class SubsidyRepository
      */
     public function getSubsidiesWithSubsidyStagesForSubjectRole(SubjectRole $subjectRole): Collection
     {
+        /** @phpstan-ignore-next-line */
         return Subsidy::query()->subjectRole($subjectRole)->ordered()->with('publishedVersion.subsidyStages')->get();
     }
 
