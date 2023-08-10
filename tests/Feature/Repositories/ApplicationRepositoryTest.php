@@ -49,9 +49,9 @@ class ApplicationRepositoryTest extends TestCase
         $application = Application::factory()->create(
             [
                 'application_title' => 'some_application_title',
-                'updated_at' => Carbon::today(),
-                'created_at' => Carbon::today(),
-                'final_review_deadline' => Carbon::today(),
+                'updated_at' => new \DateTime('now'),
+                'created_at' => new \DateTime('now'),
+                'final_review_deadline' => new \DateTime('now'),
                 'subsidy_version_id' => $subsidyVersion->id,
             ]
         );
@@ -69,13 +69,13 @@ class ApplicationRepositoryTest extends TestCase
 
         $filter = [
             'application_title' => 'some_application_title',
+            'date_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
+            'date_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
+            'date_last_modified_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
+            'date_last_modified_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
+            'date_final_review_deadline_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
+            'date_final_review_deadline_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
             'status' => ApplicationStageVersionStatus::Submitted,
-            'date_from' => Carbon::today()->toString(),
-            'date_to' => Carbon::today()->toString(),
-            'date_last_modified_from' => Carbon::today()->toString(),
-            'date_last_modified_to' => Carbon::today()->toString(),
-            'date_final_review_deadline_from' => Carbon::today()->toString(),
-            'date_final_review_deadline_to' => Carbon::today()->toString(),
             'subsidy' => 'some_subsidy_title',
         ];
         $appFilter = ApplicationsFilter::fromArray($filter);
