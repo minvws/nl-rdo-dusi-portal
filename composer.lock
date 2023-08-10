@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e78c145690e80a0747c1c7716aef8957",
+    "content-hash": "a97d3ef45a098104329645ac2105fa6c",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1844,16 +1844,16 @@
         },
         {
             "name": "minvws/dusi-application-model",
-            "version": "dev-feature/add-functions-to-repo",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-application-model.git",
-                "reference": "569c671a634b46dd5df94f084158ca6ccf593fef"
+                "reference": "dcf30ff069b86551f8af03778277bd450aa19f61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-application-model/zipball/569c671a634b46dd5df94f084158ca6ccf593fef",
-                "reference": "569c671a634b46dd5df94f084158ca6ccf593fef",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-application-model/zipball/dcf30ff069b86551f8af03778277bd450aa19f61",
+                "reference": "dcf30ff069b86551f8af03778277bd450aa19f61",
                 "shasum": ""
             },
             "require": {
@@ -1918,10 +1918,10 @@
             ],
             "description": "Models and repositories for portal-backend",
             "support": {
-                "source": "https://github.com/minvws/nl-rdo-dusi-application-model/tree/feature/add-functions-to-repo",
+                "source": "https://github.com/minvws/nl-rdo-dusi-application-model/tree/v0.1.1",
                 "issues": "https://github.com/minvws/nl-rdo-dusi-application-model/issues"
             },
-            "time": "2023-08-09T15:51:45+00:00"
+            "time": "2023-08-10T08:09:22+00:00"
         },
         {
             "name": "minvws/dusi-subsidy-model",
@@ -8211,16 +8211,16 @@
         },
         {
             "name": "orchestra/testbench",
-            "version": "v8.6.2",
+            "version": "v8.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench.git",
-                "reference": "6d8fea66a95d7818045083e4db0b474fbabcbd36"
+                "reference": "73f78b30e4a4c66e6fafa7c9dcc14ec9c29afb54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench/zipball/6d8fea66a95d7818045083e4db0b474fbabcbd36",
-                "reference": "6d8fea66a95d7818045083e4db0b474fbabcbd36",
+                "url": "https://api.github.com/repos/orchestral/testbench/zipball/73f78b30e4a4c66e6fafa7c9dcc14ec9c29afb54",
+                "reference": "73f78b30e4a4c66e6fafa7c9dcc14ec9c29afb54",
                 "shasum": ""
             },
             "require": {
@@ -8228,7 +8228,7 @@
                 "fakerphp/faker": "^1.21",
                 "laravel/framework": ">=10.17.0 <10.19.0",
                 "mockery/mockery": "^1.5.1",
-                "orchestra/testbench-core": ">=8.6.1 <8.7.0",
+                "orchestra/testbench-core": ">=8.6.2 <8.7.0",
                 "php": "^8.1",
                 "phpunit/phpunit": "^9.6 || ^10.1",
                 "spatie/laravel-ray": "^1.32.4",
@@ -8260,22 +8260,22 @@
             ],
             "support": {
                 "issues": "https://github.com/orchestral/testbench/issues",
-                "source": "https://github.com/orchestral/testbench/tree/v8.6.2"
+                "source": "https://github.com/orchestral/testbench/tree/v8.6.3"
             },
-            "time": "2023-08-09T03:37:03+00:00"
+            "time": "2023-08-10T02:43:19+00:00"
         },
         {
             "name": "orchestra/testbench-core",
-            "version": "v8.6.1",
+            "version": "v8.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "69ca36f0713faad03dffab4708d3381360672019"
+                "reference": "b401efab5a5223a41d355daf7efc83a7615c9632"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/69ca36f0713faad03dffab4708d3381360672019",
-                "reference": "69ca36f0713faad03dffab4708d3381360672019",
+                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/b401efab5a5223a41d355daf7efc83a7615c9632",
+                "reference": "b401efab5a5223a41d355daf7efc83a7615c9632",
                 "shasum": ""
             },
             "require": {
@@ -8343,7 +8343,7 @@
                 "issues": "https://github.com/orchestral/testbench/issues",
                 "source": "https://github.com/orchestral/testbench-core"
             },
-            "time": "2023-08-09T02:55:32+00:00"
+            "time": "2023-08-10T02:24:10+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -12182,9 +12182,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "minvws/dusi-application-model": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

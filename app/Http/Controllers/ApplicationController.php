@@ -31,6 +31,7 @@ class ApplicationController extends Controller
 
     /**
      * Display a listing of applications with filters on specific fields.
+     * @throws \Exception
      */
     public function filterApplications(ApplicationRequest $request): AnonymousResourceCollection
     {
