@@ -23,8 +23,8 @@ class SubsidyStageUI extends Model
         'id' => 'string',
         'updated_at' => 'timestamp',
         'created_at' => 'timestamp',
-        'input_ui' => 'json',
-        'review_ui' => 'json',
+        'input_ui' => 'array',
+        'review_ui' => 'array',
     ];
     protected $fillable = [
         'id',
