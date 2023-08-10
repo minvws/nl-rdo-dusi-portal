@@ -4,10 +4,10 @@ Subsidy model for the models and repositories of form-admin-web.
 
 ## Tests
 
-The tests need a postgres database to run. 
+The tests need a postgres database to run.
 The easiest way to get this is to run the following command:
 
-```
+```sh
 docker run \
     --name subsidy-model-test-postgres \
     -e POSTGRES_PASSWORD=postgres \
