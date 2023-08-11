@@ -9,7 +9,7 @@
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
         "laravel/framework": "^10.17",
-        "minvws/dusi-application-model": "dev-feat/latest-version as 0.2.x-dev",
+        "minvws/dusi-application-model": "^0.1",
         "minvws/dusi-subsidy-model": "^0.2",
         "predis/predis": "^2.2",
         "minvws/codable": "dev-feature/base as 1.0.x-dev"
@@ -26,7 +26,7 @@
         "nunomaduro/collision": "^7.8",
         "nunomaduro/larastan": "^2.6",
         "phpmd/phpmd": "^2.13",
-        "phpunit/phpunit": "^9.6",
+        "phpunit/phpunit": "^10.0",
         "psalm/plugin-laravel": "^2.8",
         "slevomat/coding-standard": "^8.13",
         "spatie/laravel-ignition": "^2.2",

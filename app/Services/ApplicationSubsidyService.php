@@ -5,12 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Http\Resources\ApplicationSubsidyVersionResource;
-use App\Models\Submission\FieldValue;
-use MinVWS\Codable\JSON\JSONDecoder;
-use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 class ApplicationSubsidyService
@@ -19,9 +14,17 @@ class ApplicationSubsidyService
     {
     }
 
-    public function getApplicationSubsidyResource(Application $application)
+    /**
+     * @param Application $application
+     * @return ApplicationSubsidyVersionResource
+     * @throws \Exception
+     */
+    public function getApplicationSubsidyResource(Application $application): ApplicationSubsidyVersionResource
     {
         $subsidyVersion = $this->subsidyRepository->getSubsidyVersion($application->subsidy_version_id);
+        if (!isset($subsidyVersion)) {
+            throw new \Exception('Subsidy version should always exist');
+        }
         return new ApplicationSubsidyVersionResource($application, $subsidyVersion);
     }
 }

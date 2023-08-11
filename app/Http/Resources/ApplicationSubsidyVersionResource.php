@@ -20,7 +20,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
      * Create a new resource instance.
      *
      * @param Application $application
-     * @param SubsidyStage $subsidyStage
+     * @param SubsidyVersion $subsidyVersion
      * @return void
      */
     public function __construct(Application $application, SubsidyVersion $subsidyVersion)
@@ -28,17 +28,26 @@ class ApplicationSubsidyVersionResource extends JsonResource
         parent::__construct(['application' => $application, 'subsidyVersion' => $subsidyVersion]);
     }
 
-    public function toArray(Request $request)
+    /**
+     * Transform the resource into an array.
+     *
+     * @param Request $request
+     * @return array
+     * @throws \Exception
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function toArray(Request $request): array
     {
         $stages = $this['subsidyVersion']->subsidyStages->map(function ($subsidyStage) {
-            $applicationStage = $this['application']->applicationStages
+            $applicationStage = $this->resource['application']->applicationStages
                 ->filter(function ($applicationStage) use ($subsidyStage) {
                     return $applicationStage->subsidy_stage_id === $subsidyStage->id;
                 })->first();
             $latestApplicationStageVersion = $applicationStage?->latestVersion;
-            if( isset($applicationStage->latestVersion)
-                && $latestApplicationStageVersion->status === ApplicationStageVersionStatus::Submitted)
-            {
+            if (
+                isset($applicationStage->latestVersion)
+                && $latestApplicationStageVersion->status === ApplicationStageVersionStatus::Submitted
+            ) {
                 $ui = $subsidyStage->publishedUI?->input_ui;
             } else {
                 $ui = $subsidyStage->publishedUI?->review_ui;
@@ -48,7 +57,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
                   $subsidyStage->title,
                 ],
                 'dataSchema' => $this->createDataSchema($subsidyStage),
-                'values' => $this->createValues($subsidyStage, $latestApplicationStageVersion),
+                'values' => $this->createValues($latestApplicationStageVersion),
                 'uiSchema' => $ui,
             ];
         });
@@ -59,40 +68,52 @@ class ApplicationSubsidyVersionResource extends JsonResource
         ];
     }
 
-    private function encrypt($value, $key)
+    /**
+     * @param string $value
+     * @param string $key
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    private function encrypt(string $value, string $key): string
     {
         //TODO encrypt
         return base64_encode($value);
     }
 
-    private function decrypt($value, $key)
+    /**
+     * @param string $value
+     * @param string $key
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    private function decrypt(string $value, string $key): string
     {
         //TODO decrypt
-        try{
+        try {
             return base64_decode($value);
         } catch (\Exception $e) {
             return $value;
         }
     }
 
-    private function createValues(SubsidyStage $subsidyStage, ?ApplicationStageVersion $applicationStageVersion)
-        : ?array {
-        $encryption_key = "";
-        return $applicationStageVersion?->answers->map(function($answer) use ($encryption_key){
-           return $this->encrypt($this->decrypt($answer->encrypted_answer, $encryption_key), $encryption_key);
+    private function createValues(?ApplicationStageVersion $applicationStageVersion): ?array
+    {
+        $encryptionKey = "";
+        return $applicationStageVersion?->answers->map(function ($answer) use ($encryptionKey) {
+            return $this->encrypt($this->decrypt($answer->encrypted_answer, $encryptionKey), $encryptionKey);
         })->toArray();
     }
 
     private function createMetadata(): array
     {
         return [
-            'id' => $this['subsidyVersion']->id,
+            'id' => $this->resource['subsidyVersion']->id,
             'subsidy' => [
-                'id' => $this['subsidyVersion']->subsidy->id,
-                'title' => $this['subsidyVersion']->subsidy->title,
-                'description' => $this['subsidyVersion']->subsidy->description,
-                'validFrom' => $this['subsidyVersion']->subsidy->valid_from->format('Y-m-d'),
-                'validTo' => $this['subsidyVersion']->subsidy->valid_to?->format('Y-m-d')
+                'id' => $this->resource['subsidyVersion']->subsidy->id,
+                'title' => $this->resource['subsidyVersion']->subsidy->title,
+                'description' => $this->resource['subsidyVersion']->subsidy->description,
+                'validFrom' => $this->resource['subsidyVersion']->subsidy->valid_from->format('Y-m-d'),
+                'validTo' => $this->resource['subsidyVersion']->subsidy->valid_to?->format('Y-m-d')
             ]
         ];
     }
