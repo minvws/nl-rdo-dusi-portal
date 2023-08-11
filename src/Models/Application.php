@@ -123,7 +123,7 @@ class Application extends Model
             $q->where('title', $title);
         })->pluck('id');
 
-        return $query->whereIn('subsidy_version_id', $subVersions); // @phpstan-ignore-line
+        return $query->whereIn('subsidy_version_id', $subVersions);
     }
 
     protected static function newFactory(): ApplicationFactory
