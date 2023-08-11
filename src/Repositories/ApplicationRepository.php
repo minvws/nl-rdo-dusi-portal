@@ -30,51 +30,50 @@ class ApplicationRepository
     public function filterApplications(ApplicationsFilter $filter): array|Collection
     {
         $query = Application::query();
-
-        if (isset($filter->applicationTitle)) {
-             $query->title($filter->applicationTitle);
-        }
-
-//        $query->when(
-//            isset($filter->dateFrom),
-//            fn () => $query->createdAtFrom($filter->dateFrom)->get()
-//        );
-//        $query->when(
-//            isset($filter->dateTo),
-//            fn () =>$query->createdAtTo($filter->dateTo)->get()
-//        );
-//        $query->when(
-//            isset($filter->dateLastModifiedFrom),
-//            fn () =>$query->updatedAtFrom(
-//                $filter->dateLastModifiedFrom
-//            )->get()
-//        );
-//        $query->when(
-//            isset($filter->dateLastModifiedTo),
-//            fn () =>$query->updatedAtTo(
-//                $filter->dateLastModifiedTo
-//            )->get()
-//        );
-//        $query->when(
-//            isset($filter->dateFinalReviewDeadlineFrom),
-//            fn () =>$query->finalReviewDeadlineFrom(
-//                $filter->dateFinalReviewDeadlineFrom
-//            )->get()
-//        );
-//        $query->when(
-//            isset($filter->dateFinalReviewDeadlineTo),
-//            fn () =>$query->finalReviewDeadlineTo(
-//                $filter->dateFinalReviewDeadlineTo
-//            )->get()
-//        );
-//        $query->when(
-//            isset($filter->status),
-//            fn () =>$query->status($filter->status)->get()
-//        );
-//        $query->when(
-//            isset($filter->subsidy),
-//            fn () =>$query->subsidyTitle($filter->subsidy)->get()
-//        );
+        $query->when(
+            isset($filter->applicationTitle),
+            fn () => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->dateFrom),
+            fn () => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->dateTo),
+            fn () =>$query->createdAtTo($filter->dateTo)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->dateLastModifiedFrom),
+            fn () =>$query->updatedAtFrom(
+                $filter->dateLastModifiedFrom // @phpstan-ignore-line
+            )->get()
+        );
+        $query->when(
+            isset($filter->dateLastModifiedTo),
+            fn () =>$query->updatedAtTo(
+                $filter->dateLastModifiedTo // @phpstan-ignore-line
+            )->get()
+        );
+        $query->when(
+            isset($filter->dateFinalReviewDeadlineFrom),
+            fn () =>$query->finalReviewDeadlineFrom(
+                $filter->dateFinalReviewDeadlineFrom // @phpstan-ignore-line
+            )->get()
+        );
+        $query->when(
+            isset($filter->dateFinalReviewDeadlineTo),
+            fn () =>$query->finalReviewDeadlineTo(
+                $filter->dateFinalReviewDeadlineTo // @phpstan-ignore-line
+            )->get()
+        );
+        $query->when(
+            isset($filter->status),
+            fn () =>$query->status($filter->status)->get() // @phpstan-ignore-line
+        );
+        $query->when(
+            isset($filter->subsidy),
+            fn () =>$query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
+        );
         return $query->get();
     }
 
