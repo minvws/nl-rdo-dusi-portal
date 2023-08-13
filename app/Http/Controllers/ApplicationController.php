@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
-use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\ApplicationSubsidyVersionResource;
 use App\Services\ApplicationService;
 use App\Services\ApplicationSubsidyService;
@@ -19,14 +18,6 @@ class ApplicationController extends Controller
         private ApplicationSubsidyService $applicationSubsidyService,
         private ApplicationService $applicationService
     ) {
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): AnonymousResourceCollection
-    {
-        return ApplicationResource::collection(Application::all());
     }
 
     /**

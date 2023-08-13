@@ -37,9 +37,10 @@ class ApplicationFilterResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'external_subsidy_id' => "ToDo",
             'application_title' => $this->application_title,
             'subsidy' => $subsidyTitle,
-            'status' => "ToBeDetermined",
+            'status' => "ToDo",
             'final_review_deadline' => $this->final_review_deadline,
             'updated_at' => $this->updated_at,
         ];
