@@ -306,16 +306,16 @@
         },
         {
             "name": "dragonmantank/cron-expression",
-            "version": "v3.3.2",
+            "version": "v3.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dragonmantank/cron-expression.git",
-                "reference": "782ca5968ab8b954773518e9e49a6f892a34b2a8"
+                "reference": "adfb1f505deb6384dc8b39804c5065dd3c8c8c0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/782ca5968ab8b954773518e9e49a6f892a34b2a8",
-                "reference": "782ca5968ab8b954773518e9e49a6f892a34b2a8",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/adfb1f505deb6384dc8b39804c5065dd3c8c8c0a",
+                "reference": "adfb1f505deb6384dc8b39804c5065dd3c8c8c0a",
                 "shasum": ""
             },
             "require": {
@@ -355,7 +355,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dragonmantank/cron-expression/issues",
-                "source": "https://github.com/dragonmantank/cron-expression/tree/v3.3.2"
+                "source": "https://github.com/dragonmantank/cron-expression/tree/v3.3.3"
             },
             "funding": [
                 {
@@ -363,7 +363,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-09-10T18:51:20+00:00"
+            "time": "2023-08-10T19:36:49+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -1239,16 +1239,16 @@
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.1.3",
+            "version": "v0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "562c26eb82c85789ef36291112cc27d730d3fed6"
+                "reference": "1b3ab520a75eddefcda99f49fb551d231769b1fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/562c26eb82c85789ef36291112cc27d730d3fed6",
-                "reference": "562c26eb82c85789ef36291112cc27d730d3fed6",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/1b3ab520a75eddefcda99f49fb551d231769b1fa",
+                "reference": "1b3ab520a75eddefcda99f49fb551d231769b1fa",
                 "shasum": ""
             },
             "require": {
@@ -1281,9 +1281,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.1.3"
+                "source": "https://github.com/laravel/prompts/tree/v0.1.4"
             },
-            "time": "2023-08-02T19:57:10+00:00"
+            "time": "2023-08-07T13:14:59+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -1866,16 +1866,16 @@
         },
         {
             "name": "minvws/dusi-application-model",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-application-model.git",
-                "reference": "c04f04296cf38585cb9f12bf42cfb0859e978899"
+                "reference": "dcf30ff069b86551f8af03778277bd450aa19f61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-application-model/zipball/c04f04296cf38585cb9f12bf42cfb0859e978899",
-                "reference": "c04f04296cf38585cb9f12bf42cfb0859e978899",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-application-model/zipball/dcf30ff069b86551f8af03778277bd450aa19f61",
+                "reference": "dcf30ff069b86551f8af03778277bd450aa19f61",
                 "shasum": ""
             },
             "require": {
@@ -1885,7 +1885,8 @@
             },
             "require-dev": {
                 "fakerphp/faker": "^1.23",
-                "orchestra/testbench": "^8.5",
+                "nunomaduro/larastan": "^2.0",
+                "orchestra/testbench": "^8.6",
                 "phpmd/phpmd": "^2.13",
                 "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^10.3",
@@ -1923,6 +1924,9 @@
                 ],
                 "test": [
                     "vendor/bin/phpunit"
+                ],
+                "phpmd": [
+                    "vendor/bin/phpmd src/ text ruleset.phpmd.xml"
                 ]
             },
             "license": [
@@ -1936,10 +1940,10 @@
             ],
             "description": "Models and repositories for portal-backend",
             "support": {
-                "source": "https://github.com/minvws/nl-rdo-dusi-application-model/tree/v0.1.0",
+                "source": "https://github.com/minvws/nl-rdo-dusi-application-model/tree/v0.1.1",
                 "issues": "https://github.com/minvws/nl-rdo-dusi-application-model/issues"
             },
-            "time": "2023-08-08T11:15:06+00:00"
+            "time": "2023-08-10T08:09:22+00:00"
         },
         {
             "name": "minvws/dusi-subsidy-model",
@@ -2221,21 +2225,21 @@
         },
         {
             "name": "nette/schema",
-            "version": "v1.2.3",
+            "version": "v1.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/schema.git",
-                "reference": "abbdbb70e0245d5f3bf77874cea1dfb0c930d06f"
+                "reference": "c9ff517a53903b3d4e29ec547fb20feecb05b8ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/schema/zipball/abbdbb70e0245d5f3bf77874cea1dfb0c930d06f",
-                "reference": "abbdbb70e0245d5f3bf77874cea1dfb0c930d06f",
+                "url": "https://api.github.com/repos/nette/schema/zipball/c9ff517a53903b3d4e29ec547fb20feecb05b8ab",
+                "reference": "c9ff517a53903b3d4e29ec547fb20feecb05b8ab",
                 "shasum": ""
             },
             "require": {
                 "nette/utils": "^2.5.7 || ^3.1.5 ||  ^4.0",
-                "php": ">=7.1 <8.3"
+                "php": "7.1 - 8.3"
             },
             "require-dev": {
                 "nette/tester": "^2.3 || ^2.4",
@@ -2277,9 +2281,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/schema/issues",
-                "source": "https://github.com/nette/schema/tree/v1.2.3"
+                "source": "https://github.com/nette/schema/tree/v1.2.4"
             },
-            "time": "2022-10-13T01:24:26+00:00"
+            "time": "2023-08-05T18:56:25+00:00"
         },
         {
             "name": "nette/utils",
@@ -7764,16 +7768,16 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v1.10.5",
+            "version": "v1.10.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "a458fb057bfa2f5a09888a8aa349610be807b0c3"
+                "reference": "d1915b6ecc6406c00472c6b9ae75b46aa153bbb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/a458fb057bfa2f5a09888a8aa349610be807b0c3",
-                "reference": "a458fb057bfa2f5a09888a8aa349610be807b0c3",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/d1915b6ecc6406c00472c6b9ae75b46aa153bbb2",
+                "reference": "d1915b6ecc6406c00472c6b9ae75b46aa153bbb2",
                 "shasum": ""
             },
             "require": {
@@ -7826,20 +7830,20 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
-            "time": "2023-07-14T10:26:01+00:00"
+            "time": "2023-08-08T15:17:16+00:00"
         },
         {
             "name": "laravel/sail",
-            "version": "v1.23.1",
+            "version": "v1.23.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sail.git",
-                "reference": "62582606f80466aa81fba40b193b289106902853"
+                "reference": "f8694d6af5729be72ae96b91e344c5676c89114a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sail/zipball/62582606f80466aa81fba40b193b289106902853",
-                "reference": "62582606f80466aa81fba40b193b289106902853",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/f8694d6af5729be72ae96b91e344c5676c89114a",
+                "reference": "f8694d6af5729be72ae96b91e344c5676c89114a",
                 "shasum": ""
             },
             "require": {
@@ -7891,20 +7895,20 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
-            "time": "2023-06-28T18:31:28+00:00"
+            "time": "2023-08-07T13:01:51+00:00"
         },
         {
             "name": "mockery/mockery",
-            "version": "1.6.5",
+            "version": "1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "68782e943f9ffcbc72bda08aedabe73fecb50041"
+                "reference": "b8e0bb7d8c604046539c1115994632c74dcb361e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/68782e943f9ffcbc72bda08aedabe73fecb50041",
-                "reference": "68782e943f9ffcbc72bda08aedabe73fecb50041",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/b8e0bb7d8c604046539c1115994632c74dcb361e",
+                "reference": "b8e0bb7d8c604046539c1115994632c74dcb361e",
                 "shasum": ""
             },
             "require": {
@@ -7976,7 +7980,7 @@
                 "security": "https://github.com/mockery/mockery/security/advisories",
                 "source": "https://github.com/mockery/mockery"
             },
-            "time": "2023-08-06T00:30:34+00:00"
+            "time": "2023-08-09T00:03:52+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -8279,16 +8283,16 @@
         },
         {
             "name": "orchestra/testbench",
-            "version": "v8.6.1",
+            "version": "v8.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench.git",
-                "reference": "face71aed91a7f5f19ad13846cd81be27f29340d"
+                "reference": "73f78b30e4a4c66e6fafa7c9dcc14ec9c29afb54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench/zipball/face71aed91a7f5f19ad13846cd81be27f29340d",
-                "reference": "face71aed91a7f5f19ad13846cd81be27f29340d",
+                "url": "https://api.github.com/repos/orchestral/testbench/zipball/73f78b30e4a4c66e6fafa7c9dcc14ec9c29afb54",
+                "reference": "73f78b30e4a4c66e6fafa7c9dcc14ec9c29afb54",
                 "shasum": ""
             },
             "require": {
@@ -8296,7 +8300,7 @@
                 "fakerphp/faker": "^1.21",
                 "laravel/framework": ">=10.17.0 <10.19.0",
                 "mockery/mockery": "^1.5.1",
-                "orchestra/testbench-core": ">=8.6.0 <8.7.0",
+                "orchestra/testbench-core": ">=8.6.2 <8.7.0",
                 "php": "^8.1",
                 "phpunit/phpunit": "^9.6 || ^10.1",
                 "spatie/laravel-ray": "^1.32.4",
@@ -8328,22 +8332,22 @@
             ],
             "support": {
                 "issues": "https://github.com/orchestral/testbench/issues",
-                "source": "https://github.com/orchestral/testbench/tree/v8.6.1"
+                "source": "https://github.com/orchestral/testbench/tree/v8.6.3"
             },
-            "time": "2023-08-08T14:41:41+00:00"
+            "time": "2023-08-10T02:43:19+00:00"
         },
         {
             "name": "orchestra/testbench-core",
-            "version": "v8.6.0",
+            "version": "v8.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "1c7d8d62a176d3692eb9cbb48f64485d64ed00ec"
+                "reference": "2d4230edd4a45da956c7ea49295ca0ceeff6ea07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/1c7d8d62a176d3692eb9cbb48f64485d64ed00ec",
-                "reference": "1c7d8d62a176d3692eb9cbb48f64485d64ed00ec",
+                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/2d4230edd4a45da956c7ea49295ca0ceeff6ea07",
+                "reference": "2d4230edd4a45da956c7ea49295ca0ceeff6ea07",
                 "shasum": ""
             },
             "require": {
@@ -8411,7 +8415,7 @@
                 "issues": "https://github.com/orchestral/testbench/issues",
                 "source": "https://github.com/orchestral/testbench-core"
             },
-            "time": "2023-08-08T08:10:31+00:00"
+            "time": "2023-08-11T08:24:35+00:00"
         },
         {
             "name": "pdepend/pdepend",
