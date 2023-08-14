@@ -52,9 +52,9 @@ class SubsidyStage extends Model
         return $this->belongsTo(SubsidyVersion::class, 'subsidy_version_id', 'id');
     }
 
-    public function fields(): BelongsToMany
+    public function fields(): HasMany
     {
-        return $this->belongsToMany(Field::class);
+        return $this->hasMany(Field::class, 'subsidy_stage_id', 'id');
     }
 
     public function uis(): HasMany
