@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\User;
@@ -11,7 +13,7 @@ class RemoveUserByEmail extends Command
 
     protected $description = 'Remove a user by email';
 
-    public function handle()
+    public function handle(): void
     {
         $email = $this->argument('email');
 

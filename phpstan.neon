@@ -7,7 +7,7 @@ parameters:
         - config
         - public
         - routes
-    level: 9
+    level: 8
     checkGenericClassInNonGenericObjectType: false
     excludePaths:
         - public/index.php

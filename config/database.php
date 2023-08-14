@@ -113,6 +113,8 @@ return [
 
     'migrations' => 'migrations',
 
+
+
     /*
     |--------------------------------------------------------------------------
     | Redis Databases
@@ -130,27 +132,53 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
+            'context' => [
+                'stream' => [
+                    'peer_name' => env('REDIS_TLS_PEER_NAME', ''),
+                    'verify_peer' => env('REDIS_TLS_VERIFY_PEER', true),
+                    'verify_peer_name' => env('REDIS_TLS_VERIFY_PEER_NAME', true),
+                    'cafile' => env('REDIS_TLS_CAFILE', ''),
+                    'local_cert' => env('REDIS_TLS_LOCAL_CERT', ''),
+                    'local_pk' => env('REDIS_TLS_LOCAL_PK', ''),
+                ]
+            ]
         ],
 
         'default' => [
+            'scheme' => env('REDIS_SCHEME', 'tcp'),
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
+            'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '0'),
+            'ssl' => [
+                'peer_name' => env('REDIS_TLS_PEER_NAME', ''),
+                'verify_peer' => env('REDIS_TLS_VERIFY_PEER', true),
+                'verify_peer_name' => env('REDIS_TLS_VERIFY_PEER_NAME', true),
+                'cafile' => env('REDIS_TLS_CAFILE', ''),
+                'local_cert' => env('REDIS_TLS_LOCAL_CERT', ''),
+                'local_pk' => env('REDIS_TLS_LOCAL_PK', ''),
+            ]
         ],
 
         'cache' => [
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
+            'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_CACHE_DB', '1'),
+            'database' => env('REDIS_DB', '1'),
+            'ssl' => [
+                'peer_name' => env('REDIS_TLS_PEER_NAME', ''),
+                'verify_peer' => env('REDIS_TLS_VERIFY_PEER', true),
+                'verify_peer_name' => env('REDIS_TLS_VERIFY_PEER_NAME', true),
+                'cafile' => env('REDIS_TLS_CAFILE', ''),
+                'local_cert' => env('REDIS_TLS_LOCAL_CERT', ''),
+                'local_pk' => env('REDIS_TLS_LOCAL_PK', ''),
+            ]
         ],
 
     ],
+
 
 ];
