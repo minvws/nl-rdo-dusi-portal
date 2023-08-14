@@ -14,7 +14,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Tests\TestCase;
 
-class ApplicationApiTest extends TestCase
+class ApplicationControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -77,7 +77,7 @@ class ApplicationApiTest extends TestCase
         $response->assertJsonFragment([
             'application_title' => $this->application->application_title,
             'subsidy' => $this->subsidy->title,
-            'status' => $this->applicationStageVersion->status,
+            'status' => 'ToDo',
             'final_review_deadline' => $this->application->final_review_deadline,
             'updated_at' => $this->application->updated_at,
         ]);
