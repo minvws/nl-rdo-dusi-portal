@@ -27,6 +27,7 @@ class ApplicationStageFactory extends Factory
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
             'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
             'subsidy_stage_id' => $this->faker->uuid,
+            'stage' => 1,
             'user_id' => $this->faker->uuid,
         ];
     }

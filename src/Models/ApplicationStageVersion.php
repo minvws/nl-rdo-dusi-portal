@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationStageVersionFactory;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 
@@ -16,6 +17,9 @@ use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
  * @property string $id
  * @property integer $version
  * @property ApplicationStageVersionStatus $status
+ * @property-read ApplicationStage $applicationStage
+ * @property-read Collection<Answer> $answers
+ * @property string $pdf_letter_path
  */
 class ApplicationStageVersion extends Model
 {
