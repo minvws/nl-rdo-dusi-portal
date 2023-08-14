@@ -94,9 +94,7 @@ class SubsidyRepository
     public function getFieldForSubsidyStageAndCode(SubsidyStage $subsidyStage, string $code): ?Field
     {
         $field = Field
-            ::whereHas('subsidyStages', function (Builder $query) use ($subsidyStage) {
-                $query->where('id', $subsidyStage->id);
-            })
+            ::where('subsidy_stage_id', $subsidyStage->id)
             ->where('code', $code)
             ->first();
         if ($field instanceof Field) {
@@ -112,9 +110,7 @@ class SubsidyRepository
     public function getFields(SubsidyStage $subsidyStage): Collection
     {
         return Field
-            ::whereHas('subsidyStages', function (Builder $query) use ($subsidyStage) {
-                $query->where('id', $subsidyStage->id);
-            })
+            ::where('subsidy_stage_id', $subsidyStage->id)
             ->get();
     }
 
@@ -165,32 +161,13 @@ class SubsidyRepository
     }
 
     /*
-     * @param SubsidyVersion $subsidyVersion
-     * @return SubsidyStageUI
-     */
-    public function makeSubsidyStageUI(SubsidyStage $subsidyStage): SubsidyStageUI
-    {
-        $subsidyStageUI = new SubsidyStageUI();
-        $subsidyStageUI->subsidyStage()->associate($subsidyStage);
-        return $subsidyStageUI;
-    }
-
-    /*
-     * @param SubsidyStageUI $subsidyStageUI
-     */
-    public function saveSubsidyStageUI(SubsidyStageUI $subsidyStageUI): void
-    {
-        $subsidyStageUI->save();
-    }
-
-    /*
      * @param SubsidyStage $subsidyStage
      * @return Field
      */
     public function makeField(SubsidyStage $subsidyStage): Field
     {
         $field = new Field();
-        $field->subsidyStages()->attach($subsidyStage);
+        $field->subsidyStage()->associate($subsidyStage);
         return $field;
     }
 
