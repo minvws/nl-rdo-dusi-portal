@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\FieldFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
@@ -24,6 +23,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
  * @property array $params
  * @property bool $is_required
  * @property string $source
+ * @property SubsidyStage $subsidyStage
  */
 class Field extends Model
 {
@@ -55,14 +55,9 @@ class Field extends Model
         'source',
     ];
 
-    public function subsidyStages(): BelongsToMany
+    public function subsidyStage(): BelongsTo
     {
-        return $this->belongsToMany(SubsidyStage::class);
-    }
-
-    public function fieldGroups(): BelongsTo
-    {
-        return $this->belongsTo(FieldGroup::class, 'field_group_id', 'id');
+        return $this->belongsTo(SubsidyStage::class, 'subsidy_stage_id', 'id');
     }
 
     public function subsidyStageHashFields(): HasMany
