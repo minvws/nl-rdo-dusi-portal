@@ -28,7 +28,7 @@ class ApplicationStageVersionFactory extends Factory
             'id' => $this->faker->uuid,
             'application_stage_id' => ApplicationStage::factory(),
             'created_at' => $createdAt,
-            'status' => ApplicationStageVersionStatus::Draft->value,
+            'status' => ApplicationStageVersionStatus::Draft,
             'version' => $this->faker->randomDigitNotZero(),
             'decision' => ApplicationStageVersionDecision::Pending,
             'decision_updated_at' => $createdAt,
