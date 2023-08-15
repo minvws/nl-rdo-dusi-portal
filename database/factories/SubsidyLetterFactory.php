@@ -23,7 +23,7 @@ class SubsidyLetterFactory extends Factory
         return [
             'id' => Uuid::uuid4(),
             'version' => $this->faker->randomDigitNotZero(),
-            'status' => 'accepted',
+            'status' => 'published',
             'content' => '<p>Beste, {{ firstName }} {{ lastName }}</p>'
         ];
     }
