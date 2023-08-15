@@ -214,6 +214,10 @@ class ApplicationRepository
                 ->where('stage', '<', $stageVersion->applicationStage->stage)
                 ->orderBy('stage')->get();
 
+        // NOTE:
+        // Looping the various stages and retrieving the answers will generate a query for retrieving answers
+        // for each stage. However there are only a limited amount of stages per application and using an IN query
+        // and splitting the answers afterward will only make the code more complex.
         foreach ($previousStages as $previousStage) {
             $previousStageVersion = $previousStage->applicationStageVersions()->orderBy('version', 'DESC')->first();
             assert($previousStageVersion instanceof ApplicationStageVersion);

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\DTO;
 
-readonly class AnswersByApplicationStage
+class AnswersByApplicationStage
 {
     /**
      * @param array<ApplicationStageAnswers> $stages
      */
-    public function __construct(public array $stages)
+    public function __construct(public readonly array $stages)
     {
     }
 }
