@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyVersionFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -26,6 +27,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
  * @property SubsidyStage[] $forms
+ * @property SubsidyLetter[] $subsidyLetters
  */
 
 class SubsidyVersion extends Model
@@ -82,6 +84,16 @@ class SubsidyVersion extends Model
     {
         /** @phpstan-ignore-next-line */
         return $query->whereRelation('subsidyStages', fn (Builder $subQuery) => $subQuery->subjectRole($role));
+    }
+
+    public function subsidyLetters(): HasMany
+    {
+        return $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
+    }
+
+    public function publishedLetter(): HasOne
+    {
+        return $this->hasOne(SubsidyLetter::class)->published();
     }
 
     protected static function newFactory(): SubsidyVersionFactory
