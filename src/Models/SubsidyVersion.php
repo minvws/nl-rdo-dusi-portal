@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyVersionFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -87,6 +88,21 @@ class SubsidyVersion extends Model
     public function subsidyLetters(): HasMany
     {
         return $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
+    }
+
+    public function getLatestAcceptedLetter(): SubsidyLetter|null
+    {
+        return $this->hasOne(SubsidyLetter::class)->accepted()->latest()->first();
+    }
+
+    public function getLatestRejectedLetter(): SubsidyLetter|null
+    {
+        return $this->hasOne(SubsidyLetter::class)->rejected()->latest()->first();
+    }
+
+    public function getLatestRequestForChangesLetter(): SubsidyLetter|null
+    {
+        return $this->hasOne(SubsidyLetter::class)->requestedForChanges()->latest()->first();
     }
 
     protected static function newFactory(): SubsidyVersionFactory
