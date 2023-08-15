@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationStageVersionFactory;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionDecision;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 
 /**
@@ -20,6 +22,9 @@ use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
  * @property-read ApplicationStage $applicationStage
  * @property-read Collection<Answer> $answers
  * @property string $pdf_letter_path
+ * @property ApplicationStageVersionDecision $decision
+ * @property string $assessor_user_id
+ * @property DateTime $decision_updated_at
  */
 class ApplicationStageVersion extends Model
 {
@@ -30,6 +35,8 @@ class ApplicationStageVersion extends Model
 
     protected $casts = [
         'status' => ApplicationStageVersionStatus::class,
+        'decision' => ApplicationStageVersionDecision::class,
+        'decision_updated_at' => 'datetime'
     ];
 
     protected $fillable = [
