@@ -198,7 +198,8 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($subsidyLetter->status, $actualSubsidyLetter->status);
         $this->assertEquals($subsidyLetter->version, $actualSubsidyLetter->version);
         $this->assertEquals($subsidyLetter->created_at, $actualSubsidyLetter->created_at);
-        $this->assertEquals($subsidyLetter->content, $actualSubsidyLetter->content);
+        $this->assertEquals($subsidyLetter->content_pdf, $actualSubsidyLetter->content_pdf);
+        $this->assertEquals($subsidyLetter->content_view, $actualSubsidyLetter->content_view);
     }
 
     public function testGetLatestSubsidyLetter(): void
@@ -230,5 +231,7 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($latestSubsidyLetter->id, $subsidyLetterAccepted->id);
         $this->assertEquals($latestSubsidyLetter->status, $subsidyLetterAccepted->status);
         $this->assertEquals($latestSubsidyLetter->version, $subsidyLetterAccepted->version);
+        $this->assertEquals($latestSubsidyLetter->content_pdf, $subsidyLetterAccepted->content_pdf);
+        $this->assertEquals($latestSubsidyLetter->content_view, $subsidyLetterAccepted->content_view);
     }
 }

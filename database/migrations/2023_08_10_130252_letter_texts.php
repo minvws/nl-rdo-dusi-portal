@@ -18,7 +18,8 @@ return new class extends Migration
             $table->foreignUuid('subsidy_version_id')->constrained('subsidy_versions');
             $table->unsignedTinyInteger('version');
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
-            $table->text('content');
+            $table->text('content_pdf');
+            $table->text('content_view');
             $table->timestamps();
         });
     }

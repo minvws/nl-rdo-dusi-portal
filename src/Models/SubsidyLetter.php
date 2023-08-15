@@ -18,7 +18,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $subsidy_version_id
  * @property int $version
  * @property string $status
- * @property string $content
+ * @property string $content_pdf
+ * @property string $content_view
  * @property string $created_at
  * @property-read SubsidyVersion $subsidyVersion
  */
@@ -39,7 +40,8 @@ class SubsidyLetter extends Model
     protected $fillable = [
         'version',
         'status',
-        'content',
+        'content_pdf',
+        'content_view',
     ];
 
     protected $casts = [

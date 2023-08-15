@@ -24,7 +24,8 @@ class SubsidyLetterFactory extends Factory
             'id' => Uuid::uuid4(),
             'version' => $this->faker->randomDigitNotZero(),
             'status' => 'published',
-            'content' => '<p>Beste, {{ firstName }} {{ lastName }}</p>'
+            'content_pdf' => '<p>Beste, {{ firstName }} {{ lastName }}</p>',
+            'content_view' => '<p>Beste, {{ firstName }} {{ lastName }}</p>',
         ];
     }
 }
