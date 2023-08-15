@@ -3,6 +3,7 @@
 namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyLetter;
 use Ramsey\Uuid\Uuid;
 
@@ -23,7 +24,7 @@ class SubsidyLetterFactory extends Factory
         return [
             'id' => Uuid::uuid4(),
             'version' => $this->faker->randomDigitNotZero(),
-            'status' => 'published',
+            'status' => VersionStatus::Draft->value,
             'content_pdf' => '<p>Beste, {{ firstName }} {{ lastName }}</p>',
             'content_view' => '<p>Beste, {{ firstName }} {{ lastName }}</p>',
         ];

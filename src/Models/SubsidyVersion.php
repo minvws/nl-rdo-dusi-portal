@@ -91,9 +91,9 @@ class SubsidyVersion extends Model
         return $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
     }
 
-    public function getPublishedSubsidyLetter(): SubsidyLetter|null
+    public function publishedLetter(): HasOne
     {
-        return $this->subsidyLetters()->published()->first();
+        return $this->hasOne(SubsidyLetter::class)->published();
     }
 
     protected static function newFactory(): SubsidyVersionFactory

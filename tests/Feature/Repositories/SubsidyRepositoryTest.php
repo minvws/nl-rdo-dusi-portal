@@ -202,7 +202,7 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($subsidyLetter->content_view, $actualSubsidyLetter->content_view);
     }
 
-    public function testGetLatestSubsidyLetter(): void
+    public function testGetPublishedSubsidyLetter(): void
     {
         $subsidy = Subsidy::factory()->create();
         $subsidyVersion = SubsidyVersion::factory()->create([
@@ -226,7 +226,7 @@ class SubsidyRepositoryTest extends TestCase
 
         $repository = $this->app->make(SubsidyRepository::class);
         $actualSubsidyVersion = $repository->getSubsidyVersion($subsidyVersion->id);
-        $latestSubsidyLetter = $actualSubsidyVersion?->getPublishedSubsidyLetter();
+        $latestSubsidyLetter = $actualSubsidyVersion?->publishedLetter;
 
         $this->assertEquals($latestSubsidyLetter->id, $subsidyLetterAccepted->id);
         $this->assertEquals($latestSubsidyLetter->status, $subsidyLetterAccepted->status);
