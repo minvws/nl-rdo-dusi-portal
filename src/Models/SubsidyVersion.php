@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,8 +27,10 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $subsidy_page_url
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
- * @property SubsidyStage[] $forms
- * @property SubsidyLetter[] $subsidyLetters
+ * @property-read Subsidy $subsidy
+ * @property-read Collection<SubsidyStage> $subsidyStages
+ * @property-read Collection<SubsidyLetter> $subsidyLetters
+ * @property-read ?SubsidyLetter $publishedSubsidyLetter
  */
 
 class SubsidyVersion extends Model
@@ -91,7 +94,7 @@ class SubsidyVersion extends Model
         return $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
     }
 
-    public function publishedLetter(): HasOne
+    public function publishedSubsidyLetter(): HasOne
     {
         return $this->hasOne(SubsidyLetter::class)->published();
     }

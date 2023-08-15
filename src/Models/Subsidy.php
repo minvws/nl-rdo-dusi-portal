@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -21,7 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $description
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
- * @property SubsidyVersion[] $forms
+ * @property Collection<SubsidyVersion> $subsidyVersions
  * @property SubsidyVersion $publishedVersion
  * @method static SubsidyVersion|Builder publishedVersion()
  */
