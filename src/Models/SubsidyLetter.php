@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyLetterFactory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
  * @property string $id
@@ -19,6 +20,7 @@ use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyLetterFactory;
  * @property string $status
  * @property string $content
  * @property string $created_at
+ * @property-read SubsidyVersion $subsidyVersion
  */
 
 class SubsidyLetter extends Model
@@ -42,6 +44,7 @@ class SubsidyLetter extends Model
 
     protected $casts = [
         'id' => 'string',
+        'status' => VersionStatus::class
     ];
 
     public function subsidyVersion(): BelongsTo
@@ -54,19 +57,9 @@ class SubsidyLetter extends Model
         return $query->max('version');
     }
 
-    public function scopeAccepted(Builder $query): Builder
+    public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', 'accepted');
-    }
-
-    public function scopeRejected(Builder $query): Builder
-    {
-        return $query->where('status', 'rejected');
-    }
-
-    public function scopeRequestedForChanges(Builder $query): Builder
-    {
-        return $query->where('status', 'request_for_changes');
+        return $query->where('status', 'published');
     }
 
     protected static function newFactory(): SubsidyLetterFactory

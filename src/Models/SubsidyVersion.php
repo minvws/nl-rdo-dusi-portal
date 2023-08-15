@@ -27,6 +27,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
  * @property SubsidyStage[] $forms
+ * @property SubsidyLetter[] $subsidyLetters
  */
 
 class SubsidyVersion extends Model
@@ -90,19 +91,9 @@ class SubsidyVersion extends Model
         return $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
     }
 
-    public function getLatestAcceptedLetter(): SubsidyLetter|null
+    public function getPublishedSubsidyLetter(): SubsidyLetter|null
     {
-        return $this->hasOne(SubsidyLetter::class)->accepted()->latest()->first();
-    }
-
-    public function getLatestRejectedLetter(): SubsidyLetter|null
-    {
-        return $this->hasOne(SubsidyLetter::class)->rejected()->latest()->first();
-    }
-
-    public function getLatestRequestForChangesLetter(): SubsidyLetter|null
-    {
-        return $this->hasOne(SubsidyLetter::class)->requestedForChanges()->latest()->first();
+        return $this->subsidyLetters()->published()->first();
     }
 
     protected static function newFactory(): SubsidyVersionFactory

@@ -189,7 +189,7 @@ class SubsidyRepositoryTest extends TestCase
 
         $subsidyLetter = SubsidyLetter::factory()->create([
             'subsidy_version_id' => $subsidyVersion->id,
-            'status' => 'accepted',
+            'status' => 'published',
         ]);
 
         $repository = $this->app->make(SubsidyRepository::class);
@@ -201,7 +201,7 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($subsidyLetter->content, $actualSubsidyLetter->content);
     }
 
-    public function testGetLatestAcceptedSubsidyLetter(): void
+    public function testGetLatestSubsidyLetter(): void
     {
         $subsidy = Subsidy::factory()->create();
         $subsidyVersion = SubsidyVersion::factory()->create([
@@ -214,80 +214,18 @@ class SubsidyRepositoryTest extends TestCase
 
         $subsidyLetterChangesRequested = SubsidyLetter::factory()->create([
             'subsidy_version_id' => $subsidyVersion->id,
-            'status' => 'request_for_changes',
+            'status' => VersionStatus::Archived,
             'version' => 1
         ]);
         $subsidyLetterAccepted = SubsidyLetter::factory()->create([
             'subsidy_version_id' => $subsidyVersion->id,
-            'status' => 'accepted',
+            'status' => VersionStatus::Published,
             'version' => 2,
         ]);
 
         $repository = $this->app->make(SubsidyRepository::class);
         $actualSubsidyVersion = $repository->getSubsidyVersion($subsidyVersion->id);
-        $latestSubsidyLetter = $actualSubsidyVersion?->getLatestAcceptedLetter();
-
-        $this->assertEquals($latestSubsidyLetter->id, $subsidyLetterAccepted->id);
-        $this->assertEquals($latestSubsidyLetter->status, $subsidyLetterAccepted->status);
-        $this->assertEquals($latestSubsidyLetter->version, $subsidyLetterAccepted->version);
-    }
-
-    public function testGetLatestRejectedSubsidyLetter(): void
-    {
-        $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->create([
-            'subsidy_id' => $subsidy->id,
-            'subsidy_page_url' => 'random_url',
-            'status' => 'published',
-            'version' => 1,
-            'created_at' => '2021-01-01 00:00:00',
-        ]);
-
-        $subsidyLetterChangesRequested = SubsidyLetter::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
-            'status' => 'request_for_changes',
-            'version' => 1
-        ]);
-        $subsidyLetterAccepted = SubsidyLetter::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
-            'status' => 'rejected',
-            'version' => 2,
-        ]);
-
-        $repository = $this->app->make(SubsidyRepository::class);
-        $actualSubsidyVersion = $repository->getSubsidyVersion($subsidyVersion->id);
-        $latestSubsidyLetter = $actualSubsidyVersion?->getLatestRejectedLetter();
-
-        $this->assertEquals($latestSubsidyLetter->id, $subsidyLetterAccepted->id);
-        $this->assertEquals($latestSubsidyLetter->status, $subsidyLetterAccepted->status);
-        $this->assertEquals($latestSubsidyLetter->version, $subsidyLetterAccepted->version);
-    }
-
-    public function testGetLatestRequestForChangesSubsidyLetter(): void
-    {
-        $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->create([
-            'subsidy_id' => $subsidy->id,
-            'subsidy_page_url' => 'random_url',
-            'status' => 'published',
-            'version' => 1,
-            'created_at' => '2021-01-01 00:00:00',
-        ]);
-
-        $subsidyLetterChangesRequested = SubsidyLetter::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
-            'status' => 'rejected',
-            'version' => 1
-        ]);
-        $subsidyLetterAccepted = SubsidyLetter::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
-            'status' => 'request_for_changes',
-            'version' => 2,
-        ]);
-
-        $repository = $this->app->make(SubsidyRepository::class);
-        $actualSubsidyVersion = $repository->getSubsidyVersion($subsidyVersion->id);
-        $latestSubsidyLetter = $actualSubsidyVersion?->getLatestRequestForChangesLetter();
+        $latestSubsidyLetter = $actualSubsidyVersion?->getPublishedSubsidyLetter();
 
         $this->assertEquals($latestSubsidyLetter->id, $subsidyLetterAccepted->id);
         $this->assertEquals($latestSubsidyLetter->status, $subsidyLetterAccepted->status);
