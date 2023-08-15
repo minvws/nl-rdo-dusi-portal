@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 /**
  * @property string $id
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $user_id
  * @property int $stage
  * @property Application $application
+ * @property SubsidyStage $subsidyStage
  */
 class ApplicationStage extends Model
 {
@@ -46,6 +48,11 @@ class ApplicationStage extends Model
     {
         return $this->hasOne(ApplicationStageVersion::class)
             ->orderBy('version', 'desc')->limit(1);
+    }
+
+    public function subsidyStage(): BelongsTo
+    {
+        return $this->belongsTo(SubsidyStage::class, 'subsidy_stage_id', 'id');
     }
 
     protected static function newFactory(): ApplicationStageFactory
