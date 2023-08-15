@@ -226,7 +226,7 @@ class SubsidyRepositoryTest extends TestCase
 
         $repository = $this->app->make(SubsidyRepository::class);
         $actualSubsidyVersion = $repository->getSubsidyVersion($subsidyVersion->id);
-        $latestSubsidyLetter = $actualSubsidyVersion?->publishedLetter;
+        $latestSubsidyLetter = $actualSubsidyVersion?->publishedSubsidyLetter;
 
         $this->assertEquals($latestSubsidyLetter->id, $subsidyLetterAccepted->id);
         $this->assertEquals($latestSubsidyLetter->status, $subsidyLetterAccepted->status);
