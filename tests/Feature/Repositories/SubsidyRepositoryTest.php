@@ -10,6 +10,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyLetter;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
@@ -173,5 +174,30 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($subsidyVersion->status, $actualSubsidyVersion->status);
         $this->assertEquals($subsidyVersion->version, $actualSubsidyVersion->version);
         $this->assertEquals($subsidyVersion->created_at, $actualSubsidyVersion->created_at);
+    }
+
+    public function testGetSubsidyLetter(): void
+    {
+        $subsidy = Subsidy::factory()->create();
+        $subsidyVersion = SubsidyVersion::factory()->create([
+            'subsidy_id' => $subsidy->id,
+            'subsidy_page_url' => 'random_url',
+            'status' => 'published',
+            'version' => 1,
+            'created_at' => '2021-01-01 00:00:00',
+        ]);
+
+        $subsidyLetter = SubsidyLetter::factory()->create([
+            'subsidy_version_id' => $subsidyVersion->id,
+            'status' => 'accepted',
+        ]);
+
+        $repository = $this->app->make(SubsidyRepository::class);
+        $actualSubsidyLetter = $repository->getSubsidyLetter($subsidyLetter->id);
+        $this->assertEquals($subsidyLetter->id, $actualSubsidyLetter->id);
+        $this->assertEquals($subsidyLetter->status, $actualSubsidyLetter->status);
+        $this->assertEquals($subsidyLetter->version, $actualSubsidyLetter->version);
+        $this->assertEquals($subsidyLetter->created_at, $actualSubsidyLetter->created_at);
+        $this->assertEquals($subsidyLetter->content, $actualSubsidyLetter->content);
     }
 }

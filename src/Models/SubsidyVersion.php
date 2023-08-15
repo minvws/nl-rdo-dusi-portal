@@ -84,6 +84,11 @@ class SubsidyVersion extends Model
         return $query->whereRelation('subsidyStages', fn (Builder $subQuery) => $subQuery->subjectRole($role));
     }
 
+    public function subsidyLetters(): HasMany
+    {
+        $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
+    }
+
     protected static function newFactory(): SubsidyVersionFactory
     {
         return new SubsidyVersionFactory();
