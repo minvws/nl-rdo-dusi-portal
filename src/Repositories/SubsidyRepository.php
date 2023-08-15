@@ -202,7 +202,7 @@ class SubsidyRepository
         if ($subsidyLetter instanceof SubsidyLetter) {
             return $subsidyLetter;
         }
+
         return null;
     }
-
 }

@@ -86,7 +86,7 @@ class SubsidyVersion extends Model
 
     public function subsidyLetters(): HasMany
     {
-        $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
+        return $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
     }
 
     protected static function newFactory(): SubsidyVersionFactory
