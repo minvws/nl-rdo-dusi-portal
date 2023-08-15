@@ -208,38 +208,33 @@ class ApplicationRepository
     ): AnswersByApplicationStage {
         $stages = [];
 
-        /** @var array<ApplicationStage> $previousStages */
-        $previousStages =
+        /** @var array<ApplicationStage> $matchingStages */
+        $matchingStages =
             $stageVersion->applicationStage->application->applicationStages()
-                ->where('stage', '<', $stageVersion->applicationStage->stage)
-                ->orderBy('stage')->get();
+                ->where('stage', '<=', $stageVersion->applicationStage->stage)
+                ->orderBy('stage')
+                ->get();
 
-        // NOTE:
-        // Looping the various stages and retrieving the answers will generate a query for retrieving answers
-        // for each stage. However there are only a limited amount of stages per application and using an IN query
-        // and splitting the answers afterward will only make the code more complex.
-        foreach ($previousStages as $previousStage) {
-            $previousStageVersion = $previousStage->applicationStageVersions()->orderBy('version', 'DESC')->first();
-            assert($previousStageVersion instanceof ApplicationStageVersion);
+        foreach ($matchingStages as $currentStage) {
+            $currentStageVersion =
+                $currentStage
+                    ->applicationStageVersions()
+                    ->orderBy('version', 'DESC')
+                    ->limit(1)
+                    ->with(['answers', 'answers.field'])
+                    ->first();
+
+            assert($currentStageVersion instanceof ApplicationStageVersion);
 
             /** @var array<Answer> $answers */
-            $answers = $previousStageVersion->answers()->with('field')->get()->all();
+            $answers = $currentStageVersion->answers->all();
 
             $stages[] = new ApplicationStageAnswers(
-                stage: $previousStage,
-                stageVersion: $previousStageVersion,
+                stage: $currentStage,
+                stageVersion: $currentStageVersion,
                 answers: $answers
             );
         }
-
-        /** @var array<Answer> $answers */
-        $answers = $stageVersion->answers()->with('field')->get()->all();
-
-        $stages[] = new ApplicationStageAnswers(
-            stage: $stageVersion->applicationStage,
-            stageVersion: $stageVersion,
-            answers: $answers
-        );
 
         return new AnswersByApplicationStage(stages: $stages);
     }
