@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $id
  * @property string $subsidy_stage_id
  * @property string $user_id
+ * @property int $stage
  * @property Application $application
  */
 class ApplicationStage extends Model

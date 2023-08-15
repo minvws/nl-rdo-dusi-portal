@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Application\Database\Factories\AnswerFactory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 /**
  * @property string $id
@@ -37,6 +38,11 @@ class Answer extends Model
     public function applicationStageVersion(): BelongsTo
     {
         return $this->belongsTo(ApplicationStageVersion::class, 'application_stage_version_id', 'id');
+    }
+
+    public function field(): BelongsTo
+    {
+        return $this->belongsTo(Field::class, 'field_id', 'id');
     }
 
     protected static function newFactory(): AnswerFactory

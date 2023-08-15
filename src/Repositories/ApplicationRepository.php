@@ -11,6 +11,8 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -32,47 +34,47 @@ class ApplicationRepository
         $query = Application::query();
         $query->when(
             isset($filter->applicationTitle),
-            fn () => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
+            fn() => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
         );
         $query->when(
             isset($filter->dateFrom),
-            fn () => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
+            fn() => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
         );
         $query->when(
             isset($filter->dateTo),
-            fn () =>$query->createdAtTo($filter->dateTo)->get() // @phpstan-ignore-line
+            fn() => $query->createdAtTo($filter->dateTo)->get() // @phpstan-ignore-line
         );
         $query->when(
             isset($filter->dateLastModifiedFrom),
-            fn () =>$query->updatedAtFrom(
+            fn() => $query->updatedAtFrom(
                 $filter->dateLastModifiedFrom // @phpstan-ignore-line
             )->get()
         );
         $query->when(
             isset($filter->dateLastModifiedTo),
-            fn () =>$query->updatedAtTo(
+            fn() => $query->updatedAtTo(
                 $filter->dateLastModifiedTo // @phpstan-ignore-line
             )->get()
         );
         $query->when(
             isset($filter->dateFinalReviewDeadlineFrom),
-            fn () =>$query->finalReviewDeadlineFrom(
+            fn() => $query->finalReviewDeadlineFrom(
                 $filter->dateFinalReviewDeadlineFrom // @phpstan-ignore-line
             )->get()
         );
         $query->when(
             isset($filter->dateFinalReviewDeadlineTo),
-            fn () =>$query->finalReviewDeadlineTo(
+            fn() => $query->finalReviewDeadlineTo(
                 $filter->dateFinalReviewDeadlineTo // @phpstan-ignore-line
             )->get()
         );
         $query->when(
             isset($filter->status),
-            fn () =>$query->status($filter->status)->get() // @phpstan-ignore-line
+            fn() => $query->status($filter->status)->get() // @phpstan-ignore-line
         );
         $query->when(
             isset($filter->subsidy),
-            fn () =>$query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
+            fn() => $query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
         );
         return $query->get();
     }
@@ -106,8 +108,8 @@ class ApplicationRepository
             ->where('application_stage_id', $applicationStage->id)
             ->orderBy('version', 'desc')
             ->get()
-            ->filter(fn (ApplicationStageVersion $appStageVersion)
-            => $appStageVersion instanceof ApplicationStageVersion);
+            ->filter(fn (ApplicationStageVersion $appStageVersion) =>
+                $appStageVersion instanceof ApplicationStageVersion);
     }
 
     /*
@@ -199,5 +201,41 @@ class ApplicationRepository
     public function saveAnswer(Answer $answer): void
     {
         $answer->save();
+    }
+
+    public function getAnswersForApplicationStagesUpToIncluding(
+        ApplicationStageVersion $stageVersion
+    ): AnswersByApplicationStage {
+        $stages = [];
+
+        /** @var array<ApplicationStage> $matchingStages */
+        $matchingStages =
+            $stageVersion->applicationStage->application->applicationStages()
+                ->where('stage', '<=', $stageVersion->applicationStage->stage)
+                ->orderBy('stage')
+                ->get();
+
+        foreach ($matchingStages as $currentStage) {
+            $currentStageVersion =
+                $currentStage
+                    ->applicationStageVersions()
+                    ->orderBy('version', 'DESC')
+                    ->limit(1)
+                    ->with(['answers', 'answers.field'])
+                    ->first();
+
+            assert($currentStageVersion instanceof ApplicationStageVersion);
+
+            /** @var array<Answer> $answers */
+            $answers = $currentStageVersion->answers->all();
+
+            $stages[] = new ApplicationStageAnswers(
+                stage: $currentStage,
+                stageVersion: $currentStageVersion,
+                answers: $answers
+            );
+        }
+
+        return new AnswersByApplicationStage(stages: $stages);
     }
 }
