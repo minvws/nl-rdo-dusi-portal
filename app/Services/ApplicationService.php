@@ -36,7 +36,6 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
-use Illuminate\Support\Facades\Log;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
