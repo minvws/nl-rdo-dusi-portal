@@ -21,9 +21,10 @@ use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
  * @property ApplicationStageVersionStatus $status
  * @property-read ApplicationStage $applicationStage
  * @property-read Collection<Answer> $answers
- * @property string $pdf_letter_path
+ * @property ?string $pdf_letter_path
+ * @property ?string $view_letter_path
  * @property ApplicationStageVersionDecision $decision
- * @property string $assessor_user_id
+ * @property ?string $assessor_user_id
  * @property DateTime $decision_updated_at
  */
 class ApplicationStageVersion extends Model
