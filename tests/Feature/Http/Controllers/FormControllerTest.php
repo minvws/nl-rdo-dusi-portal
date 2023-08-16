@@ -47,8 +47,9 @@ class FormControllerTest extends TestCase
             'subject_role' => 'applicant'
         ]);
 
-        $this->field = Field::factory()->create();
-        $this->subsidyStage->fields()->attach($this->field);
+        $this->field = Field::factory()
+            ->for($this->subsidyStage)
+            ->create();
 
         $ui = [
             "type" => "CustomGroupControl",
@@ -69,9 +70,12 @@ class FormControllerTest extends TestCase
             ]
         ];
 
-        $this->ui = SubsidyStageUI::factory()->create(
-            ['subsidy_stage_id' => $this->subsidyStage->id, 'status' => VersionStatus::Published, 'ui' => $ui]
-        );
+        $this->subsidyStageUI = SubsidyStageUI::factory()->create([
+            'subsidy_stage_id' => $this->subsidyStage->id,
+            'status' => VersionStatus::Published,
+            'input_ui' => $ui,
+            'view_ui' => $ui
+        ]);
 
         $this->app->get(CacheService::class)->cacheSubsidyStage($this->subsidyStage);
     }

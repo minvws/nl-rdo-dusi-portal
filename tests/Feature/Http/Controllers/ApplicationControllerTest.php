@@ -59,8 +59,7 @@ class ApplicationControllerTest extends TestCase
         $this->subsidyStage = SubsidyStage::factory()->create(
             ['subsidy_version_id' => $this->subsidyVersion->id]
         );
-        $this->field = Field::factory()->create();
-        $this->subsidyStage->fields()->attach($this->field);
+        $this->field = Field::factory()->for($this->subsidyStage)->create();
         $this->ui = SubsidyStageUI::factory()->create([
             'subsidy_stage_id' => $this->subsidyStage->id,
             'status' => VersionStatus::Published
