@@ -59,22 +59,26 @@ class ApplicationServiceTest extends TestCase
         $this->textField = Field::factory()->create([
             'type' => FieldType::Text,
             'code' => 'text',
+            'subsidy_stage_id' => $this->subsidyStage->id,
         ]);
         $this->numericField = Field::factory()->create([
             'type' => FieldType::TextNumeric,
-            'code' => 'number']);
-
-        $this->subsidyStage->fields()->attach($this->textField);
-        $this->subsidyStage->fields()->attach($this->numericField);
+            'code' => 'number',
+            'subsidy_stage_id' => $this->subsidyStage->id,
+        ]);
     }
 
     public function testProcessFileUpload(): void
     {
         Storage::fake(Disk::APPLICATION_FILES);
 
-        $this->subsidyStage->fields()->detach();
-        $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
-        $fileField->subsidyStages()->attach($this->subsidyStage->id);
+        $this->subsidyStage->fields()->delete();
+        $fileField = Field::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'type' => FieldType::Upload,
+                'code' => 'file',
+            ]);
 
         $fileUpload = new FileUpload(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
@@ -178,10 +182,13 @@ class ApplicationServiceTest extends TestCase
     {
         Storage::fake(Disk::APPLICATION_FILES);
 
-        $this->subsidyStage->fields()->detach();
+        $this->subsidyStage->fields()->delete();
 
-        $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
-        $fileField->subsidyStages()->attach($this->subsidyStage->id);
+        $fileField = Field::factory()->create([
+            'type' => FieldType::Upload,
+            'code' => 'file',
+            'subsidy_stage_id' => $this->subsidyStage->id
+        ]);
 
         $data = [
             $this->textField->code => $this->faker->word,

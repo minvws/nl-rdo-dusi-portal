@@ -46,6 +46,9 @@ services:
         ports:
             - ${RABBITMQ_PORT:-9102}:5672
             - ${RABBITMQ_MANAGEMENT_PORT:-9103}:15672
+        volumes:
+            - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+            - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
         networks:
             portal-backend:
                 aliases:

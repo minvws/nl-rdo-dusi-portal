@@ -4,6 +4,7 @@
 /public/storage
 /storage/*.key
 /vendor
+.phpunit.cache/
 .composer
 .env
 .env.user
