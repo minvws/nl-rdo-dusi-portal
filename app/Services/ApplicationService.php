@@ -36,7 +36,6 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
-use Illuminate\Support\Facades\Log;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -121,14 +120,12 @@ readonly class ApplicationService
         Identity $identity,
         SubsidyStage $subsidyStage
     ): ApplicationStage {
-        Log::info("creating application stage for id: $appMetadataId");
         $this->validateUuid($appMetadataId);
         $app = $this->createApplication($identity, $subsidyStage);
         $applicationStage = $this->appRepo->makeApplicationStage($app, $subsidyStage);
         $applicationStage->id = $appMetadataId;
         $applicationStage->stage = $subsidyStage->stage;
         $this->appRepo->saveApplicationStage($applicationStage);
-        Log::info("saved application stage for id: $appMetadataId");
         return $applicationStage;
     }
 
@@ -217,10 +214,6 @@ readonly class ApplicationService
         ApplicationStageVersion $applicationStageVersion,
         Field $field
     ): void {
-        Log::debug('Getting file for ', [
-            $applicationStageVersion->id,
-            $field->code,
-        ]);
         $answer = $this->appRepo->getAnswer($applicationStageVersion, $field);
         if ($answer === null) {
             throw new FileNotFoundException("Answer for file {$field->code} not found!");
@@ -276,11 +269,6 @@ readonly class ApplicationService
         ApplicationStageVersion $applicationStageVersion,
         FieldValue $value
     ): void {
-        Log::info(
-            'validatingField',
-            ['applicationStageVersion' => $applicationStageVersion->id,
-                'applicationStage' => $applicationStage->id, 'value' => $value]
-        );
         if ($value->field->type === FieldType::Upload) {
             $this->validateFileAnswer($applicationStage, $applicationStageVersion, $value->field);
         }
@@ -313,13 +301,6 @@ readonly class ApplicationService
                 $formSubmit->identity,
                 $formSubmit->applicationMetadata
             );
-
-            Log::info(
-                'processFormSubmit',
-                ['applicationStage' => $applicationStage->id, 'subsidyStage' => $subsidyStage->id]
-            );
-            //ea1cea2e-d5c3-4859-baca-ee385c8ad4fc
-            //ea1cea2e-d5c3-4859-baca-ee385c8ad4fc
             $json = $this->encryptionService->decryptFormSubmit($formSubmit->encryptedData);
 
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
