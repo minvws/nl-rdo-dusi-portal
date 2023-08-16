@@ -25,7 +25,20 @@ class SubsidyStageUIFactory extends Factory
             'id' => Uuid::uuid4(),
             'version' => 1,
             'status' => VersionStatus::Draft,
-            'ui' => [
+            'view_ui' => [
+                "type" => "CustomGroupControl",
+                "options" => [
+                    "section" => true
+                ],
+                "label" => "Section",
+                "elements" => [
+                    [
+                        "type" => "VerticalLayout",
+                        "elements" => []
+                    ]
+                ]
+            ],
+            'input_ui' => [
                 "type" => "CustomGroupControl",
                 "options" => [
                     "section" => true
