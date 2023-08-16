@@ -125,6 +125,7 @@ readonly class ApplicationService
         $app = $this->createApplication($identity, $subsidyStage);
         $applicationStage = $this->appRepo->makeApplicationStage($app, $subsidyStage);
         $applicationStage->id = $appMetadataId;
+        $applicationStage->stage = $subsidyStage->stage;
         $this->appRepo->saveApplicationStage($applicationStage);
         return $applicationStage;
     }
