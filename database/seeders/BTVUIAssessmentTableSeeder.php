@@ -73,7 +73,7 @@ class BTVUIAssessmentTableSeeder extends Seeder
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($ui),
-            'review_ui' => json_encode($ui)
+            'view_ui' => json_encode($ui)
         ]);
     }
 }

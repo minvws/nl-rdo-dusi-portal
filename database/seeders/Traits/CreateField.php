@@ -23,17 +23,13 @@ trait CreateField
 
         DB::table('fields')->insert([
             'id' => $id,
+            'subsidy_stage_id' => $subsidyStageId,
             'code' => $code,
             'title' => $title,
             'description' => $description,
             'type' => $type,
             'params' => json_encode($params),
             'is_required' => $isRequired,
-        ]);
-
-        DB::table('field_subsidy_stage')->insert([
-            'subsidy_stage_id' => $subsidyStageId,
-            'field_id' => $id,
         ]);
 
         return $id;
