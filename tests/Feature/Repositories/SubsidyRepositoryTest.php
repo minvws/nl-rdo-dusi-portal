@@ -55,10 +55,10 @@ class SubsidyRepositoryTest extends TestCase
                 'code' => 'field_code',
                 'description' => 'field_description',
                 'is_required' => true,
+                'subsidy_stage_id' => $subsidyStage->id,
             ]
         );
 
-        $subsidyStage->fields()->attach($field);
         $expectedId = $field->id;
         $actualId = SubsidyStage::find($subsidyStage->id)->first()->fields()->first()->id;
         $this->assertSame($expectedId, $actualId);
