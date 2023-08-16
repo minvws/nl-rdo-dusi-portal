@@ -1,4 +1,4 @@
-name: Generate Documentation - Handleiding
+ndename: Generate Documentation - Handleiding
 
 on:
   workflow_dispatch:
@@ -35,5 +35,5 @@ jobs:
         uses: actions/upload-artifact@v2
         id: upload-document
         with:
-          name: 'handleiding-dusi'
+          name: 'handleiding-dusi-behandelaars'
           path: pdfs
