@@ -1934,16 +1934,16 @@
         },
         {
             "name": "minvws/dusi-subsidy-model",
-            "version": "v0.4.1",
+            "version": "v0.4.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-dusi-subsidy-model.git",
-                "reference": "dbae6c5a955ee4fec0341e029f295dff55a81a53"
+                "reference": "c92cf1f4df28c4e399b5e4f78b9898658fcdb0ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/dbae6c5a955ee4fec0341e029f295dff55a81a53",
-                "reference": "dbae6c5a955ee4fec0341e029f295dff55a81a53",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-dusi-subsidy-model/zipball/c92cf1f4df28c4e399b5e4f78b9898658fcdb0ac",
+                "reference": "c92cf1f4df28c4e399b5e4f78b9898658fcdb0ac",
                 "shasum": ""
             },
             "require": {
@@ -2005,10 +2005,10 @@
             ],
             "description": "Models and repositories for form-admin-web",
             "support": {
-                "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/v0.4.1",
+                "source": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/tree/v0.4.2",
                 "issues": "https://github.com/minvws/nl-rdo-dusi-subsidy-model/issues"
             },
-            "time": "2023-08-15T14:30:58+00:00"
+            "time": "2023-08-16T11:12:55+00:00"
         },
         {
             "name": "minvws/openid-connect-php-laravel",
