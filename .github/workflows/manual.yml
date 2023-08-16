@@ -12,7 +12,7 @@ jobs:
     name: create manual documentation (pdf)
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: contact-manual-files
         uses: bayssmekanique/action-md-concat@v1
         with:
