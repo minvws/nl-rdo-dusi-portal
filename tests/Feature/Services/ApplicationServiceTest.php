@@ -4,24 +4,23 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Services;
 
-use App\Models\Application;
-use App\Models\ApplicationStage;
-use App\Models\Disk;
-use App\Models\Enums\ApplicationStageVersionStatus;
-use App\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use App\Services\ApplicationService;
 use App\Services\Exceptions\FileNotFoundException;
-use App\Shared\Models\Application\ApplicationMetadata;
-use App\Shared\Models\Application\FileUpload;
-use App\Shared\Models\Application\FormSubmit;
-use App\Shared\Models\Application\Identity;
-use App\Shared\Models\Application\IdentityType;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\Exceptions\ValueNotFoundException;
 use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\ApplicationMetadata;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FileUpload;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FormSubmit;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -48,6 +47,7 @@ class ApplicationServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->loadCustomMigrations();
         $subsidy = Subsidy::factory()->create();
         $subsidyVersion = SubsidyVersion::factory()
             ->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);
@@ -75,7 +75,6 @@ class ApplicationServiceTest extends TestCase
         $this->subsidyStage->fields()->detach();
         $fileField = Field::factory()->create(['type' => FieldType::Upload, 'code' => 'file']);
         $fileField->subsidyStages()->attach($this->subsidyStage->id);
-
 
         $fileUpload = new FileUpload(
             new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),

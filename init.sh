@@ -9,4 +9,4 @@ composer install
 
 vendor/bin/sail up -d --remove-orphans
 vendor/bin/sail artisan key:generate
-#vendor/bin/sail artisan migrate
+vendor/bin/sail artisan migrate:fresh --path=vendor/minvws/dusi-application-model/database/migrations

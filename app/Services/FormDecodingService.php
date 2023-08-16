@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
