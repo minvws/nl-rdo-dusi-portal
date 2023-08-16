@@ -6,6 +6,6 @@ set -xe
 vendor/bin/psalm
 vendor/bin/phpcs
 vendor/bin/phpmd app/ text ruleset.phpmd.xml
-vendor/bin/phpstan analyse app routes --memory-limit=256M
+vendor/bin/phpstan analyse --memory-limit=256M
 php artisan security-check:now
 vendor/bin/sail test
