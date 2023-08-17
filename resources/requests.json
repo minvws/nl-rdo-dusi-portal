@@ -1,20 +1,18 @@
-[
-  [
-    { "text": "Borstprothesen transvrouwen", "link": "/mijn-dossier/aanvragen/borstprothesen-transvrouwen" },
-    { "text": "4 juni 2023" },
-    { "text": "26 Augustus 2023" },
-    { "text": "Ontvangen" },
-    { "text": "Ja (2)", "link": "#" },
-    { "text": "Ja (2)" },
-    { "text": "asdf", "icon": "chevron-right", "link": "#" }
-  ],
-  [
-    { "text": "Lorem ipsum", "link": "/mijn-dossier/aanvragen/lorem-ipsum" },
-    { "text": "15 Maart 2023" },
-    { "text": "-" },
-    { "text": "Afgekeurd" },
-    { "text": "Nee", "link": "#" },
-    { "text": "Nee" },
-    { "text": "asdf", "icon": "chevron-right", "link": "#" }
-  ]
-]
+{
+    "data": [
+        {
+            "id": "99db57ed-73ac-4220-8991-a5aac01e93eb",
+            "subsidy": "Borstprothesen transvrouwen",
+            "status": "submitted",
+            "final_review_deadline": "2023-09-10T12:30:00Z",
+            "created_at": "2023-08-10T12:30:00Z"
+        },
+        {
+            "id": "b55a1c9f-01e4-4ea9-9b08-0d8672482b71",
+            "subsidy": "Borstprothesen transvrouwen",
+            "status": "rejected",
+            "final_review_deadline": "2022-02-12T12:30:00Z",
+            "created_at": "2022-01-12T12:30:00Z"
+        }
+    ]
+}
