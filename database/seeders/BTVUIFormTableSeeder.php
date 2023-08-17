@@ -237,7 +237,11 @@ class BTVUIFormTableSeeder extends Seeder
                     'elements' => [$page3],
                     'options' => [
                         'required' => [
-                            'permissionToProcessPersonalData',
+                            'bankStatement',
+                            'extractPersonalRecordsDatabase',
+                            'proofOfMedicalTreatment',
+                            'proofOfTypeOfMedicalTreatment',
+                            'permissionToProcessPersonalData'
                         ]
                     ]
                 ]
