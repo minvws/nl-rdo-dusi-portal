@@ -1,0 +1,27 @@
+# Directories
+/node_modules
+/vendor
+/public/hot
+/public/storage
+/public/css
+/public/js
+/public/fonts
+/public/images/vendor
+/public/build
+
+# Files
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+public/mix-manifest.json
+_ide_helper.php
+
+# Groups
+/storage/*.key
+/storage/debugbar
+
+.composer
+.idea
