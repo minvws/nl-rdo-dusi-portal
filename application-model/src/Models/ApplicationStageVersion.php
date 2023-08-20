@@ -20,7 +20,7 @@ use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
  * @property integer $version
  * @property ApplicationStageVersionStatus $status
  * @property-read ApplicationStage $applicationStage
- * @property-read Collection<Answer> $answers
+ * @property-read Collection<int, Answer> $answers
  * @property ?string $pdf_letter_path
  * @property ?string $view_letter_path
  * @property ApplicationStageVersionDecision $decision
