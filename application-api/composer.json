@@ -10,8 +10,8 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "minvws/dusi-application-model": "^0.2",
-        "minvws/dusi-subsidy-model": "^0.4",
+        "minvws/dusi-application-model": "@dev",
+        "minvws/dusi-subsidy-model": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "predis/predis": "^2.2",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
@@ -84,12 +84,12 @@
             "url":  "git@github.com:minvws/nl-rdo-openid-connect-php-laravel.git"
         },
         {
-            "type": "vcs",
-            "url":  "https://github.com/minvws/nl-rdo-dusi-subsidy-model.git"
+            "type": "path",
+            "url": "../application-model"
         },
         {
-            "type": "vcs",
-            "url":  "https://github.com/minvws/nl-rdo-dusi-application-model.git"
+            "type": "path",
+            "url": "../subsidy-model"
         }
     ]
 }

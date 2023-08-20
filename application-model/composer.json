@@ -13,7 +13,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^10.17",
-        "minvws/dusi-subsidy-model": "^0.4"
+        "minvws/dusi-subsidy-model": "@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.3",
@@ -59,8 +59,8 @@
     },
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/minvws/nl-rdo-dusi-subsidy-model"
+            "type": "path",
+            "url": "../subsidy-model"
         }
     ]
 }
