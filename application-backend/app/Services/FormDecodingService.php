@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Application\Backend\Services;
 
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\Codable\Decoding\DecodingContainer;

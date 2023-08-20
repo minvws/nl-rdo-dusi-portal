@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http;
+namespace MinVWS\DUSi\Application\Backend\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 

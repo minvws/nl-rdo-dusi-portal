@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Application\Backend\Services;
 
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -16,12 +16,12 @@ use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use App\Services\Exceptions\ApplicationIdentityMismatchException;
-use App\Services\Exceptions\ApplicationMetadataMismatchException;
-use App\Services\Exceptions\FieldNotFoundException;
-use App\Services\Exceptions\FieldTypeMismatchException;
-use App\Services\Exceptions\FileNotFoundException;
-use App\Services\Exceptions\FormNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationIdentityMismatchException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FileUpload;

@@ -2,7 +2,7 @@
 // phpcs:ignoreFile
 declare(strict_types=1);
 
-namespace Tests;
+namespace MinVWS\DUSi\Application\Backend\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;

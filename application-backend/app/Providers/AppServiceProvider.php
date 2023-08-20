@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace MinVWS\DUSi\Application\Backend\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
