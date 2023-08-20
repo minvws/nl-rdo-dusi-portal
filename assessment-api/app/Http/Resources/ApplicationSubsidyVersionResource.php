@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -96,6 +97,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
         }
     }
 
+    /**
+     * @return array<int, Answer>|null
+     */
     private function createValues(?ApplicationStageVersion $applicationStageVersion): ?array
     {
         $encryptionKey = "";

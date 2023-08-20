@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Assessment\API\Services;
 
-use App\Http\Resources\ApplicationFilterResource;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\Connection;
+use MinVWS\DUSi\Assessment\API\Models\Connection;
 use Illuminate\Support\Str;
 
 return [

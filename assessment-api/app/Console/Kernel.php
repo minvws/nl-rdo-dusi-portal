@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Console;
+namespace MinVWS\DUSi\Assessment\API\Console;
 
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 

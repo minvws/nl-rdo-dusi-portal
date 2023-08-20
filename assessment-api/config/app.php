@@ -191,12 +191,12 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
+        MinVWS\DUSi\Assessment\API\Providers\AppServiceProvider::class,
+        MinVWS\DUSi\Assessment\API\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\FortifyServiceProvider::class,
+        MinVWS\DUSi\Assessment\API\Providers\EventServiceProvider::class,
+        MinVWS\DUSi\Assessment\API\Providers\RouteServiceProvider::class,
+        MinVWS\DUSi\Assessment\API\Providers\FortifyServiceProvider::class,
     ],
 
     /*

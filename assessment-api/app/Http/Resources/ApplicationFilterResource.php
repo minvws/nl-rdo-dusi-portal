@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
 use DB;
 use Illuminate\Http\Request;

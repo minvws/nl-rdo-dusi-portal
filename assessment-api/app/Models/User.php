@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace MinVWS\DUSi\Assessment\API\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use App\Models\Connection;
+use MinVWS\DUSi\Assessment\API\Models\Connection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;

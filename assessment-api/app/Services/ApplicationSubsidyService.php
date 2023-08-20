@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Assessment\API\Services;
 
-use App\Http\Resources\ApplicationSubsidyVersionResource;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 

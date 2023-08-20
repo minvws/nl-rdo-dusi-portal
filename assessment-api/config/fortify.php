@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Providers\RouteServiceProvider;
+use MinVWS\DUSi\Assessment\API\Providers\RouteServiceProvider;
 use Laravel\Fortify\Features;
 
 return [

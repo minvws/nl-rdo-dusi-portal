@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
 
-use App\Models\Connection;
+use MinVWS\DUSi\Assessment\API\Models\Connection;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -12,7 +12,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use Tests\TestCase;
+use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 
 class ApplicationControllerTest extends TestCase
 {

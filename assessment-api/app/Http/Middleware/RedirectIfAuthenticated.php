@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Middleware;
+namespace MinVWS\DUSi\Assessment\API\Http\Middleware;
 
-use App\Providers\RouteServiceProvider;
+use MinVWS\DUSi\Assessment\API\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
