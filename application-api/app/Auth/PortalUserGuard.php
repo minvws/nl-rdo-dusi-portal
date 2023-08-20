@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Auth;
+namespace MinVWS\DUSi\Application\API\Auth;
 
-use App\Models\PortalUser;
+use MinVWS\DUSi\Application\API\Models\PortalUser;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Session\Session;

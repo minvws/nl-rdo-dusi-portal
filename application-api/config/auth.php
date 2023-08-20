@@ -63,7 +63,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => MinVWS\DUSi\Application\API\Models\User::class,
         ],
 
         // 'users' => [

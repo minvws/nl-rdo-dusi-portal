@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Application\API\Services;
 
-use App\Helpers\CacheKeyHelper;
-use App\Repositories\CacheRepository;
+use MinVWS\DUSi\Application\API\Helpers\CacheKeyHelper;
+use MinVWS\DUSi\Application\API\Repositories\CacheRepository;
 
 class SubsidyService
 {

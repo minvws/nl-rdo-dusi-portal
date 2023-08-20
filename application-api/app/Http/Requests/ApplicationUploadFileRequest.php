@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests;
+namespace MinVWS\DUSi\Application\API\Http\Requests;
 
-use App\Models\Application;
+use MinVWS\DUSi\Application\API\Models\Application;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ApplicationUploadFileRequest extends FormRequest

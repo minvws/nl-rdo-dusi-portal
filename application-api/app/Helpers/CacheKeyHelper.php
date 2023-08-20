@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Helpers;
+namespace MinVWS\DUSi\Application\API\Helpers;
 
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 

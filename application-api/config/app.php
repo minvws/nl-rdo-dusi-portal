@@ -191,13 +191,13 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
+        MinVWS\DUSi\Application\API\Providers\AppServiceProvider::class,
+        MinVWS\DUSi\Application\API\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\OidcServiceProvider::class,
-        App\Providers\PortalUserGuardProvider::class,
+        MinVWS\DUSi\Application\API\Providers\EventServiceProvider::class,
+        MinVWS\DUSi\Application\API\Providers\RouteServiceProvider::class,
+        MinVWS\DUSi\Application\API\Providers\OidcServiceProvider::class,
+        MinVWS\DUSi\Application\API\Providers\PortalUserGuardProvider::class,
     ],
 
     /*

@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace App\Traits;
+namespace MinVWS\DUSi\Application\API\Traits;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

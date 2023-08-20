@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 

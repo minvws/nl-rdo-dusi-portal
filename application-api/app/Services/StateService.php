@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Application\API\Services;
 
-use App\Models\DraftApplication;
-use App\Models\PortalUser;
+use MinVWS\DUSi\Application\API\Models\DraftApplication;
+use MinVWS\DUSi\Application\API\Models\PortalUser;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Session\SessionManager;

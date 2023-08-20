@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Controllers;
+namespace MinVWS\DUSi\Application\API\Tests\Feature\Http\Controllers;
 
-use App\Services\CacheService;
+use MinVWS\DUSi\Application\API\Services\CacheService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -12,7 +12,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use Tests\TestCase;
+use MinVWS\DUSi\Application\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 /**

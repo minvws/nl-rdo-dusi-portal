@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
-use App\Models\SubsidyStageData;
+use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
 use Illuminate\Http\JsonResponse;
 
 class SubsidyStageController extends Controller

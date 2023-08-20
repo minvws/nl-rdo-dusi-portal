@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Middleware;
+namespace MinVWS\DUSi\Application\API\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

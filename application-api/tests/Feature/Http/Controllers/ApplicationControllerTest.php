@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Controllers;
+namespace MinVWS\DUSi\Application\API\Tests\Feature\Http\Controllers;
 
-use App\Jobs\ProcessFileUpload;
-use App\Jobs\ProcessFormSubmit;
-use App\Models\PortalUser;
-use App\Services\ApplicationService;
-use App\Services\CacheService;
-use App\Services\StateService;
-use App\Services\SubsidyStageService;
+use MinVWS\DUSi\Application\API\Jobs\ProcessFileUpload;
+use MinVWS\DUSi\Application\API\Jobs\ProcessFormSubmit;
+use MinVWS\DUSi\Application\API\Models\PortalUser;
+use MinVWS\DUSi\Application\API\Services\ApplicationService;
+use MinVWS\DUSi\Application\API\Services\CacheService;
+use MinVWS\DUSi\Application\API\Services\StateService;
+use MinVWS\DUSi\Application\API\Services\SubsidyStageService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -22,7 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageUI;
 use Ramsey\Uuid\Uuid;
-use Tests\TestCase;
+use MinVWS\DUSi\Application\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 /**

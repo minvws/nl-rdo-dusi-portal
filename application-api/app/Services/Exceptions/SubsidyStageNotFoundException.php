@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Exceptions;
+namespace MinVWS\DUSi\Application\API\Services\Exceptions;
 
 use Exception;
 

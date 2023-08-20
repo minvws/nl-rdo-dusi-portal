@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\ApplicationController;
-use App\Http\Controllers\MockedResourceController;
-use App\Http\Controllers\SubsidyStageController;
-use App\Http\Controllers\SubsidyController;
-use App\Http\Controllers\UserController;
+use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationController;
+use MinVWS\DUSi\Application\API\Http\Controllers\MockedResourceController;
+use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
+use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyController;
+use MinVWS\DUSi\Application\API\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Responses;
+namespace MinVWS\DUSi\Application\API\Http\Responses;
 
-use App\Models\PortalUser;
+use MinVWS\DUSi\Application\API\Models\PortalUser;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;

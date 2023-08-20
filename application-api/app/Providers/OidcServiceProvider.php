@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace MinVWS\DUSi\Application\API\Providers;
 
-use App\Http\Responses\OidcLoginResponseHandler;
+use MinVWS\DUSi\Application\API\Http\Responses\OidcLoginResponseHandler;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\OpenIDConnectLaravel\Http\Responses\LoginResponseHandlerInterface;
 
