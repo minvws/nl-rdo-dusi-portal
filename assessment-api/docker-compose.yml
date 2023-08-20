@@ -20,6 +20,8 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+            - '../application-model:/var/www/application-model'
+            - '../subsidy-model:/var/www/subsidy-model'
         networks:
             portal-backend:
             form-admin-web:
