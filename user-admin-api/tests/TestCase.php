@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace MinVWS\DUSi\User\Admin\API\Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 

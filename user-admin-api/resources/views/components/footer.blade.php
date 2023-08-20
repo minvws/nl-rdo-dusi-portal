@@ -11,7 +11,7 @@
         <div class="meta">
             <p>
                 @lang('Version')
-                <span id="application_version">{{ App\Http\Kernel::applicationVersion() }}</span>
+                <span id="application_version">{{ MinVWS\DUSi\User\Admin\API\Http\Kernel::applicationVersion() }}</span>
             </p>
         </div>
     </div>

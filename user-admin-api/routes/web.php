@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserProfileController;
+use MinVWS\DUSi\User\Admin\API\Http\Controllers\HomeController;
+use MinVWS\DUSi\User\Admin\API\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*

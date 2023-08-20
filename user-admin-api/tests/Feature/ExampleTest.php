@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace MinVWS\DUSi\User\Admin\API\Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use MinVWS\DUSi\User\Admin\API\Tests\TestCase;
 
 class ExampleTest extends TestCase
 {

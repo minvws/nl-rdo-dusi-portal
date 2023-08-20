@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories;
+namespace MinVWS\DUSi\User\Admin\API\Database\Factories;
 
-use App\Models\User;
+use MinVWS\DUSi\User\Admin\API\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\MinVWS\DUSi\User\Admin\API\Models\User>
  */
 class UserFactory extends Factory
 {
