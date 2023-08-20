@@ -1,0 +1,26 @@
+name: Node - npm run lint
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+      - run: npm ci --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
+      - run: npm run build
+      - run: npm run lint
+      - run: npm run check-browser-compat
+      - run: npm run audit

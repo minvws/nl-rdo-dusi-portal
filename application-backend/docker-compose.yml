@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+    laravel.test:
+        build:
+            context: ./vendor/laravel/sail/runtimes/8.2
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: sail-8.2/app
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-8001}:80'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+            IGNITION_LOCAL_SITES_PATH: '${PWD}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            portal-backend:
+            form-admin-web:
+        depends_on:
+            - pgsql
+
+    pgsql:
+        environment:
+            POSTGRES_PASSWORD: '${DB_APPLICATION_PASSWORD}'
+            POSTGRES_USER: '${DB_APPLICATION_USERNAME}'
+            POSTGRES_DB: '${DB_APPLICATION_DATABASE}'
+        image: 'postgres:12'
+        volumes:
+            - 'pgsql:/var/lib/postgresql/data'
+            - './tests/Scripts/create-testing-databases.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+        networks:
+            portal-backend:
+                aliases:
+                    - portal-backend-pgsql
+        ports:
+            - ${POSTGRES_PORT:-9101}:5432
+    rabbitmq:
+        image: rabbitmq:3.12-management
+        ports:
+            - ${RABBITMQ_PORT:-9102}:5672
+            - ${RABBITMQ_MANAGEMENT_PORT:-9103}:15672
+        volumes:
+            - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+            - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+        networks:
+            portal-backend:
+                aliases:
+                    - portal-backend-rabbitmq
+
+networks:
+    portal-backend:
+        name: portal-backend
+    form-admin-web:
+        name: form-admin-web
+        external: true
+
+volumes:
+    pgsql:
+        driver: local

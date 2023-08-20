@@ -1,0 +1,39 @@
+name: Generate Documentation - Handleiding
+
+on:
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ github.token }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: create manual documentation (pdf)
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: contact-manual-files
+        uses: bayssmekanique/action-md-concat@v1
+        with:
+          srcDir: doc/manual
+          destFile: doc/manual.md
+      - name: publish-document
+        uses: baileyjm02/markdown-to-pdf@v1
+        with:
+          input_path: doc/manual.md
+          output_dir: pdfs
+          images_dir: doc/manual/images
+          # for example <img src="./images/file-name.png">
+          image_import: ./images
+          build_html: false
+          table_of_contents: true
+          template: .github/workflows/pdf_template.html
+          theme: .github/workflows/manon-sky-blue.css
+         
+      - name: upload manual documentation (pdf)
+        uses: actions/upload-artifact@v2
+        id: upload-document
+        with:
+          name: 'handleiding-dusi'
+          path: pdfs
