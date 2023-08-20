@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders\Traits;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits;
 
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;

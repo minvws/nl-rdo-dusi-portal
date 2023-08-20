@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Traits;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Traits;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
