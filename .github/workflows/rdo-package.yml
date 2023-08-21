@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        directory: [ "user-admin-api", "subsidy-admin-api", "application-api", "assessment-api" ]
+        directory: [ "user-admin-api", "subsidy-admin-api", "application-api", "assessment-api", "application-backend" ]
     defaults:
       run:
         working-directory: ${{ matrix.directory }}
