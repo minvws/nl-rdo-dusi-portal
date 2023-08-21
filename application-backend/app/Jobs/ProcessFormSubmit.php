@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Jobs;
+namespace MinVWS\DUSi\Application\Backend\Jobs;
 
-use App\Services\ApplicationService;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

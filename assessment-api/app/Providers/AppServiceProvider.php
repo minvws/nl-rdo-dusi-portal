@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace MinVWS\DUSi\Assessment\API\Providers;
 
-use App\Services\ApplicationService;
-use App\Services\ApplicationSubsidyService;
+use MinVWS\DUSi\Assessment\API\Services\ApplicationService;
+use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;

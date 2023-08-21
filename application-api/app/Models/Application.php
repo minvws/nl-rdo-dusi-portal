@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace MinVWS\DUSi\Application\API\Models;
 
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\ApplicationMetadata;
 

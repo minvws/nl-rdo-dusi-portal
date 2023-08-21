@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Jobs;
+namespace MinVWS\DUSi\Application\API\Jobs;
 
 use Exception;
 use Illuminate\Bus\Queueable;

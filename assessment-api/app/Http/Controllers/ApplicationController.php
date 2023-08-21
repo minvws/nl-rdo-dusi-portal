@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Http\Resources\ApplicationSubsidyVersionResource;
-use App\Services\ApplicationService;
-use App\Services\ApplicationSubsidyService;
+use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
+use MinVWS\DUSi\Assessment\API\Services\ApplicationService;
+use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;

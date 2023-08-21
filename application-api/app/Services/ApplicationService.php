@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Application\API\Services;
 
-use App\Jobs\ProcessFileUpload;
-use App\Jobs\ProcessFormSubmit;
-use App\Models\Application;
-use App\Models\SubsidyStageData;
-use App\Models\DraftApplication;
-use App\Services\Exceptions\ApplicationNotFoundException;
+use MinVWS\DUSi\Application\API\Jobs\ProcessFileUpload;
+use MinVWS\DUSi\Application\API\Jobs\ProcessFormSubmit;
+use MinVWS\DUSi\Application\API\Models\Application;
+use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
+use MinVWS\DUSi\Application\API\Models\DraftApplication;
+use MinVWS\DUSi\Application\API\Services\Exceptions\ApplicationNotFoundException;
 use Illuminate\Http\UploadedFile;
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FormSubmit;

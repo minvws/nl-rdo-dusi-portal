@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Repositories;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Tests\Feature\Repositories;
 
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -14,7 +14,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use Tests\TestCase;
+use MinVWS\DUSi\Subsidy\Admin\API\Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
 

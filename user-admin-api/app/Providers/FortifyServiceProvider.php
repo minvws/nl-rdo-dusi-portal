@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace MinVWS\DUSi\User\Admin\API\Providers;
 
-use App\Actions\Fortify\UpdateUserPassword;
+use MinVWS\DUSi\User\Admin\API\Actions\Fortify\UpdateUserPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;

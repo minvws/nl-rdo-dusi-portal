@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace MinVWS\DUSi\Application\API\Providers;
 
-use App\Services\ApplicationService;
-use App\Services\Exceptions\ApplicationNotFoundException;
-use App\Services\Exceptions\SubsidyStageNotFoundException;
-use App\Services\SubsidyStageService;
+use MinVWS\DUSi\Application\API\Services\ApplicationService;
+use MinVWS\DUSi\Application\API\Services\Exceptions\ApplicationNotFoundException;
+use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
+use MinVWS\DUSi\Application\API\Services\SubsidyStageService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;

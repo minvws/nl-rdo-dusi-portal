@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Application\API\Services;
 
-use App\Models\SubsidyStageData;
-use App\Services\Exceptions\SubsidyStageNotFoundException;
+use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
+use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 class SubsidyStageService

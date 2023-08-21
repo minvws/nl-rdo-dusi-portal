@@ -64,7 +64,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => MinVWS\DUSi\Subsidy\Admin\API\Models\User::class,
         ],
 
         // 'users' => [

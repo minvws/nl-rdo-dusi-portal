@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 

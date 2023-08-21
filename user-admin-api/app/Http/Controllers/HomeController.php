@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace MinVWS\DUSi\User\Admin\API\Http\Controllers;
 
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;

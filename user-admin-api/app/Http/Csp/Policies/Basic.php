@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Csp\Policies;
+namespace MinVWS\DUSi\User\Admin\API\Http\Csp\Policies;
 
 use Spatie\Csp\Directive;
 use Spatie\Csp\Keyword;

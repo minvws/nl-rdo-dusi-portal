@@ -33,15 +33,13 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/",
-            "Auth\\": "app/Http/Controllers/Auth"
+            "MinVWS\\DUSi\\Subsidy\\Admin\\API\\": "app/",
+            "MinVWS\\DUSi\\Subsidy\\Admin\\API\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "MinVWS\\DUSi\\Subsidy\\Admin\\API\\Tests\\": "tests/"
         }
     },
     "scripts": {

@@ -34,14 +34,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "MinVWS\\DUSi\\Application\\Backend\\": "app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "MinVWS\\DUSi\\Application\\Backend\\Tests\\": "tests/"
         }
     },
     "scripts": {

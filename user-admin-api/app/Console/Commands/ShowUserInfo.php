@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands;
+namespace MinVWS\DUSi\User\Admin\API\Console\Commands;
 
-use App\Models\User;
+use MinVWS\DUSi\User\Admin\API\Models\User;
 use Illuminate\Console\Command;
 
 class ShowUserInfo extends Command

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\View\Components;
+namespace MinVWS\DUSi\Assessment\API\View\Components;
 
 use Illuminate\View\Component;
 use Illuminate\View\View;

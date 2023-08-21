@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Services;
+namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use App\Services\ApplicationService;
-use App\Services\Exceptions\FileNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -28,7 +28,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Ramsey\Uuid\Uuid;
-use Tests\TestCase;
+use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use Throwable;
 
 /**

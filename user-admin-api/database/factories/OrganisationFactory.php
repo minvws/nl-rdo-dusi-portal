@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace MinVWS\DUSi\User\Admin\API\Database\Factories;
 
-use App\Models\Organisation;
+use MinVWS\DUSi\User\Admin\API\Models\Organisation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

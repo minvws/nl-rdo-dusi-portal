@@ -2,7 +2,7 @@
 // phpcs:ignoreFile
 declare(strict_types=1);
 
-namespace App\Models;
+namespace MinVWS\DUSi\Assessment\API\Models;
 
 final readonly class Connection
 {

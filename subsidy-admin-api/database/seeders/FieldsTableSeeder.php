@@ -1,9 +1,9 @@
 <?php
 /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection, PhpUnusedPrivateMethodInspection, SpellCheckingInspection, PhpSameParameterValueInspection, PhpNamedArgumentsWithChangedOrderInspection */
 
-namespace Database\Seeders;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
-use Database\Seeders\Traits\CreateField;
+use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 use Illuminate\Database\Seeder;
 
 class FieldsTableSeeder extends Seeder

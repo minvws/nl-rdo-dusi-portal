@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
-use App\Http\Requests\ApplicationSubmitRequest;
-use App\Http\Requests\ApplicationUploadFileRequest;
-use App\Models\Application;
-use App\Models\SubsidyStageData;
-use App\Services\ApplicationService;
-use App\Services\Exceptions\SubsidyStageNotFoundException;
+use MinVWS\DUSi\Application\API\Http\Requests\ApplicationSubmitRequest;
+use MinVWS\DUSi\Application\API\Http\Requests\ApplicationUploadFileRequest;
+use MinVWS\DUSi\Application\API\Models\Application;
+use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
+use MinVWS\DUSi\Application\API\Services\ApplicationService;
+use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;

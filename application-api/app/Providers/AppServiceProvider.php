@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace MinVWS\DUSi\Application\API\Providers;
 
-use App\Repositories\CacheRepository;
+use MinVWS\DUSi\Application\API\Repositories\CacheRepository;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;

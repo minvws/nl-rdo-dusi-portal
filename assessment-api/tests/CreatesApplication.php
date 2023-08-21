@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace MinVWS\DUSi\Assessment\API\Tests;
 
 use Illuminate\Contracts\Console\Kernel;
 

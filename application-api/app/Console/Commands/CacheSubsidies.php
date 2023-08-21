@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands;
+namespace MinVWS\DUSi\Application\API\Console\Commands;
 
-use App\Services\CacheService;
+use MinVWS\DUSi\Application\API\Services\CacheService;
 use Illuminate\Console\Command;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 

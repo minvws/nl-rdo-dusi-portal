@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Repositories;
+namespace MinVWS\DUSi\Application\API\Repositories;
 
 use Illuminate\Cache\Repository as LaravelCacheRepository;
 

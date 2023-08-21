@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace MinVWS\DUSi\Application\API\Services;
 
-use App\Helpers\CacheKeyHelper;
-use App\Http\Resources\SubsidyStageResource;
-use App\Http\Resources\SubsidyResource;
-use App\Models\SubsidyStageData;
-use App\Repositories\CacheRepository;
+use MinVWS\DUSi\Application\API\Helpers\CacheKeyHelper;
+use MinVWS\DUSi\Application\API\Http\Resources\SubsidyStageResource;
+use MinVWS\DUSi\Application\API\Http\Resources\SubsidyResource;
+use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
+use MinVWS\DUSi\Application\API\Repositories\CacheRepository;
 use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Fortify;
+namespace MinVWS\DUSi\User\Admin\API\Actions\Fortify;
 
 use Illuminate\Contracts\Validation\Rule;
 use Laravel\Fortify\Rules\Password;

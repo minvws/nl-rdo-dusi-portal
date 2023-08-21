@@ -191,14 +191,14 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
+        MinVWS\DUSi\User\Admin\API\Providers\AppServiceProvider::class,
+        MinVWS\DUSi\User\Admin\API\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        MinVWS\DUSi\User\Admin\API\Providers\EventServiceProvider::class,
+        MinVWS\DUSi\User\Admin\API\Providers\RouteServiceProvider::class,
 
         // Laravel Fortify
-        App\Providers\FortifyServiceProvider::class,
+        MinVWS\DUSi\User\Admin\API\Providers\FortifyServiceProvider::class,
     ],
 
     /*

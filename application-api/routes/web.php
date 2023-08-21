@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Auth\DigidMockController;
+use MinVWS\DUSi\Application\API\Http\Controllers\Auth\DigidMockController;
 use Illuminate\Support\Facades\Route;
 
 /*
