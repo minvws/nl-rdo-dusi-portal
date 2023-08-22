@@ -9,8 +9,8 @@ use MinVWS\DUSi\Application\API\Models\PortalUser;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Session\SessionManager;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\Identity;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 
 class StateService
 {

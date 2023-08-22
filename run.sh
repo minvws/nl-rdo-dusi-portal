@@ -35,7 +35,7 @@ done
 SCRIPT=$(readlink -f $0)
 BASEDIR=`dirname $SCRIPT`
 
-packages=( subsidy-model application-model user-admin-api subsidy-admin-api application-backend application-api assessment-api )
+packages=( serialisation-model subsidy-model application-model user-admin-api subsidy-admin-api application-backend application-api assessment-api )
 for package in "${packages[@]}"
 do
   cd $BASEDIR/$package

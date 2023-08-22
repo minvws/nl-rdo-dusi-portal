@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
+use MinVWS\DUSi\Assessment\API\Models\Enums\UIType;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -15,6 +16,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
+//TODO: Move logic to service
 class ApplicationSubsidyVersionResource extends JsonResource
 {
     /**
@@ -44,25 +46,30 @@ class ApplicationSubsidyVersionResource extends JsonResource
                 ->filter(function ($applicationStage) use ($subsidyStage) {
                     return $applicationStage->subsidy_stage_id === $subsidyStage->id;
                 })->first();
-            $latestApplicationStageVersion = $applicationStage?->latestVersion;
+            $latestApplicationStageVersion = $applicationStage?->latestApplicationStageVersion;
             if (
-                isset($applicationStage->latestVersion)
-                && $latestApplicationStageVersion->status === ApplicationStageVersionStatus::Submitted
+                !isset($applicationStage)
+                || !isset($applicationStage->latestApplicationStageVersion)
+                || $latestApplicationStageVersion->status === ApplicationStageVersionStatus::Draft
             ) {
+                $uiType = UIType::Input;
                 $ui = $subsidyStage->publishedUI?->input_ui;
             } else {
-                $ui = $subsidyStage->publishedUI?->review_ui;
+                $uiType = UIType::View;
+                $ui = $subsidyStage->publishedUI?->view_ui;
             }
             return [
                 'metadata' => [
-                  $subsidyStage->title,
+                    "title" => $subsidyStage->title,
+                    "uiType" => $uiType,
+                    "subjectRole" => $subsidyStage->subject_role,
+                    "subjectOrganisation" => $subsidyStage->subject_organisation,
                 ],
                 'dataSchema' => $this->createDataSchema($subsidyStage),
-                'values' => $this->createValues($latestApplicationStageVersion),
+                'values' => $this->createValues($latestApplicationStageVersion, $subsidyStage->fields),
                 'uiSchema' => $ui,
             ];
         });
-
         return [
             'metadata' => $this->createMetadata(),
             'stages' => $stages,
@@ -98,20 +105,34 @@ class ApplicationSubsidyVersionResource extends JsonResource
     }
 
     /**
-     * @return array<int, Answer>|null
+     * @param ApplicationStageVersion|null $applicationStageVersion
+     * @param Collection<string, Field> $fields
+     * @return array|null
      */
-    private function createValues(?ApplicationStageVersion $applicationStageVersion): ?array
+    private function createValues(?ApplicationStageVersion $applicationStageVersion, Collection $fields): ?array
     {
         $encryptionKey = "";
-        return $applicationStageVersion?->answers->map(function ($answer) use ($encryptionKey) {
-            return $this->encrypt($this->decrypt($answer->encrypted_answer, $encryptionKey), $encryptionKey);
+        $fieldsById = $fields->mapToDictionary(function ($field) {
+            return [ $field->id => $field->code ];
+        })
+            ->map(function ($item) {
+                return $item[0];
+            });
+        return $applicationStageVersion?->answers->map(function ($answer) use ($encryptionKey, $fieldsById) {
+            return [
+                $fieldsById[$answer->field_id] => $this->encrypt(
+                    $this->decrypt($answer->encrypted_answer, $encryptionKey),
+                    $encryptionKey
+                )
+            ];
         })->toArray();
     }
 
     private function createMetadata(): array
     {
         return [
-            'id' => $this->resource['subsidyVersion']->id,
+            'subsidyVersionId' => $this->resource['subsidyVersion']->id,
+            'applicationId' => $this->resource['application']->id,
             'subsidy' => [
                 'id' => $this->resource['subsidyVersion']->subsidy->id,
                 'title' => $this->resource['subsidyVersion']->subsidy->title,

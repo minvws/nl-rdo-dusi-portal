@@ -10,8 +10,8 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "minvws/dusi-application-model": "@dev",
         "minvws/dusi-subsidy-model": "@dev",
+        "minvws/dusi-serialisation-model": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "predis/predis": "^2.2",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
@@ -82,11 +82,11 @@
         },
         {
             "type": "path",
-            "url": "../application-model"
+            "url": "../subsidy-model"
         },
         {
             "type": "path",
-            "url": "../subsidy-model"
+            "url": "../serialisation-model"
         }
     ]
 }

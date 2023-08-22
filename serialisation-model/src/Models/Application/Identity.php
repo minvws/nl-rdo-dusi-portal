@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\Shared\Models\Application;
+namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 
 readonly class Identity
 {

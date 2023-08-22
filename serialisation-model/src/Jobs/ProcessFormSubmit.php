@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\API\Jobs;
+namespace MinVWS\DUSi\Shared\Serialisation\Jobs;
 
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -10,7 +10,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
+use Throwable;
 
 class ProcessFormSubmit implements ShouldQueue
 {
@@ -24,10 +26,10 @@ class ProcessFormSubmit implements ShouldQueue
     }
 
     /**
-     * @throws Exception
+     * @throws Throwable
      */
-    public function handle(): void
+    public function handle(FormSubmitHandlerInterface $uploadHandler): void
     {
-        throw new Exception("Job should not be processed by this service!");
+        $uploadHandler->handle($this->formSubmit);
     }
 }

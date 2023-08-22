@@ -22,6 +22,7 @@ services:
             - '.:/var/www/html'
             - '../application-model:/var/www/application-model'
             - '../subsidy-model:/var/www/subsidy-model'
+            - '../serialisation-model:/var/www/serialisation-model'
         networks:
             portal-web:
             portal-backend:

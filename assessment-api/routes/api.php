@@ -13,3 +13,5 @@ use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationController;
 
 Route::get('/applications/{application}', [ApplicationController::class, 'show']);
 Route::get('/applications', [ApplicationController::class, 'filterApplications']);
+Route::get('/applicationscount', [ApplicationController::class, 'getApplicationsCount']);
+Route::get('/applicationfilterui', [ApplicationController::class, 'getApplicationFilterUIResource']);
