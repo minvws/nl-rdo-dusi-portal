@@ -55,21 +55,24 @@ fi
 
 if $INSTALL ; then
     composer install
+
+    npm install
+    npm run build
+
+    vendor/bin/sail up -d --remove-orphans
+
+    # Install gmp to accellerate encryption/decryption
+    vendor/bin/sail root-shell -c 'apt-get update; apt-get --yes install php8.2-gmp'
+    vendor/bin/sail restart
+else
+    vendor/bin/sail up -d --remove-orphans
 fi
-vendor/bin/sail up -d --remove-orphans
 
 if $CLEAR ; then
     vendor/bin/sail artisan key:generate
 fi
 
-# TODO: Run migration to default database
-#if $MIGRATE ; then
-#    vendor/bin/sail artisan migrate:fresh
-#    vendor/bin/sail artisan db:seed --class="MinVWS\\DUSi\\Subsidy\\Admin\\API\\Database\\Seeders\\DatabaseSeeder"
-#fi
-
-#docker-compose exec user-admin-web php artisan migrate
-#
-#docker-compose exec user-admin-web php artisan migrate:fresh
-#docker-compose exec user-admin-web php artisan user:create mail@example.com user password
-#echo "Log in with: mail@example.com password"
+if $MIGRATE ; then
+    vendor/bin/sail artisan migrate:fresh
+    vendor/bin/sail artisan db:seed --class="MinVWS\\DUSi\\Subsidy\\Admin\\API\\Database\\Seeders\\DatabaseSeeder"
+fi

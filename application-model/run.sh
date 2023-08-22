@@ -2,18 +2,14 @@
 
 set -e
 
-CLEAR=false
 INSTALL=false
-MIGRATE=false
 
 # Function to display script usage
 function display_usage() {
-    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-m|--migrate] [-h|--help]"
+    echo "Usage: $0 [-v|--verbose] [-h|--help]"
     echo "Options:"
-    echo "  -c, --clear-env                 Copy the env files from the example files in each repository"
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
-    echo "  -m, --migrate                   Migrate database"
     echo "  -h, --help                      Display this help message"
     exit 1
 }
@@ -21,10 +17,6 @@ function display_usage() {
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -c | --clear-env)
-            CLEAR=true
-            shift
-            ;;
         -v | --verbose)
             set -x
             shift
@@ -36,32 +28,12 @@ while [[ $# -gt 0 ]]; do
             INSTALL=true
             shift
             ;;
-        -m | --migrate)
-            MIGRATE=true
-            shift
-            ;;
         * )
             shift
             ;;
     esac
 done
 
-if $CLEAR ; then
-  rm -f .env
-fi
-if [ ! -f ".env" ]; then
-    cp .env.example .env
-fi
-
 if $INSTALL ; then
     composer install
-
-    npm install
-    npm run build
-fi
-vendor/bin/sail up -d --remove-orphans
-
-
-if $CLEAR ; then
-    vendor/bin/sail artisan key:generate
 fi

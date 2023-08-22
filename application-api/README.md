@@ -24,7 +24,7 @@ sure to install these first.
 After cloning `nl-rdo-dusi-form-admin-web` inside the `nl-rdo-dusi-form-admin-web` directory:
 ```sh
 # 1. Copy the .env.example to .env and start the application
-./init.sh
+./run.sh
 
 # 2. Migrate the database and seed the form(s)
 vendor/bin/sail artisan migrate --seed
@@ -33,7 +33,7 @@ vendor/bin/sail artisan migrate --seed
 After cloning `nl-rdo-dusi-portal-backend` inside the `nl-rdo-dusi-portal-backend` directory:
 ```sh
 # 1. Copy the .env.example to .env and start the application
-./init.sh
+./run.sh
 
 # 2. Migrate the database
 vendor/bin/sail artisan migrate
@@ -41,7 +41,7 @@ vendor/bin/sail artisan migrate
 And finally for `nl-rdo-dusi-portal-web` inside the `nl-rdo-dusi-portal-web` directory:
 ```sh
 # 1. Copy the .env.example to .env and start the application
-./init.sh
+./run.sh
 
 # 2. Cache forms (re-run this command if you re-seed the form-admin-web database)
 vendor/bin/sail artisan cache:all
