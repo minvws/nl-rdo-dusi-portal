@@ -1,0 +1,135 @@
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+registries:
+  github-minvws:
+    type: git
+    url: https://github.com
+    username: x-access-token
+    password: "${{ secrets.REPO_READ_ONLY_TOKEN }}"
+
+updates:
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/application-api"
+    schedule:
+      interval: "weekly"
+    registries:
+      - github-minvws
+    open-pull-requests-limit: 5
+
+  # Maintain dependencies for Composer
+  - package-ecosystem: "composer"
+    directory: "/application-api"
+    registries:
+      - github-minvws
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/application-backend"
+    schedule:
+      interval: "weekly"
+    registries:
+      - github-minvws
+    open-pull-requests-limit: 5
+
+  # Maintain dependencies for Composer
+  - package-ecosystem: "composer"
+    directory: "/application-backend"
+    registries:
+      - github-minvws
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/application-model"
+    schedule:
+      interval: "weekly"
+    registries:
+      - github-minvws
+    open-pull-requests-limit: 5
+
+  # Maintain dependencies for Composer
+  - package-ecosystem: "composer"
+    directory: "/application-model"
+    registries:
+      - github-minvws
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/assessment-api"
+    schedule:
+      interval: "weekly"
+    registries:
+      - github-minvws
+    open-pull-requests-limit: 5
+
+  # Maintain dependencies for Composer
+  - package-ecosystem: "composer"
+    directory: "/assessment-api"
+    registries:
+      - github-minvws
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/subsidy-admin-api"
+    schedule:
+      interval: "weekly"
+    registries:
+      - github-minvws
+    open-pull-requests-limit: 5
+
+  # Maintain dependencies for Composer
+  - package-ecosystem: "composer"
+    directory: "/subsidy-admin-api"
+    registries:
+      - github-minvws
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/subsidy-model"
+    schedule:
+      interval: "weekly"
+    registries:
+      - github-minvws
+    open-pull-requests-limit: 5
+
+  # Maintain dependencies for Composer
+  - package-ecosystem: "composer"
+    directory: "/subsidy-model"
+    registries:
+      - github-minvws
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/user-admin-api"
+    schedule:
+      interval: "weekly"
+    registries:
+      - github-minvws
+    open-pull-requests-limit: 5
+
+  # Maintain dependencies for Composer
+  - package-ecosystem: "composer"
+    directory: "/user-admin-api"
+    registries:
+      - github-minvws
+    schedule:
+      interval: "weekly"
