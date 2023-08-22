@@ -16,7 +16,7 @@
         "eslint-plugin-compat": "^4.1.4",
         "eslint-plugin-prettier": "^5.0.0",
         "esprima": "^4.0.1",
-        "laravel-vite-plugin": "^0.7.8",
+        "laravel-vite-plugin": "^0.8.0",
         "lodash": "^4.17.21",
         "postcss": "^8.4.27",
         "prettier": "^3.0.0",
