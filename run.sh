@@ -4,6 +4,10 @@ set -e
 
 ARGUMENTS="$@"
 
+DOWN=false
+INSTALL=false
+OTHER_ARGUMENT=false
+
 # Function to display script usage
 function display_usage() {
     echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-m|--migrate] [-h|--help]"
@@ -12,6 +16,7 @@ function display_usage() {
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
     echo "  -m, --migrate                   Migrate database"
+    echo "  -d, --down                      Stop the applications and remove docker containers"
     echo "  -h, --help                      Display this help message"
     exit 1
 }
@@ -26,11 +31,26 @@ while [[ $# -gt 0 ]]; do
         -h | --help)
             display_usage
             ;;
+        -d | --down)
+            DOWN=true
+            shift
+            ;;
+        -i | --install)
+            INSTALL=true
+            shift
+            ;;
         * )
+            OTHER_ARGUMENT=true
             shift
             ;;
     esac
 done
+
+if "$DOWN" && ( "$INSTALL" || "$OTHER_ARGUMENT" ) ; then
+    echo "Down only works without other argments. Please run the script again with only the down option."
+    exit 1
+fi
+
 
 SCRIPT=$(readlink -f $0)
 BASEDIR=`dirname $SCRIPT`
@@ -41,6 +61,11 @@ do
   cd $BASEDIR/$package
   ./run.sh $ARGUMENTS
 done
+
+if "$DOWN" ; then
+    echo "Stopped docker applications"
+    exit 0
+fi
 
 echo "Initialisation is finished, listening for incoming applications:"
 cd "$BASEDIR/application-backend"

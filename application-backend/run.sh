@@ -3,6 +3,9 @@
 set -e
 
 CLEAR=false
+DOWN=false
+INSTALL=false
+MIGRATE=false
 
 # Function to display script usage
 function display_usage() {
@@ -12,6 +15,7 @@ function display_usage() {
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
     echo "  -m, --migrate                   Migrate database"
+    echo "  -d, --down                      Stop the applications and remove docker containers"
     echo "  -h, --help                      Display this help message"
     exit 1
 }
@@ -19,6 +23,10 @@ function display_usage() {
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
+        -d | --down)
+            DOWN=true
+            shift
+            ;;
         -c | --clear-env)
             CLEAR=true
             shift
@@ -51,13 +59,20 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
+if $DOWN ; then
+    if [ -f "vendor/bin/sail" ]; then
+        vendor/bin/sail down --remove-orphans
+    else
+        echo "Composer packages not installed."
+    fi
+    exit 0
+fi
+
 if $INSTALL ; then
     composer install
-
-    vendor/bin/sail up -d --remove-orphans
-else
-    vendor/bin/sail up -d --remove-orphans
 fi
+
+vendor/bin/sail up -d --remove-orphans
 
 if $CLEAR ; then
     vendor/bin/sail artisan key:generate
