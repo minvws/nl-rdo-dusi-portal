@@ -9,7 +9,7 @@
         "laravel-vite-plugin": "^0.8.0",
         "lodash": "^4.17.19",
         "postcss": "^8.4.28",
-        "vite": "^4.4.8"
+        "vite": "^4.4.9"
     },
     "dependencies": {
         "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.7",
