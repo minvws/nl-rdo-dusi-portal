@@ -27,8 +27,8 @@ class SubsidyStageResource extends JsonResource
     {
         return [
             'metadata' => $this->createMetadata(),
-            'dataSchema' => $this->createDataSchema(),
-            'uiSchema' => $this->publishedUI?->input_ui
+            'dataschema' => $this->createDataSchema(),
+            'uischema' => $this->publishedUI?->input_ui
         ];
     }
 

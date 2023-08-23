@@ -65,9 +65,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
                     "subjectRole" => $subsidyStage->subject_role,
                     "subjectOrganisation" => $subsidyStage->subject_organisation,
                 ],
-                'dataSchema' => $this->createDataSchema($subsidyStage),
+                'dataschema' => $this->createDataSchema($subsidyStage),
                 'values' => $this->createValues($latestApplicationStageVersion, $subsidyStage->fields),
-                'uiSchema' => $ui,
+                'uischema' => $ui,
             ];
         });
         return [
@@ -164,12 +164,19 @@ class ApplicationSubsidyVersionResource extends JsonResource
         return $result;
     }
 
+    /**
+     * @param Field $field
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     private function createFieldDataSchema(Field $field): array
     {
 
         $type = match ($field->type) {
             FieldType::TextNumeric => 'integer',
             FieldType::Checkbox => 'boolean',
+            FieldType::Multiselect => 'array',
             default => 'string'
         };
 
@@ -188,6 +195,8 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
         if ($field->type === FieldType::Select) {
             $result['enum'] = $field->params['options'];
+        } elseif ($field->type === FieldType::Multiselect) {
+            $result['items'] = ["enum" => $field->params['options'], "type" => "string"];
         } elseif ($field->type === FieldType::Upload) {
             $result['file'] = true;
         } elseif ($field->type === FieldType::CustomBankAccount) {

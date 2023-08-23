@@ -151,5 +151,50 @@ class FieldsTableSeeder extends Seeder
             code: 'permissionToProcessPersonalData',
             title: 'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',
         );
+
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
+            code: 'checklist',
+            title: 'Gecontroleerd',
+            options: [
+                "Uittreksel van het BRP is opgestuurd",
+                "De aanvrager is een ingezetene (> 4 maanden) in Nederland",
+                "de aanvrager is ouder dan 18 jaar",
+                "De verklaring van de arts over het behandeltraject is opgestuurd",
+                "De verklaring van de arts over het behandeltraject is minder dan 2 maanden oud",
+                "De verklaring van de arts over het behandeltraject is ondertekend en voorzien van een naamstempel",
+                "Het opgegeven BIG-nummer komt overeen met het BIG-register",
+                "De operatie heeft nog niet plaatsgevonden",
+                "De aanvrager heeft genderdysforie",
+                "De aanvrager heeft minimaal een jaar voor de aanvraag hormoonbehandeling ondergaan, of is hiermee vanwege medische redenen gestopt of kon deze om medische redenen niet ondergaan",
+                "De verklaring van de arts met de vermelding van de type behandeling is opgestuurd",
+                "De verklaring van de arts met de vermelding van de type behandeling is ondertekend en voorzien van een naamstempel",
+                "De type behandeling voldoet aan de voorwaarden conform de subsidieregeling",
+                "Het IBAN-nummer klopt met het opgegeven IBAN-nummer van de aanvraag",
+                "De tenaamstelling op het bankafschrift of bankpas klopt"
+            ]
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
+            code: 'amount',
+            title: 'Bedrag',
+            options: [
+                "€ 3.830",
+                "€ 13.720"
+            ]
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
+            code: 'review',
+            title: 'Beoordeling',
+            options: [
+                "Onbeoordeeld",
+                "Aanvulling nodig",
+                "Afgekeurd",
+                "Goedgekeurd"
+            ]
+        );
     }
 }

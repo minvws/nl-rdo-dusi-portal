@@ -55,6 +55,25 @@ trait CreateField
         );
     }
 
+    private function createMultiSelectField(
+        string $subsidyStageId,
+        string $code,
+        string $title,
+        array $options,
+        ?string $description = null,
+        bool $isRequired = true
+    ): string {
+        return $this->createField(
+            subsidyStageId: $subsidyStageId,
+            code: $code,
+            title: $title,
+            description: $description,
+            type: 'multiselect',
+            params: ['options' => $options],
+            isRequired: $isRequired,
+        );
+    }
+
     private function createCheckboxField(
         string $subsidyStageId,
         string $code,

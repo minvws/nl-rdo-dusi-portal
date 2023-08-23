@@ -12,6 +12,7 @@ enum FieldType: string
     case TextTel = 'text:tel';
     case TextUrl = 'text:url';
     case Checkbox = 'checkbox';
+    case Multiselect = 'multiselect';
     case Select = 'select';
     case TextArea = 'textarea';
     case Upload = 'upload';

@@ -89,12 +89,12 @@ class FormControllerTest extends TestCase
         $response->assertJsonPath('metadata.subsidy.id', $this->subsidy->id);
         $response->assertJsonPath('metadata.subsidy.title', $this->subsidy->title);
 
-        $response->assertJsonCount(1, 'dataSchema.properties');
-        $response->assertJsonPath('dataSchema.properties.' . $this->field->code . '.type', 'string');
-        $response->assertJsonPath('dataSchema.properties.' . $this->field->code . '.title', $this->field->title);
+        $response->assertJsonCount(1, 'dataschema.properties');
+        $response->assertJsonPath('dataschema.properties.' . $this->field->code . '.type', 'string');
+        $response->assertJsonPath('dataschema.properties.' . $this->field->code . '.title', $this->field->title);
 
-        $response->assertJsonCount(1, 'uiSchema.elements');
-        $response->assertJsonPath('uiSchema.elements.0.elements.0.scope', '#/properties/' . $this->field->code);
+        $response->assertJsonCount(1, 'uischema.elements');
+        $response->assertJsonPath('uischema.elements.0.elements.0.scope', '#/properties/' . $this->field->code);
     }
 
     public function testShowFormShouldReturnA404IfNotFound(): void
