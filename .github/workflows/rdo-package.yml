@@ -86,7 +86,7 @@ jobs:
         shell: bash
 
       - name: Create tar
-        run: tar -czfh ${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}.tar.gz ./app ./bootstrap ./config ./database ./lang ./public ./resources ./routes ./storage ./vendor ./composer.json
+        run: tar -czhf ${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}.tar.gz ./app ./bootstrap ./config ./database ./lang ./public ./resources ./routes ./storage ./vendor ./composer.json
 
       - name: Upload release tar
         uses: actions/upload-artifact@v3
