@@ -71,9 +71,6 @@ fi
 if $INSTALL ; then
     composer install
 
-    npm install
-    npm run build
-
     vendor/bin/sail up -d --remove-orphans
 
     # Install gmp to accellerate encryption/decryption
