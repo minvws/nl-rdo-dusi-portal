@@ -9,6 +9,7 @@ jobs:
   build-mazi:
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
         directory: [ "user-admin-api", "subsidy-admin-api", "application-api", "assessment-api", "application-backend" ]
     defaults:
