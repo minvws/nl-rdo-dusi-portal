@@ -19,6 +19,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 /**
  * @property string $id
  * @property string $title
+ * @property string $code
  * @property string $description
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
@@ -38,6 +39,7 @@ class Subsidy extends Model
 
     protected $fillable = [
         'title',
+        'code',
         'description',
         'valid_from',
         'valid_to',

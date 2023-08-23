@@ -18,7 +18,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
  * @property DateTime $final_review_deadline
  * @property Collection<ApplicationStage> $applicationStages
  */
-class ApplicationFilterUIResource extends JsonResource
+class ApplicationRequestsFilterResource extends JsonResource
 {
     /**
      * @param array<string> $regulations
@@ -140,6 +140,7 @@ class ApplicationFilterUIResource extends JsonResource
 
     private function toSchema(): array
     {
+        //TODO dynamic content
         return [
             "properties" => [
                 'caseNumber' => [
@@ -175,7 +176,7 @@ class ApplicationFilterUIResource extends JsonResource
                     'type' => 'array',
                     'items' => [
                         'type' => 'string',
-                        'enum' => ['BTV', 'DAMU', 'Post Covid']
+                        'enum' => $this['shortRegulations']
                     ],
                     'title' => 'Regeling'
                 ],

@@ -234,4 +234,34 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($latestSubsidyLetter->content_pdf, $subsidyLetterAccepted->content_pdf);
         $this->assertEquals($latestSubsidyLetter->content_view, $subsidyLetterAccepted->content_view);
     }
+
+    public function testGetShortRegulations(): void
+    {
+        SubsidyVersion::factory()->for(
+            Subsidy::factory()->create([
+                'title' => 'Subsidy A',
+                'code' => 'SA',
+            ])
+        )->create([
+            'subsidy_page_url' => 'random_url',
+            'status' => 'published',
+            'version' => 1,
+            'created_at' => '2021-01-01 00:00:00',
+            ]);
+        SubsidyVersion::factory()->for(
+            Subsidy::factory()->create([
+                'title' => 'Subsidy B',
+                'code' => 'SB',
+            ])
+        )->create([
+            'subsidy_page_url' => 'random_url',
+            'status' => 'published',
+            'version' => 1,
+            'created_at' => '2021-01-01 00:00:00',
+            ]);
+
+        $repository = $this->app->make(SubsidyRepository::class);
+        $actualShortRegulations = $repository->getShortRegulations();
+        $this->assertEquals(['SA', 'SB'], $actualShortRegulations->toArray());
+    }
 }

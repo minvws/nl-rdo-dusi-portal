@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Services;
 
+use Exception;
+use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterUIResource;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationRequestsFilterResource;
+use MinVWS\DUSi\Assessment\API\Models\User;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 class ApplicationService
 {
-    public function __construct(private ApplicationRepository $applicationRepository)
-    {
+    public function __construct(
+        private ApplicationRepository $applicationRepository,
+        private SubsidyRepository $subsidyRepository
+    ) {
     }
 
     /**
@@ -32,8 +39,22 @@ class ApplicationService
         return ApplicationCountResource::make(1, 2, 3, 4);
     }
 
-    public function getApplicationFilterUIResource(): ApplicationFilterUIResource
+    public function getApplicationMessageFilterResource(): ApplicationMessageFilterResource
     {
-        return ApplicationFilterUIResource::make([]);
+        $shortRegulations = $this->subsidyRepository->getShortRegulations();
+        return ApplicationMessageFilterResource::make(['shortRegulations' => $shortRegulations]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getApplicationRequestFilterResource(?User $user): ApplicationRequestsFilterResource
+    {
+        if ($user) {
+            Log::debug("Fetching application request filter for user {$user->id}");
+            throw new Exception("Not Implemented");
+        }
+        $shortRegulations = $this->subsidyRepository->getShortRegulations();
+        return ApplicationRequestsFilterResource::make(['shortRegulations' => $shortRegulations]);
     }
 }

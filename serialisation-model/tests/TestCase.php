@@ -10,5 +10,4 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 class TestCase extends OrchestraTestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-
 }
