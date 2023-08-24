@@ -67,6 +67,34 @@ class SubsidyStageResource extends JsonResource
         return $result;
     }
 
+    private function addFieldOptionsForType(array &$result, Field $field): void
+    {
+        switch ($field->type) {
+            case FieldType::Select:
+                $result['enum'] = $field->params['options'];
+                break;
+            case FieldType::Upload:
+                $result['file'] = true;
+                break;
+            case FieldType::CustomBankAccount:
+                $result['iban'] = true;
+                break;
+            case FieldType::TextTel:
+                $result['tel'] = true;
+                break;
+            case FieldType::Checkbox:
+                $result['const'] = true;
+                break;
+            case FieldType::TextEmail:
+                $result['format'] = 'email';
+                break;
+            case FieldType::Date:
+                $result['format'] = 'date';
+                break;
+            default:
+        }
+    }
+
     private function createFieldDataSchema(Field $field): array
     {
 
@@ -89,21 +117,7 @@ class SubsidyStageResource extends JsonResource
             $result['description'] = $field->description;
         }
 
-        if ($field->type === FieldType::Select) {
-            $result['enum'] = $field->params['options'];
-        } elseif ($field->type === FieldType::Upload) {
-            $result['file'] = true;
-        } elseif ($field->type === FieldType::CustomBankAccount) {
-            $result['iban'] = true;
-        } elseif ($field->type === FieldType::TextTel) {
-            $result['tel'] = true;
-        } elseif ($field->type === FieldType::Checkbox) {
-            $result['const'] = true;
-        } elseif ($field->type === FieldType::TextEmail) {
-            $result['format'] = 'email';
-        } elseif ($field->type === FieldType::Date) {
-            $result['format'] = 'date';
-        }
+        $this->addFieldOptionsForType($result, $field);
 
         return $result;
     }
