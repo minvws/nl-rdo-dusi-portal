@@ -112,13 +112,6 @@ class FieldsTableSeeder extends Seeder
             maxLength: 50,
         );
 
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'communicationPreference',
-            title: 'Communicatievoorkeur',
-            options: ['Digitaal', 'Post']
-        );
-
         $this->createUploadField(
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'bankStatement',

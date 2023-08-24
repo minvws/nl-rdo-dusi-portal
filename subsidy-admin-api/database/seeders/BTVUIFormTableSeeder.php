@@ -68,13 +68,13 @@ class BTVUIFormTableSeeder extends Seeder
                     "firstName",
                     "lastName",
                     "street",
+                    "dateOfBirth",
                     "houseNumber",
                     "postalCode",
                     "city",
                     "country",
                     "phoneNumber",
                     "email",
-                    "dateOfBirth",
                     "bankAccountHolder",
                     "bankAccountNumber"
                 ]),
@@ -119,6 +119,9 @@ class BTVUIFormTableSeeder extends Seeder
                         ],[
                             "type"=>"string",
                             "field"=>"lastName"
+                        ],[
+                            "type"=>"date",
+                            "field"=>"dateOfBirth"
                         ]
                     ]
                 ],
@@ -155,9 +158,6 @@ class BTVUIFormTableSeeder extends Seeder
                         ],[
                             "type"=>"string",
                             "field"=>"email"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"communicationPreference"
                         ]
                     ]
                 ],
