@@ -101,6 +101,8 @@ class SubsidyStageResource extends JsonResource
             $result['const'] = true;
         } elseif ($field->type === FieldType::TextEmail) {
             $result['format'] = 'email';
+        } elseif ($field->type === FieldType::Date) {
+            $result['format'] = 'date';
         }
 
         return $result;
