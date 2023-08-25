@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use InvalidArgumentException;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -37,6 +38,7 @@ use Exception;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -58,7 +60,7 @@ readonly class ApplicationService
     private function validateUuid(string $uuid): void
     {
         if (!Str::isUuid($uuid)) {
-            throw new \InvalidArgumentException('Invalid UUID');
+            throw new InvalidArgumentException('Invalid UUID');
         }
     }
 
@@ -210,8 +212,9 @@ readonly class ApplicationService
 
     /**
      * @throws FileNotFoundException
+     * TODO: Move to specific rule ...
      */
-    private function validateFileAnswer(
+    protected function validateFileAnswer(
         ApplicationStage $applicationStage,
         ApplicationStageVersion $applicationStageVersion,
         Field $field
@@ -221,6 +224,7 @@ readonly class ApplicationService
             throw new FileNotFoundException("Answer for file {$field->code} not found!");
         }
 
+        // TODO: ApplicationService should not be responsible for file path, should be something for the file service ...
         $path = $this->getFilePath($applicationStage, $field);
         if (!$this->filesystemManager->disk(Disk::APPLICATION_FILES)->exists($path)) {
             throw new FileNotFoundException("File not found!");
@@ -264,34 +268,6 @@ readonly class ApplicationService
     }
 
     /**
-     * @throws Throwable
-     */
-    private function validateFieldValue(
-        ApplicationStage $applicationStage,
-        ApplicationStageVersion $applicationStageVersion,
-        FieldValue $value
-    ): void {
-        if ($value->field->type === FieldType::Upload) {
-            $this->validateFileAnswer($applicationStage, $applicationStageVersion, $value->field);
-        }
-
-        // TODO: validate format of certain fields
-    }
-
-    /**
-     * @throws Throwable
-     */
-    private function validateFieldValues(
-        ApplicationStage $applicationStage,
-        ApplicationStageVersion $applicationStageVersion,
-        array $fieldValues
-    ): void {
-        foreach ($fieldValues as $fieldValue) {
-            $this->validateFieldValue($applicationStage, $applicationStageVersion, $fieldValue);
-        }
-    }
-
-    /**
      *
      */
     private function getIdentityFromSerialisation(SerialisationIdentity $serialisationIdentity): Identity
@@ -307,7 +283,8 @@ readonly class ApplicationService
      */
     public function processFormSubmit(FormSubmit $formSubmit): ApplicationStage
     {
-
+        ray()->newScreen();
+        ray('Processing form submit', $formSubmit);
         $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
@@ -319,7 +296,11 @@ readonly class ApplicationService
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
             $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
-            $this->validateFieldValues($applicationStage, $applicationStageVersion, $values);
+            $validationService = new ValidationService();
+            $validator = $validationService->getValidator($values);
+
+            ray($validator->fails(), $validator->failed());
+
             $this->processFieldValues($applicationStageVersion, $values);
 
             $applicationStageVersion->status = ApplicationStageVersionStatus::Submitted;
