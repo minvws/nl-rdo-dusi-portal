@@ -13,7 +13,8 @@
         "minvws/codable": "dev-feature/base as 1.0.x-dev",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
         "minvws/dusi-subsidy-model": "@dev",
-        "minvws/dusi-application-model": "@dev"
+        "minvws/dusi-application-model": "@dev",
+        "minvws/dusi-serialisation-model": "@dev"
     },
     "require-dev": {
         "ext-openssl": "*",
@@ -85,6 +86,10 @@
         {
             "type": "path",
             "url": "../subsidy-model"
+        },
+        {
+            "type": "path",
+            "url": "../serialisation-model"
         }
     ]
 }

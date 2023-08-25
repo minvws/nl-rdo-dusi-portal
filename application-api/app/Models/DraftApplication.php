@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Models;
 
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\ApplicationMetadata;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 
 class DraftApplication implements Application
 {

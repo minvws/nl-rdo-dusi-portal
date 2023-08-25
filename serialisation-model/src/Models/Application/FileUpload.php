@@ -1,0 +1,20 @@
+<?php // phpcs:disable PSR1.Files.SideEffects
+
+
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
+
+readonly class FileUpload
+{
+    public function __construct(
+        public Identity $identity,
+        public ApplicationMetadata $applicationMetadata,
+        public string $fieldCode,
+        public string $id,
+        public string $mimeType,
+        public ?string $extension,
+        public string $encryptedContents
+    ) {
+    }
+}

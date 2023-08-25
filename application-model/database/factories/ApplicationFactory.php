@@ -2,9 +2,9 @@
 
 namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 
-use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\IdentityType;
 
 
 /**

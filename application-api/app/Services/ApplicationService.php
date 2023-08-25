@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Services;
 
-use MinVWS\DUSi\Application\API\Jobs\ProcessFileUpload;
-use MinVWS\DUSi\Application\API\Jobs\ProcessFormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFileUpload;
+use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFormSubmit;
 use MinVWS\DUSi\Application\API\Models\Application;
 use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
 use MinVWS\DUSi\Application\API\Models\DraftApplication;
 use MinVWS\DUSi\Application\API\Services\Exceptions\ApplicationNotFoundException;
 use Illuminate\Http\UploadedFile;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FileUpload;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use Ramsey\Uuid\Uuid;
 
 class ApplicationService

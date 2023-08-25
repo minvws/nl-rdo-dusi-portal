@@ -87,6 +87,10 @@
         {
             "type": "path",
             "url": "../subsidy-model"
+        },
+        {
+            "type": "path",
+            "url": "../serialisation-model"
         }
     ]
 }

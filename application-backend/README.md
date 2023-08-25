@@ -14,7 +14,7 @@ you need:
 
 ```sh
 # 1. Start the applications
-./init.sh
+./run.sh
 
 # 2. Connect to assessment-portal
 By default the portal is accessable at http://localhost:8001

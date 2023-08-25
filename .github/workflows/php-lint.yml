@@ -1,0 +1,223 @@
+name: PHP Linting
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  call-composer-install:
+    uses: ./.github/workflows/composer-install.yml
+    secrets:
+      REPO_READ_ONLY_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
+
+  php-linting-psalm:
+    strategy:
+      matrix:
+        directory: ["serialisation-model", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    
+    needs: call-composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+          tools: psalm
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.directory }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Generate _ide_helper file
+        if : ${{ matrix.directory != 'serialisation-model' && matrix.directory != 'subsidy-model' && matrix.directory != 'application-model'}}
+        run: php artisan ide-helper:generate
+
+      - name: Static analysis with Psalm
+        if : ${{ matrix.directory != 'serialisation-model' && matrix.directory != 'subsidy-model' && matrix.directory != 'application-model'}}
+        run: psalm --output-format=github
+
+  php-linting-psr12:
+    strategy:
+      matrix:
+        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+
+    needs: call-composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+          tools: cs2pr
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.directory }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Coding style PSR12 Check
+        run: vendor/bin/phpcs -q --report=checkstyle | cs2pr
+
+  php-linting-stan:
+    strategy:
+      matrix:
+        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+
+    needs: call-composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+          tools: phpstan
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.directory }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Static analysis with PHPStan
+        run: phpstan analyse
+
+  php-linting-cve:
+    strategy:
+      matrix:
+        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+
+    needs: call-composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.directory }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Check for known CVE vulnerabilities
+        if : ${{ matrix.directory != 'subsidy-model' && matrix.directory != 'application-model'}}
+        run: php artisan security-check:now
+
+  phpmd:
+    strategy:
+      matrix:
+        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+
+    needs: call-composer-install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: pcov
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.directory }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Mess detection
+        if : ${{ matrix.directory != 'serialisation-model' && matrix.directory != 'subsidy-model' && matrix.directory != 'application-model'}}
+        run: vendor/bin/phpmd app/ text ruleset.phpmd.xml
+
+      - name: Mess detection
+        if : ${{ matrix.directory != 'serialisation-model' && matrix.directory == 'subsidy-model' || matrix.directory == 'application-model'}}
+        run: vendor/bin/phpmd src/ text ruleset.phpmd.xml

@@ -6,15 +6,13 @@ namespace MinVWS\DUSi\Shared\Application\Models;
 
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
-use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\Identity;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**

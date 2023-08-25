@@ -15,6 +15,9 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Models\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationIdentityMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
@@ -23,10 +26,9 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchExcepti
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\ApplicationMetadata;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FileUpload;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\FormSubmit;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -290,6 +292,17 @@ readonly class ApplicationService
     }
 
     /**
+     *
+     */
+    private function getIdentityFromSerialisation(SerialisationIdentity $serialisationIdentity): Identity
+    {
+        return new Identity(
+            IdentityType::from($serialisationIdentity->type->value),
+            $serialisationIdentity->identifier,
+        );
+    }
+
+    /**
      * @throws Throwable
      */
     public function processFormSubmit(FormSubmit $formSubmit): ApplicationStage
@@ -298,7 +311,7 @@ readonly class ApplicationService
         $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-                $formSubmit->identity,
+                $this->getIdentityFromSerialisation($formSubmit->identity),
                 $formSubmit->applicationMetadata
             );
             $json = $this->encryptionService->decryptFormSubmit($formSubmit->encryptedData);
@@ -324,7 +337,7 @@ readonly class ApplicationService
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-            $fileUpload->identity,
+            $this->getIdentityFromSerialisation($fileUpload->identity),
             $fileUpload->applicationMetadata
         );
         $field = $this->loadField($subsidyStage, $fileUpload->fieldCode);
@@ -352,7 +365,7 @@ readonly class ApplicationService
         $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-            $fileUpload->identity,
+            $this->getIdentityFromSerialisation($fileUpload->identity),
             $fileUpload->applicationMetadata
         );
 

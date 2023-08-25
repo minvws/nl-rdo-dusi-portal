@@ -14,7 +14,7 @@ you need:
 
 ```sh
 # 1. Start the applications
-./init.sh
+./run.sh
 
 # 2. Connect to portal
 By default the admin panel is accessible at http://localhost:8002

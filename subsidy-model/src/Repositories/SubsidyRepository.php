@@ -205,4 +205,15 @@ class SubsidyRepository
 
         return null;
     }
+
+    /*
+     * @param SubsidyLetter $subsidyLetter
+     * @return Collection<string>
+     */
+    public function getShortRegulations(): Collection
+    {
+        return Subsidy::query()->active()->ordered()->get()->map(function (Subsidy $subsidy) {
+            return $subsidy->code;
+        });
+    }
 }

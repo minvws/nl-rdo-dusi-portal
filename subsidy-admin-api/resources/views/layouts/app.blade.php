@@ -5,7 +5,6 @@
     <title>Lorem ipsum</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="img/favicon.ico" rel="shortcut icon">
-    @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 </head>
 
 <header>

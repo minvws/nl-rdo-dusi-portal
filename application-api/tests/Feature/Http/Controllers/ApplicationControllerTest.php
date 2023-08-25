@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Tests\Feature\Http\Controllers;
 
-use MinVWS\DUSi\Application\API\Jobs\ProcessFileUpload;
-use MinVWS\DUSi\Application\API\Jobs\ProcessFormSubmit;
 use MinVWS\DUSi\Application\API\Models\PortalUser;
 use MinVWS\DUSi\Application\API\Services\ApplicationService;
 use MinVWS\DUSi\Application\API\Services\CacheService;
@@ -15,7 +13,9 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
-use MinVWS\DUSi\Shared\Application\Shared\Models\Application\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFileUpload;
+use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
