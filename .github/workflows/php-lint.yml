@@ -15,7 +15,7 @@ jobs:
   php-linting-psalm:
     strategy:
       matrix:
-        directory: ["bridge", "serialisation-model", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
+        directory: ["serialisation-model", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
 
     defaults:
       run:
@@ -60,7 +60,7 @@ jobs:
   php-linting-psr12:
     strategy:
       matrix:
-        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+        directory: [ "bridge", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
 
     defaults:
       run:
@@ -100,7 +100,7 @@ jobs:
   php-linting-stan:
     strategy:
       matrix:
-        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+        directory: [ "bridge", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
 
     defaults:
       run:
@@ -180,7 +180,7 @@ jobs:
   phpmd:
     strategy:
       matrix:
-        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+        directory: [ "bridge", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
 
     defaults:
       run:
