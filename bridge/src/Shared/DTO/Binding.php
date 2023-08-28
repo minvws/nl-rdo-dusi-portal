@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Bridge\DTO;
+namespace MinVWS\DUSi\Shared\Bridge\Shared\DTO;
 
 use Closure;
 

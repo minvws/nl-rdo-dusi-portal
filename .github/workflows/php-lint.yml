@@ -15,7 +15,7 @@ jobs:
   php-linting-psalm:
     strategy:
       matrix:
-        directory: ["serialisation-model", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
+        directory: ["bridge", "serialisation-model", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
 
     defaults:
       run:

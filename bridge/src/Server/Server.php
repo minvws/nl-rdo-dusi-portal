@@ -7,13 +7,14 @@ namespace MinVWS\DUSi\Shared\Bridge\Server;
 use Closure;
 use Exception;
 use MinVWS\Codable\Coding\Codable;
+use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
-use MinVWS\DUSi\Shared\Bridge\DTO\Binding;
-use MinVWS\DUSi\Shared\Bridge\DTO\MethodCall;
-use MinVWS\DUSi\Shared\Bridge\DTO\MethodResult;
+use MinVWS\DUSi\Shared\Bridge\Shared\DTO\Binding;
+use MinVWS\DUSi\Shared\Bridge\Shared\DTO\MethodCall;
+use MinVWS\DUSi\Shared\Bridge\Shared\DTO\MethodResult;
+use MinVWS\DUSi\Shared\Bridge\Shared\Connection;
 use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class Server
@@ -23,10 +24,8 @@ class Server
      */
     private array $bindings = [];
 
-    public function __construct(
-        private readonly AMQPStreamConnection $connection,
-        private readonly string $queue = 'rpc_queue'
-    ) {
+    public function __construct(private readonly Connection $connection)
+    {
     }
 
     /**
@@ -41,11 +40,11 @@ class Server
         $this->bindings[$method] = new Binding($method, $paramsClass, $callback);
     }
 
-    private function setupChannel(): ?AMQPChannel
+    private function setupChannel(): AMQPChannel
     {
-        $channel = $this->connection->channel();
+        $channel = $this->connection->connection->channel();
 
-        [$queue] = $channel->queue_declare($this->queue, auto_delete: false);
+        [$queue] = $channel->queue_declare($this->connection->queue, auto_delete: false) ?? [];
         assert(is_string($queue));
 
         $channel->basic_qos(0, 1, false);
@@ -63,7 +62,10 @@ class Server
         return $call;
     }
 
-    private function encodeMethodResult(?Codable $data): string
+    /**
+     * @throws Exception
+     */
+    private function encodeMethodResult(Codable $data): string
     {
         $methodResult = new MethodResult($data);
         return (new JSONEncoder())->encode($methodResult);
@@ -84,8 +86,11 @@ class Server
                 'correlation_id' => $request->get('correlation_id')
             ];
 
+            $channel = $request->getChannel();
+            assert(!is_null($channel));
+
             $msg = new AMQPMessage($body, $properties);
-            $request->getChannel()->basic_publish(
+            $channel->basic_publish(
                 $msg,
                 routing_key: $request->get('reply_to')
             );

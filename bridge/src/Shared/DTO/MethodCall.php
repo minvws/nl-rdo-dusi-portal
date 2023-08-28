@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Bridge\DTO;
+namespace MinVWS\DUSi\Shared\Bridge\Shared\DTO;
 
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Decoding\Decodable;
@@ -20,7 +20,7 @@ class MethodCall implements Codable
     /**
      * @param TParams|null $params
      */
-    public function __construct(
+    final public function __construct(
         public readonly string $method,
         public readonly ?Codable $params = null
     ) {
@@ -45,12 +45,12 @@ class MethodCall implements Codable
         $paramsClass = $bindings[$method]->paramsClass;
         if ($paramsClass !== null) {
             $params = $container->{'params'}->decodeObject($paramsClass);
-            assert(is_a($params, $paramsClass));
+            assert($params instanceof Codable && is_a($params, $paramsClass));
         } else {
             $params = null;
         }
 
-        return new self($method, $params);
+        return new static($method, $params);
     }
 
     public function encode(EncodingContainer $container): void

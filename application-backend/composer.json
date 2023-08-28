@@ -14,7 +14,8 @@
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
         "minvws/dusi-subsidy-model": "@dev",
         "minvws/dusi-application-model": "@dev",
-        "minvws/dusi-serialisation-model": "@dev"
+        "minvws/dusi-serialisation-model": "@dev",
+        "minvws/php-rmq-rpc-bridge": "@dev"
     },
     "require-dev": {
         "ext-openssl": "*",
@@ -90,6 +91,10 @@
         {
             "type": "path",
             "url": "../serialisation-model"
+        },
+        {
+            "type": "path",
+            "url": "../bridge"
         }
     ]
 }

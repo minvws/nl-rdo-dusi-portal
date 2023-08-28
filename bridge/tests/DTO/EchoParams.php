@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Bridge\Tests;
+namespace MinVWS\DUSi\Shared\Bridge\Tests\DTO;
 
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Decoding\Decodable;

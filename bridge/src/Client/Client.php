@@ -8,10 +8,10 @@ use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Bridge\Client\Exceptions\TimeoutException;
-use MinVWS\DUSi\Shared\Bridge\DTO\MethodCall;
-use MinVWS\DUSi\Shared\Bridge\DTO\MethodResult;
+use MinVWS\DUSi\Shared\Bridge\Shared\DTO\MethodCall;
+use MinVWS\DUSi\Shared\Bridge\Shared\DTO\MethodResult;
+use MinVWS\DUSi\Shared\Bridge\Shared\Connection;
 use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -25,21 +25,24 @@ class Client
     private ?string $correlationId = null;
     private ?string $encodedResult = null;
 
-    public function __construct(
-        private readonly AMQPStreamConnection $connection,
-        private readonly string $routingKey = 'rpc_queue'
-    ) {
+    public function __construct(private readonly Connection $connection)
+    {
     }
 
-    private function setupChannelQueue(): string
+    /**
+     * @return array{AMQPChannel, string}
+     */
+    private function setupChannelQueue(): array
     {
-        if ($this->queue !== null) {
-            return $this->queue;
+        if ($this->channel !== null && $this->queue !== null) {
+            return [$this->channel, $this->queue];
         }
 
-        $this->channel = $this->connection->channel();
+        $this->channel = $this->connection->connection->channel();
 
-        [$queue] = $this->channel->queue_declare();
+        $queueDecl = $this->channel->queue_declare();
+        assert(is_array($queueDecl));
+        [$queue] = $queueDecl;
         assert(is_string($queue));
         $this->queue = $queue;
 
@@ -49,7 +52,7 @@ class Client
             callback: fn (AMQPMessage $message) => $this->onResponse($message)
         );
 
-        return $queue;
+        return [$this->channel, $this->queue];
     }
 
     private function onResponse(AMQPMessage $message): void
@@ -70,7 +73,7 @@ class Client
      */
     public function call(string $method, ?Codable $params, string $resultDataClass, int $timeout = 30): Codable
     {
-        $this->setupChannelQueue();
+        [$channel, $queue] = $this->setupChannelQueue();
 
         $this->correlationId = uniqid();
         $this->encodedResult = null;
@@ -80,13 +83,13 @@ class Client
 
             $properties = [
                 'correlation_id' => $this->correlationId,
-                'reply_to' => $this->queue
+                'reply_to' => $queue
             ];
 
             $msg = new AMQPMessage($body, $properties);
 
-            $this->channel->basic_publish(msg: $msg, routing_key: $this->routingKey);
-            $this->channel->wait(timeout: $timeout);
+            $channel->basic_publish(msg: $msg, routing_key: $this->connection->queue);
+            $channel->wait(timeout: $timeout);
 
             return $this->decodeMethodResult($resultDataClass);
         } catch (AMQPTimeoutException $e) {
@@ -110,11 +113,11 @@ class Client
      *
      * @template TResultData of Codable
      */
-    private function decodeMethodResult(string $resultDataClass): ?Codable
+    private function decodeMethodResult(string $resultDataClass): Codable
     {
         $decoder = new JSONDecoder();
         $decoder->getContext()->setValue(MethodResult::DATA_CLASS, $resultDataClass);
-        $result = $decoder->decode($this->encodedResult)->decodeObject(MethodResult::class);
+        $result = $decoder->decode($this->encodedResult ?? '')->decodeObject(MethodResult::class);
         assert(is_a($result->data, $resultDataClass));
         return $result->data;
     }

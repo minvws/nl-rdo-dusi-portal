@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Bridge\DTO;
+namespace MinVWS\DUSi\Shared\Bridge\Shared\DTO;
 
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Decoding\Decodable;
@@ -18,10 +18,10 @@ class MethodResult implements Codable
     public const DATA_CLASS = self::class . '::DATA_CLASS';
 
     /**
-     * @param TData|null $data
+     * @param TData $data
      */
-    public function __construct(
-        public readonly ?Codable $data
+    final public function __construct(
+        public readonly Codable $data
     ) {
     }
 
@@ -37,15 +37,11 @@ class MethodResult implements Codable
 
         $data = $container->{'data'}->decodeObject($dataClass);
 
-        return new self($data);
+        return new static($data);
     }
 
     public function encode(EncodingContainer $container): void
     {
-        if ($this->data === null) {
-            return;
-        }
-
         $container->{'data'} = $this->data;
     }
 }
