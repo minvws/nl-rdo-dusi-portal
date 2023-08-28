@@ -16,6 +16,7 @@ enum FieldType: string
     case Select = 'select';
     case TextArea = 'textarea';
     case Upload = 'upload';
+    case Date = 'date';
     case CustomPostalCode = 'custom:postalcode';
     case CustomCountry = 'custom:country';
     case CustomBankAccount = 'custom:bankaccount';

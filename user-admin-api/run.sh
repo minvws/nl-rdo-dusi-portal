@@ -70,6 +70,7 @@ fi
 
 if $INSTALL ; then
     composer install
+    npm install
 fi
 
 vendor/bin/sail up -d --remove-orphans
