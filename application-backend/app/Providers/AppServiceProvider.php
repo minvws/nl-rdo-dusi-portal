@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Providers;
 
+use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Application\Backend\Handlers\FileUploadHandler;
 use MinVWS\DUSi\Application\Backend\Handlers\FormSubmitHandler;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
+use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
 use Illuminate\Foundation\Application;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
@@ -31,6 +34,14 @@ class AppServiceProvider extends ServiceProvider
             FormSubmitHandlerInterface::class,
             function (Application $app) {
                 return new FormSubmitHandler($app->get(ApplicationService::class));
+            }
+        );
+        $this->app->bind(
+            ApplicationFileService::class,
+            function (Application $app) {
+                return new ApplicationFileService(
+                    filesystem: $app->get(FilesystemManager::class)->disk(Disk::APPLICATION_FILES),
+                );
             }
         );
     }

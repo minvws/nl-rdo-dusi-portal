@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Application\Backend\Services\Validation;
+
+use Illuminate\Translation\ArrayLoader;
+use Illuminate\Translation\Translator;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+
+class ValidatorFactory
+{
+    public function __construct(
+        protected ApplicationFileService $applicationFileService,
+        protected ApplicationRepository $applicationRepository,
+    ) {
+    }
+
+    /**
+     * @param ApplicationStageVersion $applicationStageVersion
+     * @param array<string, FieldValue> $fieldValues
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $rules
+     * @return Validator
+     */
+    public function getValidator(
+        ApplicationStageVersion $applicationStageVersion,
+        array $fieldValues,
+        array $data,
+        array $rules,
+    ): Validator {
+        return new Validator(
+            translator: new Translator(new ArrayLoader(), 'nl'),
+            data: $data,
+            rules: $rules,
+            applicationStageVersion: $applicationStageVersion,
+            fieldValues: $fieldValues,
+            applicationFileService: $this->applicationFileService,
+            applicationRepository: $this->applicationRepository,
+        );
+    }
+}

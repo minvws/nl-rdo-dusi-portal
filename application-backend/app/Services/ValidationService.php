@@ -1,34 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Translation\ArrayLoader;
-use Illuminate\Translation\Translator;
 use Illuminate\Validation\Rule;
+use MinVWS\DUSi\Application\Backend\Services\Validation\Rules\FileUploadRule;
+use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
+use MinVWS\DUSi\Application\Backend\Services\Validation\ValidatorFactory;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 class ValidationService
 {
-    public function __construct()
-    {
+    public function __construct(
+        protected ValidatorFactory $validatorFactory,
+    ) {
     }
 
     /**
+     * @param ApplicationStageVersion $applicationStageVersion
      * @param FieldValue[] $fieldValues
      * @return Validator
      */
-    public function getValidator(array $fieldValues): Validator
+    public function getValidator(ApplicationStageVersion $applicationStageVersion, array $fieldValues): Validator
     {
         ray('fieldValues', $fieldValues);
         ray('getValidator', $this->getFieldValuesRules($fieldValues), $this->getFieldValuesData($fieldValues));
 
-        return new \Illuminate\Validation\Validator(
-            translator: new Translator(new ArrayLoader(), 'nl'),
+        return $this->validatorFactory->getValidator(
+            applicationStageVersion: $applicationStageVersion,
+            fieldValues: $fieldValues,
             data: $this->getFieldValuesData($fieldValues),
             rules: $this->getFieldValuesRules($fieldValues),
         );
@@ -46,7 +51,7 @@ class ValidationService
             $rules[] = 'required';
         }
 
-        return [...$rules , ...match($field->type) {
+        return [...$rules , ...match ($field->type) {
             FieldType::Checkbox => ['boolean'],
             FieldType::CustomBankAccount => [],
             FieldType::CustomCountry => [],
@@ -59,7 +64,7 @@ class ValidationService
             FieldType::TextTel => [...$this->getTextFieldRules($field)],
             FieldType::TextNumeric => [...$this->getTextFieldRules($field)],
             FieldType::TextUrl => [],
-            FieldType::Upload => [],
+            FieldType::Upload => [new FileUploadRule($field)],
         }];
     }
 
@@ -108,7 +113,14 @@ class ValidationService
 
     protected function getTextFieldRules(Field $field): array
     {
-        if (!in_array($field->type, [FieldType::Text, FieldType::TextArea, FieldType::TextNumeric, FieldType::TextTel], true)) {
+        if (
+            !in_array($field->type, [
+            FieldType::Text,
+            FieldType::TextArea,
+            FieldType::TextNumeric,
+            FieldType::TextTel
+            ], true)
+        ) {
             return [];
         }
 
@@ -121,5 +133,4 @@ class ValidationService
 
         return $rules;
     }
-
 }

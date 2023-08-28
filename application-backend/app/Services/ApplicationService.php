@@ -14,7 +14,6 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
-use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Models\IdentityType;
@@ -35,10 +34,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Exception;
-use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -53,7 +50,8 @@ readonly class ApplicationService
         private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
-        private FilesystemManager $filesystemManager
+        private ApplicationFileService $fileService,
+        private ValidationService $validationService,
     ) {
     }
 
@@ -205,32 +203,6 @@ readonly class ApplicationService
         return $field;
     }
 
-    private function getFilePath(ApplicationStage $applicationStage, Field $field): string
-    {
-        return sprintf('%s/%s', $applicationStage->id, $field->code);
-    }
-
-    /**
-     * @throws FileNotFoundException
-     * TODO: Move to specific rule ...
-     */
-    protected function validateFileAnswer(
-        ApplicationStage $applicationStage,
-        ApplicationStageVersion $applicationStageVersion,
-        Field $field
-    ): void {
-        $answer = $this->appRepo->getAnswer($applicationStageVersion, $field);
-        if ($answer === null) {
-            throw new FileNotFoundException("Answer for file {$field->code} not found!");
-        }
-
-        // TODO: ApplicationService should not be responsible for file path, should be something for the file service ...
-        $path = $this->getFilePath($applicationStage, $field);
-        if (!$this->filesystemManager->disk(Disk::APPLICATION_FILES)->exists($path)) {
-            throw new FileNotFoundException("File not found!");
-        }
-    }
-
     /**
      * @throws Exception
      */
@@ -255,9 +227,11 @@ readonly class ApplicationService
     private function processFieldValue(ApplicationStageVersion $applicationStageVersion, FieldValue $value): void
     {
         // answer for file already exists at this point
-        if ($value->field->type !== FieldType::Upload) {
-            $this->createOrUpdateAnswer($applicationStageVersion, $value->field, $value->value);
+        if ($value->field->type === FieldType::Upload) {
+            return;
         }
+
+        $this->createOrUpdateAnswer($applicationStageVersion, $value->field, $value->value);
     }
 
     private function processFieldValues(ApplicationStageVersion $applicationStageVersion, array $fieldValues): void
@@ -296,10 +270,11 @@ readonly class ApplicationService
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
             $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
-            $validationService = new ValidationService();
-            $validator = $validationService->getValidator($values);
+            $validator = $this->validationService->getValidator($applicationStageVersion, $values);
 
             ray($validator->fails(), $validator->failed());
+            // TODO: Fail on upload field should cleanup ... should delete file and empty answer
+            // TODO: Empty answers on fail of field, so user should update the field
 
             $this->processFieldValues($applicationStageVersion, $values);
 
@@ -356,8 +331,7 @@ readonly class ApplicationService
             $value
         );
 
-        $path = $this->getFilePath($applicationStage, $field);
-        $result = $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($path, $encryptedContents);
+        $result = $this->fileService->writeFile($applicationStage, $field, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
         }
