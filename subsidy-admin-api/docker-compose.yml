@@ -22,15 +22,10 @@ services:
             - '.:/var/www/html'
             - '../subsidy-model:/var/www/subsidy-model'
         networks:
-            form-admin-web:
             user-admin-web:
             portal-backend:
-        depends_on:
-            - pgsql
 
 networks:
-    form-admin-web:
-        name: form-admin-web
     user-admin-web:
         external: true
     portal-backend:
