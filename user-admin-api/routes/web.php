@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MinVWS\DUSi\User\Admin\API\Http\Controllers\HomeController;
+use MinVWS\DUSi\User\Admin\API\Http\Controllers\OrganisationController;
 use MinVWS\DUSi\User\Admin\API\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     Route::get('/', HomeController::class)->name('home');
     Route::get('/account', UserProfileController::class)->name('profile.show');
+
+    Route::resource('organisations', OrganisationController::class)
+        ->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
 });

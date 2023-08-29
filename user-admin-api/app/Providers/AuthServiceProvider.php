@@ -6,6 +6,8 @@ namespace MinVWS\DUSi\User\Admin\API\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use MinVWS\DUSi\User\Admin\API\Models\Organisation;
+use MinVWS\DUSi\User\Admin\API\Policies\OrganisationPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -15,7 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Organisation::class => OrganisationPolicy::class,
     ];
 
     /**
