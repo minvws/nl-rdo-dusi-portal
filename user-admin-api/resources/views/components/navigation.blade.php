@@ -13,6 +13,9 @@
                 @can('viewAny', \MinVWS\DUSi\User\Admin\API\Models\Organisation::class)
                     <x-nav-item :route="'organisations.index'">@lang('Organisations') </x-nav-item>
                 @endcan
+                @can('viewAny', \MinVWS\DUSi\User\Admin\API\Models\User::class)
+                    <x-nav-item :route="'users.index'">@lang('Users') </x-nav-item>
+                @endcan
             @endauth
         </ul>
 
