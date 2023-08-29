@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -xe
+vendor/bin/phpcs
+vendor/bin/phpmd src/ text ruleset.phpmd.xml
+vendor/bin/phpstan analyse --memory-limit=-1
+docker compose up -d
+docker compose run php vendor/bin/phpunit

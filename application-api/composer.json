@@ -14,7 +14,9 @@
         "minvws/dusi-serialisation-model": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "predis/predis": "^2.2",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
+        "minvws/php-rmq-rpc-bridge": "@dev",
+        "minvws/codable": "dev-feature/base as 1.0.x-dev"
     },
     "require-dev": {
         "ext-openssl": "*",
@@ -77,6 +79,10 @@
     "prefer-stable": true,
     "repositories": [
         {
+            "type": "vcs",
+            "url": "https://github.com/minvws/nl-rdo-php-codable.git"
+        },
+        {
             "type": "git",
             "url":  "git@github.com:minvws/nl-rdo-openid-connect-php-laravel.git"
         },
@@ -87,6 +93,10 @@
         {
             "type": "path",
             "url": "../serialisation-model"
+        },
+        {
+            "type": "path",
+            "url": "../bridge"
         }
     ]
 }

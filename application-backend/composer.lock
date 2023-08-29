@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9686985e8d8efa72b059798d742d40e0",
+    "content-hash": "1798fcfb0b86fb8eb872f6f9fb5bcf52",
     "packages": [
         {
             "name": "brick/math",
@@ -1862,7 +1862,7 @@
         },
         {
             "name": "minvws/dusi-application-model",
-            "version": "dev-feat/combine-database-subsidy-application",
+            "version": "dev-feature/rabbitmq-rpc-bridge",
             "dist": {
                 "type": "path",
                 "url": "../application-model",
@@ -1936,7 +1936,7 @@
         },
         {
             "name": "minvws/dusi-serialisation-model",
-            "version": "dev-feat/combine-database-subsidy-application",
+            "version": "dev-feature/rabbitmq-rpc-bridge",
             "dist": {
                 "type": "path",
                 "url": "../serialisation-model",
@@ -1998,7 +1998,7 @@
         },
         {
             "name": "minvws/dusi-subsidy-model",
-            "version": "dev-feat/combine-database-subsidy-application",
+            "version": "dev-feature/rabbitmq-rpc-bridge",
             "dist": {
                 "type": "path",
                 "url": "../subsidy-model",
@@ -2062,6 +2062,78 @@
                 }
             ],
             "description": "Models and repositories for the subsidy model",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "minvws/php-rmq-rpc-bridge",
+            "version": "dev-feature/rabbitmq-rpc-bridge",
+            "dist": {
+                "type": "path",
+                "url": "../bridge",
+                "reference": "5cd593a5fdb0c27cf71439c003a2b9efe0f17769"
+            },
+            "require": {
+                "minvws/codable": "dev-feature/base as 1.0.x-dev",
+                "php": "^8.2",
+                "php-amqplib/php-amqplib": "^3.5"
+            },
+            "require-dev": {
+                "ext-pcntl": "*",
+                "ext-posix": "*",
+                "fakerphp/faker": "^1.23",
+                "laravel/framework": "^10.0",
+                "nunomaduro/larastan": "^2.0",
+                "orchestra/testbench": "^8.6",
+                "phpmd/phpmd": "^2.13",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^10.3",
+                "slevomat/coding-standard": "^8.13",
+                "squizlabs/php_codesniffer": "^3.7"
+            },
+            "suggest": {
+                "laravel/framework": "^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MinVWS\\DUSi\\Shared\\Bridge\\Laravel\\Providers\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MinVWS\\DUSi\\Shared\\Bridge\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "MinVWS\\DUSi\\Shared\\Bridge\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "phpstan": [
+                    "vendor/bin/phpstan analyze -c phpstan.neon.dist"
+                ],
+                "phpcs": [
+                    "vendor/bin/phpcs"
+                ],
+                "phpcbf": [
+                    "vendor/bin/phpcbf"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "phpmd": [
+                    "vendor/bin/phpmd src/ text ruleset.phpmd.xml"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "RMQ request/response bridge",
             "transport-options": {
                 "relative": true
             }
@@ -12230,7 +12302,8 @@
         "minvws/codable": 20,
         "minvws/dusi-subsidy-model": 20,
         "minvws/dusi-application-model": 20,
-        "minvws/dusi-serialisation-model": 20
+        "minvws/dusi-serialisation-model": 20,
+        "minvws/php-rmq-rpc-bridge": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

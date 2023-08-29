@@ -23,6 +23,7 @@ services:
             - '../application-model:/var/www/application-model'
             - '../subsidy-model:/var/www/subsidy-model'
             - '../serialisation-model:/var/www/serialisation-model'
+            - '../bridge:/var/www/bridge'
         networks:
             portal-backend:
         depends_on:

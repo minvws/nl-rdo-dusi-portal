@@ -1,0 +1,13 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+parameters:
+    paths:
+        - ./src
+    level: 8
+
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+
+    universalObjectCratesClasses:
+        - MinVWS\Codable\Decoding\DecodingContainer
+        - MinVWS\Codable\Encoding\EncodingContainer
