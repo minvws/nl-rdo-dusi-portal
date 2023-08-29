@@ -8,4 +8,5 @@ enum ApplicationStageVersionStatus: string
 {
     case Draft = 'draft';
     case Submitted = 'submitted';
+    case Invalid = 'invalid';
 }

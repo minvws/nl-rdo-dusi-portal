@@ -51,7 +51,7 @@ readonly class ApplicationService
         private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
-        private ApplicationFileRepository $fileService,
+        private ApplicationFileRepository $fileRepository,
         private ValidationService $validationService,
     ) {
     }
@@ -269,16 +269,16 @@ readonly class ApplicationService
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
             $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
-            // TODO: Use this unused variable
-            // @SuppressWarnings(PHPMD.UnusedFormalParameter)
             $validator = $this->validationService->getValidator($applicationStageVersion, $values);
 
-            // TODO: Fail on upload field should cleanup ... should delete file and empty answer
-            // TODO: Empty answers on fail of field, so user should update the field
-
+            $this->processInvalidFieldValues($applicationStageVersion, $values, $validator);
             $this->processFieldValues($applicationStageVersion, $values);
 
             $applicationStageVersion->status = ApplicationStageVersionStatus::Submitted;
+            if ($validator->fails()) {
+                $applicationStageVersion->status = ApplicationStageVersionStatus::Invalid;
+            }
+
             $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
             $this->appRepo->saveApplicationStage($applicationStage);
 
@@ -331,7 +331,7 @@ readonly class ApplicationService
             $value
         );
 
-        $result = $this->fileService->writeFile($applicationStage, $field, $encryptedContents);
+        $result = $this->fileRepository->writeFile($applicationStage, $field, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
         }
@@ -343,5 +343,10 @@ readonly class ApplicationService
     public function processFileUpload(FileUpload $fileUpload): void
     {
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
+    }
+
+    protected function processInvalidFieldValues(ApplicationStageVersion $applicationStageVersion, array $values, Validation\Validator $validator): void
+    {
+        // TODO: Process invalid fields ...
     }
 }
