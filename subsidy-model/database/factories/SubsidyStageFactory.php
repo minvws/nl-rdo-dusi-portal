@@ -5,6 +5,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use Ramsey\Uuid\Uuid;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
  * @extends Factory<SubsidyStage>
@@ -22,6 +23,7 @@ class SubsidyStageFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
+            'subsidy_version_id' => SubsidyVersion::factory(),
             'title' => $this->faker->sentence,
             'subject_role' => 'applicant',
             'stage' => 1,

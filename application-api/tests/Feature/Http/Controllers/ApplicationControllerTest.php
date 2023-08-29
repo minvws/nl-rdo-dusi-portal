@@ -34,7 +34,7 @@ class ApplicationControllerTest extends TestCase
     use DatabaseTransactions;
     use WithFaker;
 
-    protected array $connectionsToTransact = [Connection::FORM];
+    protected array $connectionsToTransact = [Connection::APPLICATION];
 
     private PortalUser $user;
     private Subsidy $subsidy;

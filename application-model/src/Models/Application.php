@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
@@ -25,6 +27,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTime $locked_from
  * @property DateTime $final_review_deadline
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Application extends Model
 {
@@ -54,6 +57,11 @@ class Application extends Model
     public function applicationStages(): HasMany
     {
         return $this->hasMany(ApplicationStage::class, 'application_id', 'id');
+    }
+
+    public function subsidyVersion(): BelongsTo
+    {
+        return $this->belongsTo(SubsidyVersion::class, 'subsidy_version_id', 'id');
     }
 
     /**
@@ -115,6 +123,7 @@ class Application extends Model
         });
     }
 
+    //TODO GB: This is not the correct way to do this, but it works for now
     public function scopeSubsidyTitle(Builder $query, string $title): Builder
     {
         $subVersions = SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($title) {

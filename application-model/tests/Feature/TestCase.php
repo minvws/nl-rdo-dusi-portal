@@ -19,7 +19,6 @@ class TestCase extends BaseTestCase
 
     protected function loadCustomMigrations(): void
     {
-        Artisan::call('db:wipe', ['--database' => 'pgsql_form']);
         Artisan::call('db:wipe', ['--database' => 'pgsql_application']);
         Artisan::call('migrate:fresh');
     }
@@ -37,19 +36,6 @@ class TestCase extends BaseTestCase
     {
         tap($app->make('config'), function (Repository $config) {
             $config->set('database.default', 'pgsql_application');
-            $config->set('database.connections.pgsql_form', [
-                'driver' => 'pgsql',
-                'host' => env('DB_FORM_HOST'),
-                'port' => env('DB_FORM_PORT'),
-                'database' => env('DB_FORM_DATABASE'),
-                'username' => env('DB_FORM_USERNAME'),
-                'password' => env('DB_FORM_PASSWORD'),
-                'charset' => 'utf8',
-                'prefix' => '',
-                'prefix_indexes' => true,
-                'search_path' => 'public',
-                'sslmode' => 'prefer',
-            ]);
             $config->set('database.connections.pgsql_application', [
                 'driver' => 'pgsql',
                 'host' => env('DB_APPLICATION_HOST'),

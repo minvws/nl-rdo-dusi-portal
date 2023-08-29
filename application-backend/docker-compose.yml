@@ -26,7 +26,6 @@ services:
             - '../bridge:/var/www/bridge'
         networks:
             portal-backend:
-            form-admin-web:
         depends_on:
             - pgsql
 
@@ -61,9 +60,6 @@ services:
 networks:
     portal-backend:
         name: portal-backend
-    form-admin-web:
-        name: form-admin-web
-        external: true
 
 volumes:
     pgsql:

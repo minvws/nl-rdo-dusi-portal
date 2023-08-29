@@ -1,6 +1,6 @@
 # Subsidy model
 
-Subsidy model for the models and repositories of form-admin-web.
+Subsidy model for the models and repositories of the subsidy model.
 
 ## Tests
 

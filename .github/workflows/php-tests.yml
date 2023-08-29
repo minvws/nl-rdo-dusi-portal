@@ -41,19 +41,9 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: form_admin_web_testing
-        ports:
-          - 54323:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
-      postgres-3:
-        image: postgres:12.5
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
           POSTGRES_DB: user_testing
         ports:
-          - 54324:5432
+          - 54323:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
@@ -100,16 +90,9 @@ jobs:
           DB_APPLICATION_PASSWORD: password
           DB_APPLICATION_SSLMODE: prefer
 
-          DB_FORM_HOST: localhost
-          DB_FORM_DATABASE: form_admin_web_testing
-          DB_FORM_PORT: 54323
-          DB_FORM_USERNAME: postgres
-          DB_FORM_PASSWORD: password
-          DB_FORM_SSLMODE: prefer
-
           DB_USER_HOST: localhost
           DB_USER_DATABASE: user_testing
-          DB_USER_PORT: 54324
+          DB_USER_PORT: 54323
           DB_USER_USERNAME: postgres
           DB_USER_PASSWORD: password
           DB_USER_SSLMODE: prefer
