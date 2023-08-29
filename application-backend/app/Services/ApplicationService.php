@@ -8,7 +8,17 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
+use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationIdentityMismatchException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -17,25 +27,16 @@ use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Models\IdentityType;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationIdentityMismatchException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use Exception;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Throwable;
 
 /**
@@ -50,7 +51,7 @@ readonly class ApplicationService
         private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
-        private ApplicationFileService $fileService,
+        private ApplicationFileRepository $fileService,
         private ValidationService $validationService,
     ) {
     }

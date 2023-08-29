@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services;
+namespace MinVWS\DUSi\Application\Backend\Repositories;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
-class ApplicationFileService
+class ApplicationFileRepository
 {
     public function __construct(
         protected Filesystem $filesystem,

@@ -6,7 +6,7 @@ namespace MinVWS\DUSi\Application\Backend\Services\Validation;
 
 use Illuminate\Translation\ArrayLoader;
 use Illuminate\Translation\Translator;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
+use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
@@ -14,7 +14,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 class ValidatorFactory
 {
     public function __construct(
-        protected ApplicationFileService $applicationFileService,
+        protected ApplicationFileRepository $applicationFileService,
         protected ApplicationRepository $applicationRepository,
     ) {
     }
@@ -38,7 +38,7 @@ class ValidatorFactory
             rules: $rules,
             applicationStageVersion: $applicationStageVersion,
             fieldValues: $fieldValues,
-            applicationFileService: $this->applicationFileService,
+            applicationFileRepository: $this->applicationFileService,
             applicationRepository: $this->applicationRepository,
         );
     }

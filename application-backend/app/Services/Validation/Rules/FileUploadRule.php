@@ -7,8 +7,8 @@ namespace MinVWS\DUSi\Application\Backend\Services\Validation\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
-use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationFileServiceAwareRule;
+use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationFileRepositoryAwareRule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationRepositoryAwareRule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationStageVersionAwareRule;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
@@ -18,12 +18,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 class FileUploadRule implements
     ValidationRule,
     ApplicationStageVersionAwareRule,
-    ApplicationFileServiceAwareRule,
+    ApplicationFileRepositoryAwareRule,
     ApplicationRepositoryAwareRule
 {
     protected ApplicationStageVersion $applicationStageVersion;
     protected ApplicationRepository $applicationRepository;
-    protected ApplicationFileService $applicationFileService;
+    protected ApplicationFileRepository $applicationFileRepository;
 
     public function __construct(protected Field $field)
     {
@@ -45,7 +45,7 @@ class FileUploadRule implements
             $fail("Field is required!");
         }
 
-        $fileExists = $this->applicationFileService->fileExists(
+        $fileExists = $this->applicationFileRepository->fileExists(
             applicationStage: $this->applicationStageVersion->applicationStage,
             field: $this->field,
         );
@@ -59,9 +59,9 @@ class FileUploadRule implements
         $this->applicationStageVersion = $applicationStageVersion;
     }
 
-    public function setApplicationFileService(ApplicationFileService $applicationFileService): void
+    public function setApplicationFileRepository(ApplicationFileRepository $applicationFileService): void
     {
-        $this->applicationFileService = $applicationFileService;
+        $this->applicationFileRepository = $applicationFileService;
     }
 
     public function setApplicationRepository(ApplicationRepository $applicationRepository): void
