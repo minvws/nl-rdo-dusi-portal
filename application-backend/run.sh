@@ -79,5 +79,5 @@ if $CLEAR ; then
 fi
 
 if $MIGRATE ; then
-    vendor/bin/sail artisan migrate:fresh --path=vendor/minvws/dusi-application-model/database/migrations
+    vendor/bin/sail artisan migrate:fresh
 fi

@@ -23,7 +23,6 @@ class ApplicationStageVersionFactory extends Factory
     public function definition(): array
     {
         $createdAt = $this->faker->dateTimeBetween('-1 year');
-
         return [
             'id' => $this->faker->uuid,
             'application_stage_id' => ApplicationStage::factory(),

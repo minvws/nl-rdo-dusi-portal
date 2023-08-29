@@ -26,13 +26,9 @@ services:
         networks:
             portal-web:
             portal-backend:
-            form-admin-web:
 
 networks:
     portal-web:
     portal-backend:
         name: portal-backend
-        external: true
-    form-admin-web:
-        name: form-admin-web
         external: true

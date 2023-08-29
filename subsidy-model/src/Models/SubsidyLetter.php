@@ -34,7 +34,7 @@ class SubsidyLetter extends Model
     /**
      * @var string|null
      */
-    protected $connection = Connection::FORM;
+    protected $connection = Connection::APPLICATION;
 
 
     protected $fillable = [

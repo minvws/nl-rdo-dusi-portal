@@ -1,6 +1,6 @@
 {
     "name": "minvws/dusi-subsidy-model",
-    "description": "Models and repositories for form-admin-web",
+    "description": "Models and repositories for the subsidy model",
     "type": "library",
     "license": "MIT",
     "authors": [

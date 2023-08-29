@@ -4,6 +4,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -22,6 +23,7 @@ class FieldFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
+            'subsidy_stage_id' => SubsidyStage::factory(),
             'code' => $this->faker->word,
             'title' => $this->faker->words(3, true),
             'type' => 'text',

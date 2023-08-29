@@ -23,10 +23,18 @@ class ApplicationRepositoryTest extends TestCase
 {
     private ApplicationRepository $repository;
 
+    private SubsidyVersion $subsidyVersion;
+    private SubsidyStage $subsidyStage;
+
+
     protected function setUp(): void
     {
         parent::setUp();
-
+        $subsidy = Subsidy::factory()->create([
+            'title' => 'some_subsidy_title',
+        ]);
+        $this->subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create();
+        $this->subsidyStage = SubsidyStage::factory()->for($this->subsidyVersion)->create(['stage' => 1]);
         $this->repository = new ApplicationRepository();
     }
 
@@ -35,31 +43,21 @@ class ApplicationRepositoryTest extends TestCase
      */
     public function testGetApplicationWith()
     {
-        $subsidy = Subsidy::factory()->create(
-            [
-                'title' => 'some_subsidy_title',
-            ]
-        );
-        $subsidyVersion = SubsidyVersion::factory()->create(
-            [
-                'subsidy_id' => $subsidy->id,
-            ]
-        );
         // Create a test application
-        $application = Application::factory()->create(
-            [
+        $application = Application::factory()
+            ->for($this->subsidyVersion)
+            ->create(
+                [
                 'application_title' => 'some_application_title',
                 'updated_at' => new \DateTime('now'),
                 'created_at' => new \DateTime('now'),
                 'final_review_deadline' => new \DateTime('now'),
-                'subsidy_version_id' => $subsidyVersion->id,
-            ]
-        );
-        $appStageId = ApplicationStage::factory()->create(
-            [
-                'application_id' => $application->id,
-            ]
-        )->id;
+                ]
+            );
+        $appStageId = ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage)
+            ->create()->id;
         ApplicationStageVersion::factory()->create(
             [
                 'application_stage_id' => $appStageId,
@@ -82,8 +80,9 @@ class ApplicationRepositoryTest extends TestCase
         ];
         $appFilter = ApplicationsFilter::fromArray($filter);
         // Test valid application
-        $foundApplication = $this->repository->filterApplications($appFilter);
-        $this->assertInstanceOf(Application::class, $foundApplication->first());
+        $foundApplication = $this->repository->filterApplications($appFilter)->first();
+        $this->assertInstanceOf(Application::class, $foundApplication);
+        $this->assertEquals($foundApplication->subsidyVersion->id, $this->subsidyVersion->id);
 
         // Test invalid application
         $filter = [
@@ -99,7 +98,9 @@ class ApplicationRepositoryTest extends TestCase
     public function testGetApplication()
     {
         // Create a test application
-        $application = Application::factory()->create();
+        $application = Application::factory()
+            ->for($this->subsidyVersion)
+            ->create();
 
         // Test valid application
         $foundApplication = $this->repository->getApplication($application->id);
@@ -141,10 +142,9 @@ class ApplicationRepositoryTest extends TestCase
     public function testGetAnswer()
     {
         // Create test models
-        $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->create(['subsidy_id' => $subsidy->id]);
-        $subsidyStage = SubsidyStage::factory()->create(['subsidy_version_id' => $subsidyVersion->id]);
-        $field = Field::factory()->create(['subsidy_stage_id' => $subsidyStage->id]);
+        $field = Field::factory()
+            ->for($this->subsidyStage)
+            ->create();
         $applicationStageVersion = ApplicationStageVersion::factory()->create();
         Answer::factory()->create([
             'application_stage_version_id' => $applicationStageVersion->id,
@@ -154,29 +154,25 @@ class ApplicationRepositoryTest extends TestCase
         $foundAnswer = $this->repository->getAnswer($applicationStageVersion, $field);
         $this->assertInstanceOf(Answer::class, $foundAnswer);
 
-        $field2 = Field::factory()->create(['subsidy_stage_id' => $subsidyStage->id]);
+        $field2 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
         $this->assertNull($this->repository->getAnswer($applicationStageVersion, $field2));
     }
 
     public function testMakeApplicationForSubsidyVersion()
     {
-        // Create a test subsidy version
-        $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->create(['subsidy_id' => $subsidy->id]);
-
         // Test make application for subsidy version
-        $application = $this->repository->makeApplicationForSubsidyVersion($subsidyVersion);
+        $application = $this->repository->makeApplicationForSubsidyVersion($this->subsidyVersion);
         $this->assertInstanceOf(Application::class, $application);
-        $this->assertEquals($subsidyVersion->id, $application->subsidy_version_id);
+        $this->assertEquals($this->subsidyVersion->id, $application->subsidy_version_id);
     }
 
     public function testMakeApplicationStage()
     {
         // Create test models
-        $application = Application::factory()->create();
-        $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->create(['subsidy_id' => $subsidy->id]);
-        $subsidyStage = SubsidyStage::factory()->create(['subsidy_version_id' => $subsidyVersion->id]);
+        $application = Application::factory()
+            ->for($this->subsidyVersion)
+            ->create();
+        $subsidyStage = SubsidyStage::factory()->create(['subsidy_version_id' => $this->subsidyVersion->id]);
 
         // Test make application stage
         $applicationStage = $this->repository->makeApplicationStage($application, $subsidyStage);
@@ -199,10 +195,7 @@ class ApplicationRepositoryTest extends TestCase
     public function testMakeAnswer()
     {
         // Create test models
-        $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->create(['subsidy_id' => $subsidy->id]);
-        $subsidyStage = SubsidyStage::factory()->create(['subsidy_version_id' => $subsidyVersion->id]);
-        $field = Field::factory()->create(['subsidy_stage_id' => $subsidyStage->id]);
+        $field = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
         $applicationStageVersion = ApplicationStageVersion::factory()->create();
 
         // Test make answer
@@ -215,7 +208,9 @@ class ApplicationRepositoryTest extends TestCase
     public function testSaveApplication()
     {
         // Create a test application
-        $application = Application::factory()->make();
+        $application = Application::factory()
+            ->for($this->subsidyVersion)
+            ->make();
 
         // Test save application
         $this->repository->saveApplication($application);
@@ -237,7 +232,7 @@ class ApplicationRepositoryTest extends TestCase
     public function testSaveApplicationStage()
     {
         // Create a test application stage
-        $applicationStage = ApplicationStage::factory()->make();
+        $applicationStage = ApplicationStage::factory()->for($this->subsidyStage)->make();
 
         // Test save application stage
         $this->repository->saveApplicationStage($applicationStage);
@@ -258,7 +253,7 @@ class ApplicationRepositoryTest extends TestCase
     public function testGetLatestApplicationStageVersion()
     {
         // Create test models
-        $applicationStage = ApplicationStage::factory()->create();
+        $applicationStage = ApplicationStage::factory()->for($this->subsidyStage)->create();
         $now = Carbon::now();
         $expectedApplicationStageVersion = ApplicationStageVersion::factory()->create([
             'application_stage_id' => $applicationStage->id,
@@ -285,35 +280,26 @@ class ApplicationRepositoryTest extends TestCase
 
     public function testGetAnswersForApplicationStagesUpToIncluding(): void
     {
-        Subsidy::query()->truncate();
-        SubsidyVersion::query()->truncate();
-        Application::query()->truncate();
-        ApplicationStage::query()->truncate();
-        ApplicationStageVersion::query()->truncate();
+//        Subsidy::query()->truncate();
+//        SubsidyVersion::query()->truncate();
+//        Application::query()->truncate();
+//        ApplicationStage::query()->truncate();
+//        ApplicationStageVersion::query()->truncate();
 
-        $subsidy = Subsidy::factory()->create();
 
-        $subsidyVersion = SubsidyVersion::factory()->create([
-            'subsidy_id' => $subsidy->id
-        ]);
 
-        $subsidyStage1 = SubsidyStage::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
-            'stage' => 1
-        ]);
-
-        $stage1Field1 = Field::factory()->create(['subsidy_stage_id' => $subsidyStage1->id]);
-        $stage1Field2 = Field::factory()->create(['subsidy_stage_id' => $subsidyStage1->id]);
+        $stage1Field1 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
+        $stage1Field2 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
 
         $subsidyStage2 = SubsidyStage::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
+            'subsidy_version_id' => $this->subsidyVersion->id,
             'stage' => 2
         ]);
 
         $stage2Field1 = Field::factory()->create(['subsidy_stage_id' => $subsidyStage2->id]);
 
         $application = Application::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
+            'subsidy_version_id' => $this->subsidyVersion->id,
             'updated_at' => Carbon::today(),
             'created_at' => Carbon::today(),
             'final_review_deadline' => Carbon::today(),
@@ -321,8 +307,8 @@ class ApplicationRepositoryTest extends TestCase
 
         $applicationStage1 = ApplicationStage::factory()->create([
             'application_id' => $application->id,
-            'subsidy_stage_id' => $subsidyStage1->id,
-            'stage' => $subsidyStage1->stage
+            'subsidy_stage_id' => $this->subsidyStage->id,
+            'stage' => $this->subsidyStage->stage
         ]);
 
         $applicationStage1Version = ApplicationStageVersion::factory()->create([

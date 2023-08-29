@@ -29,7 +29,7 @@ class ApplicationFilterResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $subsidyTitle = DB::connection('pgsql_form')
+        $subsidyTitle = DB::connection('pgsql_application')
             ->table('subsidy_versions')
             ->join('subsidies', 'subsidies.id', '=', 'subsidy_versions.subsidy_id')
             ->where('subsidy_versions.id', $this->subsidy_version_id)

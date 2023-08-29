@@ -24,7 +24,7 @@ class SubsidyControllerTest extends TestCase
     use DatabaseTransactions;
     use WithFaker;
 
-    protected array $connectionsToTransact = [Connection::FORM];
+    protected array $connectionsToTransact = [Connection::APPLICATION];
 
     private Subsidy $subsidy1;
     private Subsidy $subsidy2;
