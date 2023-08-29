@@ -258,8 +258,6 @@ readonly class ApplicationService
      */
     public function processFormSubmit(FormSubmit $formSubmit): ApplicationStage
     {
-        ray()->newScreen();
-        ray('Processing form submit', $formSubmit);
         $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
@@ -273,7 +271,6 @@ readonly class ApplicationService
 
             $validator = $this->validationService->getValidator($applicationStageVersion, $values);
 
-            ray($validator->fails(), $validator->failed());
             // TODO: Fail on upload field should cleanup ... should delete file and empty answer
             // TODO: Empty answers on fail of field, so user should update the field
 

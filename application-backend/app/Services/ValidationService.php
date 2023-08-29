@@ -28,9 +28,6 @@ class ValidationService
      */
     public function getValidator(ApplicationStageVersion $applicationStageVersion, array $fieldValues): Validator
     {
-        ray('fieldValues', $fieldValues);
-        ray('getValidator', $this->getFieldValuesRules($fieldValues), $this->getFieldValuesData($fieldValues));
-
         return $this->validatorFactory->getValidator(
             applicationStageVersion: $applicationStageVersion,
             fieldValues: $fieldValues,
