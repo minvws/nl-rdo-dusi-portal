@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Bridge\Server\Server;
 use MinVWS\DUSi\Shared\Bridge\Shared\Connection;
 use MinVWS\DUSi\Shared\Bridge\Tests\DTO\EchoParams;
 use MinVWS\DUSi\Shared\Bridge\Tests\DTO\EchoResult;
+use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 
 use function pcntl_fork;
@@ -31,7 +32,7 @@ class ClientServerTest extends TestCase
 
         // child process, start server and wait indefinitely
         $conn = Connection::create(host: 'rabbitmq');
-        $server = new Server($conn);
+        $server = new Server($conn, new Logger('test'));
 
         $conn->connection->channel()->queue_purge('rpc_queue', true);
 

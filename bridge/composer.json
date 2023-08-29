@@ -20,7 +20,8 @@
         "orchestra/testbench": "^8.6",
         "phpmd/phpmd": "^2.13",
         "nunomaduro/larastan": "^2.0",
-        "laravel/framework": "^10.0"
+        "laravel/framework": "^10.0",
+        
     },
     "suggest": {
         "laravel/framework": "^10.0"

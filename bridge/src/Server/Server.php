@@ -7,7 +7,6 @@ namespace MinVWS\DUSi\Shared\Bridge\Server;
 use Closure;
 use Exception;
 use MinVWS\Codable\Coding\Codable;
-use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Bridge\Shared\DTO\Binding;
@@ -16,6 +15,7 @@ use MinVWS\DUSi\Shared\Bridge\Shared\DTO\MethodResult;
 use MinVWS\DUSi\Shared\Bridge\Shared\Connection;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Log\LoggerInterface;
 
 class Server
 {
@@ -24,7 +24,7 @@ class Server
      */
     private array $bindings = [];
 
-    public function __construct(private readonly Connection $connection)
+    public function __construct(private readonly Connection $connection, private readonly LoggerInterface $logger)
     {
     }
 
@@ -73,8 +73,11 @@ class Server
 
     private function onMethodCall(AMQPMessage $request): void
     {
+        $this->logger->debug('Request message body: ' . $request->body);
+
         try {
             $call = $this->decodeMethodCall($request->body);
+            $this->logger->info("Received call for method \"{$call->method}\"");
 
             $binding = $this->bindings[$call->method];
             assert($binding instanceof Binding);
@@ -89,6 +92,9 @@ class Server
             $channel = $request->getChannel();
             assert(!is_null($channel));
 
+            $this->logger->info("Sending result for method \"{$call->method}\"");
+            $this->logger->debug('Response message body: ' . $body);
+
             $msg = new AMQPMessage($body, $properties);
             $channel->basic_publish(
                 $msg,
@@ -96,9 +102,11 @@ class Server
             );
 
             $request->ack();
-        } catch (Exception) {
+        } catch (Exception $e) {
             $request->nack();
-            // TODO: log
+
+            $this->logger->error('Error processing message: ' . $e->getMessage());
+            $this->logger->debug('Trace: ' . $e->getTraceAsString());
         }
     }
 
