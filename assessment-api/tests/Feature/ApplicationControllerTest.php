@@ -18,7 +18,7 @@ class ApplicationControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected array $connectionsToTransact = [Connection::APPLICATION, Connection::FORM];
+    protected array $connectionsToTransact = [Connection::APPLICATION];
     private Application $application;
     private ApplicationStage $applicationStage;
     protected function setUp(): void

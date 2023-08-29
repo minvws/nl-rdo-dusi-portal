@@ -1,4 +1,4 @@
-@props(['for'])
+@props(['for', 'errors'])
 
 @if ($errors->has($for))
     <p {{ $attributes->merge(['class' => 'error']) }}>

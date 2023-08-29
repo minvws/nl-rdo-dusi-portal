@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'active_until',
     ];
 
     /**
@@ -47,7 +49,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'active_until' => 'timestamp',
+        'active_until' => 'datetime',
     ];
 
     /**
@@ -62,6 +64,33 @@ class User extends Authenticatable
     public function organisations(): BelongsToMany
     {
         return $this->belongsToMany(Organisation::class, 'organisation_role')
-            ->using(OrganisationRole::class);
+            ->using(OrganisationRole::class)
+            ->withPivot('role_name');
+    }
+
+    public function isAdministrator(): bool
+    {
+        return $this->organisations()
+            ->wherePivot('role_name', 'admin')
+            ->exists();
+    }
+
+    public function getActiveAttribute(): bool
+    {
+        if ($this->active_until === null) {
+            return true;
+        }
+
+        if (!($this->active_until instanceof Carbon)) {
+            return false;
+        }
+
+        return $this->active_until->isFuture();
+    }
+
+    public function twoFactorQrCodeSvgWithAria(): string
+    {
+        $svgTag = $this->twoFactorQrCodeSvg();
+        return str_replace('<svg ', '<svg role="img"focusable="false" aria-label="QR-code" ', $svgTag);
     }
 }

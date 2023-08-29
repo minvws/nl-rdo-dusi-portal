@@ -27,7 +27,7 @@ class SubsidyRepositoryTest extends TestCase
     use DatabaseMigrations;
     use WithFaker;
 
-    protected array $connectionsToTransact = [Connection::FORM];
+    protected array $connectionsToTransact = [Connection::APPLICATION];
 
     public function testGetSubsidy(): void
     {

@@ -30,7 +30,7 @@ class SubsidyStage extends Model
     use HasUuids;
     use HasFactory;
 
-    protected $connection = Connection::FORM;
+    protected $connection = Connection::APPLICATION;
 
     public const UPDATED_AT = null;
 

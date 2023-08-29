@@ -7,7 +7,7 @@ and running is a matter of:
 
 Running the init script
 
-### TL;DR:
+### TL;DR
 
 If you already know how all of this works, this should be all the information
 you need:
@@ -22,10 +22,10 @@ By default the admin panel is accessible at http://localhost:8002
 
 ## Usage
 
-
 ## Development
 
-This application has been developed in Laravel, please see the [Laravel docs][laravel-docs]
+This application has been developed in Laravel, please see the
+[Laravel docs][laravel-docs]
 for Laravel specific details.
 
 ### Sail
@@ -34,13 +34,16 @@ for Laravel specific details.
 
 - Whenever something changes in the docker setup, don't forget to re-build the
   containers:
+
   ```sh
   sail up --build --remove-orphans
   ```
 
 - A script that checks the develop environment is run when `sail up` is run.
-  This script will report any problems and try to make suggestions on how to resolve things.
-  These suggestions can usually be run inside the Docker container (using `sail exec laraval.test some-command`).
+This script will report any problems and try to make suggestions on how to
+resolve things.
+These suggestions can usually be run inside the Docker container (using
+`sail exec laraval.test some-command`).
 
 - Docker-compose might show this warning:
   ```WARNING: The [...] variable is not set. Defaulting to a blank string.```

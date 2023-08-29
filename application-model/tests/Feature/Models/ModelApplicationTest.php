@@ -22,7 +22,7 @@ class ModelApplicationTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected array $connectionsToTransact = [Connection::APPLICATION, ConnectionSubsidy::FORM];
+    protected array $connectionsToTransact = [Connection::APPLICATION];
     private Application $application;
     private ApplicationStage $applicationStage;
     private ApplicationStageVersion $applicationStageVersion;

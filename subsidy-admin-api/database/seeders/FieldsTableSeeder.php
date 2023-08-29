@@ -15,15 +15,6 @@ class FieldsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $sort = 0;
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'formOfAddress',
-            title: 'Aanspreekvorm',
-            options: ['Beste lezer', 'Beste heer', 'Beste mevrouw'],
-        );
-
         $this->createTextField(
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'firstName',
@@ -41,6 +32,12 @@ class FieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'lastName',
             title: 'Achternaam',
+        );
+
+        $this->createDateField(
+            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            code: 'dateOfBirth',
+            title: 'Geboortedatum',
         );
 
         $this->createTextField(
@@ -105,21 +102,14 @@ class FieldsTableSeeder extends Seeder
         $this->createBankAccountField(
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'bankAccountNumber',
-            title: 'Rekeningnummer',
+            title: 'IBAN',
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'bankAccountHolder',
-            title: 'Tenaamstelling rekeningnummer',
+            title: 'Naam rekeninghouder',
             maxLength: 50,
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'communicationPreference',
-            title: 'Communicatievoorkeur',
-            options: ['Digitaal', 'Post']
         );
 
         $this->createUploadField(
@@ -137,19 +127,25 @@ class FieldsTableSeeder extends Seeder
         $this->createUploadField(
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'proofOfMedicalTreatment',
-            title: 'Medische verklaring behandeltraject',
+            title: 'Verklaring behandeltraject',
         );
 
         $this->createUploadField(
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'proofOfTypeOfMedicalTreatment',
-            title: 'Medische verklaring type behandeling',
+            title: 'Verklaring type behandeling',
         );
 
         $this->createCheckboxField(
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'permissionToProcessPersonalData',
             title: 'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',
+        );
+
+        $this->createCheckboxField(
+            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            code: 'truthfullyCompleted',
+            title: ''
         );
 
         $this->createMultiSelectField(

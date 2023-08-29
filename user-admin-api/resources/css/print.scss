@@ -1,0 +1,52 @@
+/*---------------------------------------------------------------*/
+/*-------------------------- print.scss -------------------------*/
+/*---------------------------------------------------------------*/
+@media print {
+  body > {
+    header > nav {
+      display: none;
+    }
+
+    footer {
+      display: none;
+    }
+
+    main.sidemenu > nav {
+      display: none;
+    }
+  }
+
+  button.to-top.ro-icon,
+  a.button.to-top.ro-icon {
+    display: none;
+  }
+
+  pre {
+    break-inside: avoid;
+  }
+
+  div,
+  p {
+    &.code-block,
+    &.error,
+    &.warning,
+    &.explanation,
+    &.confirmation,
+    &.primary {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+
+  .error,
+  .warning,
+  .explanation,
+  .confirmation,
+  .primary {
+    -webkit-print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none;
+  }
+}
