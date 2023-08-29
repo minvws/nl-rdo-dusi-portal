@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Ramsey\Uuid\Uuid;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 
 /**
  * @extends Factory<SubsidyVersion>
@@ -23,6 +24,7 @@ class SubsidyVersionFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
+            'subsidy_id' => Subsidy::factory(),
             'version' => $this->faker->randomDigitNotZero(),
             'status' => VersionStatus::Draft->value,
             'subsidy_page_url' => $this->faker->url(),

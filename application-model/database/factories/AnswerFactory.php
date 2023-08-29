@@ -5,6 +5,7 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 /**
  * @extends Factory<Answer>
@@ -19,7 +20,7 @@ class AnswerFactory extends Factory
             'id' => $this->faker->uuid,
             'application_stage_version_id' => ApplicationStageVersion::factory(),
             'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
-            'field_id' => $this->faker->uuid,
+            'field_id' => Field::factory(),
             'encrypted_answer' => $this->faker->text,
         ];
     }

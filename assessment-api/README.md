@@ -7,7 +7,7 @@ and running is a matter of:
 
 Running the init script
 
-### TL;DR:
+### TL;DR
 
 If you already know how all of this works, this should be all the information
 you need:
@@ -22,7 +22,6 @@ By default the portal is accessable at http://localhost:80
 
 ## Usage
 
-
 ## Development
 
 This application has been developed in Laravel, please see the [Laravel docs][laravel-docs]
@@ -36,6 +35,7 @@ for Laravel specific details.
 
 - Whenever something changes in the docker setup, don't forget to re-build the
   containers:
+
   ```sh
   docker-compose up --build --remove-orphans
   ```

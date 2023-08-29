@@ -9,7 +9,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 return new class extends Migration
 {
-    protected $connection = Connection::FORM;
+    protected $connection = Connection::APPLICATION;
 
     /**
      * Run the migrations.

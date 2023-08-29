@@ -19,7 +19,6 @@ abstract class TestCase extends BaseTestCase
 
     protected function loadCustomMigrations(): void
     {
-        Artisan::call('db:wipe', ['--database' => 'pgsql_form']);
         Artisan::call('db:wipe', ['--database' => 'pgsql_application']);
         Artisan::call('migrate:fresh');
     }

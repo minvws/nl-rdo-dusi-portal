@@ -2002,7 +2002,7 @@
             "dist": {
                 "type": "path",
                 "url": "../subsidy-model",
-                "reference": "ca46407a55354876ea7b2129f4a7d2b53d62eafb"
+                "reference": "b1e98fa119251911ef218a4e4a2343eaa1cc8790"
             },
             "require": {
                 "laravel/framework": "^10.16",
@@ -2061,7 +2061,7 @@
                     "email": "54805624+thomas-samoht@users.noreply.github.com"
                 }
             ],
-            "description": "Models and repositories for form-admin-web",
+            "description": "Models and repositories for the subsidy model",
             "transport-options": {
                 "relative": true
             }

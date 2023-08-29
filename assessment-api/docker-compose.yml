@@ -24,7 +24,6 @@ services:
             - '../subsidy-model:/var/www/subsidy-model'
         networks:
             portal-backend:
-            form-admin-web:
             user-admin-web:
 
 
@@ -32,6 +31,4 @@ networks:
     portal-backend:
         external: true
     user-admin-web:
-        external: true
-    form-admin-web:
         external: true

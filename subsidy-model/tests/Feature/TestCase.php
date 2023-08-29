@@ -23,15 +23,15 @@ class TestCase extends BaseTestCase
     {
         // Setup default database to use sqlite :memory:
         tap($app->make('config'), function (Repository $config) {
-            $config->set('database.default', 'pgsql_form');
-            $config->set('database.connections.pgsql_form', [
+            $config->set('database.default', 'pgsql_application');
+            $config->set('database.connections.pgsql_application', [
                 'driver' => 'pgsql',
                 'url' => env('DATABASE_FORM_URL'),
-                'host' => env('DB_FORM_HOST', '127.0.0.1'),
-                'port' => env('DB_FORM_PORT', '5432'),
-                'database' => env('DB_FORM_DATABASE', 'forge'),
-                'username' => env('DB_FORM_USERNAME', 'forge'),
-                'password' => env('DB_FORM_PASSWORD', ''),
+                'host' => env('DB_APPLICATION_HOST', '127.0.0.1'),
+                'port' => env('DB_APPLICATION_PORT', '5432'),
+                'database' => env('DB_APPLICATION_DATABASE', 'forge'),
+                'username' => env('DB_APPLICATION_USERNAME', 'forge'),
+                'password' => env('DB_APPLICATION_PASSWORD', ''),
                 'charset' => 'utf8',
                 'prefix' => '',
                 'prefix_indexes' => true,

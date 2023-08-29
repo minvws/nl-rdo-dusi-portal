@@ -64,4 +64,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Organisation::class, 'organisation_role')
             ->using(OrganisationRole::class);
     }
+
+    public function isAdministrator(): bool
+    {
+        return $this->organisations()
+            ->wherePivot('role_name', 'admin')
+            ->exists();
+    }
 }

@@ -15,7 +15,7 @@ class SubsidyStageUI extends Model
     use HasUuids;
     use HasFactory;
 
-    protected $connection = Connection::FORM;
+    protected $connection = Connection::APPLICATION;
 
     protected $table = 'subsidy_stage_uis';
 

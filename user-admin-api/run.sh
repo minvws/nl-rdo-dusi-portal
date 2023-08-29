@@ -71,6 +71,7 @@ fi
 if $INSTALL ; then
     composer install
     npm install
+    npm run build
 fi
 
 vendor/bin/sail up -d --remove-orphans
@@ -80,10 +81,10 @@ if $CLEAR ; then
 fi
 
 # TODO: Run migration to default database
-#if $MIGRATE ; then
-#    vendor/bin/sail artisan migrate:fresh
-#    vendor/bin/sail artisan db:seed --class="MinVWS\\DUSi\\Subsidy\\Admin\\API\\Database\\Seeders\\DatabaseSeeder"
-#fi
+if $MIGRATE ; then
+    vendor/bin/sail artisan migrate:fresh
+    vendor/bin/sail artisan db:seed --class="MinVWS\\DUSi\\User\\Admin\\API\\Database\\Seeders\\DatabaseSeeder"
+fi
 
 #docker-compose exec user-admin-web php artisan migrate
 #
