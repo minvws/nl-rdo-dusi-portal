@@ -32,6 +32,7 @@ class FileUploadRule implements
     /**
      * Run the validation rule.
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) no need to check $value because answer should already exist
      * @param string $attribute
      * @param mixed $value The value under validation does not need to be checked because answer should already exist.
      * @param Closure(string): PotentiallyTranslatedString $fail

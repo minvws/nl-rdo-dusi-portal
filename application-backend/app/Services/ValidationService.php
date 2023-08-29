@@ -53,6 +53,7 @@ class ValidationService
             FieldType::CustomBankAccount => [],
             FieldType::CustomCountry => [],
             FieldType::CustomPostalCode => [],
+            FieldType::Date => [],
             FieldType::Multiselect => ['array', ...$this->getSelectFieldRules($field)],
             FieldType::Select => [...$this->getSelectFieldRules($field)],
             FieldType::Text => [...$this->getTextFieldRules($field)],
