@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use DateTimeImmutable;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -17,6 +18,10 @@ use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Models\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationIdentityMismatchException;
@@ -29,6 +34,7 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -37,6 +43,7 @@ use Exception;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 use Throwable;
 
 /**
@@ -388,5 +395,22 @@ readonly class ApplicationService
     public function processFileUpload(FileUpload $fileUpload): void
     {
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function listApplications(ApplicationListParams $params): ApplicationList
+    {
+        // TODO: fill list based on the applications in `applications`
+        return new ApplicationList([
+            new ApplicationListApplication(
+                Uuid::uuid4()->toString(),
+                new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie'),
+                new DateTimeImmutable(),
+                new DateTimeImmutable("+30 days"),
+                ApplicationStatus::New
+            )
+        ]);
     }
 }
