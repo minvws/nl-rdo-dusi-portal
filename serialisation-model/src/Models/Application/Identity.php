@@ -19,16 +19,22 @@ readonly class Identity implements Codable
     ) {
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameters)
+     */
     public static function decode(DecodingContainer $container, ?Decodable $object = null): static
     {
         $type = IdentityType::tryFrom($container->{'type'}->decodeString());
         if ($type === null) {
-            throw new CodablePathException($container->getPath(), "Invalid identity type at path " . CodablePathException::convertPathToString($container->getPath()));
+            throw new CodablePathException(
+                $container->getPath(),
+                "Invalid identity type at path " . CodablePathException::convertPathToString($container->getPath())
+            );
         }
 
         $identifier = $container->{'identifier'}->decodeString();
 
-        return new self($type, $identifier);
+        return new static($type, $identifier);
     }
 
     public function encode(EncodingContainer $container): void

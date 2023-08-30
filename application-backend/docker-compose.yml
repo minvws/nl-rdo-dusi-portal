@@ -82,7 +82,6 @@ services:
             - '../bridge:/var/www/bridge'
         networks:
             portal-backend:
-            form-admin-web:
         depends_on:
             - pgsql
 

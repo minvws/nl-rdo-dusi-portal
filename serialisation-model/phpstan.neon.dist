@@ -7,3 +7,7 @@ parameters:
 
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
+
+    universalObjectCratesClasses:
+        - MinVWS\Codable\Decoding\DecodingContainer
+        - MinVWS\Codable\Encoding\EncodingContainer

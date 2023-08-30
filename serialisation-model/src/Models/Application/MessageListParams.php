@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
@@ -27,13 +28,16 @@ class MessageListParams implements Codable
     ) {
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameters)
+     */
     public static function decode(DecodingContainer $container, ?Decodable $object = null): static
     {
         $identity = $container->{'identity'}->decodeObject(Identity::class);
         $periodStart = $container->{'periodStart'}->decodeDateTimeIfPresent(self::DATE_FORMAT);
         $periodEnd = $container->{'periodEnd'}->decodeDateTimeIfPresent(self::DATE_FORMAT);
         $subsidies = $container->{'subsidies'}->decodeArrayifPresent('string');
-        return new self($identity, $periodStart, $periodEnd, $subsidies);
+        return new static($identity, $periodStart, $periodEnd, $subsidies);
     }
 
     public function encode(EncodingContainer $container): void
