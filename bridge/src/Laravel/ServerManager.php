@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\DUSi\Shared\Bridge\Server\Server;
+use Psr\Log\LoggerInterface;
 use ReflectionMethod;
 
 class ServerManager
@@ -18,7 +19,8 @@ class ServerManager
 
     public function __construct(
         private readonly Application $app,
-        private readonly ConnectionManager $connectionManager
+        private readonly ConnectionManager $connectionManager,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -54,7 +56,7 @@ class ServerManager
         assert(!isset($config['connection']) || is_string($config['connection']));
         $connection = $this->connectionManager->connection($config['connection'] ?? null);
 
-        $server = new Server($connection);
+        $server = new Server($connection, $this->logger);
 
         assert(is_array($config['bindings']));
         foreach ($config['bindings'] as $method => $binding) {
@@ -64,7 +66,7 @@ class ServerManager
             $server->bind(
                 $method,
                 $binding['paramsClass'],
-                fn ($params) => $this->invokeCallback($binding['callback'], $params)
+                fn (Codable $params) => $this->invokeCallback($binding['callback'], $params)
             );
         }
 
@@ -81,7 +83,7 @@ class ServerManager
             }
         }
 
-        $result = $this->app->call($callback, [$params]);
+        $result = call_user_func($callback, $params);
         assert($result instanceof Codable);
         return $result;
     }
