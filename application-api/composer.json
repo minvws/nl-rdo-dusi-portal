@@ -79,8 +79,8 @@
     "prefer-stable": true,
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/minvws/nl-rdo-php-codable.git"
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-php-codable.git"
         },
         {
             "type": "git",
