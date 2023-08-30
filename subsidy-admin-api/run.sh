@@ -85,6 +85,5 @@ if $CLEAR ; then
 fi
 
 if $MIGRATE ; then
-    vendor/bin/sail artisan migrate:fresh
     vendor/bin/sail artisan db:seed --class="MinVWS\\DUSi\\Subsidy\\Admin\\API\\Database\\Seeders\\DatabaseSeeder"
 fi
