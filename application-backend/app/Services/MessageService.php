@@ -12,6 +12,9 @@ use Ramsey\Uuid\Uuid;
 
 class MessageService
 {
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function listMessages(MessageListParams $params): MessageList
     {
         // TODO: fill message list based on the available messages in `application_stage`
