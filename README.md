@@ -23,6 +23,19 @@ On Linux and Windows Subsystem for Linux use your package manager.
 apt-get install php8.2-cli php8.2-bcmath php8.2-curl php8.2-gd php8.2-xml php8.2-zip
 ```
 
+To run the backend applications you need to have docker installed. And
+because we use a private docker registry you need to be logged in to the
+registry. To do this run:
+
+```docker login ghcr.io --username <username>```
+
+In the prompt enter a personal access token with read:packages scope.
+This token can be created in your
+[GitHub account.](https://github.com/settings/tokens/new?scopes=read:packages&description=GitHub%20Container%20Registry%20Token)
+Finally, if you want to test if you are logged in, run the following command:
+
+```docker pull ghcr.io/minvws/nl-rdo-dusi-api-service```
+
 To run the backend applications simply run:
 
 ```shell

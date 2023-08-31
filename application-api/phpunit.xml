@@ -10,6 +10,7 @@
   </testsuites>
   <coverage/>
   <php>
+    <env name="HSM_PUBLIC_KEY_FILE_PATH" value="tests/secrets/public.key"/>
     <env name="APP_ENV" value="testing"/>
     <env name="BCRYPT_ROUNDS" value="4"/>
     <env name="CACHE_DRIVER" value="array"/>

@@ -8,6 +8,7 @@ use MinVWS\DUSi\Assessment\API\Models\Enums\UIType;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use MinVWS\DUSi\Assessment\API\Services\EncryptionService;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -17,18 +18,29 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 //TODO: Move logic to service
+
+/**
+ *  @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ApplicationSubsidyVersionResource extends JsonResource
 {
+    private string|null $publicKey;
+
     /**
      * Create a new resource instance.
      *
      * @param Application $application
      * @param SubsidyVersion $subsidyVersion
-     * @return void
+     * @param string|null $publicKey
      */
-    public function __construct(Application $application, SubsidyVersion $subsidyVersion)
-    {
+    public function __construct(
+        Application $application,
+        SubsidyVersion $subsidyVersion,
+        string|null $publicKey = null,
+        private EncryptionService $encryptionService,
+    ) {
         parent::__construct(['application' => $application, 'subsidyVersion' => $subsidyVersion]);
+        $this->publicKey = $publicKey;
     }
 
     /**
@@ -78,30 +90,32 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
     /**
      * @param string $value
-     * @param string $key
      * @return string
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @throws \Exception
      */
-    private function encrypt(string $value, string $key): string
+    private function encrypt(string $value): string
     {
-        //TODO encrypt
-        return base64_encode($value);
+        try {
+            if (isset($this->publicKey)) {
+                return $this->encryptionService->sodiumEncrypt($value, $this->publicKey);
+            } else {
+                return $value; // TODO: remove when frontend can decrypt the sodium
+            }
+        } catch (\SodiumException $e) {
+            throw new \SodiumException('Encryption failed', 0, $e);
+        }
     }
 
     /**
      * @param string $value
-     * @param string $key
      * @return string
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @throws \Exception
      */
-    private function decrypt(string $value, string $key): string
+    private function decrypt(string $value): string
     {
-        //TODO decrypt
-        try {
-            return base64_decode($value);
-        } catch (\Exception $e) {
-            return $value;
-        }
+        return $this->encryptionService->decryptData($value);
     }
 
     /**
@@ -111,18 +125,16 @@ class ApplicationSubsidyVersionResource extends JsonResource
      */
     private function createValues(?ApplicationStageVersion $applicationStageVersion, Collection $fields): ?array
     {
-        $encryptionKey = "";
         $fieldsById = $fields->mapToDictionary(function ($field) {
             return [ $field->id => $field->code ];
         })
             ->map(function ($item) {
                 return $item[0];
             });
-        return $applicationStageVersion?->answers->map(function ($answer) use ($encryptionKey, $fieldsById) {
+        return $applicationStageVersion?->answers->map(function ($answer) use ($fieldsById) {
             return [
                 $fieldsById[$answer->field_id] => $this->encrypt(
-                    $this->decrypt($answer->encrypted_answer, $encryptionKey),
-                    $encryptionKey
+                    $this->decrypt($answer->encrypted_answer)
                 )
             ];
         })->toArray();

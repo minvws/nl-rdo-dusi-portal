@@ -64,6 +64,10 @@ jobs:
           coverage: pcov
           extensions: xdebug, pgsql
 
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -80,13 +84,15 @@ jobs:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Copy .env
-        continue-on-error: true
-        run: cp -n .env.example .env
-
       - name: Generate key
         continue-on-error: true
         run: php artisan key:generate
+
+      - name: Generate Public Key
+        run: |
+          mkdir -p 'secrets'
+          openssl genpkey -algorithm RSA -out 'secrets/private.key'
+          openssl rsa -pubout -in 'secrets/private.key' -out 'secrets/public.key'
 
       - name: Execute tests with Code Coverage
         env:

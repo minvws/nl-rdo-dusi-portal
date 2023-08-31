@@ -86,6 +86,20 @@ services:
         depends_on:
             - pgsql
 
+    hsm-api-service:
+        image: ghcr.io/minvws/nl-rdo-hsm-api-service:v0.2.0
+        environment:
+            USER_ID: '${WWWUSER:-1000}'
+            GROUP_ID: '${WWWGROUP:-1000}'
+        volumes:
+            - './secrets:/src/secrets'
+        ports:
+            - ${HSM_PORT:-9104}:8000
+        networks:
+            portal-backend:
+                aliases:
+                    - portal-backend-hsm-api-service
+
 networks:
     portal-backend:
         name: portal-backend

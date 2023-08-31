@@ -24,7 +24,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationIdentityMismatchException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
@@ -76,7 +76,7 @@ readonly class ApplicationService
     }
 
     /**
-     * @throws ApplicationMetadataMismatchException|ApplicationIdentityMismatchException
+     * @throws ApplicationMetadataMismatchException|EncryptionException
      */
     private function validateIdentityAndApplicationMetadata(
         Identity $identity,
@@ -88,7 +88,7 @@ readonly class ApplicationService
             $application->identity->type !== $identity->type || // @phpstan-ignore-line
             $application->identity->identifier !== $identity->identifier
         ) {
-            throw new ApplicationIdentityMismatchException(
+            throw new EncryptionException(
                 sprintf('Identity mismatch for app with identifier "%s"', $applicationStage->id)
             );
         }
@@ -243,12 +243,11 @@ readonly class ApplicationService
         mixed $value
     ): void {
         $answer = $this->appRepo->makeAnswer($applicationStageVersion, $field);
-        $json = json_encode($value);
+        $json = json_encode($value, JSON_UNESCAPED_SLASHES);
         if (!is_string($json)) {
             throw new Exception('JSON encoding failed. Invalid data provided.');
         }
-        $answer->encrypted_answer = $this->encryptionService
-            ->encryptFieldValue($json);
+        $answer->encrypted_answer = $this->encryptionService->encryptData($json);
         $this->appRepo->saveAnswer($answer);
     }
 
@@ -317,11 +316,14 @@ readonly class ApplicationService
 
         $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
 
+            $formSubmit = $this->encryptionService->decryptFormSubmit($formSubmit);
+
+            $json = $formSubmit->encryptedData;
+
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
                 $this->getIdentityFromSerialisation($formSubmit->identity),
                 $formSubmit->applicationMetadata
             );
-            $json = $this->encryptionService->decryptFormSubmit($formSubmit->encryptedData);
 
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
             $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
@@ -343,6 +345,7 @@ readonly class ApplicationService
      */
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
+        $fileUpload = $this->encryptionService->decryptFileUpload($fileUpload);
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
             $this->getIdentityFromSerialisation($fileUpload->identity),
             $fileUpload->applicationMetadata
@@ -359,9 +362,8 @@ readonly class ApplicationService
             );
         }
 
-        $decryptedContents = base64_decode($fileUpload->encryptedContents); // TODO: decrypt
-        $size = strlen($decryptedContents);
-        $encryptedContents = $decryptedContents; // TODO: encrypt based on app specific key
+        $size = strlen($fileUpload->encryptedContents);
+        $encryptedContents = $fileUpload->encryptedContents; // TODO: encrypt based on app specific key
 
         $value = [
             'mimeType' => $fileUpload->mimeType,
@@ -383,6 +385,7 @@ readonly class ApplicationService
         );
 
         $path = $this->getFilePath($applicationStage, $field);
+        $encryptedContents = $this->encryptionService->encryptData($encryptedContents);
         $result = $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($path, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');

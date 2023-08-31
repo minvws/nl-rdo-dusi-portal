@@ -10,7 +10,16 @@
   </testsuites>
   <coverage/>
   <php>
-    <env name="APP_ENV" value="testing"/>
+      <env name="APP_ENV" value="testing"/>
+      <env name="HSM_API_MODULE" value="softhsm"/>
+      <env name="HSM_API_SLOT" value="SoftHSMLabel"/>
+      <env name="HSM_API_ENCRYPTION_KEY_LABEL" value="SoftHSMLabel"/>
+      <env name="HSM_API_CLIENT_CERTIFICATE_PATH" value="secrets/pki/issued/softhsm^SoftHSMLabel^*=create,destroy,use,import.crt"/>
+      <env name="HSM_API_CLIENT_CERTIFICATE_KEY_PATH" value="secrets/pki/private/softhsm^SoftHSMLabel^*=create,destroy,use,import.key"/>
+      <env name="HSM_API_ENDPOINT_URL" value="https://portal-backend-hsm-api-service:8000/hsm"/>
+
+      <env name="HSM_PUBLIC_KEY_FILE_PATH" value="secrets/public.key"/>
+
     <env name="BCRYPT_ROUNDS" value="4"/>
     <env name="CACHE_DRIVER" value="array"/>
     <!-- <env name="DB_CONNECTION" value="sqlite"/> -->

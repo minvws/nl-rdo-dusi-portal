@@ -8,6 +8,7 @@ FORCE=false
 INSTALL=false
 IGNORE_PLATFORM_REQS=false
 MIGRATE=false
+NOPROMPTS=true
 
 # Function to display script usage
 function display_usage() {
@@ -37,6 +38,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -v | --verbose)
             set -x
+            NOPROMPTS=false
             shift
             ;;
         -i | --install)
@@ -101,3 +103,5 @@ fi
 if $MIGRATE ; then
     vendor/bin/sail artisan migrate:fresh
 fi
+
+vendor/bin/sail artisan hsm:local-init --no-prompts=$NOPROMPTS

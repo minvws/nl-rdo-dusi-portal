@@ -19,7 +19,6 @@
         "minvws/codable": "dev-feature/base as 1.0.x-dev"
     },
     "require-dev": {
-        "ext-openssl": "*",
         "barryvdh/laravel-ide-helper": "^2.13",
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Services;
 
+use Config;
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use MinVWS\DUSi\Shared\Bridge\Client\Client;
 use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFormSubmit;
@@ -18,6 +20,8 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\DUSi\Application\API\Services\Exceptions\DataEncryptionException;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -27,7 +31,8 @@ class ApplicationService
 {
     public function __construct(
         private readonly StateService $stateService,
-        private readonly Client $bridgeClient
+        private readonly Client $bridgeClient,
+        private EncryptionService $encryptionService
     ) {
     }
 
@@ -51,6 +56,11 @@ class ApplicationService
         return $application->id;
     }
 
+    /**
+     * @throws AuthenticationException
+     * @throws DataEncryptionException
+     * @throws Exception
+     */
     public function uploadFile(Application $application, string $fieldCode, UploadedFile $file): string
     {
         $id = Uuid::uuid4()->toString();
@@ -60,20 +70,31 @@ class ApplicationService
             $extension = null;
         }
 
-        $encryptedContents = $file->getContent();
+        // TODO: remove encryption here when frontend implements encryption
+
+        $encryptedFile = Config::get('encryption.encrypt_till_support') ?
+            $this->encryptionService->encryptData($file->getContent()) : $file->getContent();
+        $encryptedIdentifier = Config::get('encryption.encrypt_till_support') ?
+            $this->encryptionService->encryptData($this->stateService->getIdentity()->identifier) :
+            $this->stateService->getIdentity()->identifier;
+
+        $encryptedIdentity = new Identity(
+            type: $this->stateService->getIdentity()->type,
+            identifier: $encryptedIdentifier
+        );
 
         if ($file->getMimeType() === null) {
             throw new Exception('Mime type is null');
         }
 
         $fileUpload = new FileUpload(
-            identity: $this->stateService->getIdentity(),
+            identity: $encryptedIdentity,
             applicationMetadata: $application->getMetadata(),
             fieldCode: $fieldCode,
             id: $id,
             mimeType: $file->getMimeType(),
             extension: $extension,
-            encryptedContents: base64_encode($encryptedContents)
+            encryptedContents: $encryptedFile
         );
 
         ProcessFileUpload::dispatch($fileUpload);
@@ -81,12 +102,27 @@ class ApplicationService
         return $id;
     }
 
-    public function submit(Application $application, string $encryptedData): void
+    /**
+     * @throws AuthenticationException
+     * @throws DataEncryptionException
+     */
+    public function submit(Application $application, string $formData): void
     {
+        // TODO: remove encryption here when frontend implements encryption
+        $encryptedData = Config::get('encryption.encrypt_till_support') ?
+            $this->encryptionService->encryptData($formData) : $formData;
+        $encryptedIdentifier = Config::get('encryption.encrypt_till_support') ?
+            $this->encryptionService->encryptData($this->stateService->getIdentity()->identifier) :
+            $this->stateService->getIdentity()->identifier;
+        $encryptedIdentity = new Identity(
+            type: $this->stateService->getIdentity()->type,
+            identifier: $encryptedIdentifier
+        );
+
         $formSubmit = new FormSubmit(
-            identity: $this->stateService->getIdentity(),
+            identity: $encryptedIdentity,
             applicationMetadata: $application->getMetadata(),
-            encryptedData: base64_encode($encryptedData)
+            encryptedData: $encryptedData
         );
 
         ProcessFormSubmit::dispatch($formSubmit);

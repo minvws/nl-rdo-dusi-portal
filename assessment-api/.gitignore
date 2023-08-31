@@ -25,3 +25,5 @@ _ide_helper.php
 
 .composer
 .idea
+*.crt
+*.key

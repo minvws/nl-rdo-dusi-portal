@@ -18,7 +18,6 @@
         "minvws/php-rmq-rpc-bridge": "@dev"
     },
     "require-dev": {
-        "ext-openssl": "*",
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",
         "laravel/pint": "^1.10",

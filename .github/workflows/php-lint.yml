@@ -40,6 +40,10 @@ jobs:
           extensions: zip
           tools: psalm
 
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -85,6 +89,10 @@ jobs:
           extensions: zip
           tools: cs2pr
 
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -125,6 +133,10 @@ jobs:
           extensions: zip
           tools: phpstan
 
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -163,6 +175,10 @@ jobs:
         with:
           php-version: '8.2'
           extensions: zip
+
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
 
       - name: Get composer cache directory
         id: composer-cache
@@ -204,6 +220,10 @@ jobs:
         with:
           php-version: '8.2'
           coverage: pcov
+
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
 
       - name: Get composer cache directory
         id: composer-cache
