@@ -2,6 +2,8 @@
 
 set -e
 
+FORCE=false
+IGNORE_PLATFORM_REQS=false
 INSTALL=false
 
 # Function to display script usage
@@ -10,6 +12,7 @@ function display_usage() {
     echo "Options:"
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
+    echo "      --ignore-platform-reqs      Ignore platform requirements during composer install"
     echo "  -h, --help                      Display this help message"
     exit 1
 }
@@ -28,6 +31,14 @@ while [[ $# -gt 0 ]]; do
             INSTALL=true
             shift
             ;;
+        --ignore-platform-reqs)
+            IGNORE_PLATFORM_REQS=true
+            shift
+            ;;
+        -f | --force)
+            FORCE=true
+            shift
+            ;;
         * )
             shift
             ;;
@@ -35,5 +46,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 if $INSTALL ; then
-    composer install
+    if $FORCE ; then
+        rm -rf ./vendor
+    fi
+
+    if $IGNORE_PLATFORM_REQS ; then
+        composer install --ignore-platform-reqs
+    else
+        composer install
+    fi
 fi

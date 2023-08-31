@@ -9,7 +9,7 @@ Running the run.sh script
 
 ### TL;DR
 
-Make sure you have PHP 8.2 and composer installed.
+Make sure you have PHP 8.2, composer, node and npm installed.
 
 On Mac:
 
@@ -19,13 +19,31 @@ On Mac:
 
 On Linux and Windows Subsystem for Linux use your package manager.
 
+```shell
+apt-get install php8.2-cli php8.2-bcmath php8.2-curl php8.2-gd php8.2-xml php8.2-zip
+```
+
 To run the backend applications simply run:
 
-```./run.sh -c -i -m```
+```shell
+./run.sh -c -i -m
+```
 
 To see a list of all available options run:
 
-```./run.sh -h```
+```shell
+./run.sh -h
+```
+
+#### Github token
+
+For installation steps a GitHub token is required, this token should have the
+full repo control, and package read permissions.
+[Generate new personal access token](https://github.com/settings/tokens/new?scopes=repo,read:packages&description=Composer+Token)
+
+To implement this token the command
+`composer config --global --auth github-oauth.github.com <token>`
+can be run, replacing `<token>`.
 
 ### Frontend
 
