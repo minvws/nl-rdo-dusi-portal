@@ -6,9 +6,8 @@ namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
 use Exception;
 use MinVWS\DUSi\Application\API\Services\MessageService;
+use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 
 class MessageController extends Controller
@@ -16,11 +15,12 @@ class MessageController extends Controller
     /**
      * @throws Exception
      */
-    public function index(MessageService $messageService): EncodableResponse
-    {
+    public function index(
+        StateService $stateService,
+        MessageService $messageService
+    ): EncodableResponse {
         // TODO: implement
-        $identity = new Identity(IdentityType::EncryptedCitizenServiceNumber, 'test');
-        $params = new MessageListParams($identity, null, null, null);
+        $params = new MessageListParams($stateService->getIdentity(), null, null, null);
         $list = $messageService->listMessages($params);
         return new EncodableResponse($list);
     }

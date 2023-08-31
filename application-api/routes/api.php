@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use MinVWS\DUSi\Application\API\Http\Controllers\ActionableController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MessageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MockedResourceController;
@@ -31,6 +32,7 @@ Route::middleware('auth')->group(
 
         Route::get('applications', [ApplicationController::class, 'index']);
         Route::get('messages', [MessageController::class, 'index']);
+        Route::get('actionables/counts', [ActionableController::class, 'counts']);
 
         Route::get('user/info', [UserController::class, 'info'])->name('user-info');
         Route::post('user/logout', [UserController::class, 'logout'])->name('user-logout');
