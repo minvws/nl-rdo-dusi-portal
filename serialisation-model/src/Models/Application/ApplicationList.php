@@ -9,10 +9,10 @@ use MinVWS\Codable\Decoding\Decodable;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\Encoding\EncodingContainer;
 
-class MessageList implements Codable
+class ApplicationList implements Codable
 {
     /**
-     * @param array<MessageListMessage> $items
+     * @param array<ApplicationListApplication> $items
      */
     final public function __construct(public readonly array $items)
     {
@@ -20,11 +20,12 @@ class MessageList implements Codable
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameters)
+     * @inheritDoc
      */
     public static function decode(DecodingContainer $container, ?Decodable $object = null): static
     {
-        $messages = $container->{'items'}->decodeArray(MessageListMessage::class);
-        return new static($messages);
+        $items = $container->{'items'}->decodeArray(ApplicationListApplication::class);
+        return new static($items);
     }
 
     public function encode(EncodingContainer $container): void

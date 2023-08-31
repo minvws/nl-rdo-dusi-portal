@@ -29,6 +29,7 @@ Route::middleware('auth')->group(
         Route::post('applications/{application}/files', [ApplicationController::class, 'uploadFile'])
             ->name('application-upload-file');
 
+        Route::get('applications', [ApplicationController::class, 'index']);
         Route::get('messages', [MessageController::class, 'index']);
 
         Route::get('user/info', [UserController::class, 'info'])->name('user-info');
@@ -36,7 +37,4 @@ Route::middleware('auth')->group(
     }
 );
 
-//TODO: Remove mocked routes when the real API is ready
-Route::get('messages', [MockedResourceController::class, 'messages']);
-Route::get('requests', [MockedResourceController::class, 'requests']);
 Route::get('btv', [MockedResourceController::class, 'btv']);

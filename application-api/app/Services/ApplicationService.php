@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Services;
 
+use Exception;
+use MinVWS\DUSi\Shared\Bridge\Client\Client;
 use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFormSubmit;
 use MinVWS\DUSi\Application\API\Models\Application;
@@ -11,14 +13,21 @@ use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
 use MinVWS\DUSi\Application\API\Models\DraftApplication;
 use MinVWS\DUSi\Application\API\Services\Exceptions\ApplicationNotFoundException;
 use Illuminate\Http\UploadedFile;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ApplicationService
 {
     public function __construct(
-        private StateService $stateService
+        private readonly StateService $stateService,
+        private readonly Client $bridgeClient
     ) {
     }
 
@@ -54,7 +63,7 @@ class ApplicationService
         $encryptedContents = $file->getContent();
 
         if ($file->getMimeType() === null) {
-            throw new \Exception('Mime type is null');
+            throw new Exception('Mime type is null');
         }
 
         $fileUpload = new FileUpload(
@@ -81,5 +90,13 @@ class ApplicationService
         );
 
         ProcessFormSubmit::dispatch($formSubmit);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function listApplications(ApplicationListParams $params): ApplicationList
+    {
+        return $this->bridgeClient->call(RPCMethods::LIST_APPLICATIONS, $params, ApplicationList::class);
     }
 }

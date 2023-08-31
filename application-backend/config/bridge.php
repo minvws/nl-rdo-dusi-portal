@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use MinVWS\DUSi\Application\Backend\Services\MessageService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 
@@ -16,6 +18,10 @@ $bindings = [
     RPCMethods::LIST_MESSAGES => [
         'paramsClass' => MessageListParams::class,
         'callback' => [MessageService::class, 'listMessages']
+    ],
+    RPCMethods::LIST_APPLICATIONS => [
+        'paramsClass' => ApplicationListParams::class,
+        'callback' => [ApplicationService::class, 'listApplications']
     ]
 ];
 
