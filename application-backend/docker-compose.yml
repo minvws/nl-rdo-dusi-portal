@@ -22,7 +22,7 @@ services:
             - '.:/var/www/html'
             - '../application-model:/var/www/html/vendor/minvws/dusi-application-model'
             - '../subsidy-model:/var/www/html/vendor/minvws/dusi-subsidy-model'
-            - '../serialisation-model:/var/www/html/vendor/minvws/serialisation-model'
+            - '../serialisation-model:/var/www/html/vendor/minvws/dusi-serialisation-model'
             - '../bridge:/var/www/html/vendor/minvws/php-rmq-rpc-bridge'
         networks:
             portal-backend:
