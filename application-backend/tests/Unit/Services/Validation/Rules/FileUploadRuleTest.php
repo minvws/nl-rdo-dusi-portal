@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Services\Validation;
+namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Services\Validation\Rules;
 
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Validation\Rules\FileUploadRule;

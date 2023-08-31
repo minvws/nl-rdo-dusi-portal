@@ -69,7 +69,7 @@ class Validator extends BaseValidator
 
         $invokableRule = $rule->invokable();
         if ($invokableRule instanceof FieldValuesAwareRule) {
-            $invokableRule->setFieldValues($this->data);
+            $invokableRule->setFieldValues($this->fieldValues);
         }
 
         if ($invokableRule instanceof ApplicationStageVersionAwareRule) {

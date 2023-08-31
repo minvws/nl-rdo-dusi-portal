@@ -19,6 +19,7 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -345,8 +346,11 @@ readonly class ApplicationService
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
     }
 
-    protected function processInvalidFieldValues(ApplicationStageVersion $applicationStageVersion, array $values, Validation\Validator $validator): void
-    {
+    protected function processInvalidFieldValues(
+        ApplicationStageVersion $applicationStageVersion,
+        array $values,
+        Validator $validator,
+    ): void {
         // TODO: Process invalid fields ...
     }
 }
