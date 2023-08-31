@@ -8,4 +8,5 @@ class RPCMethods
 {
     public const LIST_MESSAGES = 'listMessages';
     public const LIST_APPLICATIONS = 'listApplications';
+    public const GET_ACTIONABLE_COUNTS = 'getActionableCounts';
 }
