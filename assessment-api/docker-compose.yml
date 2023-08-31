@@ -20,8 +20,8 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
-            - '../application-model:/var/www/application-model'
-            - '../subsidy-model:/var/www/subsidy-model'
+            - '../application-model:/var/www/html/vendor/minvws/dusi-application-model'
+            - '../subsidy-model:/var/www/html/vendor/minvws/dusi-subsidy-model'
         networks:
             portal-backend:
             user-admin-web:
