@@ -42,15 +42,20 @@ class FileUploadRule implements
         $fieldIsRequired = $this->field->is_required;
 
         $answer = $this->applicationRepository->getAnswer($this->applicationStageVersion, $this->field);
+        if (!$fieldIsRequired && $answer === null) {
+            return;
+        }
+
         if ($fieldIsRequired && $answer === null) {
             $fail("Field is required!");
+            return;
         }
 
         $fileExists = $this->applicationFileRepository->fileExists(
             applicationStage: $this->applicationStageVersion->applicationStage,
             field: $this->field,
         );
-        if (($answer || $fieldIsRequired) && !$fileExists) {
+        if (!$fileExists) {
             $fail("File not found!");
         }
     }
