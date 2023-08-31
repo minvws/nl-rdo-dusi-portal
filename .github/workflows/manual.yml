@@ -52,5 +52,5 @@ jobs:
         uses: actions/upload-artifact@v2
         id: upload-document
         with:
-          name: 'handleiding-dusi'
+          name: ${{ matrix.directory }} 
           path: pdfs
