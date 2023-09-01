@@ -1,6 +1,7 @@
 # Workflow aanvragen
 
-Algemene handleiding voor het gebruik van DUS-I aanvragen
+Algemene handleiding voor het gebruik van DUS-I aanvragen.
+Dit is een wijziging.
 
 !["Test image"](./images/test_image.png "Title test image")
 
