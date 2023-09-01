@@ -34,7 +34,7 @@ This token can be created in your
 [GitHub account.](https://github.com/settings/tokens/new?scopes=read:packages&description=GitHub%20Container%20Registry%20Token)
 Finally, if you want to test if you are logged in, run the following command:
 
-```docker pull ghcr.io/minvws/nl-rdo-dusi-api-service```
+```docker pull ghcr.io/minvws/nl-rdo-hsm-api-service```
 
 To run the backend applications simply run:
 
