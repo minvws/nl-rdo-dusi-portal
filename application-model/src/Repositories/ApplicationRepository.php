@@ -10,6 +10,8 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\DuplicateApplicationReferenceEntryException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
@@ -17,6 +19,7 @@ use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -185,7 +188,30 @@ class ApplicationRepository
 
     public function saveApplication(Application $application): void
     {
-        $application->save();
+
+        DB::beginTransaction();
+        try {
+            $application->save();
+
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+
+            $errorCode = $e->errorInfo[1];
+
+            if ($errorCode === 1062) {
+                // Duplicate Entry
+                // Extract field name from the error message
+                if (preg_match('/Duplicate entry .+ for key \'(.+)\'.*/', $e->getMessage(), $matches) === 1) {
+                    $fieldName = $matches[1];
+                    if ($fieldName === Application::REFERENCE_FIELD_NAME) {
+                        throw new DuplicateApplicationReferenceEntryException($e->getMessage());
+                    }
+                }
+            } else {
+                throw $e;
+            }
+        }
     }
 
     public function saveApplicationStageVersion(ApplicationStageVersion $appStageVersion): void
@@ -237,5 +263,10 @@ class ApplicationRepository
         }
 
         return new AnswersByApplicationStage(stages: $stages);
+    }
+
+    public function isReferenceUnique(string $applicationReference): bool
+    {
+        return Application::where('reference', $applicationReference)->count() === 0;
     }
 }

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationReferenceService;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
@@ -20,6 +20,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 /**
  * @property string $id
  * @property string $subsidy_version_id
+ * @property string $reference
  * @property string $application_title
  * @property string $identity_type
  * @property string $identity_identifier
@@ -34,6 +35,8 @@ class Application extends Model
     use HasFactory;
     use HasUuids;
 
+    public const REFERENCE_FIELD_NAME = 'reference';
+
     protected $connection = Connection::APPLICATION;
 
     protected $casts = [
@@ -44,10 +47,24 @@ class Application extends Model
 
     protected $fillable = [
         'subsidy_version_id',
+        'reference',
         'application_title',
         'final_review_deadline',
         'locked_from'
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(static function (self $application): void {
+            if ($application->reference !== null) {
+                return;
+            }
+
+            /** @var ApplicationReferenceService $applicationReferenceService */
+            $applicationReferenceService = app(ApplicationReferenceService::class);
+            $application->reference = $applicationReferenceService->generateUniqueReference($application->subsidyVersion->subsidy);
+        });
+    }
 
     public function applicationHashes(): HasMany
     {

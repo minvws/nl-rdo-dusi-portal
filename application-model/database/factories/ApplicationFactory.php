@@ -22,9 +22,12 @@ class ApplicationFactory extends Factory
      */
     public function definition(): array
     {
+        $subsidyVersion = SubsidyVersion::factory()->create();
+
         return [
             'id' => $this->faker->uuid,
-            'subsidy_version_id' => SubsidyVersion::factory(),
+            'subsidy_version_id' => $subsidyVersion,
+            'reference' => sprintf('%s-%s', $subsidyVersion->subsidy()->get()->first()->reference_prefix, $this->faker->unique()->regexify('[0-9]{8}')),
             'created_at' => $this->faker->dateTimeBetween('-1 year'),
             'identity_type' => IdentityType::EncryptedCitizenServiceNumber->value,
             'identity_identifier' => $this->faker->randomNumber(9),

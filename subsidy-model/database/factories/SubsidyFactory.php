@@ -24,6 +24,7 @@ class SubsidyFactory extends Factory
     {
         return [
             'id' => Uuid::uuid4(),
+            'reference_prefix' => $this->faker->unique()->regexify('[A-Z]{4}[0-9]{2}'),
             'title' => $this->faker->words(3, true),
             'code' => $this->faker->unique()->regexify('[A-Z]{3}'),
             'description' => $this->faker->paragraph,

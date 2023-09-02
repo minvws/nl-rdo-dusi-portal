@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use DateTimeImmutable;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\DuplicateApplicationReferenceEntryException;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -58,7 +59,8 @@ readonly class ApplicationService
         private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
-        private FilesystemManager $filesystemManager
+        private FilesystemManager $filesystemManager,
+        private ApplicationReferenceService $applicationReferenceService,
     ) {
     }
 
@@ -112,7 +114,7 @@ readonly class ApplicationService
     /**
      * @throws Exception
      */
-    private function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
+    public function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
     {
         if (!isset($subsidyStage->subsidyVersion)) {
             throw new Exception('SubsidyVersion is not set');
@@ -120,7 +122,14 @@ readonly class ApplicationService
         $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
         $app->application_title = $subsidyStage->title;
         $app->identity = $identity;
-        $this->appRepo->saveApplication($app);
+        //$app->identity_type = $identity->type;
+        //$app->identity_identifier = $identity->identifier;
+        try {
+            $this->appRepo->saveApplication($app);
+        }
+        catch (DuplicateApplicationReferenceEntryException) {
+            $app->reference = $this->applicationReferenceService->generateUniqueReference($subsidyStage->subsidyVersion->subsidy);
+        }
         return $app;
     }
 

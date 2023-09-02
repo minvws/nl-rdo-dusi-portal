@@ -19,6 +19,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 /**
  * @property string $id
  * @property string $title
+ * @property string $reference_prefix
  * @property string $code
  * @property string $description
  * @property DateTimeInterface $valid_from
