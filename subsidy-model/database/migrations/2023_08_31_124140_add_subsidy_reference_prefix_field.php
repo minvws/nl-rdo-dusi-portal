@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-            $table->string('reference', 15)->after('subsidy_version_id')->unique();
+        Schema::table('subsidies', function (Blueprint $table) {
+            $table->string('reference_prefix', 6)->after('title')->unique();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-            $table->dropColumn('reference');
+        Schema::table('subsidies', function (Blueprint $table) {
+            $table->dropColumn('reference_prefix');
         });
     }
 };

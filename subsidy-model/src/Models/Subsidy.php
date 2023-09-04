@@ -39,6 +39,7 @@ class Subsidy extends Model
     protected $connection = Connection::APPLICATION;
 
     protected $fillable = [
+        'reference_prefix',
         'title',
         'code',
         'description',

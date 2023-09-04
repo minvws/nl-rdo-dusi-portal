@@ -13,8 +13,6 @@ class SubsidyFactory extends Factory
 {
     protected $model = Subsidy::class;
 
-
-
     /**
      * Define the model's default state.
      *

@@ -7,11 +7,21 @@
     </testsuite>
   </testsuites>
   <php>
-    <env name="DB_APPLICATION_DATABASE" value="db_test_application"/>
-    <env name="DB_APPLICATION_HOST" value="localhost"/>
-    <env name="DB_APPLICATION_PASSWORD" value="postgres"/>
-    <env name="DB_APPLICATION_PORT" value="54322"/>
+    <env name="DB_CONNECTION" value="pgsql_application"/>
+    <env name="DB_APPLICATION_DATABASE" value="portal_backend_testing"/>
+    <env name="DB_APPLICATION_HOST" value="portal-backend-pgsql"/>
+    <env name="DB_APPLICATION_PORT" value="5432"/>
     <env name="DB_APPLICATION_USERNAME" value="postgres"/>
+    <env name="DB_APPLICATION_PASSWORD" value="password"/>
+    <env name="DB_APPLICATION_SSLMODE" value="prefer"/>
+    <env name="HSM_API_MODULE" value="softhsm"/>
+    <env name="HSM_API_SLOT" value="SoftHSMLabel"/>
+    <env name="HSM_API_ENCRYPTION_KEY_LABEL" value="SoftHSMLabel"/>
+    <env name="HSM_API_CLIENT_CERTIFICATE_PATH" value="secrets/pki/issued/softhsm^SoftHSMLabel^*=create,destroy,use,import.crt"/>
+    <env name="HSM_API_CLIENT_CERTIFICATE_KEY_PATH" value="secrets/pki/private/softhsm^SoftHSMLabel^*=create,destroy,use,import.key"/>
+    <env name="HSM_API_ENDPOINT_URL" value="https://portal-backend-hsm-api-service:8000/hsm"/>
+    <env name="HSM_PUBLIC_KEY_FILE_PATH" value="secrets/public.key"/>
+
   </php>
   <source>
     <include>

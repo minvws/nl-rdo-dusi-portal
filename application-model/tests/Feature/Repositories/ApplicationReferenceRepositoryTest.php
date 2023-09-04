@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
+namespace MinVWS\DUSi\Shared\Application\Tests\Feature\Repositories;
 
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

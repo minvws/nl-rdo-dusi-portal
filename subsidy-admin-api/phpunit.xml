@@ -18,11 +18,19 @@
         </include>
     </coverage>
     <php>
+        <env name="DB_CONNECTION" value="pgsql_application"/>
+        <env name="DB_APPLICATION_DATABASE" value="portal_backend_testing"/>
+        <env name="DB_APPLICATION_HOST" value="portal-backend-pgsql"/>
+        <env name="DB_APPLICATION_PORT" value="5432"/>
+        <env name="DB_APPLICATION_USERNAME" value="postgres"/>
+        <env name="DB_APPLICATION_PASSWORD" value="password"/>
+        <env name="DB_APPLICATION_SSLMODE" value="prefer"/>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
         <!-- <env name="DB_CONNECTION" value="sqlite"/> -->
         <!-- <env name="DB_DATABASE" value=":memory:"/> -->
+
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
