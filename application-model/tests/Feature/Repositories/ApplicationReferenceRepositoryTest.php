@@ -11,7 +11,7 @@ use MinVWS\DUSi\Shared\Application\Models\IdentityType;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use MinVWS\DUSi\Application\Backend\Tests\TestCase;
+use MinVWS\DUSi\Shared\Application\Tests\Feature\TestCase;
 
 /**
  * @group application
