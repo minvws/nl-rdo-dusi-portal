@@ -31,7 +31,11 @@ Route::middleware('auth')->group(
             ->name('application-upload-file');
 
         Route::get('applications', [ApplicationController::class, 'index']);
+
         Route::get('messages', [MessageController::class, 'index']);
+        Route::get('messages/{id}', [MessageController::class, 'view']);
+        Route::get('messages/{id}/download/{format}', [MessageController::class, 'download']);
+
         Route::get('actionables/counts', [ActionableController::class, 'counts']);
 
         Route::get('user/info', [UserController::class, 'info'])->name('user-info');

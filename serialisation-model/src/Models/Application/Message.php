@@ -11,15 +11,16 @@ use MinVWS\Codable\Decoding\Decodable;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\Encoding\EncodingContainer;
 
-class MessageListMessage implements Codable
+class Message implements Codable
 {
     use CodableSupport;
 
-    final public function __construct(
+    public function __construct(
         public readonly string $id,
         public readonly string $subject,
         public readonly DateTimeInterface $sentAt,
-        public readonly bool $isNew
+        public readonly bool $isNew,
+        public readonly string $body
     ) {
     }
 }

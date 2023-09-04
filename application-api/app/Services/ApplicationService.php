@@ -111,16 +111,9 @@ class ApplicationService
         // TODO: remove encryption here when frontend implements encryption
         $encryptedData = Config::get('encryption.encrypt_till_support') ?
             $this->encryptionService->encryptData($formData) : $formData;
-        $encryptedIdentifier = Config::get('encryption.encrypt_till_support') ?
-            $this->encryptionService->encryptData($this->stateService->getIdentity()->identifier) :
-            $this->stateService->getIdentity()->identifier;
-        $encryptedIdentity = new Identity(
-            type: $this->stateService->getIdentity()->type,
-            identifier: $encryptedIdentifier
-        );
 
         $formSubmit = new FormSubmit(
-            identity: $encryptedIdentity,
+            identity: $this->stateService->getIdentity(),
             applicationMetadata: $application->getMetadata(),
             encryptedData: $encryptedData
         );

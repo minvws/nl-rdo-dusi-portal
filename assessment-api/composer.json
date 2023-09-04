@@ -12,7 +12,7 @@
         "minvws/dusi-application-model": "@dev",
         "minvws/dusi-subsidy-model": "@dev",
         "predis/predis": "^2.2",
-        "minvws/codable": "dev-feature/base as 1.0.x-dev"
+        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
