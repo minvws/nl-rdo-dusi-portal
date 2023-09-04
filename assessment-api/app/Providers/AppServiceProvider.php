@@ -6,6 +6,8 @@ namespace MinVWS\DUSi\Assessment\API\Providers;
 
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
+use Config;
+use Laravel\Fortify\Fortify;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Assessment\API\Services\EncryptionService;
@@ -73,5 +75,11 @@ class AppServiceProvider extends ServiceProvider
                 slot: $config->get('hsm_api.slot'),
             );
         });
+        if (Config::get('fortify.disable_2fa')) {
+            Fortify::ignoreRoutes();
+            $features = config('fortify.features');
+            $updatedFeatures = array_diff($features, ['two-factor-authentication']);
+            config(['fortify.features' => $updatedFeatures]);
+        }
     }
 }

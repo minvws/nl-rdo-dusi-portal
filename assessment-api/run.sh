@@ -94,6 +94,7 @@ fi
 
 vendor/bin/sail up -d --remove-orphans
 
-if $CLEAR ; then
-    vendor/bin/sail artisan key:generate
-fi
+# copy app key from user-admin-api to own env file
+USER_APP_KEY=$(grep -m 1 "APP_KEY" ../user-admin-api/.env)
+APP_KEY=$(grep -m 1 "APP_KEY" .env)
+sed -i "s%$APP_KEY%$USER_APP_KEY%" .env
