@@ -19,12 +19,14 @@ class MessageListParams implements Codable
 
     /**
      * @param array<string>|null $subsidies
+     * @param array<string>|null $statuses
      */
     final public function __construct(
         public readonly Identity $identity,
         public readonly ?DateTimeInterface $periodStart,
         public readonly ?DateTimeInterface $periodEnd,
-        public readonly ?array $subsidies
+        public readonly ?array $subsidies,
+        public readonly ?array $statuses
     ) {
     }
 
@@ -37,7 +39,8 @@ class MessageListParams implements Codable
         $periodStart = $container->{'periodStart'}->decodeDateTimeIfPresent(self::DATE_FORMAT);
         $periodEnd = $container->{'periodEnd'}->decodeDateTimeIfPresent(self::DATE_FORMAT);
         $subsidies = $container->{'subsidies'}->decodeArrayifPresent('string');
-        return new static($identity, $periodStart, $periodEnd, $subsidies);
+        $statuses = $container->{'statuses'}->decodeArrayifPresent('string');
+        return new static($identity, $periodStart, $periodEnd, $subsidies, $statuses);
     }
 
     public function encode(EncodingContainer $container): void
@@ -46,5 +49,6 @@ class MessageListParams implements Codable
         $container->{'periodStart'}->encodeDateTime($this->periodStart, self::DATE_FORMAT);
         $container->{'periodEnd'}->encodeDateTime($this->periodEnd, self::DATE_FORMAT);
         $container->{'subsidies'} = $this->subsidies;
+        $container->{'statuses'} = $this->statuses;
     }
 }

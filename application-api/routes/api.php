@@ -36,6 +36,9 @@ Route::middleware('auth')->group(
 
         Route::get('user/info', [UserController::class, 'info'])->name('user-info');
         Route::post('user/logout', [UserController::class, 'logout'])->name('user-logout');
+
+        // TODO: route name not suitable for user messages
+        Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters']);
     }
 );
 

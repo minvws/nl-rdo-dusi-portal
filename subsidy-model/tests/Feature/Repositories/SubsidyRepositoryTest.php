@@ -235,7 +235,7 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($latestSubsidyLetter->content_view, $subsidyLetterAccepted->content_view);
     }
 
-    public function testGetShortRegulations(): void
+    public function testGetActiveSubsidyCodes(): void
     {
         SubsidyVersion::factory()->for(
             Subsidy::factory()->create([
@@ -261,7 +261,7 @@ class SubsidyRepositoryTest extends TestCase
             ]);
 
         $repository = $this->app->make(SubsidyRepository::class);
-        $actualShortRegulations = $repository->getShortRegulations();
+        $actualShortRegulations = $repository->getActiveSubsidyCodes();
         $this->assertEquals(['SA', 'SB'], $actualShortRegulations->toArray());
     }
 }
