@@ -102,7 +102,6 @@ jobs:
           DB_APPLICATION_USERNAME: postgres
           DB_APPLICATION_PASSWORD: password
           DB_APPLICATION_SSLMODE: prefer
-
           DB_USER_HOST: localhost
           DB_USER_DATABASE: user_testing
           DB_USER_PORT: 54323

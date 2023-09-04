@@ -6,6 +6,7 @@ use MinVWS\DUSi\Assessment\API\Providers\RouteServiceProvider;
 use Laravel\Fortify\Features;
 
 return [
+    'disable_2fa' => env('DISABLE_2FA'),
 
     /*
     |--------------------------------------------------------------------------
@@ -77,7 +78,7 @@ return [
     |
     */
 
-    'prefix' => '',
+    'prefix' => '/api',
 
     'domain' => null,
 
@@ -121,7 +122,7 @@ return [
     |
     */
 
-    'views' => true,
+    'views' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -141,7 +142,7 @@ return [
         Features::updateProfileInformation(),
         Features::updatePasswords(),
         Features::twoFactorAuthentication([
-            'confirmPassword' => false,
+            'confirmPassword' => true,
             // 'window' => 0,
         ]),
     ],
