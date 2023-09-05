@@ -19,18 +19,19 @@ $bindings = [
         'paramsClass' => Ping::class,
         'callback' => [PingService::class, 'ping']
     ],
-    RPCMethods::LIST_MESSAGES => [
-        'paramsClass' => MessageListParams::class,
-        'callback' => [MessageService::class, 'listMessages']
-    ],
     RPCMethods::LIST_APPLICATIONS => [
         'paramsClass' => ApplicationListParams::class,
         'callback' => [ApplicationService::class, 'listApplications']
     ],
-    RPCMethods::GET_ACTIONABLE_COUNTS => [
-        'paramsClass' => ActionableCountsParams::class,
-        'callback' => [ActionableService::class, 'getActionableCounts']
+    RPCMethods::GET_APPLICATION => [
+        'paramsClass' => ApplicationListParams::class,
+        'callback' => [ApplicationService::class, 'getApplication']
     ],
+    RPCMethods::LIST_MESSAGES => [
+        'paramsClass' => MessageListParams::class,
+        'callback' => [MessageService::class, 'listMessages']
+    ],
+
     RPCMethods::GET_MESSAGE => [
         'paramsClass' => MessageParams::class,
         'callback' => [MessageService::class, 'getMessage']
@@ -38,6 +39,10 @@ $bindings = [
     RPCMethods::GET_MESSAGE_DOWNLOAD => [
         'paramsClass' => MessageDownloadParams::class,
         'callback' => [MessageService::class, 'getMessageDownload']
+    ],
+    RPCMethods::GET_ACTIONABLE_COUNTS => [
+        'paramsClass' => ActionableCountsParams::class,
+        'callback' => [ActionableService::class, 'getActionableCounts']
     ]
 ];
 

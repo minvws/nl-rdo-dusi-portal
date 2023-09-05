@@ -7,14 +7,15 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
 
-class Subsidy implements Codable
+class ApplicationParams implements Codable
 {
     use CodableSupport;
 
     public function __construct(
+        public readonly Identity $identity,
+        public readonly ClientPublicKey $publicKey,
         public readonly string $id,
-        public readonly string $title,
-        public readonly string $pageUrl
+        public readonly bool $includeData
     ) {
     }
 }
