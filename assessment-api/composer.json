@@ -6,13 +6,15 @@
     "license": "EUPL-1.2",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^2.0",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
         "laravel/framework": "^10.17",
+        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
+        "latte/latte": "^3.0",
         "minvws/dusi-application-model": "@dev",
         "minvws/dusi-subsidy-model": "@dev",
-        "predis/predis": "^2.2",
-        "minvws/codable": "dev-feature/base as 1.0.x-dev"
+        "predis/predis": "^2.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
@@ -77,8 +79,8 @@
     "prefer-stable": true,
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/minvws/nl-rdo-php-codable.git"
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-php-codable.git"
         },
         {
             "type": "path",

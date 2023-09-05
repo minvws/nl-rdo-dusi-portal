@@ -20,12 +20,20 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
-            - '../application-model:/var/www/application-model'
-            - '../subsidy-model:/var/www/subsidy-model'
+            - '../application-model:/var/www/html/vendor/minvws/dusi-application-model'
+            - '../subsidy-model:/var/www/html/vendor/minvws/dusi-subsidy-model'
         networks:
             portal-backend:
             user-admin-web:
 
+    mailpit:
+        image: 'axllent/mailpit:latest'
+        ports:
+            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            portal-backend:
+            user-admin-web:
 
 networks:
     portal-backend:

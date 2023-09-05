@@ -8,36 +8,35 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Exception;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Shared\Application\Models\Answer;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
+use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Models\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationIdentityMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
-use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
-use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
-use MinVWS\DUSi\Shared\Application\Models\Connection;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Models\IdentityType;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use Exception;
+use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Throwable;
 
 /**
@@ -71,7 +70,7 @@ readonly class ApplicationService
     }
 
     /**
-     * @throws ApplicationMetadataMismatchException|ApplicationIdentityMismatchException
+     * @throws ApplicationMetadataMismatchException|EncryptionException
      */
     private function validateIdentityAndApplicationMetadata(
         Identity $identity,
@@ -83,7 +82,7 @@ readonly class ApplicationService
             $application->identity->type !== $identity->type || // @phpstan-ignore-line
             $application->identity->identifier !== $identity->identifier
         ) {
-            throw new ApplicationIdentityMismatchException(
+            throw new EncryptionException(
                 sprintf('Identity mismatch for app with identifier "%s"', $applicationStage->id)
             );
         }
@@ -214,12 +213,11 @@ readonly class ApplicationService
         mixed $value
     ): void {
         $answer = $this->appRepo->makeAnswer($applicationStageVersion, $field);
-        $json = json_encode($value);
+        $json = json_encode($value, JSON_UNESCAPED_SLASHES);
         if (!is_string($json)) {
             throw new Exception('JSON encoding failed. Invalid data provided.');
         }
-        $answer->encrypted_answer = $this->encryptionService
-            ->encryptFieldValue($json);
+        $answer->encrypted_answer = $this->encryptionService->encryptData($json);
         $this->appRepo->saveAnswer($answer);
     }
 
@@ -260,12 +258,13 @@ readonly class ApplicationService
     public function processFormSubmit(FormSubmit $formSubmit): ApplicationStage
     {
         $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
+            $formSubmit = $this->encryptionService->decryptFormSubmit($formSubmit);
+            $json = $formSubmit->encryptedData;
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
                 $this->getIdentityFromSerialisation($formSubmit->identity),
                 $formSubmit->applicationMetadata
             );
-            $json = $this->encryptionService->decryptFormSubmit($formSubmit->encryptedData);
 
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
             $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
@@ -293,6 +292,7 @@ readonly class ApplicationService
      */
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
+        $fileUpload = $this->encryptionService->decryptFileUpload($fileUpload);
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
             $this->getIdentityFromSerialisation($fileUpload->identity),
             $fileUpload->applicationMetadata
@@ -309,9 +309,8 @@ readonly class ApplicationService
             );
         }
 
-        $decryptedContents = base64_decode($fileUpload->encryptedContents); // TODO: decrypt
-        $size = strlen($decryptedContents);
-        $encryptedContents = $decryptedContents; // TODO: encrypt based on app specific key
+        $size = strlen($fileUpload->encryptedContents);
+        $encryptedContents = $fileUpload->encryptedContents; // TODO: encrypt based on app specific key
 
         $value = [
             'mimeType' => $fileUpload->mimeType,
@@ -332,6 +331,7 @@ readonly class ApplicationService
             $value
         );
 
+        $encryptedContents = $this->encryptionService->encryptData($encryptedContents);
         $result = $this->fileRepository->writeFile($applicationStage, $field, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
@@ -344,6 +344,23 @@ readonly class ApplicationService
     public function processFileUpload(FileUpload $fileUpload): void
     {
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function listApplications(ApplicationListParams $params): ApplicationList
+    {
+        // TODO: fill list based on the applications in `applications`
+        return new ApplicationList([
+            new ApplicationListApplication(
+                Uuid::uuid4()->toString(),
+                new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie'),
+                new DateTimeImmutable(),
+                new DateTimeImmutable("+30 days"),
+                ApplicationStatus::New
+            )
+        ]);
     }
 
     protected function processInvalidFieldValues(

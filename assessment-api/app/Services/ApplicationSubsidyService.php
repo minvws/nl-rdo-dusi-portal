@@ -10,8 +10,10 @@ use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 class ApplicationSubsidyService
 {
-    public function __construct(private SubsidyRepository $subsidyRepository)
-    {
+    public function __construct(
+        private SubsidyRepository $subsidyRepository,
+        private EncryptionService $encryptionService
+    ) {
     }
 
     /**
@@ -19,12 +21,19 @@ class ApplicationSubsidyService
      * @return ApplicationSubsidyVersionResource
      * @throws \Exception
      */
-    public function getApplicationSubsidyResource(Application $application): ApplicationSubsidyVersionResource
-    {
+    public function getApplicationSubsidyResource(
+        Application $application,
+        string|null $publicKey = null
+    ): ApplicationSubsidyVersionResource {
         $subsidyVersion = $this->subsidyRepository->getSubsidyVersion($application->subsidy_version_id);
         if (!isset($subsidyVersion)) {
             throw new \Exception('Subsidy version should always exist');
         }
-        return new ApplicationSubsidyVersionResource($application, $subsidyVersion);
+        return new ApplicationSubsidyVersionResource(
+            $application,
+            $subsidyVersion,
+            $publicKey,
+            $this->encryptionService
+        );
     }
 }

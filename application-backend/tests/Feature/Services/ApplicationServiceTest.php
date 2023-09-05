@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
+use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
+use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
+use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
@@ -27,6 +30,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Uuid;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use Throwable;
@@ -66,8 +71,46 @@ class ApplicationServiceTest extends TestCase
             'code' => 'number',
             'subsidy_stage_id' => $this->subsidyStage->id,
         ]);
+
+        $keyReader = $this->getMockBuilder(KeyReader::class)
+            ->getMock();
+
+        $hsmService = $this->getMockBuilder(HsmService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $encryptionServiceMock = $this->getMockBuilder(EncryptionService::class)
+            ->setConstructorArgs([$keyReader, $hsmService])
+            ->getMock();
+
+        // Configure the decryptData method to return the same value as the input parameter
+        $encryptionServiceMock->expects($this->any())
+            ->method('decryptFileUpload')
+            ->willReturnCallback(function ($input) {
+                return $input;
+            });
+
+        $encryptionServiceMock->expects($this->any())
+            ->method('decryptFormSubmit')
+            ->willReturnCallback(function ($input) {
+                return $input;
+            });
+
+        $encryptionServiceMock->expects($this->any())
+            ->method('encryptData')
+            ->willReturnCallback(function ($input) {
+                return $input;
+            });
+
+        $this->app->instance(EncryptionService::class, $encryptionServiceMock);
     }
 
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws Throwable
+     * @throws NotFoundExceptionInterface
+     */
     public function testProcessFileUpload(): void
     {
         Storage::fake(Disk::APPLICATION_FILES);
@@ -81,7 +124,10 @@ class ApplicationServiceTest extends TestCase
             ]);
 
         $fileUpload = new FileUpload(
-            new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
+            new Identity(
+                IdentityType::EncryptedCitizenServiceNumber,
+                base64_encode(openssl_random_pseudo_bytes(32))
+            ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             $fileField->code,
             Uuid::uuid4()->toString(),
@@ -113,9 +159,12 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
+            new Identity(
+                IdentityType::EncryptedCitizenServiceNumber,
+                base64_encode(openssl_random_pseudo_bytes(32))
+            ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
-            base64_encode(json_encode($data))
+            json_encode($data)
         );
 
         $applicationService = $this->app->get(ApplicationService::class);
@@ -152,9 +201,12 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
+            new Identity(
+                IdentityType::EncryptedCitizenServiceNumber,
+                base64_encode(openssl_random_pseudo_bytes(32))
+            ),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
-            base64_encode(json_encode($data))
+            json_encode($data)
         );
 
         $applicationService = $this->app->get(ApplicationService::class);
@@ -167,7 +219,10 @@ class ApplicationServiceTest extends TestCase
     public function testProcessFormSubmitInvalidForm(): void
     {
         $formSubmit = new FormSubmit(
-            new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
+            new Identity(
+                IdentityType::EncryptedCitizenServiceNumber,
+                base64_encode(openssl_random_pseudo_bytes(32))
+            ),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
             json_encode([]) // Empty data for the form, which should be invalid
         );
@@ -197,9 +252,12 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(IdentityType::EncryptedCitizenServiceNumber, base64_encode(openssl_random_pseudo_bytes(32))),
+            new Identity(
+                IdentityType::EncryptedCitizenServiceNumber,
+                base64_encode(openssl_random_pseudo_bytes(32))
+            ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
-            base64_encode(json_encode($data))
+            json_encode($data)
         );
 
         $this->expectException(FileNotFoundException::class);

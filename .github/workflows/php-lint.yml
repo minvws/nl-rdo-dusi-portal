@@ -3,8 +3,15 @@ name: PHP Linting
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.sh'
+      
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.sh'
 
 jobs:
   call-composer-install:
@@ -33,6 +40,10 @@ jobs:
           extensions: zip
           tools: psalm
 
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -60,7 +71,7 @@ jobs:
   php-linting-psr12:
     strategy:
       matrix:
-        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+        directory: [ "bridge", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
 
     defaults:
       run:
@@ -77,6 +88,10 @@ jobs:
           php-version: '8.2'
           extensions: zip
           tools: cs2pr
+
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
 
       - name: Get composer cache directory
         id: composer-cache
@@ -100,7 +115,7 @@ jobs:
   php-linting-stan:
     strategy:
       matrix:
-        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+        directory: [ "bridge", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
 
     defaults:
       run:
@@ -117,6 +132,10 @@ jobs:
           php-version: '8.2'
           extensions: zip
           tools: phpstan
+
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
 
       - name: Get composer cache directory
         id: composer-cache
@@ -157,6 +176,10 @@ jobs:
           php-version: '8.2'
           extensions: zip
 
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -180,7 +203,7 @@ jobs:
   phpmd:
     strategy:
       matrix:
-        directory: [ "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
+        directory: [ "bridge", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
 
     defaults:
       run:
@@ -197,6 +220,10 @@ jobs:
         with:
           php-version: '8.2'
           coverage: pcov
+
+      - name: Copy .env
+        continue-on-error: true
+        run: cp -n .env.example .env
 
       - name: Get composer cache directory
         id: composer-cache
@@ -215,9 +242,9 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Mess detection
-        if : ${{ matrix.directory != 'serialisation-model' && matrix.directory != 'subsidy-model' && matrix.directory != 'application-model'}}
+        if : ${{ matrix.directory != 'serialisation-model' && matrix.directory != 'subsidy-model' && matrix.directory != 'application-model' && matrix.directory != 'bridge' }}
         run: vendor/bin/phpmd app/ text ruleset.phpmd.xml
 
       - name: Mess detection
-        if : ${{ matrix.directory != 'serialisation-model' && matrix.directory == 'subsidy-model' || matrix.directory == 'application-model'}}
+        if : ${{ matrix.directory == 'serialisation-model' || matrix.directory == 'subsidy-model' || matrix.directory == 'application-model' || matrix.directory == 'bridge' }}
         run: vendor/bin/phpmd src/ text ruleset.phpmd.xml

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
+use Exception;
 use MinVWS\DUSi\Application\API\Http\Requests\ApplicationSubmitRequest;
 use MinVWS\DUSi\Application\API\Http\Requests\ApplicationUploadFileRequest;
 use MinVWS\DUSi\Application\API\Models\Application;
@@ -14,8 +15,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\ResponseFactory;
+use MinVWS\DUSi\Application\API\Services\StateService;
+use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use Throwable;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ApplicationController extends Controller
 {
     public function createDraft(
@@ -55,5 +62,17 @@ class ApplicationController extends Controller
         assert(is_string($encryptedData));
         $applicationService->submit($application, $encryptedData);
         return response(status: 202);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function index(
+        StateService $stateService,
+        ApplicationService $applicationService
+    ): EncodableResponse {
+        $params = new ApplicationListParams($stateService->getIdentity());
+        $list = $applicationService->listApplications($params);
+        return new EncodableResponse($list);
     }
 }

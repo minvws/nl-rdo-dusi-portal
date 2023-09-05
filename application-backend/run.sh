@@ -4,8 +4,11 @@ set -e
 
 CLEAR=false
 DOWN=false
+FORCE=false
 INSTALL=false
+IGNORE_PLATFORM_REQS=false
 MIGRATE=false
+NOPROMPTS=true
 
 # Function to display script usage
 function display_usage() {
@@ -14,6 +17,8 @@ function display_usage() {
     echo "  -c, --clear-env                 Copy the env files from the example files in each repository"
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
+    echo "      --ignore-platform-reqs      Ignore platform requirements during composer install"
+    echo "  -f, --force                     Force override of installed packages"
     echo "  -m, --migrate                   Migrate database"
     echo "  -d, --down                      Stop the applications and remove docker containers"
     echo "  -h, --help                      Display this help message"
@@ -33,10 +38,19 @@ while [[ $# -gt 0 ]]; do
             ;;
         -v | --verbose)
             set -x
+            NOPROMPTS=false
             shift
             ;;
         -i | --install)
             INSTALL=true
+            shift
+            ;;
+        --ignore-platform-reqs)
+            IGNORE_PLATFORM_REQS=true
+            shift
+            ;;
+        -f | --force)
+            FORCE=true
             shift
             ;;
         -m | --migrate)
@@ -69,7 +83,15 @@ if $DOWN ; then
 fi
 
 if $INSTALL ; then
-    composer install
+    if $FORCE ; then
+        rm -rf ./vendor
+    fi
+
+    if $IGNORE_PLATFORM_REQS ; then
+        composer install --ignore-platform-reqs
+    else
+        composer install
+    fi
 fi
 
 vendor/bin/sail up -d --remove-orphans
@@ -81,3 +103,5 @@ fi
 if $MIGRATE ; then
     vendor/bin/sail artisan migrate:fresh
 fi
+
+vendor/bin/sail artisan hsm:local-init --no-prompts=$NOPROMPTS

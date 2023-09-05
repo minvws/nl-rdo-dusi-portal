@@ -4,6 +4,8 @@ set -e
 
 CLEAR=false
 DOWN=false
+FORCE=false
+IGNORE_PLATFORM_REQS=false
 INSTALL=false
 MIGRATE=false
 
@@ -14,6 +16,8 @@ function display_usage() {
     echo "  -c, --clear-env                 Copy the env files from the example files in each repository"
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
+    echo "      --ignore-platform-reqs      Ignore platform requirements during composer install"
+    echo "  -f, --force                     Force override of installed packages"
     echo "  -m, --migrate                   Migrate database"
     echo "  -d, --down                      Stop the applications and remove docker containers"
     echo "  -h, --help                      Display this help message"
@@ -40,6 +44,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -i | --install)
             INSTALL=true
+            shift
+            ;;
+        --ignore-platform-reqs)
+            IGNORE_PLATFORM_REQS=true
             shift
             ;;
         -m | --migrate)
@@ -69,7 +77,15 @@ if $DOWN ; then
 fi
 
 if $INSTALL ; then
-    composer install
+    if $FORCE ; then
+        rm -rf ./vendor
+    fi
+
+    if $IGNORE_PLATFORM_REQS ; then
+        composer install --ignore-platform-reqs
+    else
+        composer install
+    fi
 
     vendor/bin/sail up -d --remove-orphans
 
@@ -85,6 +101,5 @@ if $CLEAR ; then
 fi
 
 if $MIGRATE ; then
-    vendor/bin/sail artisan migrate:fresh
     vendor/bin/sail artisan db:seed --class="MinVWS\\DUSi\\Subsidy\\Admin\\API\\Database\\Seeders\\DatabaseSeeder"
 fi

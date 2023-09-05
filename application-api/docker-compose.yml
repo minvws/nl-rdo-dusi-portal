@@ -20,9 +20,9 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
-            - '../application-model:/var/www/application-model'
-            - '../subsidy-model:/var/www/subsidy-model'
-            - '../serialisation-model:/var/www/serialisation-model'
+            - '../subsidy-model:/var/www/html/vendor/minvws/dusi-subsidy-model'
+            - '../serialisation-model:/var/www/html/vendor/minvws/dusi-serialisation-model'
+            - '../bridge:/var/www/html/vendor/minvws/php-rmq-rpc-bridge'
         networks:
             portal-web:
             portal-backend:

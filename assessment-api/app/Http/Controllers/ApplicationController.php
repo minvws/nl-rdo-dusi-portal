@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
+use Illuminate\Http\Request;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
@@ -15,6 +16,9 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ApplicationController extends Controller
 {
     public function __construct(
@@ -34,10 +38,24 @@ class ApplicationController extends Controller
 
     /**
      * Display the specified resource.
+     * @throws \Exception
      */
-    public function show(Application $application): ApplicationSubsidyVersionResource
+    public function show(Request $request, Application $application): ApplicationSubsidyVersionResource
     {
-        return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+        try {
+            $publicKey = $request->hasHeader('publicKey') ? $request->header('publicKey')
+                : throw new \Exception('No public key provided');
+            $publicKey = $publicKey ?? throw new \Exception('No public key provided');
+            return $this->applicationSubsidyService->getApplicationSubsidyResource(
+                $application,
+                $publicKey
+            );
+        } catch (\Exception $e) {
+            if (!\Config::get('encryption.backend_encrypt')) { // TODO: remove when frontend supports decryption
+                return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+            }
+            throw $e;
+        }
     }
 
     /**

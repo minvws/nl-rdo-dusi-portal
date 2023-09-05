@@ -14,12 +14,14 @@ class VerifyCsrfToken extends BaseVerifyCsrfToken
      * @var array<int, string>
      */
     protected $except = [
-        //
+        '/api/login',
+        '/api/logout',
     ];
 
     /**
      * We use the XSRF-TOKEN cookie as our default CSRF token response.
      *
+     * @param $request
      * @return string
      */
     protected function getTokenFromRequest($request): string

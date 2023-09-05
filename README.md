@@ -9,7 +9,7 @@ Running the run.sh script
 
 ### TL;DR
 
-Make sure you have PHP 8.2 and composer installed.
+Make sure you have PHP 8.2, composer, node and npm installed.
 
 On Mac:
 
@@ -19,13 +19,44 @@ On Mac:
 
 On Linux and Windows Subsystem for Linux use your package manager.
 
+```shell
+apt-get install php8.2-cli php8.2-bcmath php8.2-curl php8.2-gd php8.2-xml php8.2-zip
+```
+
+To run the backend applications you need to have docker installed. And
+because we use a private docker registry you need to be logged in to the
+registry. To do this run:
+
+```docker login ghcr.io --username <username>```
+
+In the prompt enter a personal access token with read:packages scope.
+This token can be created in your
+[GitHub account.](https://github.com/settings/tokens/new?scopes=read:packages&description=GitHub%20Container%20Registry%20Token)
+Finally, if you want to test if you are logged in, run the following command:
+
+```docker pull ghcr.io/minvws/nl-rdo-hsm-api-service```
+
 To run the backend applications simply run:
 
-```./run.sh -c -i -m```
+```shell
+./run.sh -c -i -m
+```
 
 To see a list of all available options run:
 
-```./run.sh -h```
+```shell
+./run.sh -h
+```
+
+#### Github token
+
+For installation steps a GitHub token is required, this token should have the
+full repo control, and package read permissions.
+[Generate new personal access token](https://github.com/settings/tokens/new?scopes=repo,read:packages&description=Composer+Token)
+
+To implement this token the command
+`composer config --global --auth github-oauth.github.com <token>`
+can be run, replacing `<token>`.
 
 ### Frontend
 

@@ -27,6 +27,10 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $subsidy_page_url
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface $valid_to
+ * @property string $contact_mail_address
+ * @property string $mail_to_name_field_identifier
+ * @property string $mail_to_address_field_identifier
+ * @property string $message_overview_subject
  * @property-read Subsidy $subsidy
  * @property-read Collection<SubsidyStage> $subsidyStages
  * @property-read Collection<SubsidyLetter> $subsidyLetters
@@ -51,6 +55,10 @@ class SubsidyVersion extends Model
         'version',
         'status',
         'subsidy_page_url',
+        'contact_mail_address',
+        'mail_to_name_field_identifier',
+        'mail_to_address_field_identifier',
+        'message_overview_subject',
     ];
 
     protected $casts = [

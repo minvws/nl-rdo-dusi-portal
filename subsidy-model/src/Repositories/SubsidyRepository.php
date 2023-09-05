@@ -210,10 +210,8 @@ class SubsidyRepository
      * @param SubsidyLetter $subsidyLetter
      * @return Collection<string>
      */
-    public function getShortRegulations(): Collection
+    public function getActiveSubsidyCodes(): Collection
     {
-        return Subsidy::query()->active()->ordered()->get()->map(function (Subsidy $subsidy) {
-            return $subsidy->code;
-        });
+        return Subsidy::query()->active()->ordered()->pluck('code');
     }
 }

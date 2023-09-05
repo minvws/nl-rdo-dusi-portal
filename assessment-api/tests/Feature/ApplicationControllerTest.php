@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
 
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use MinVWS\DUSi\Assessment\API\Models\Connection;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -17,6 +18,7 @@ use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 class ApplicationControllerTest extends TestCase
 {
     use DatabaseTransactions;
+    use WithoutMiddleware;
 
     protected array $connectionsToTransact = [Connection::APPLICATION];
     private Application $application;
@@ -24,6 +26,7 @@ class ApplicationControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         Subsidy::query()->truncate();
         SubsidyVersion::query()->truncate();
         Application::query()->truncate();

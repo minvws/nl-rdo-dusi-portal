@@ -10,14 +10,15 @@
         "guzzlehttp/guzzle": "^7.7",
         "laravel/framework": "^10.17",
         "laravel/tinker": "^2.8",
-        "minvws/codable": "dev-feature/base as 1.0.x-dev",
+        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
         "minvws/dusi-subsidy-model": "@dev",
         "minvws/dusi-application-model": "@dev",
-        "minvws/dusi-serialisation-model": "@dev"
+        "minvws/dusi-serialisation-model": "@dev",
+        "minvws/php-rmq-rpc-bridge": "@dev",
+        "ext-openssl": "*"
     },
     "require-dev": {
-        "ext-openssl": "*",
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",
         "laravel/pint": "^1.10",
@@ -76,8 +77,8 @@
     "prefer-stable": true,
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/minvws/nl-rdo-php-codable.git"
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-php-codable.git"
         },
         {
             "type": "path",
@@ -90,6 +91,10 @@
         {
             "type": "path",
             "url": "../serialisation-model"
+        },
+        {
+            "type": "path",
+            "url": "../bridge"
         }
     ]
 }

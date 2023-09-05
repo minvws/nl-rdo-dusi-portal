@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use MinVWS\DUSi\Application\API\Http\Controllers\ActionableController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationController;
+use MinVWS\DUSi\Application\API\Http\Controllers\MessageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MockedResourceController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyController;
@@ -28,12 +30,20 @@ Route::middleware('auth')->group(
         Route::post('applications/{application}/files', [ApplicationController::class, 'uploadFile'])
             ->name('application-upload-file');
 
+        Route::get('applications', [ApplicationController::class, 'index']);
+
+        Route::get('messages', [MessageController::class, 'index']);
+        Route::get('messages/{id}', [MessageController::class, 'view']);
+        Route::get('messages/{id}/download/{format}', [MessageController::class, 'download']);
+
+        Route::get('actionables/counts', [ActionableController::class, 'counts']);
+
         Route::get('user/info', [UserController::class, 'info'])->name('user-info');
         Route::post('user/logout', [UserController::class, 'logout'])->name('user-logout');
+
+        // TODO: route name not suitable for user messages
+        Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters']);
     }
 );
 
-//TODO: Remove mocked routes when the real API is ready
-Route::get('messages', [MockedResourceController::class, 'messages']);
-Route::get('requests', [MockedResourceController::class, 'requests']);
 Route::get('btv', [MockedResourceController::class, 'btv']);
