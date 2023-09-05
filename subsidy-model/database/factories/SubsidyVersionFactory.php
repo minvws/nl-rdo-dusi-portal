@@ -28,6 +28,10 @@ class SubsidyVersionFactory extends Factory
             'version' => $this->faker->randomDigitNotZero(),
             'status' => VersionStatus::Draft->value,
             'subsidy_page_url' => $this->faker->url(),
+            'contact_mail_address' => 'dienstpostbus@minvws.nl',
+            'mail_to_address_field_identifier' => 'email',
+            'mail_to_name_field_identifier' => 'firstName;infix;lastName',
+            'message_overview_subject' => $this->faker->words(3, true),
         ];
     }
 }

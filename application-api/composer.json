@@ -16,7 +16,7 @@
         "predis/predis": "^2.2",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "minvws/codable": "dev-feature/base as 1.0.x-dev"
+        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",

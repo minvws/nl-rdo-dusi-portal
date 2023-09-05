@@ -26,6 +26,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property Identity $identity
  * @property DateTime $locked_from
  * @property DateTime $final_review_deadline
+ * @property DateTime $created_at
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */

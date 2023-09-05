@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Providers;
@@ -8,12 +12,24 @@ use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
 use Config;
 use Laravel\Fortify\Fortify;
+use MinVWS\DUSi\Assessment\API\Services\LatteLetterLoaderService;
+use MinVWS\DUSi\Assessment\API\DTO\LetterData;
+use MinVWS\DUSi\Assessment\API\DTO\ApplicationStages;
+use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageData;
+use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageAnswer;
+use Latte\Engine;
+use Latte\Sandbox\SecurityPolicy;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Assessment\API\Services\EncryptionService;
 use MinVWS\DUSi\Assessment\API\Services\Hsm\HsmService;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use RuntimeException;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +45,26 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(SubsidyRepository::class),
                 $app->make(EncryptionService::class)
             );
+        });
+
+        $this->app->singleton(Engine::class, function ($app) {
+            $latte = new Engine();
+            $latte->setSandboxMode();
+            $latte->setTempDirectory($app->config->get('view.compiled'));
+            $latte->setLoader(new LatteLetterLoaderService(resource_path('views') . '/letters/'));
+
+            $policy = new SecurityPolicy();
+            $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include']);
+            $policy->allowFilters(['date', 'join', 'spaceless', 'capitalize', 'firstUpper', 'lower', 'upper', 'round']);
+
+            $policy->allowProperties(LetterData::class, $policy::All);
+            $policy->allowProperties(ApplicationStages::class, $policy::All);
+            $policy->allowProperties(ApplicationStageData::class, $policy::All);
+            $policy->allowProperties(ApplicationStageAnswer::class, $policy::All);
+
+            $latte->setPolicy($policy);
+
+            return $latte;
         });
     }
 

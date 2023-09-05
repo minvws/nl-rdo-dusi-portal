@@ -5,30 +5,17 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 
 use MinVWS\Codable\Coding\Codable;
-use MinVWS\Codable\Decoding\Decodable;
-use MinVWS\Codable\Decoding\DecodingContainer;
-use MinVWS\Codable\Encoding\EncodingContainer;
+use MinVWS\Codable\Coding\CodableSupport;
+use MinVWS\Codable\Reflection\Attributes\CodableArray;
 
 class MessageList implements Codable
 {
+    use CodableSupport;
+
     /**
      * @param array<MessageListMessage> $items
      */
-    final public function __construct(public readonly array $items)
+    final public function __construct(#[CodableArray(MessageListMessage::class)] public readonly array $items)
     {
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameters)
-     */
-    public static function decode(DecodingContainer $container, ?Decodable $object = null): static
-    {
-        $messages = $container->{'items'}->decodeArray(MessageListMessage::class);
-        return new static($messages);
-    }
-
-    public function encode(EncodingContainer $container): void
-    {
-        $container->{'items'} = $this->items;
     }
 }

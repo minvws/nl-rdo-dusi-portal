@@ -1,0 +1,210 @@
+/* Path Variables */
+$ro-font-path: '../fonts';
+$ro-img-path: '~@minvws/nl-rdo-rijksoverheid-ui-theme/img';
+
+/* RO Fonts */
+@font-face {
+  font-family: "RO Sans Web";
+  font-weight: normal;
+  font-style: normal;
+  src: url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Regular.woff2") format("woff2"),
+  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Regular.woff") format("woff"),
+  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "RO Sans Web";
+  font-weight: normal;
+  font-style: italic;
+  src: url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Italic.woff2") format("woff2"),
+  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Italic.woff") format("woff"),
+  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Italic.ttf") format("truetype");
+}
+
+/* Bold */
+@font-face {
+  font-family: "RO Sans Web";
+  font-weight: bold;
+  font-style: normal;
+  src: url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Bold.woff2") format("woff2"),
+  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Bold.woff") format("woff"),
+  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "RO Serif Web";
+  font-weight: normal;
+  font-style: normal;
+  src: url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Regular.woff2") format("woff2"),
+  url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "RO Serif Web";
+  font-weight: normal;
+  font-style: italic;
+  src: url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Italic.woff2") format("woff2"),
+  url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Italic.woff") format("woff");
+}
+
+/* Bold */
+@font-face {
+  font-family: "RO Serif Web";
+  font-weight: bold;
+  font-style: normal;
+  src: url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Bold.woff2") format("woff2"),
+  url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Bold.woff") format("woff");
+}
+
+
+/* Basic styling */
+
+@page {
+  margin: 2.5cm 0.8cm 2.6cm 2.7cm;
+  font-size: 9.5pt;
+}
+
+.color-ro-blue {
+  color: #01689b;
+}
+
+.color-ro-ruby {
+  color: #ca005d;
+}
+
+* {
+  font-family: "RO Sans Web", serif;
+  font-weight: normal;
+  font-size: 9pt;
+  color: black;
+}
+
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  font-weight: bold;
+}
+
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 1.2rem;
+}
+
+h2 {
+  font-size: 1.1rem;
+}
+
+h3, h4 {
+  font-size: 1rem;
+}
+
+$headerOffset: 3.5;
+
+header {
+  height: $headerOffset * 1cm;
+
+  img {
+    display: block;
+    margin: 0 auto;
+    position: absolute;
+    top: -2.5cm;
+    left: 7.5cm;
+  }
+}
+
+.page-break {
+  page-break-after: always;
+}
+
+article {
+  width: 13.5cm;
+
+  table {
+    margin-bottom: 0.5cm;
+    page-break-inside: avoid;
+    border-spacing: 0;
+
+    &.full-width {
+      width: 100%;
+    }
+
+    td {
+      padding: 3mm 3mm 0 0;
+    }
+
+    &.styled {
+      &.header {
+        tr:first-child td {
+          font-weight: bold;
+          border-bottom: 1pt solid black;
+          padding-top: 1mm;
+          padding-bottom: 1mm;
+        }
+
+        tr:nth-child(2) td {
+          padding-top: 1mm;
+        }
+      }
+
+      &.footer-line {
+        tr:last-child td {
+          padding-top: 1mm;
+          border-top: 1pt solid black;
+        }
+
+        tr:nth-last-child(2) td {
+          padding-bottom: 1mm;
+        }
+      }
+    }
+  }
+
+  code {
+    background-color: #999;
+    padding: 0.1mm 1mm;
+  }
+
+  .small {
+    font-size: 6.5pt;
+  }
+
+  .justify {
+    text-align: justify;
+  }
+
+  .left {
+    text-align: left;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+}
+
+
+aside#right {
+  position: absolute;
+  top: $headerOffset * 1cm;
+  right: 0cm;
+  width: 3.8cm;
+  font-size: 7pt;
+
+  p, em {
+    font-size: 7pt;
+    line-height: 1;
+  }
+
+  h3, h4 {
+    font-size: 8pt;
+  }
+}

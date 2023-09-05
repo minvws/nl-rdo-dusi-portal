@@ -6,38 +6,20 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 
 use DateTimeInterface;
 use MinVWS\Codable\Coding\Codable;
+use MinVWS\Codable\Coding\CodableSupport;
 use MinVWS\Codable\Decoding\Decodable;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\Encoding\EncodingContainer;
 
 class MessageListMessage implements Codable
 {
+    use CodableSupport;
+
     final public function __construct(
         public readonly string $id,
         public readonly string $subject,
         public readonly DateTimeInterface $sentAt,
         public readonly bool $isNew
     ) {
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameters)
-     * @psalm-suppress NoValue
-     */
-    public static function decode(DecodingContainer $container, ?Decodable $object = null): static
-    {
-        $id = $container->{'id'}->decodeString();
-        $subject = $container->{'subject'}->decodeString();
-        $sentAt = $container->{'sentAt'}->decodeDateTime();
-        $isNew = $container->{'isNew'}->decodeBool();
-        return new static($id, $subject, $sentAt, $isNew);
-    }
-
-    public function encode(EncodingContainer $container): void
-    {
-        $container->{'id'} = $this->id;
-        $container->{'subject'} = $this->subject;
-        $container->{'sentAt'} = $this->sentAt;
-        $container->{'isNew'} = $this->isNew;
     }
 }
