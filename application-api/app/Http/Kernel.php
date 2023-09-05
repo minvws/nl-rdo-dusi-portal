@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Http;
 
-use MinVWS\DUSi\Application\API\Http\Middleware\EnforceJson;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -17,7 +16,7 @@ class Kernel extends HttpKernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
+        \MinVWS\DUSi\Application\API\Http\Middleware\TrustHosts::class,
         \MinVWS\DUSi\Application\API\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \MinVWS\DUSi\Application\API\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -42,7 +41,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            EnforceJson::class,
+            \MinVWS\DUSi\Application\API\Http\Middleware\EnforceJson::class,
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
