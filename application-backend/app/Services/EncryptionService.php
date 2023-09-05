@@ -6,8 +6,11 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Config;
 use Exception;
+use MinVWS\Codable\Coding\Codable;
+use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedPayload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
@@ -92,7 +95,6 @@ class EncryptionService
         return base64_encode($dataToBeSavedInDatabase);
     }
 
-
     /**
      * @throws Exception
      */
@@ -167,5 +169,13 @@ class EncryptionService
         $aesKeyDecrypted = $this->decryptAesKey($dataArray['encrypted_aes']);
 
         return $this->decryptAesEncrypted($dataArray['encrypted'], $aesKeyDecrypted, $dataArray['iv']);
+    }
+
+    public function encryptPayload(Codable $payload, string $publicKey): EncryptedPayload
+    {
+        $encoder = new JSONEncoder();
+        $json = $encoder->encode($payload);
+        openssl_public_encrypt($json, $data, $publicKey, OPENSSL_PKCS1_OAEP_PADDING);
+        return new EncryptedPayload($data);
     }
 }

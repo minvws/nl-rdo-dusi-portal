@@ -24,7 +24,7 @@
         "orchestra/testbench": "^8.0",
         "vimeo/psalm": "^5.14",
         "nunomaduro/larastan": "^2.0",
-        "minvws/codable": "dev-feature/base as 1.0.x-dev"
+        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev"
     },
     "autoload": {
         "psr-4": {
