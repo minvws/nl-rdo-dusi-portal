@@ -6,10 +6,12 @@
     "license": "EUPL-1.2",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^2.0",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
         "laravel/framework": "^10.17",
         "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
+        "latte/latte": "^3.0",
         "minvws/dusi-application-model": "@dev",
         "minvws/dusi-subsidy-model": "@dev",
         "predis/predis": "^2.2"

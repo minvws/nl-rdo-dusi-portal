@@ -26,6 +26,7 @@ use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
  * @property ApplicationStageVersionDecision $decision
  * @property ?string $assessor_user_id
  * @property DateTime $decision_updated_at
+ * @property DateTime $created_at
  */
 class ApplicationStageVersion extends Model
 {

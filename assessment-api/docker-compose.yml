@@ -26,6 +26,14 @@ services:
             portal-backend:
             user-admin-web:
 
+    mailpit:
+        image: 'axllent/mailpit:latest'
+        ports:
+            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            portal-backend:
+            user-admin-web:
 
 networks:
     portal-backend:

@@ -1,0 +1,48 @@
+{layout 'letter_layout.latte'}
+{block content}
+    <p>
+        {$content->stage1->firstName} {$content->stage1->infix} {$content->stage1->lastName}<br />
+        {$content->stage1->street} {$content->stage1->houseNumber}{$content->stage1->houseNumberSuffix}<br />
+        {$content->stage1->postalCode} {$content->stage1->city}
+    </p>
+    <p>&nbsp;</p>
+    <p>Beste lezer,</p>
+    <p>Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor {$content->subsidyTitle}. Uw aanvraag is geregistreerd
+        met referentienummer {$content->reference}.</p>
+
+    <p>&nbsp;</p>
+    <h2>Besluit</h2>
+    {if $content->decision === 'pending'}
+        <p>We hebben uw aanvraag in behandeling genomen, maar er is nog geen beslissing.</p>
+    {/if}
+    {if $content->decision === 'accepted'}
+        <p>U heeft *AANGEVRAAGDE SUBSIDIE* subsidie aangevraagd. Ik stel de subsidie vast op *VASTGESTELDE SUBSIDIE*. </p>
+    {/if}
+
+    {if $content->decision === 'rejected'}
+        <p>U aanvraag is afgewezen.</p>
+    {/if}
+
+    {if $content->decision === 'request_for_changes'}
+        <p>We vragen u nog aanvullende informatie te verstrekken.</p>
+    {/if}
+
+    <h2>Motivering bij het besluit</h2>
+    <p>*MAATWERKTESKT REGELINGSPECIFIEK*</p>
+    <p>&nbsp;</p>
+
+    <h2>Heeft u vragen?</h2>
+    <p>Mail dan naar *MAILBOX REGELING* of bel met 070-340 55 66. Vermeld bij al uw correspondentie
+        het referentienummer *REFERENTIE*.</p>
+    <p>&nbsp;</p>
+    <p>
+        *ONDERTEKENING*<br />
+        *HANDTEKENING*<br />
+    </p>
+
+    <p>&nbsp;</p>
+{/block}
+
+{block sidebar}
+    {include parent}
+{/block}
