@@ -19,9 +19,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
-use Mockery\Mock;
-use Mockery\MockInterface;
-use Throwable;
 
 /**
  * @group application
