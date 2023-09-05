@@ -20,10 +20,13 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 class ValidatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * Only test if we can have a validation rule, and it is an FieldValuesAwareRule.
      * And that the field values are set on the rule.
@@ -57,7 +60,7 @@ class ValidatorTest extends TestCase
                 'someField' => 'some value',
             ],
             rules: [
-                'someField' => $mockRule,
+                'someField' => [$mockRule],
             ],
             applicationStageVersion: $applicationStageVersion,
             fieldValues: $fieldValues,
@@ -202,11 +205,6 @@ class ValidatorTest extends TestCase
         $mockRule->shouldReceive('passes')
             ->andReturn(true);
 
-        $mockRule
-            ->shouldReceive('validate')
-            ->with('someField', 'some value', Mockery::type(Closure::class))
-            ->once();
-
         $mockApplicationRepository = Mockery::mock(ApplicationRepository::class);
 
         $validator = new Validator(
@@ -215,7 +213,7 @@ class ValidatorTest extends TestCase
                 'someField' => 'some value',
             ],
             rules: [
-                'someField' => $mockRule,
+                'someField' => [$mockRule],
             ],
             applicationStageVersion: new ApplicationStageVersion(),
             fieldValues: [

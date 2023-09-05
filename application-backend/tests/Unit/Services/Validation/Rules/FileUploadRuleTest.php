@@ -181,13 +181,6 @@ class FileUploadRuleTest extends TestCase
         $rule->setApplicationRepository($mockApplicationRepository);
         $rule->setApplicationStageVersion($applicationStageVersion);
 
-        $rule->validate('uploadField', null, fn ($message) => $this->fail('Should not fail!'));
-    }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-
-        parent::tearDown();
+        $rule->validate('uploadField', null, fn($message) => $this->fail('Should not fail!'));
     }
 }
