@@ -15,14 +15,12 @@ class ApplicationReferenceService
     public function __construct(
         private ApplicationRepository $applicationRepository,
         private ApplicationReferenceGenerator $applicationReferenceGenerator,
-    )
-    {
+    ) {
     }
 
     public function generateUniqueReferenceByElevenRule(Subsidy $subsidy): string
     {
         for ($i = 0; $i < self::MAX_TRIES; $i++) {
-
             $randomNumber = $this->applicationReferenceGenerator->generateRandomNumberByElevenRule();
             $applicationReference = $this->createApplicationReferenceString($subsidy->reference_prefix, $randomNumber);
 

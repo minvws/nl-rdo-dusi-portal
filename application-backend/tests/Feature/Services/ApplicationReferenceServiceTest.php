@@ -49,7 +49,6 @@ class ApplicationReferenceServiceTest extends TestCase
         $this->subsidyVersion = SubsidyVersion::factory()
             ->recycle($subsidy)
             ->create();
-
     }
 
     public function testAppliationReferenceIsCreated()
@@ -57,7 +56,7 @@ class ApplicationReferenceServiceTest extends TestCase
         $application = $this->createSubsidyApplication();
 
         $this->assertNotEmpty($application->reference);
-        $this->assertMatchesRegularExpression('/^[A-Za-z0-9]{6}-\d{8}$/',$application->reference);
+        $this->assertMatchesRegularExpression('/^[A-Za-z0-9]{6}-\d{8}$/', $application->reference);
     }
 
     public function testApplicationReferencePassesTheElevenRule(): void
@@ -99,7 +98,7 @@ class ApplicationReferenceServiceTest extends TestCase
         $this->expectException(QueryException::class);
 
         //Create another application
-       $this->createSubsidyApplication();
+        $this->createSubsidyApplication();
     }
 
     public function testApplicationReferenceDuplicateExceptionHandling(): void

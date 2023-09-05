@@ -6,6 +6,6 @@ namespace MinVWS\DUSi\Application\Backend\Services\Exceptions;
 
 use Exception;
 
-class DuplicateApplicationReferenceEntryException extends Exception
+class DuplicateApplicationReferenceException extends Exception
 {
 }

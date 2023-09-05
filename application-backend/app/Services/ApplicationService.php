@@ -52,7 +52,6 @@ use Webmozart\Assert\Assert;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings("LongVariable")
  */
-
 readonly class ApplicationService
 {
     private const CREATE_REFERENCE_MAX_TRIES = 3;
@@ -129,15 +128,15 @@ readonly class ApplicationService
         $createReferenceTries = 0;
         do {
             try {
-                DB::transaction(function() use ($app){
+                DB::transaction(function () use ($app) {
                     $this->saveApplication($app);
                 });
                 return $app;
             } catch (QueryException $queryException) {
-                //We assume a QueryException is caused by a Duplicate entry exception on the unique constraint of the reference field.
-                //We try again until CREATE_REFERENCE_MAX_TRIES
+                //We assume a QueryException is caused by a Duplicate entry exception on the unique constraint of the
+                //reference field. We try again until CREATE_REFERENCE_MAX_TRIES.
             }
-        } while(self::CREATE_REFERENCE_MAX_TRIES > $createReferenceTries++);
+        } while (self::CREATE_REFERENCE_MAX_TRIES > $createReferenceTries++);
 
         throw $queryException;
     }
@@ -145,7 +144,9 @@ readonly class ApplicationService
     private function saveApplication(Application $application): void
     {
         Assert::notNull($application->subsidyVersion);
-        $application->reference = $this->applicationReferenceService->generateUniqueReferenceByElevenRule($application->subsidyVersion->subsidy);
+        $application->reference = $this->applicationReferenceService->generateUniqueReferenceByElevenRule(
+            $application->subsidyVersion->subsidy
+        );
         $this->appRepo->saveApplication($application);
     }
 
@@ -441,5 +442,4 @@ readonly class ApplicationService
             )
         ]);
     }
-
 }

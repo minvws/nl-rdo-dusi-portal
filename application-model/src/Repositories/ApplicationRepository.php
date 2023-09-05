@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\DuplicateApplicationReferenceEntryException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\DuplicateApplicationReferenceException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;

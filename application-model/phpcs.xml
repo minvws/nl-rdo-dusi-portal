@@ -2,7 +2,9 @@
 <ruleset>
     <arg name="basepath" value="."/>
 
-    <file>./src</file>
+    <file>./app</file>
+    <file>./config</file>
+    <file>./routes</file>
     <file>./tests</file>
 
     <rule ref="PSR12" />
@@ -10,7 +12,13 @@
         <exclude name="Generic.Files.LineEndings.InvalidEOLChar"/>
     </rule>
 
+    <config name="installed_paths" value="vendor/slevomat/coding-standard"/>
     <rule ref="vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/TypeHints/DeclareStrictTypesSniff.php" />
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" type="boolean" value="true"/>
+        </properties>
+    </rule>
 
     <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
         <properties>
@@ -18,4 +26,8 @@
         </properties>
     </rule>
 
+    <rule ref="PSR1" />
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude name="PSR1.Files.SideEffects"/>
+    </rule>
 </ruleset>
