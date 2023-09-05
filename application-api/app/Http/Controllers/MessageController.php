@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\Response;
+use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Http\Requests\MessageRequest;
 use MinVWS\DUSi\Application\API\Http\Resources\MessageFiltersResource;
 use MinVWS\DUSi\Application\API\Services\MessageService;
 use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
@@ -43,26 +45,29 @@ class MessageController extends Controller
         return $this->messageService->getFilters();
     }
 
-    public function view(string $id, ClientPublicKey $publicKey): EncodableResponse
+    public function view(string $id, ClientPublicKeyHelper $publicKeyHelper): Response|ResponseFactory
     {
         $params = new MessageParams(
             $this->stateService->getIdentity(),
-            $publicKey,
+            $publicKeyHelper->getClientPublicKey(),
             $id
         );
-        $message = $this->messageService->getMessage($params);
-        return new EncodableResponse($message);
+        $response = $this->messageService->getMessage($params);
+        return response($response->data, $response->status->value);
     }
 
-    public function download(string $id, string $format, ClientPublicKey $publicKey): EncodableResponse
-    {
+    public function download(
+        string $id,
+        string $format,
+        ClientPublicKeyHelper $publicKeyHelper
+    ): Response|ResponseFactory {
         $params = new MessageDownloadParams(
             $this->stateService->getIdentity(),
-            $publicKey,
+            $publicKeyHelper->getClientPublicKey(),
             $id,
             MessageDownloadFormat::from($format)
         );
-        $download = $this->messageService->getMessageDownload($params);
-        return new EncodableResponse($download);
+        $response = $this->messageService->getMessageDownload($params);
+        return response($response->data, $response->status->value);
     }
 }

@@ -11,7 +11,8 @@ use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedPayload;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
@@ -172,11 +173,14 @@ class EncryptionService
         return $this->decryptAesEncrypted($dataArray['encrypted'], $aesKeyDecrypted, $dataArray['iv']);
     }
 
-    public function encryptPayload(Codable $payload, ClientPublicKey $publicKey): EncryptedPayload
-    {
+    public function encryptResponse(
+        EncryptedResponseStatus $status,
+        Codable $payload,
+        ClientPublicKey $publicKey
+    ): EncryptedResponse {
         $encoder = new JSONEncoder();
         $json = $encoder->encode($payload);
         openssl_public_encrypt($json, $data, $publicKey->value, OPENSSL_PKCS1_OAEP_PADDING);
-        return new EncryptedPayload($data);
+        return new EncryptedResponse($status, $data);
     }
 }
