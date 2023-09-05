@@ -35,6 +35,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Uuid;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use Throwable;
+use function PHPUnit\Framework\assertEquals;
 
 /**
  * @group application
@@ -260,10 +261,14 @@ class ApplicationServiceTest extends TestCase
             json_encode($data)
         );
 
-        $this->expectException(FileNotFoundException::class);
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $applicationService->processFormSubmit($formSubmit);
+        $applicationStage = $applicationService->processFormSubmit($formSubmit);
+
+        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        // The application stage version should be invalid, because the file is missing
+        $this->assertNotNull($applicationStageVersion);
+        $this->assertEquals(ApplicationStageVersionStatus::Invalid, $applicationStageVersion->status);
     }
 
     public function testValidationFailsSubmittedApplicationInvalid(): void
