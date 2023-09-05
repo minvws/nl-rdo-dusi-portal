@@ -94,7 +94,14 @@ fi
 
 vendor/bin/sail up -d --remove-orphans
 
-# copy app key from user-admin-api to own env file
+# Copy app key from user-admin-api to own env file
 USER_APP_KEY=$(grep -m 1 "APP_KEY" ../user-admin-api/.env)
 APP_KEY=$(grep -m 1 "APP_KEY" .env)
-sed -i "s%$APP_KEY%$USER_APP_KEY%" .env
+
+# Escape special characters in the variables
+USER_APP_KEY_ESCAPED=$(echo "$USER_APP_KEY" | sed 's/[\*\.&\/]/\\&/g')
+APP_KEY_ESCAPED=$(echo "$APP_KEY" | sed 's/[\*\.&\/]/\\&/g')
+
+# Use the escaped variables in the sed command
+sed -i -e "s%$APP_KEY_ESCAPED%$USER_APP_KEY_ESCAPED%" .env
+
