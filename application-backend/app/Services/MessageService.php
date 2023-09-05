@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use DateTimeImmutable;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedPayload;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
@@ -37,7 +38,7 @@ class MessageService
         ]);
     }
 
-    public function getMessage(MessageParams $params): EncryptedPayload
+    public function getMessage(MessageParams $params): EncryptedResponse
     {
         $message = new Message(
             Uuid::uuid4()->toString(),
@@ -47,12 +48,12 @@ class MessageService
             'Dit is een mock bericht.'
         );
 
-        return $this->encryptionService->encryptPayload($message, $params->publicKey);
+        return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $message, $params->publicKey);
     }
 
-    public function getMessageDownload(MessageDownloadParams $params): EncryptedPayload
+    public function getMessageDownload(MessageDownloadParams $params): EncryptedResponse
     {
         $download = new MessageDownload('application/pdf', 'PDF mock');
-        return $this->encryptionService->encryptPayload($download, $params->publicKey);
+        return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $download, $params->publicKey);
     }
 }

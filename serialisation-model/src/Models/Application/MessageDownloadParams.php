@@ -13,7 +13,7 @@ class MessageDownloadParams implements Codable
 
     final public function __construct(
         public readonly Identity $identity,
-        public readonly string $publicKey,
+        public readonly ClientPublicKey $publicKey,
         public readonly string $id,
         public readonly MessageDownloadFormat $format
     ) {
