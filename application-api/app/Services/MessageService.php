@@ -32,6 +32,7 @@ class MessageService
         $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
         return MessageFiltersResource::make(['shortRegulations' => $shortRegulations]);
     }
+
     public function getMessage(MessageParams $params): EncryptedResponse
     {
         return $this->bridgeClient->call(RPCMethods::GET_MESSAGE, $params, EncryptedResponse::class);
