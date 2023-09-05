@@ -10,6 +10,7 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\DuplicateApplicationReferenceEntryException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
@@ -189,29 +190,7 @@ class ApplicationRepository
     public function saveApplication(Application $application): void
     {
 
-        DB::beginTransaction();
-        try {
-            $application->save();
-
-            DB::commit();
-        } catch (QueryException $e) {
-            DB::rollBack();
-
-            $errorCode = $e->errorInfo[1];
-
-            if ($errorCode === 1062) {
-                // Duplicate Entry
-                // Extract field name from the error message
-                if (preg_match('/Duplicate entry .+ for key \'(.+)\'.*/', $e->getMessage(), $matches) === 1) {
-                    $fieldName = $matches[1];
-                    if ($fieldName === Application::REFERENCE_FIELD_NAME) {
-                        throw new DuplicateApplicationReferenceEntryException($e->getMessage());
-                    }
-                }
-            } else {
-                throw $e;
-            }
-        }
+        $application->save();
     }
 
     public function saveApplicationStageVersion(ApplicationStageVersion $appStageVersion): void

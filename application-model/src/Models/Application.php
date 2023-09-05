@@ -53,19 +53,6 @@ class Application extends Model
         'locked_from'
     ];
 
-    protected static function booted(): void
-    {
-        static::creating(static function (self $application): void {
-            if ($application->reference !== null) {
-                return;
-            }
-
-            /** @var ApplicationReferenceService $applicationReferenceService */
-            $applicationReferenceService = app(ApplicationReferenceService::class);
-            $application->reference = $applicationReferenceService->generateUniqueReference($application->subsidyVersion->subsidy);
-        });
-    }
-
     public function applicationHashes(): HasMany
     {
         return $this->hasMany(ApplicationHash::class, 'application_id', 'id');

@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use DateTimeImmutable;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\DuplicateApplicationReferenceEntryException;
+use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -46,6 +46,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Throwable;
+use Webmozart\Assert\Assert;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -54,6 +55,8 @@ use Throwable;
 
 readonly class ApplicationService
 {
+    private const CREATE_REFERENCE_MAX_TRIES = 3;
+
     public function __construct(
         private SubsidyRepository $subsidyRepository,
         private FormDecodingService $decodingService,
@@ -122,15 +125,28 @@ readonly class ApplicationService
         $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
         $app->application_title = $subsidyStage->title;
         $app->identity = $identity;
-        //$app->identity_type = $identity->type;
-        //$app->identity_identifier = $identity->identifier;
-        try {
-            $this->appRepo->saveApplication($app);
-        }
-        catch (DuplicateApplicationReferenceEntryException) {
-            $app->reference = $this->applicationReferenceService->generateUniqueReference($subsidyStage->subsidyVersion->subsidy);
-        }
-        return $app;
+
+        $createReferenceTries = 0;
+        do {
+            try {
+                DB::transaction(function() use ($app){
+                    $this->saveApplication($app);
+                });
+                return $app;
+            } catch (QueryException $queryException) {
+                //We assume a QueryException is caused by a Duplicate entry exception on the unique constraint of the reference field.
+                //We try again until CREATE_REFERENCE_MAX_TRIES
+            }
+        } while(self::CREATE_REFERENCE_MAX_TRIES > $createReferenceTries++);
+
+        throw $queryException;
+    }
+
+    private function saveApplication(Application $application): void
+    {
+        Assert::notNull($application->subsidyVersion);
+        $application->reference = $this->applicationReferenceService->generateUniqueReferenceByElevenRule($application->subsidyVersion->subsidy);
+        $this->appRepo->saveApplication($application);
     }
 
     private function createApplicationStage(
@@ -425,4 +441,5 @@ readonly class ApplicationService
             )
         ]);
     }
+
 }
