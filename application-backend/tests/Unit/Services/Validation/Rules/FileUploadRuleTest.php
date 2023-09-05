@@ -13,11 +13,14 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
 class FileUploadRuleTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testUploadFieldNotRequiredAndAnswerNull(): void
     {
         $this->expectNotToPerformAssertions();
@@ -137,8 +140,6 @@ class FileUploadRuleTest extends TestCase
 
     public function testUploadFieldRequiredAndFileExists(): void
     {
-        $this->expectNotToPerformAssertions();
-
         $applicationStageVersionUuid = Uuid::uuid4();
 
         $applicationStageVersion = Mockery::mock(ApplicationStageVersion::class);
