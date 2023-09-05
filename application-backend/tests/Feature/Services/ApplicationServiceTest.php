@@ -12,7 +12,6 @@ use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -35,7 +34,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Uuid;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use Throwable;
-use function PHPUnit\Framework\assertEquals;
 
 /**
  * @group application
