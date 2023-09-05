@@ -352,5 +352,6 @@ readonly class ApplicationService
         Validator $validator,
     ): void {
         // TODO: Process invalid fields ...
+        // TODO: Reset values for invalid fields ...
     }
 }

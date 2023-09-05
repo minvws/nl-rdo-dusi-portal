@@ -207,4 +207,10 @@ class ApplicationServiceTest extends TestCase
         assert($applicationService instanceof ApplicationService);
         $applicationService->processFormSubmit($formSubmit);
     }
+
+    public function testValidationFailsSubmittedApplicationInvalid(): void
+    {
+        // TODO: implement
+        $this->markTestSkipped('Not implemented yet.');
+    }
 }
