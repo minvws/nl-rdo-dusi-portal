@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationStageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -20,6 +21,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
  * @property int $stage
  * @property Application $application
  * @property SubsidyStage $subsidyStage
+ * @property DateTime $created_at
  */
 class ApplicationStage extends Model
 {

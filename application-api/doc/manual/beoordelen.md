@@ -5,7 +5,7 @@ Algemene handleiding voor het gebruik van DUS-I beoordelen
 ## beschrijving action 1
 
 Dit is een beschrijving van action 1
-Klik op een aanvraag, test 
+Klik op een aanvraag, test
 
 ## beschrijving action 2
 
