@@ -10,6 +10,7 @@ use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyController;
 use MinVWS\DUSi\Application\API\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use MinVWS\DUSi\Application\API\Http\Middleware\RequireClientPublicKey;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,8 +34,14 @@ Route::middleware('auth')->group(
         Route::get('applications', [ApplicationController::class, 'index']);
 
         Route::get('messages', [MessageController::class, 'index']);
-        Route::get('messages/{id}', [MessageController::class, 'view']);
-        Route::get('messages/{id}/download/{format}', [MessageController::class, 'download']);
+
+        // TODO: move more routes to this once the frontend is ready
+        Route::middleware(RequireClientPublicKey::class)->group(function () {
+            Route::get('messages/{id}', [MessageController::class, 'view'])
+                ->name('message-view');
+            Route::get('messages/{id}/download/{format}', [MessageController::class, 'download'])
+                ->name('message-download');
+        });
 
         Route::get('actionables/counts', [ActionableController::class, 'counts']);
 
