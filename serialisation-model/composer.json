@@ -12,7 +12,8 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^10.16"
+        "laravel/framework": "^10.16",
+        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.2",
@@ -23,8 +24,7 @@
         "slevomat/coding-standard": "^8.13",
         "orchestra/testbench": "^8.0",
         "vimeo/psalm": "^5.14",
-        "nunomaduro/larastan": "^2.0",
-        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev"
+        "nunomaduro/larastan": "^2.0"
     },
     "autoload": {
         "psr-4": {

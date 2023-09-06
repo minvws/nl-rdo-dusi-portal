@@ -4,9 +4,8 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Models\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 
 /**
  * @extends Factory<Application>

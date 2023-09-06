@@ -14,10 +14,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
  * @property string $id
+ * @property string $reference
  * @property string $subsidy_version_id
  * @property string $reference
  * @property string $application_title
@@ -82,6 +85,14 @@ class Application extends Model
                 'identity_identifier' => $identity->identifier
             ]
         );
+    }
+
+    public function scopeIdentity(Builder $query, Identity $identity): Builder
+    {
+        return
+            $query
+                ->where('identity_type', $identity->type)
+                ->where('identity_identifier', $identity->identifier);
     }
 
     public function scopeTitle(Builder $query, string $title): Builder

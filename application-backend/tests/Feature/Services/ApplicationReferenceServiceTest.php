@@ -12,8 +12,8 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationReferenceExce
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Models\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
