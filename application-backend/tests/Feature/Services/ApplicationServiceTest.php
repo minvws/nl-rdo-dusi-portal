@@ -277,9 +277,46 @@ class ApplicationServiceTest extends TestCase
         $this->assertEquals(ApplicationStageVersionStatus::Invalid, $applicationStageVersion->status);
     }
 
-    public function testValidationFailsSubmittedApplicationInvalid(): void
+    /**
+     * Test field validation fails when a required field is missing
+     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws Throwable
+     */
+    public function testValidationFailsRequiredFieldSubmittedApplicationInvalid(): void
     {
-        // TODO: implement
-        $this->markTestSkipped('Not implemented yet.');
+        $this->subsidyStage->fields()->delete();
+
+        $requiredTextField = Field::factory()->create([
+            'type' => FieldType::Text,
+            'code' => 'required_text_field',
+            'subsidy_stage_id' => $this->subsidyStage->id,
+            'is_required' => true,
+        ]);
+
+        $data = [
+            $this->textField->code => $this->faker->word,
+            $this->numericField->code => $this->faker->randomDigit(),
+            $requiredTextField->code => null,
+        ];
+
+        $formSubmit = new FormSubmit(
+            new Identity(
+                IdentityType::EncryptedCitizenServiceNumber,
+                base64_encode(openssl_random_pseudo_bytes(32))
+            ),
+            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
+            json_encode($data)
+        );
+
+        $applicationService = $this->app->get(ApplicationService::class);
+        assert($applicationService instanceof ApplicationService);
+        $applicationStage = $applicationService->processFormSubmit($formSubmit);
+
+        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        // The application stage version should be invalid, because the file is missing
+        $this->assertNotNull($applicationStageVersion);
+        $this->assertEquals(ApplicationStageVersionStatus::Invalid, $applicationStageVersion->status);
     }
 }
