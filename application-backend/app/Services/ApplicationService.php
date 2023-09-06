@@ -46,7 +46,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Throwable;
-use Webmozart\Assert\Assert;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -118,9 +117,6 @@ readonly class ApplicationService
      */
     public function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
     {
-        if (!isset($subsidyStage->subsidyVersion)) {
-            throw new Exception('SubsidyVersion is not set');
-        }
         $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
         $app->application_title = $subsidyStage->title;
         $app->identity = $identity;
@@ -143,7 +139,6 @@ readonly class ApplicationService
 
     private function saveApplication(Application $application): void
     {
-        Assert::notNull($application->subsidyVersion);
         $application->reference = $this->applicationReferenceService->generateUniqueReferenceByElevenRule(
             $application->subsidyVersion->subsidy
         );
