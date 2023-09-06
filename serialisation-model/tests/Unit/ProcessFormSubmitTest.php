@@ -23,7 +23,7 @@ class ProcessFormSubmitTest extends TestCase
                 random_bytes(100)
             ),
             new ApplicationMetadata(
-                'applicationStageId',
+                'applicationId',
                 'subsidyStageId',
             ),
             'encryptedData'

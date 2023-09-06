@@ -8,7 +8,7 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 readonly class ApplicationMetadata
 {
     public function __construct(
-        public string $applicationStageId,
+        public string $applicationId,
         public string $subsidyStageId,
     ) {
     }

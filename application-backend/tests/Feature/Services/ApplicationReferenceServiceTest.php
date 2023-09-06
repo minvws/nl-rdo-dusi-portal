@@ -19,6 +19,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @group application
@@ -202,7 +203,9 @@ class ApplicationReferenceServiceTest extends TestCase
             ->recycle($this->subsidyVersion)
             ->create();
 
+        // TODO: this test unnecessarily exposes the createApplication method
         return $this->applicationService->createApplication(
+            Uuid::uuid4()->toString(),
             new Identity(IdentityType::EncryptedCitizenServiceNumber, $this->faker->word()),
             $subsidyStage
         );

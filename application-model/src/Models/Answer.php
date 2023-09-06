@@ -13,8 +13,11 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 /**
  * @property string $id
- * @property string $encrypted_answer
+ * @property string $application_stage_id
  * @property string $field_id
+ * @property string $encrypted_answer
+ * @property-read ApplicationStage $applicationStage
+ * @property-read Field $field
  */
 class Answer extends Model
 {
@@ -25,19 +28,9 @@ class Answer extends Model
 
     public const UPDATED_AT = null;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'field_id',
-        'encrypted_answer',
-    ];
-
-    public function applicationStageVersion(): BelongsTo
+    public function applicationStage(): BelongsTo
     {
-        return $this->belongsTo(ApplicationStageVersion::class, 'application_stage_version_id', 'id');
+        return $this->belongsTo(ApplicationStage::class, 'application_stage_id', 'id');
     }
 
     public function field(): BelongsTo

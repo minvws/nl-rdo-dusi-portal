@@ -12,17 +12,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
  * @property string $id
+ * @property ApplicationStatus $status
  * @property string $reference
  * @property string $subsidy_version_id
- * @property string $reference
  * @property string $application_title
  * @property string $identity_type
  * @property string $identity_identifier
@@ -31,6 +32,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTime $final_review_deadline
  * @property DateTime $created_at
  * @property-read SubsidyVersion $subsidyVersion
+ * @property-read ApplicationStage $currentApplicationStage
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -42,6 +44,7 @@ class Application extends Model
     protected $connection = Connection::APPLICATION;
 
     protected $casts = [
+        'status' => ApplicationStatus::class,
         'identity_type' => IdentityType::class,
         'locked_from' => 'datetime',
         'final_review_deadline' => 'datetime',
@@ -63,6 +66,15 @@ class Application extends Model
     public function applicationStages(): HasMany
     {
         return $this->hasMany(ApplicationStage::class, 'application_id', 'id');
+    }
+
+    public function currentApplicationStage(): HasOne
+    {
+        return
+            $this->hasOne(ApplicationStage::class)
+                ->where('is_current', true)
+                ->orderBy('sequence_number', 'desc')
+                ->limit(1);
     }
 
     public function subsidyVersion(): BelongsTo
@@ -130,11 +142,9 @@ class Application extends Model
         return $query->where('final_review_deadline', '<=', $timestamp);
     }
 
-    public function scopeStatus(Builder $query, ApplicationStageVersionStatus $status): Builder
+    public function scopeStatus(Builder $query, ApplicationStatus $status): Builder
     {
-        return $query->whereHas('applicationStages.applicationStageVersions', function (Builder $query) use ($status) {
-            $query->where('status', $status);
-        });
+        return $query->where('status', $status);
     }
 
     //TODO GB: This is not the correct way to do this, but it works for now
