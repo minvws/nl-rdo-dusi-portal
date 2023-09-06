@@ -289,6 +289,11 @@ readonly class ApplicationService
                     previous: $exception,
                 );
             }
+            if (count($values) === 0) {
+                throw new FormSubmitInvalidBodyReceivedException(
+                    message: 'Form submit invalid, no values received',
+                );
+            }
 
             $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 

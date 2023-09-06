@@ -236,7 +236,7 @@ class ApplicationServiceTest extends TestCase
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $this->expectException(\Exception::class);
+        $this->expectException(FormSubmitInvalidBodyReceivedException::class);
         $applicationService->processFormSubmit($formSubmit);
     }
 
