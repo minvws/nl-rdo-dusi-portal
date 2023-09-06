@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{$content->subsidyTitle}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{$content->cssPath}">
+</head>
+<body>
+
+<header>
+    <img src="{$content->logoPath}" />
+</header>
+
+<aside id="right">
+    {block sidebar}
+        <h3>Dienst Uitvoering Subsidies aan Instellingen (DUS-I)</h3>
+        <p>&nbsp;</p>
+        <h4>Bezoekadres:</h4>
+        <p>
+            Rijnstraat 50<br>
+            2515 XP DEN HAAG
+        </p>
+
+        <h4>Contact</h4>
+        <p>
+            {$content->contactEmailAddress}<br>
+            070 340 5566<br>
+            <em>Bereikbaar op werkdagen<br>van 9.00 tot 16.00 uur</em>
+        </p>
+
+        <p>www.dus-i.nl</p>
+
+        {if $content->reference}
+            <h4>Ons kenmerk</h4>
+            <p>{$content->reference}</p>
+        {/if}
+
+        {if $content->applicationCode}
+            <h4>Dossiernummer</h4>
+            <p>{$content->applicationCode}</p>
+        {/if}
+    {/block}
+</aside>
+
+<article>
+    <p class="small">&gt; Retouradres Postbus 16006  2500 BA  Den Haag</p>
+    {block content}{/block}
+</article>
+
+
+</body>
+
+</html>
+

@@ -9,7 +9,9 @@ use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 
 $bindings = [
@@ -17,13 +19,26 @@ $bindings = [
         'paramsClass' => Ping::class,
         'callback' => [PingService::class, 'ping']
     ],
+    RPCMethods::LIST_APPLICATIONS => [
+        'paramsClass' => ApplicationListParams::class,
+        'callback' => [ApplicationService::class, 'listApplications']
+    ],
+    RPCMethods::GET_APPLICATION => [
+        'paramsClass' => ApplicationListParams::class,
+        'callback' => [ApplicationService::class, 'getApplication']
+    ],
     RPCMethods::LIST_MESSAGES => [
         'paramsClass' => MessageListParams::class,
         'callback' => [MessageService::class, 'listMessages']
     ],
-    RPCMethods::LIST_APPLICATIONS => [
-        'paramsClass' => ApplicationListParams::class,
-        'callback' => [ApplicationService::class, 'listApplications']
+
+    RPCMethods::GET_MESSAGE => [
+        'paramsClass' => MessageParams::class,
+        'callback' => [MessageService::class, 'getMessage']
+    ],
+    RPCMethods::GET_MESSAGE_DOWNLOAD => [
+        'paramsClass' => MessageDownloadParams::class,
+        'callback' => [MessageService::class, 'getMessageDownload']
     ],
     RPCMethods::GET_ACTIONABLE_COUNTS => [
         'paramsClass' => ActionableCountsParams::class,

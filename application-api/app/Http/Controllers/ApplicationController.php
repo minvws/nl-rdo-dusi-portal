@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
 use Exception;
+use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Http\Requests\ApplicationSubmitRequest;
 use MinVWS\DUSi\Application\API\Http\Requests\ApplicationUploadFileRequest;
 use MinVWS\DUSi\Application\API\Models\Application;
@@ -18,6 +19,7 @@ use Illuminate\Routing\ResponseFactory;
 use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use Throwable;
 
 /**
@@ -74,5 +76,21 @@ class ApplicationController extends Controller
         $params = new ApplicationListParams($stateService->getIdentity());
         $list = $applicationService->listApplications($params);
         return new EncodableResponse($list);
+    }
+
+    public function show(
+        string $id,
+        ClientPublicKeyHelper $publicKeyHelper,
+        StateService $stateService,
+        ApplicationService $applicationService
+    ): Response|ResponseFactory {
+        $params = new ApplicationParams(
+            $stateService->getIdentity(),
+            $publicKeyHelper->getClientPublicKey(),
+            $id,
+            true
+        );
+        $response = $applicationService->getApplication($params);
+        return response($response->data, $response->status->value);
     }
 }

@@ -60,7 +60,7 @@ class RouteServiceProvider extends ServiceProvider
             'application',
             function (string $id) {
                 try {
-                    return app()->get(ApplicationService::class)->getApplication($id);
+                    return app()->get(ApplicationService::class)->getDraftApplication($id);
                 } catch (ApplicationNotFoundException $e) {
                     abort(404, $e->getMessage());
                 }

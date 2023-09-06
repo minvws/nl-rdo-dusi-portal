@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use MinVWS\DUSi\Shared\Application\Models\Disk;
+
 return [
 
     /*
@@ -58,6 +60,11 @@ return [
             'throw' => false,
         ],
 
+        Disk::APPLICATION_FILES => [
+            'driver' => env('FILESYSTEM_APPLICATION_FILES_DRIVER', 'local'),
+            'root' => env('FILESYSTEM_APPLICATION_FILES_ROOT', storage_path('application-files')),
+            'throw' => false,
+        ],
     ],
 
     /*

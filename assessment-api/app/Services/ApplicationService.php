@@ -44,7 +44,7 @@ class ApplicationService
 
     public function getApplicationMessageFilterResource(): ApplicationMessageFilterResource
     {
-        $shortRegulations = $this->subsidyRepository->getShortRegulations();
+        $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
         return ApplicationMessageFilterResource::make(['shortRegulations' => $shortRegulations]);
     }
 
@@ -57,7 +57,7 @@ class ApplicationService
             Log::debug("Fetching application request filter for user {$user->id}");
             throw new Exception("Not Implemented");
         }
-        $shortRegulations = $this->subsidyRepository->getShortRegulations();
+        $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
         return ApplicationRequestsFilterResource::make(['shortRegulations' => $shortRegulations]);
     }
 }

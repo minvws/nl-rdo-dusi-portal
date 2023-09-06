@@ -17,6 +17,8 @@ use MinVWS\DUSi\Application\API\Services\Exceptions\ApplicationNotFoundException
 use Illuminate\Http\UploadedFile;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
@@ -39,7 +41,7 @@ class ApplicationService
     /**
      * @throws ApplicationNotFoundException
      */
-    public function getApplication(string $id): ?DraftApplication
+    public function getDraftApplication(string $id): ?DraftApplication
     {
         $application = $this->stateService->getDraftApplication($id);
         if ($application === null) {
@@ -111,16 +113,9 @@ class ApplicationService
         // TODO: remove encryption here when frontend implements encryption
         $encryptedData = Config::get('encryption.encrypt_till_support') ?
             $this->encryptionService->encryptData($formData) : $formData;
-        $encryptedIdentifier = Config::get('encryption.encrypt_till_support') ?
-            $this->encryptionService->encryptData($this->stateService->getIdentity()->identifier) :
-            $this->stateService->getIdentity()->identifier;
-        $encryptedIdentity = new Identity(
-            type: $this->stateService->getIdentity()->type,
-            identifier: $encryptedIdentifier
-        );
 
         $formSubmit = new FormSubmit(
-            identity: $encryptedIdentity,
+            identity: $this->stateService->getIdentity(),
             applicationMetadata: $application->getMetadata(),
             encryptedData: $encryptedData
         );
@@ -134,5 +129,10 @@ class ApplicationService
     public function listApplications(ApplicationListParams $params): ApplicationList
     {
         return $this->bridgeClient->call(RPCMethods::LIST_APPLICATIONS, $params, ApplicationList::class);
+    }
+
+    public function getApplication(ApplicationParams $params): EncryptedResponse
+    {
+        return $this->bridgeClient->call(RPCMethods::GET_APPLICATION, $params, EncryptedResponse::class);
     }
 }

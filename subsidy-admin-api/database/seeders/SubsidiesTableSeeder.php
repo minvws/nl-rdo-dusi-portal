@@ -28,8 +28,18 @@ class SubsidiesTableSeeder extends Seeder
         ]);
         Subsidy::factory()->count(2)
             ->create()
-            ->each(function($subsidy){
-                SubsidyVersion::factory(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published, 'subsidy_page_url' => 'https://www.dus-i.nl/subsidies'])
+            ->each(function ($subsidy){
+                SubsidyVersion::factory(
+                    [
+                        'subsidy_id' => $subsidy->id,
+                        'status' => VersionStatus::Published,
+                        'subsidy_page_url' => 'https://www.dus-i.nl/subsidies',
+                        'contact_mail_address' => 'dienstpostbus@minvws.nl',
+                        'mail_to_address_field_identifier' => 'email',
+                        'mail_to_name_field_identifier' => 'firstName;infix;lastName',
+                        'message_overview_subject' => 'Onderwerp voor overzicht',
+                    ]
+                )
                     ->create()
                     ->each(function($subsidyVersion){
                     SubsidyStage::factory(['subsidy_version_id' => $subsidyVersion->id])->create();

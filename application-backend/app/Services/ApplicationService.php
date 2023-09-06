@@ -22,7 +22,11 @@ use MinVWS\DUSi\Shared\Application\Models\IdentityType;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
@@ -36,6 +40,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -430,11 +435,35 @@ readonly class ApplicationService
         return new ApplicationList([
             new ApplicationListApplication(
                 Uuid::uuid4()->toString(),
-                new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie'),
+                new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie', 'https://www.dus-i.nl/'),
                 new DateTimeImmutable(),
                 new DateTimeImmutable("+30 days"),
                 ApplicationStatus::New
             )
         ]);
+    }
+
+    public function getApplication(ApplicationParams $params): EncryptedResponse
+    {
+        // TODO:
+        // Retrieve application from the database and verify the identity. If the
+        // application doesn't exist or doesn't belong to the user return a not found
+        // response. If the application exists, retrieve all the answers, decrypt
+        // them and structure them in the correct JSON format (compatible with the schema).
+        $application = new ApplicationDTO(
+            $params->id,
+            new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie', 'https://www.dus-i.nl/'),
+            new DateTimeImmutable(),
+            new DateTimeImmutable("+30 days"),
+            ApplicationStatus::New,
+            new Form(Uuid::uuid4()->toString(), 1),
+            $params->includeData ? (object)['firstName' => 'John', 'lastName' => 'Doe'] : null
+        );
+
+        return $this->encryptionService->encryptResponse(
+            EncryptedResponseStatus::OK,
+            $application,
+            $params->publicKey
+        );
     }
 }

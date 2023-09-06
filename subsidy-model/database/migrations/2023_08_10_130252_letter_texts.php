@@ -22,10 +22,24 @@ return new class extends Migration
             $table->text('content_view');
             $table->timestamps();
         });
+
+        Schema::table('subsidy_versions', static function (Blueprint $table) {
+            $table->string('contact_mail_address');
+            $table->string('mail_to_name_field_identifier');
+            $table->string('mail_to_address_field_identifier');
+            $table->string('message_overview_subject');
+        });
     }
 
     public function down(): void
     {
         Schema::drop('subsidy_letters');
+
+        Schema::table('subsidy_versions', static function (Blueprint $table) {
+            $table->dropColumn('contact_mail_address');
+            $table->dropColumn('mail_to_name_field_identifier');
+            $table->dropColumn('mail_to_address_field_identifier');
+            $table->dropColumn('message_overview_subject');
+        });
     }
 };

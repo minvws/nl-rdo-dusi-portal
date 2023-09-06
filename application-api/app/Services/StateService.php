@@ -17,8 +17,11 @@ class StateService
     private const KEY_APPLICATION = 'application.%s';
     private const KEY_FORM_ID = 'formId';
 
-    public function __construct(private SessionManager $sessionManager, private AuthManager $authManager)
-    {
+    public function __construct(
+        private SessionManager $sessionManager,
+        private AuthManager $authManager,
+        private EncryptionService $encryptionService
+    ) {
     }
 
     /**
@@ -31,7 +34,7 @@ class StateService
         if ($user instanceof PortalUser) {
             return new Identity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                $user->bsn
+                $this->encryptionService->encryptData($user->bsn)
             );
         }
 

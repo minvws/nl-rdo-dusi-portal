@@ -79,6 +79,12 @@ cp "$BASEDIR/application-backend/secrets/public.key" "$BASEDIR/application-api/s
 cp "$BASEDIR/application-backend/secrets/pki/issued/softhsm^SoftHSMLabel^*=create,destroy,use,import.crt" "$BASEDIR/assessment-api/secrets/softhsm.crt"
 cp "$BASEDIR/application-backend/secrets/pki/private/softhsm^SoftHSMLabel^*=create,destroy,use,import.key" "$BASEDIR/assessment-api/secrets/softhsm.key"
 
+echo "Creating user:"
+cd "$BASEDIR/user-admin-api"
+vendor/bin/sail artisan user:create user@example.com user password
+echo "Log user in with: user@example.com password"
+cd "$BASEDIR"
+
 echo "Initialisation is finished, listening for incoming applications:"
 cd "$BASEDIR/application-backend"
 vendor/bin/sail artisan rabbitmq:consume

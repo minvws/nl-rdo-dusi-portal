@@ -15,7 +15,10 @@ Route::get('/applications/{application}', [ApplicationController::class, 'show']
 Route::get('/applications', [ApplicationController::class, 'filterApplications']);
 
 Route::get('/ui/applications/count', [ApplicationController::class, 'getApplicationsCount']);
-Route::get('/ui/applications/messages-filter', [ApplicationController::class, 'getApplicationMessageFilterResource']);
+Route::get(
+    '/ui/applications/messages-filter',
+    [ApplicationController::class, 'getApplicationMessageFilterResource']
+);
 Route::get(
     '/ui/applications/requests-filter',
     [ApplicationController::class, 'getApplicationRequestFilterForUserResource']

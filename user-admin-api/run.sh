@@ -107,9 +107,3 @@ if $MIGRATE ; then
     vendor/bin/sail artisan migrate:fresh
     vendor/bin/sail artisan db:seed --class="MinVWS\\DUSi\\User\\Admin\\API\\Database\\Seeders\\DatabaseSeeder"
 fi
-
-#docker-compose exec user-admin-web php artisan migrate
-#
-#docker-compose exec user-admin-web php artisan migrate:fresh
-#docker-compose exec user-admin-web php artisan user:create mail@example.com user password
-#echo "Log in with: mail@example.com password"
