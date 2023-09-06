@@ -8,7 +8,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Assessment\API\Listeners\GenerateLetter;
 use MinVWS\DUSi\Assessment\API\Listeners\SendDispositionNotification;
-use MinVWS\DUSi\Shared\Application\Events\ApplicationStageVersionDecidedEvent;
+use MinVWS\DUSi\Shared\Application\Events\ApplicationStageDecidedEvent;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -18,7 +18,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        ApplicationStageVersionDecidedEvent::class => [
+        ApplicationStageDecidedEvent::class => [
             GenerateLetter::class
         ],
         LetterGeneratedEvent::class => [

@@ -10,10 +10,9 @@ use Illuminate\Support\Facades\Queue;
 use MinVWS\DUSi\Assessment\API\Jobs\GenerateLetterJob;
 use MinVWS\DUSi\Assessment\API\Models\Connection;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
-use MinVWS\DUSi\Shared\Application\Events\ApplicationStageVersionDecidedEvent;
+use MinVWS\DUSi\Shared\Application\Events\ApplicationStageDecidedEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
@@ -32,7 +31,6 @@ class LetterGenerationTest extends TestCase
         SubsidyVersion::query()->truncate();
         Application::query()->truncate();
         ApplicationStage::query()->truncate();
-        ApplicationStageVersion::query()->truncate();
 
         $this->subsidy = Subsidy::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()->create(
@@ -55,17 +53,10 @@ class LetterGenerationTest extends TestCase
         );
     }
 
-    public function testApplcationDecidedEventTriggerGenerateLetterJob(): void
+    public function testApplicationDecidedEventTriggerGenerateLetterJob(): void
     {
         Queue::fake();
-
-        $applicationStageVersion = ApplicationStageVersion::factory()->create(
-            [
-                'application_stage_id' => $this->applicationStage->id,
-            ]
-        );
-
-        ApplicationStageVersionDecidedEvent::dispatch($applicationStageVersion);
+        ApplicationStageDecidedEvent::dispatch($this->applicationStage);
         Queue::assertPushed(GenerateLetterJob::class);
     }
 }

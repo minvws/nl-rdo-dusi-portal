@@ -23,7 +23,7 @@ use Illuminate\Filesystem\FilesystemManager;
 use Latte\Engine as RenderEngine;
 use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 
@@ -45,7 +45,7 @@ readonly class LetterService
     {
         $result = new ApplicationStages();
         foreach ($answers->stages as $applicationStageAnswers) {
-            $stageKey = 'stage' . $applicationStageAnswers->stage->stage;
+            $stageKey = 'stage' . $applicationStageAnswers->stage->subsidyStage->stage;
             $stageData = new ApplicationStageData($stageKey);
 
             foreach ($applicationStageAnswers->answers as $answer) {
@@ -149,21 +149,23 @@ readonly class LetterService
     }
 
 
-    private function collectGenericDataForTemplate(ApplicationStageVersion $stageVersion): LetterData
+    private function collectGenericDataForTemplate(ApplicationStage $stage): LetterData
     {
-        $answers = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($stageVersion);
+        $answers = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($stage);
         $data = $this->convertAnswersToTemplateData($answers);
 
         $cssPath = $this->getCssPath();
         $logoPath = public_path('img/vws_dusi_logo.svg');
 
+        assert($stage->accessor_decision !== null);
+
         return new LetterData(
-            subsidyTitle: $stageVersion->applicationStage->subsidyStage->subsidyVersion->subsidy->title,
-            decision: $stageVersion->decision->value,
+            subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
+            decision: $stage->accessor_decision->value,
             stages: $data,
-            createdAt: $stageVersion->applicationStage->application->created_at,
-            contactEmailAddress: $stageVersion->applicationStage->subsidyStage->subsidyVersion->contact_mail_address,
-            reference: substr($stageVersion->applicationStage->application->id, 0, 8),
+            createdAt: $stage->application->created_at,
+            contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
+            reference: substr($stage->application->id, 0, 8),
             applicationCode: null,
             cssPath: $cssPath,
             logoPath: $logoPath,
@@ -191,9 +193,9 @@ readonly class LetterService
         return trim(str_replace('  ', ' ', $valueString));
     }
 
-    private function triggerMailNotification(ApplicationStageVersion $stageVersion, LetterData $data): void
+    private function triggerMailNotification(ApplicationStage $stage, LetterData $data): void
     {
-        $subsidyVersion =  $stageVersion->applicationStage->subsidyStage->subsidyVersion;
+        $subsidyVersion = $stage->subsidyStage->subsidyVersion;
 
         $mailToAddressIdentifier = $subsidyVersion->mail_to_address_field_identifier;
         $mailToNameIdentifier = $subsidyVersion->mail_to_name_field_identifier;
@@ -210,21 +212,20 @@ readonly class LetterService
     /**
      * @throws Exception
      */
-    public function generateLetters(ApplicationStageVersion $stageVersion): void
+    public function generateLetters(ApplicationStage $stage): void
     {
-        $letter = $stageVersion->applicationStage->subsidyStage->subsidyVersion->publishedSubsidyLetter;
+        $letter = $stage->subsidyStage->subsidyVersion->publishedSubsidyLetter;
         if ($letter === null) {
             throw new Exception('No published subsidy letter template found!');
         }
 
-        $data = $this->collectGenericDataForTemplate($stageVersion);
+        $data = $this->collectGenericDataForTemplate($stage);
 
         $pdf = $this->generatePDFLetter($letter->content_pdf, $data);
         $pdfPath = sprintf(
-            'applications/%s/letters/stages/%d/versions/%d/%s.pdf',
-            $stageVersion->applicationStage->application->id,
-            $stageVersion->applicationStage->subsidyStage->stage,
-            $stageVersion->version,
+            'applications/%s/letters/%d/%s.pdf',
+            $stage->application->id,
+            $stage->sequence_number,
             'letter'
         );
         // TODO: encrypt
@@ -232,19 +233,19 @@ readonly class LetterService
 
         $html = $this->generateHTMLLetter($letter->content_view, $data);
         $htmlPath = sprintf(
-            'applications/%s/letters/stages/%d/versions/%d/%s.html',
-            $stageVersion->applicationStage->application->id,
-            $stageVersion->applicationStage->subsidyStage->stage,
-            $stageVersion->version,
+            'applications/%s/letters/%d/%s.html',
+            $stage->application->id,
+            $stage->sequence_number,
             'letter'
         );
         // TODO: encrypt
         $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($htmlPath, $html);
 
-        $stageVersion->pdf_letter_path = $pdfPath;
-        $stageVersion->view_letter_path = $htmlPath;
-        $this->applicationRepository->saveApplicationStageVersion($stageVersion);
+        // TODO: save application_message
+//        $stageVersion->pdf_letter_path = $pdfPath;
+//        $stageVersion->view_letter_path = $htmlPath;
+//        $this->applicationRepository->saveApplicationStageVersion($stageVersion);
 
-        $this->triggerMailNotification($stageVersion, $data);
+        $this->triggerMailNotification($stage, $data);
     }
 }

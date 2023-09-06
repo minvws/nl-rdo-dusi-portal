@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
@@ -31,7 +30,6 @@ class ApplicationControllerTest extends TestCase
         SubsidyVersion::query()->truncate();
         Application::query()->truncate();
         ApplicationStage::query()->truncate();
-        ApplicationStageVersion::query()->truncate();
 
         $this->subsidy = Subsidy::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()->create([
@@ -50,11 +48,6 @@ class ApplicationControllerTest extends TestCase
                 'application_id' => $this->application->id,
             ]
         );
-        $this->applicationStageVersion = ApplicationStageVersion::factory()->create(
-            [
-                'application_stage_id' => $this->applicationStage->id,
-            ]
-        );
     }
 
 
@@ -68,7 +61,7 @@ class ApplicationControllerTest extends TestCase
             'date_last_modified_to' => $this->application->updated_at,
             'date_final_review_deadline_from' => $this->application->final_review_deadline,
             'date_final_review_deadline_to' => $this->application->final_review_deadline,
-            'status' => $this->applicationStageVersion->status,
+            'status' => $this->application->status->value,
             'subsidy' => $this->subsidy->title,
         ];
 

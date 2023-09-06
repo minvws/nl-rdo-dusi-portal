@@ -21,13 +21,13 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
  * @property string $subsidy_stage_id
  * @property int $sequence_number
  * @property boolean $is_current
- * @property string $assessor_user_id
- * @property ApplicationStageDecision $accessor_decision
+ * @property string|null $assessor_user_id
+ * @property ApplicationStageDecision|null $accessor_decision
  * @property DateTime $created_at
  * @property DateTime $updated_at
  * @property-read Application $application
  * @property-read SubsidyStage $subsidyStage
- * @property-read Collection<Answer> $answers
+ * @property-read Collection<array-key, Answer> $answers
  */
 class ApplicationStage extends Model
 {
