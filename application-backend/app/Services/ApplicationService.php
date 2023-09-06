@@ -10,6 +10,7 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use MinVWS\DUSi\Application\Backend\Exceptions\FormSubmitInvalidException;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
 use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
@@ -280,18 +281,25 @@ readonly class ApplicationService
                 $formSubmit->applicationMetadata
             );
 
-            $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
+            try {
+                $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
+            } catch (Throwable $exception) {
+                throw new FormSubmitInvalidException(
+                    message: 'Form submit invalid, could not decode form values',
+                    previous: $exception,
+                );
+            }
+
             $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
             $validator = $this->validationService->getValidator($applicationStageVersion, $values);
-
-            $this->processInvalidFieldValues($applicationStageVersion, $values, $validator);
-            $this->processFieldValues($applicationStageVersion, $values);
-
             $applicationStageVersion->status = ApplicationStageVersionStatus::Submitted;
             if ($validator->fails()) {
                 $applicationStageVersion->status = ApplicationStageVersionStatus::Invalid;
             }
+
+            $this->processInvalidFieldValues($applicationStageVersion, $values, $validator);
+            $this->processFieldValues($applicationStageVersion, $values);
 
             $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
             $this->appRepo->saveApplicationStage($applicationStage);

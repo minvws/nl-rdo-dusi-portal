@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
+use MinVWS\DUSi\Application\Backend\Exceptions\FormSubmitInvalidException;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
@@ -210,8 +211,15 @@ class ApplicationServiceTest extends TestCase
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $this->expectException($expectedException);
-        $applicationService->processFormSubmit($formSubmit);
+
+        try {
+            $applicationService->processFormSubmit($formSubmit);
+        } catch (FormSubmitInvalidException $exception) {
+            $this->assertEquals($expectedException, $exception->getPrevious()::class);
+            return;
+        }
+
+        $this->fail("Expected exception $expectedException was not thrown");
     }
 
 
