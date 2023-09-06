@@ -12,6 +12,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 class SubsidiesTableSeeder extends Seeder
 {
     public const BTV_UUID = '00f26400-7232-475f-922c-6b569b7e421a';
+    public const PCZM_UUID = '06A6B91C-D59B-401E-A5BF-4BF9262D85F8';
     /**
      * Run the database seeds.
      */
@@ -23,6 +24,15 @@ class SubsidiesTableSeeder extends Seeder
             'code' => 'BTV',
             'description' => "Transvrouwen zijn man-vrouw transgenders die negatieve gevoelens ('genderdysforie') ervaren omdat ze als man geboren zijn en in transitie zijn om als vrouw te leven. De meerderheid van de transvrouwen vindt, ook na behandeling (de zogeheten genderbevestigende hormonale therapie), dat zij te weinig borstweefsel heeft voor een vrouwelijk profiel. Dit kan een grote hindernis zijn bij de transitie. Een borstvergroting kan deze hinder verminderen.",
             'valid_from' => '2019-02-01',
+            'valid_to' => null
+        ]);
+        DB::table('subsidies')->insert([
+            'id' => self::PCZM_UUID,
+            'title' => 'Zorgmedewerkers met post-Covid',
+            'reference_prefix' => 'PCZM23',
+            'code' => 'PCZM',
+            'description' => "De regeling Zorgmedewerkers met langdurige post-COVID klachten richt zich op zorgmedewerkers die tijdens de eerste golf van de COVID-19 pandemie besmet zijn geraakt met COVID-19 en sindsdien langdurige post-COVID klachten hebben. Deze klachten hebben grote invloed op het werk en het privéleven van deze zorgmedewerkers. Zij kunnen soms hun eigen werk als zorgmedewerker niet meer (volledig) doen. Voor deze specifieke groep zorgmedewerkers is een eenmalige financiële ondersteuning van €15.000 beschikbaar.",
+            'valid_from' => '2023-09-01',
             'valid_to' => null
         ]);
         Subsidy::factory()->count(2)
