@@ -6,7 +6,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Application\Models\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 
 return new class extends Migration
 {

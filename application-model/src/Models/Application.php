@@ -12,14 +12,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
  * @property string $id
+ * @property string $reference
  * @property string $subsidy_version_id
+ * @property string $reference
  * @property string $application_title
  * @property string $identity_type
  * @property string $identity_identifier
@@ -27,6 +30,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTime $locked_from
  * @property DateTime $final_review_deadline
  * @property DateTime $created_at
+ * @property-read SubsidyVersion $subsidyVersion
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -45,6 +49,7 @@ class Application extends Model
 
     protected $fillable = [
         'subsidy_version_id',
+        'reference',
         'application_title',
         'final_review_deadline',
         'locked_from'
@@ -80,6 +85,14 @@ class Application extends Model
                 'identity_identifier' => $identity->identifier
             ]
         );
+    }
+
+    public function scopeIdentity(Builder $query, Identity $identity): Builder
+    {
+        return
+            $query
+                ->where('identity_type', $identity->type)
+                ->where('identity_identifier', $identity->identifier);
     }
 
     public function scopeTitle(Builder $query, string $title): Builder

@@ -12,7 +12,7 @@ class MessageParams implements Codable
     use CodableSupport;
 
     public function __construct(
-        public readonly Identity $identity,
+        public readonly EncryptedIdentity $identity,
         public readonly ClientPublicKey $publicKey,
         public readonly string $id
     ) {

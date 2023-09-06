@@ -24,7 +24,7 @@ class MessageListParams implements Codable
      * @param array<string>|null $statuses
      */
     final public function __construct(
-        public readonly Identity $identity,
+        public readonly EncryptedIdentity $identity,
         #[CodableDateTime(self::DATE_FORMAT)] public readonly ?DateTimeInterface $periodStart,
         #[CodableDateTime(self::DATE_FORMAT)] public readonly ?DateTimeInterface $periodEnd,
         #[CodableArray('string')] public readonly ?array $subsidies,

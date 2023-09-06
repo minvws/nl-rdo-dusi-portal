@@ -17,7 +17,6 @@ use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\ResponseFactory;
 use MinVWS\DUSi\Application\API\Services\StateService;
-use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use Throwable;
@@ -71,13 +70,20 @@ class ApplicationController extends Controller
      */
     public function index(
         StateService $stateService,
-        ApplicationService $applicationService
-    ): EncodableResponse {
-        $params = new ApplicationListParams($stateService->getIdentity());
-        $list = $applicationService->listApplications($params);
-        return new EncodableResponse($list);
+        ApplicationService $applicationService,
+        ClientPublicKeyHelper $publicKeyHelper
+    ): Response|ResponseFactory {
+        $params = new ApplicationListParams(
+            $stateService->getEncryptedIdentity(),
+            $publicKeyHelper->getClientPublicKey()
+        );
+        $response = $applicationService->listApplications($params);
+        return response($response->data, $response->status->value);
     }
 
+    /**
+     * @throws Exception
+     */
     public function show(
         string $id,
         ClientPublicKeyHelper $publicKeyHelper,
@@ -85,7 +91,7 @@ class ApplicationController extends Controller
         ApplicationService $applicationService
     ): Response|ResponseFactory {
         $params = new ApplicationParams(
-            $stateService->getIdentity(),
+            $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $id,
             true

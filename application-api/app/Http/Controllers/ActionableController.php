@@ -20,7 +20,7 @@ class ActionableController extends Controller
         ActionableService $actionableService
     ): EncodableResponse {
         // TODO: implement
-        $params = new ActionableCountsParams($stateService->getIdentity());
+        $params = new ActionableCountsParams($stateService->getEncryptedIdentity());
         $counts = $actionableService->getActionableCounts($params);
         return new EncodableResponse($counts);
     }

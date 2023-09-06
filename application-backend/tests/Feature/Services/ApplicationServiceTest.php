@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\Exceptions\ValueNotFoundException;
 use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
@@ -85,15 +86,22 @@ class ApplicationServiceTest extends TestCase
 
         // Configure the decryptData method to return the same value as the input parameter
         $encryptionServiceMock->expects($this->any())
-            ->method('decryptFileUpload')
+            ->method('decryptBase64EncodedData')
             ->willReturnCallback(function ($input) {
                 return $input;
             });
 
         $encryptionServiceMock->expects($this->any())
-            ->method('decryptFormSubmit')
+            ->method('decryptData')
             ->willReturnCallback(function ($input) {
                 return $input;
+            });
+
+        $encryptionServiceMock->expects($this->any())
+            ->method('decryptIdentity')
+            ->willReturnCallback(function ($input) {
+                assert($input instanceof EncryptedIdentity);
+                return new Identity($input->type, $input->encryptedIdentifier);
             });
 
         $encryptionServiceMock->expects($this->any())
@@ -124,9 +132,9 @@ class ApplicationServiceTest extends TestCase
             ]);
 
         $fileUpload = new FileUpload(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             $fileField->code,
@@ -159,9 +167,9 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             json_encode($data)
@@ -201,9 +209,9 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
             json_encode($data)
@@ -219,9 +227,9 @@ class ApplicationServiceTest extends TestCase
     public function testProcessFormSubmitInvalidForm(): void
     {
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
             json_encode([]) // Empty data for the form, which should be invalid
@@ -252,9 +260,9 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             json_encode($data)
