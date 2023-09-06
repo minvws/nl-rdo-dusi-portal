@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use DateTimeImmutable;
+use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -55,15 +56,17 @@ use Throwable;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings("LongVariable")
  */
-
 readonly class ApplicationService
 {
+    private const CREATE_REFERENCE_MAX_TRIES = 3;
+
     public function __construct(
         private SubsidyRepository $subsidyRepository,
         private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
-        private FilesystemManager $filesystemManager
+        private FilesystemManager $filesystemManager,
+        private ApplicationReferenceService $applicationReferenceService,
     ) {
     }
 
@@ -117,16 +120,34 @@ readonly class ApplicationService
     /**
      * @throws Exception
      */
-    private function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
+    public function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
     {
-        if (!isset($subsidyStage->subsidyVersion)) {
-            throw new Exception('SubsidyVersion is not set');
-        }
         $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
         $app->application_title = $subsidyStage->title;
         $app->identity = $identity;
-        $this->appRepo->saveApplication($app);
-        return $app;
+
+        $createReferenceTries = 0;
+        do {
+            try {
+                DB::transaction(function () use ($app) {
+                    $this->saveApplication($app);
+                });
+                return $app;
+            } catch (QueryException $queryException) {
+                //We assume a QueryException is caused by a Duplicate entry exception on the unique constraint of the
+                //reference field. We try again until CREATE_REFERENCE_MAX_TRIES.
+            }
+        } while (self::CREATE_REFERENCE_MAX_TRIES > $createReferenceTries++);
+
+        throw $queryException;
+    }
+
+    private function saveApplication(Application $application): void
+    {
+        $application->reference = $this->applicationReferenceService->generateUniqueReferenceByElevenRule(
+            $application->subsidyVersion->subsidy
+        );
+        $this->appRepo->saveApplication($application);
     }
 
     private function createApplicationStage(

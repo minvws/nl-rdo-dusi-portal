@@ -10,6 +10,9 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\DuplicateApplicationReferenceException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
@@ -17,6 +20,7 @@ use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -185,6 +189,7 @@ class ApplicationRepository
 
     public function saveApplication(Application $application): void
     {
+
         $application->save();
     }
 
@@ -237,5 +242,10 @@ class ApplicationRepository
         }
 
         return new AnswersByApplicationStage(stages: $stages);
+    }
+
+    public function isReferenceUnique(string $applicationReference): bool
+    {
+        return Application::where('reference', $applicationReference)->count() === 0;
     }
 }
