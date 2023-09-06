@@ -22,6 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property string $id
  * @property string $reference
  * @property string $subsidy_version_id
+ * @property string $reference
  * @property string $application_title
  * @property string $identity_type
  * @property string $identity_identifier
@@ -48,6 +49,7 @@ class Application extends Model
 
     protected $fillable = [
         'subsidy_version_id',
+        'reference',
         'application_title',
         'final_review_deadline',
         'locked_from'

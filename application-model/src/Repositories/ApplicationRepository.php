@@ -184,6 +184,7 @@ class ApplicationRepository
 
     public function saveApplication(Application $application): void
     {
+
         $application->save();
     }
 
@@ -238,6 +239,7 @@ class ApplicationRepository
         return new AnswersByApplicationStage(stages: $stages);
     }
 
+
     public function getMyApplications(Identity $identity): Collection
     {
         return
@@ -245,5 +247,10 @@ class ApplicationRepository
                 ->identity($identity)
                 ->with(['subsidyVersion', 'subsidyVersion.subsidy'])
                 ->get();
+    }
+
+    public function isReferenceUnique(string $applicationReference): bool
+    {
+        return Application::where('reference', $applicationReference)->count() === 0;
     }
 }
