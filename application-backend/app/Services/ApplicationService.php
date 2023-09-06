@@ -9,10 +9,18 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use DateTimeImmutable;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
-use MinVWS\DUSi\Application\Backend\Exceptions\FormSubmitInvalidException;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormSubmitInvalidBodyReceivedException;
 use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -22,34 +30,26 @@ use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Models\IdentityType;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
-use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use Exception;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Throwable;
@@ -284,7 +284,7 @@ readonly class ApplicationService
             try {
                 $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
             } catch (Throwable $exception) {
-                throw new FormSubmitInvalidException(
+                throw new FormSubmitInvalidBodyReceivedException(
                     message: 'Form submit invalid, could not decode form values',
                     previous: $exception,
                 );

@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
-use MinVWS\DUSi\Application\Backend\Exceptions\FormSubmitInvalidException;
-use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
-use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\Disk;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\Exceptions\ValueNotFoundException;
 use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
+use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
+use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormSubmitInvalidBodyReceivedException;
+use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
+use MinVWS\DUSi\Application\Backend\Tests\TestCase;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
@@ -33,7 +34,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Uuid;
-use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use Throwable;
 
 /**
@@ -214,7 +214,7 @@ class ApplicationServiceTest extends TestCase
 
         try {
             $applicationService->processFormSubmit($formSubmit);
-        } catch (FormSubmitInvalidException $exception) {
+        } catch (FormSubmitInvalidBodyReceivedException $exception) {
             $this->assertEquals($expectedException, $exception->getPrevious()::class);
             return;
         }
