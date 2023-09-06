@@ -161,7 +161,7 @@ class ApplicationReferenceServiceTest extends TestCase
         $this->expectException(ApplicationReferenceException::class);
 
         Application::factory([
-            'reference' => sprintf('%s-%s', $this->subsidyVersion->subsidy->reference_prefix, $elevenRuleNumber),
+            'reference' => sprintf('%s-%08d', $this->subsidyVersion->subsidy->reference_prefix, $elevenRuleNumber),
         ])->recycle($this->subsidyVersion)->create();
 
         $this->applicationService = $this->app->make(ApplicationService::class);
@@ -185,10 +185,6 @@ class ApplicationReferenceServiceTest extends TestCase
 
         // Bind the mock into the Laravel's service container
         $this->app->instance(ApplicationReferenceGenerator::class, $generatorMock);
-
-        Application::factory([
-            'reference' => sprintf('%s-%s', $this->subsidyVersion->subsidy->reference_prefix, $elevenRuleNumber),
-        ])->recycle($this->subsidyVersion)->create();
 
         $this->applicationService = $this->app->make(ApplicationService::class);
 
