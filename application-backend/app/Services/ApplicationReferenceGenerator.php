@@ -10,7 +10,7 @@ class ApplicationReferenceGenerator
     {
 
         do {
-            $randomNumber = rand(10000000, 99999999);
+            $randomNumber = rand(11, 99999999);
         } while ($randomNumber % 11 !== 0);
 
         return $randomNumber;

@@ -34,6 +34,6 @@ class ApplicationReferenceService
 
     private function createApplicationReferenceString(string $referencePrefix, int $randomNumber): string
     {
-        return sprintf('%s-%s', $referencePrefix, $randomNumber);
+        return sprintf('%s-%08d', $referencePrefix, $randomNumber);
     }
 }

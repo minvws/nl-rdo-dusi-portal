@@ -170,6 +170,36 @@ class ApplicationReferenceServiceTest extends TestCase
         $this->createSubsidyApplication();
     }
 
+    public function testApplicationReferenceShouldHaveLeadingZeros(): void
+    {
+        $elevenRuleNumber = 11;
+
+        // Create a mock for the ApplicationReferenceGenerator class with only
+        $generatorMock = $this->getMockBuilder(ApplicationReferenceGenerator::class)
+            ->onlyMethods(['generateRandomNumberByElevenRule'])
+            ->getMock();
+
+        $generatorMock->expects($this->any())
+            ->method('generateRandomNumberByElevenRule')
+            ->willReturn($elevenRuleNumber);
+
+        // Bind the mock into the Laravel's service container
+        $this->app->instance(ApplicationReferenceGenerator::class, $generatorMock);
+
+        Application::factory([
+            'reference' => sprintf('%s-%s', $this->subsidyVersion->subsidy->reference_prefix, $elevenRuleNumber),
+        ])->recycle($this->subsidyVersion)->create();
+
+        $this->applicationService = $this->app->make(ApplicationService::class);
+
+        // Create another application when the generateRandomNumberByElevenRule should be called
+        $application = $this->createSubsidyApplication();
+        $this->assertEquals(
+            sprintf('%s-%s', $this->subsidyVersion->subsidy->reference_prefix, '00000011'),
+            $application->reference
+        );
+    }
+
     private function createSubsidyApplication(): Application
     {
         $subsidyStage = SubsidyStage::factory()
