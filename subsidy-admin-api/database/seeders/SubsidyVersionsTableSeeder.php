@@ -33,7 +33,11 @@ class SubsidyVersionsTableSeeder extends Seeder
             'version' => 1,
             'status' => "published", //TODO should be an enum
             'created_at' => '2023-08-31',
-            'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/zorgmedewerkers-met-langdurige-post-covid-klachten'
+            'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/zorgmedewerkers-met-langdurige-post-covid-klachten',
+            'contact_mail_address' => 'dienstpostbus@minvws.nl',
+            'mail_to_address_field_identifier' => 'email',
+            'mail_to_name_field_identifier' => 'firstName;infix;lastName',
+            'message_overview_subject' => 'Onderwerp voor overzicht',
         ]);
     }
 }

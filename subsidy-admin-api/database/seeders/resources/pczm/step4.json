@@ -10,13 +10,14 @@
             "elements": [
                 {
                     "type": "FormResultsTable",
-                    "label": "Uw bankgegevens",
+                    "label": "Uw gegevens",
                     "options": {
                         "fields": {
-                            "Indiener": "{firstName} {infix} {lastName}",
+                            "Naam": "{firstName} {infix} {lastName}",
                             "Adres": "{streetName} {houseNumber}{houseNumberSuffix} {postalCode} {city}",
                             "Telefoon": "{phoneNumber}",
-                            "E-mailadress": "{email}"
+                            "E-mailadress": "{email}",
+                            "Geboortedatum": "{dateOfBirth}"
                         }
                     }
                 }
