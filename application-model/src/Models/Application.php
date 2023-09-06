@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationReferenceService;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
@@ -34,8 +33,6 @@ class Application extends Model
 {
     use HasFactory;
     use HasUuids;
-
-    public const REFERENCE_FIELD_NAME = 'reference';
 
     protected $connection = Connection::APPLICATION;
 
