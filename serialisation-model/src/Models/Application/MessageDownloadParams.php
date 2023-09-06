@@ -12,7 +12,7 @@ class MessageDownloadParams implements Codable
     use CodableSupport;
 
     final public function __construct(
-        public readonly Identity $identity,
+        public readonly EncryptedIdentity $identity,
         public readonly ClientPublicKey $publicKey,
         public readonly string $id,
         public readonly MessageDownloadFormat $format

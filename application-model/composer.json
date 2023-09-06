@@ -9,11 +9,13 @@
             "email": "54805624+thomas-samoht@users.noreply.github.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": "^8.2",
         "laravel/framework": "^10.17",
-        "minvws/dusi-subsidy-model": "@dev"
+        "minvws/dusi-subsidy-model": "@dev",
+        "minvws/dusi-serialisation-model": "@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.3",
@@ -61,6 +63,14 @@
         {
             "type": "path",
             "url": "../subsidy-model"
+        },
+        {
+            "type": "path",
+            "url": "../serialisation-model"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-php-codable.git"
         }
     ]
 }

@@ -9,7 +9,7 @@ use MinVWS\DUSi\Application\API\Models\PortalUser;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Session\SessionManager;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 
 class StateService
@@ -27,14 +27,14 @@ class StateService
     /**
      * @throws AuthenticationException
      */
-    public function getIdentity(): Identity
+    public function getEncryptedIdentity(): EncryptedIdentity
     {
         $user = $this->authManager->user();
 
         if ($user instanceof PortalUser) {
-            return new Identity(
+            return new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                $this->encryptionService->encryptData($user->bsn)
+                base64_decode($this->encryptionService->encryptData($user->bsn))
             );
         }
 

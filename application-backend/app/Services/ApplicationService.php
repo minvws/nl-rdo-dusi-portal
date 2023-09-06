@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use DateInterval;
 use DateTimeImmutable;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -16,8 +17,6 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Models\IdentityType;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
@@ -26,7 +25,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
@@ -303,30 +302,17 @@ readonly class ApplicationService
     }
 
     /**
-     *
-     */
-    private function getIdentityFromSerialisation(SerialisationIdentity $serialisationIdentity): Identity
-    {
-        return new Identity(
-            IdentityType::from($serialisationIdentity->type->value),
-            $serialisationIdentity->identifier,
-        );
-    }
-
-    /**
      * @throws Throwable
      */
     public function processFormSubmit(FormSubmit $formSubmit): ApplicationStage
     {
 
         $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
-
-            $formSubmit = $this->encryptionService->decryptFormSubmit($formSubmit);
-
-            $json = $formSubmit->encryptedData;
+            $identity = $this->encryptionService->decryptIdentity($formSubmit->identity);
+            $json = $this->encryptionService->decryptBase64EncodedData($formSubmit->encryptedData);
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-                $this->getIdentityFromSerialisation($formSubmit->identity),
+                $identity,
                 $formSubmit->applicationMetadata
             );
 
@@ -350,11 +336,13 @@ readonly class ApplicationService
      */
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
-        $fileUpload = $this->encryptionService->decryptFileUpload($fileUpload);
+        $identity = $this->encryptionService->decryptIdentity($fileUpload->identity);
+
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-            $this->getIdentityFromSerialisation($fileUpload->identity),
+            $identity,
             $fileUpload->applicationMetadata
         );
+
         $field = $this->loadField($subsidyStage, $fileUpload->fieldCode);
         if ($field->type !== FieldType::Upload) {
             throw new FieldTypeMismatchException(
@@ -368,7 +356,7 @@ readonly class ApplicationService
         }
 
         $size = strlen($fileUpload->encryptedContents);
-        $encryptedContents = $fileUpload->encryptedContents; // TODO: encrypt based on app specific key
+        $decryptedContents = $this->encryptionService->decryptBase64EncodedData($fileUpload->encryptedContents);
 
         $value = [
             'mimeType' => $fileUpload->mimeType,
@@ -378,11 +366,6 @@ readonly class ApplicationService
 
         $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
 
-        [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-            $this->getIdentityFromSerialisation($fileUpload->identity),
-            $fileUpload->applicationMetadata
-        );
-
         $this->createOrUpdateAnswer(
             $applicationStageVersion,
             $field,
@@ -390,7 +373,7 @@ readonly class ApplicationService
         );
 
         $path = $this->getFilePath($applicationStage, $field);
-        $encryptedContents = $this->encryptionService->encryptData($encryptedContents);
+        $encryptedContents = $this->encryptionService->encryptData($decryptedContents);
         $result = $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($path, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
@@ -405,21 +388,41 @@ readonly class ApplicationService
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
     }
 
+    private function toApplicationListApplication(Application $app): ApplicationListApplication
+    {
+        // TODO: where to retrieve / base deadline on?
+        // TODO: application status
+        $subsidy = new Subsidy(
+            $app->subsidyVersion->subsidy->code,
+            $app->subsidyVersion->title,
+            $app->subsidyVersion->subsidy_page_url
+        );
+
+        return new ApplicationListApplication(
+            $app->reference,
+            $subsidy,
+            $app->created_at,
+            DateTimeImmutable::createFromInterface($app->created_at)->add(new DateInterval('30D')),
+            ApplicationStatus::New
+        );
+    }
+
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function listApplications(ApplicationListParams $params): ApplicationList
+    public function listApplications(ApplicationListParams $params): EncryptedResponse
     {
-        // TODO: fill list based on the applications in `applications`
-        return new ApplicationList([
-            new ApplicationListApplication(
-                Uuid::uuid4()->toString(),
-                new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie', 'https://www.dus-i.nl/'),
-                new DateTimeImmutable(),
-                new DateTimeImmutable("+30 days"),
-                ApplicationStatus::New
-            )
-        ]);
+        $identity = $this->encryptionService->decryptIdentity($params->identity);
+
+        /** @var array<Application> $apps */
+        $apps = $this->appRepo->getMyApplications($identity)->toArray();
+        $listApps = array_map(fn ($app) => $this->toApplicationListApplication($app), $apps);
+
+        return $this->encryptionService->encryptResponse(
+            EncryptedResponseStatus::OK,
+            new ApplicationList($listApps),
+            $params->publicKey
+        );
     }
 
     public function getApplication(ApplicationParams $params): EncryptedResponse
@@ -430,7 +433,7 @@ readonly class ApplicationService
         // response. If the application exists, retrieve all the answers, decrypt
         // them and structure them in the correct JSON format (compatible with the schema).
         $application = new ApplicationDTO(
-            $params->id,
+            $params->reference,
             new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie', 'https://www.dus-i.nl/'),
             new DateTimeImmutable(),
             new DateTimeImmutable("+30 days"),

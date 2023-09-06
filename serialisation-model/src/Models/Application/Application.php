@@ -13,7 +13,7 @@ class Application implements Codable
     use CodableSupport;
 
     public function __construct(
-        public readonly string $id,
+        public readonly string $reference,
         public readonly Subsidy $subsidy,
         public readonly DateTimeInterface $submittedAt,
         public readonly ?DateTimeInterface $deadlineForResponseAt,

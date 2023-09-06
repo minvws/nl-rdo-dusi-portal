@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
@@ -18,14 +17,14 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
-use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ApplicationRepository
 {
@@ -237,5 +236,14 @@ class ApplicationRepository
         }
 
         return new AnswersByApplicationStage(stages: $stages);
+    }
+
+    public function getMyApplications(Identity $identity): Collection
+    {
+        return
+            Application::query()
+                ->identity($identity)
+                ->with(['subsidyVersion', 'subsidyVersion.subsidy'])
+                ->get();
     }
 }
