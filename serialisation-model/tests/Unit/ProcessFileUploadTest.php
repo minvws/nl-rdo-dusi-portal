@@ -19,7 +19,7 @@ class ProcessFileUploadTest extends TestCase
     {
         $fileUpload = new FileUpload(
             new EncryptedIdentity(
-                IdentityType::EncryptedCitizenServiceNumber,
+                IdentityType::CitizenServiceNumber,
                 random_bytes(100)
             ),
             new ApplicationMetadata(

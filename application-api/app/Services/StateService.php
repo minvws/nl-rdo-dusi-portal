@@ -33,7 +33,7 @@ class StateService
 
         if ($user instanceof PortalUser) {
             return new EncryptedIdentity(
-                IdentityType::EncryptedCitizenServiceNumber,
+                IdentityType::CitizenServiceNumber,
                 base64_decode($this->encryptionService->encryptData($user->bsn))
             );
         }

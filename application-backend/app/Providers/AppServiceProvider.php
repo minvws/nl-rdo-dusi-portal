@@ -13,6 +13,7 @@ use MinVWS\DUSi\Application\Backend\Handlers\FormSubmitHandler;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use MinVWS\DUSi\Application\Backend\Services\FileKeyReader;
+use MinVWS\DUSi\Application\Backend\Services\IdentityService;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmInfoCommand;
@@ -128,5 +129,8 @@ class AppServiceProvider extends ServiceProvider
                 hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
             );
         });
+
+        $this->app->when(IdentityService::class)->needs('$hashSecret')->giveConfig('identity.hash_secret');
+        $this->app->when(IdentityService::class)->needs('$hashAlgorithm')->giveConfig('identity.hash_algorithm');
     }
 }

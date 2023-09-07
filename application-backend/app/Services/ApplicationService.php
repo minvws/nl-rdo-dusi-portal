@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use DateInterval;
 use DateTimeImmutable;
 use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
@@ -23,7 +23,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
@@ -63,6 +62,7 @@ readonly class ApplicationService
         private ApplicationRepository $appRepo,
         private FilesystemManager $filesystemManager,
         private ApplicationReferenceService $applicationReferenceService,
+        private IdentityService $identityService
     ) {
     }
 
@@ -90,8 +90,7 @@ readonly class ApplicationService
     ): void {
         $application = $applicationStage->application;
         if (
-            $application->identity->type !== $identity->type || // @phpstan-ignore-line
-            $application->identity->identifier !== $identity->identifier
+            $application->identity->id !== $identity->id
         ) {
             throw new EncryptionException(
                 sprintf('Identity mismatch for app with identifier "%s"', $application->id)
@@ -125,10 +124,9 @@ readonly class ApplicationService
      */
     public function createApplication(string $id, Identity $identity, SubsidyStage $subsidyStage): Application
     {
-        $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
+        $app = $this->appRepo->makeApplicationForIdentityAndSubsidyVersion($identity, $subsidyStage->subsidyVersion);
         $app->id = $id;
         $app->application_title = $subsidyStage->title;
-        $app->identity = $identity;
         $app->status = ApplicationStatus::Draft;
 
         $createReferenceTries = 0;
@@ -301,7 +299,7 @@ readonly class ApplicationService
     public function processFormSubmit(FormSubmit $formSubmit): void
     {
         DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
-            $identity = $this->encryptionService->decryptIdentity($formSubmit->identity);
+            $identity = $this->identityService->findOrCreateIdentity($formSubmit->identity);
             $json = $this->encryptionService->decryptBase64EncodedData($formSubmit->encryptedData);
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
@@ -330,7 +328,7 @@ readonly class ApplicationService
      */
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
-        $identity = $this->encryptionService->decryptIdentity($fileUpload->identity);
+        $identity = $this->identityService->findOrCreateIdentity($fileUpload->identity);
 
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
             $identity,
@@ -382,8 +380,6 @@ readonly class ApplicationService
 
     private function toApplicationListApplication(Application $app): ApplicationListApplication
     {
-        // TODO: where to retrieve / base deadline on?
-        // TODO: application status
         $subsidy = new Subsidy(
             $app->subsidyVersion->subsidy->code,
             $app->subsidyVersion->title,
@@ -394,8 +390,8 @@ readonly class ApplicationService
             $app->reference,
             $subsidy,
             $app->created_at,
-            DateTimeImmutable::createFromInterface($app->created_at)->add(new DateInterval('30D')),
-            ApplicationStatus::Draft
+            $app->final_review_deadline,
+            $app->status,
         );
     }
 
@@ -404,7 +400,15 @@ readonly class ApplicationService
      */
     public function listApplications(ApplicationListParams $params): EncryptedResponse
     {
-        $identity = $this->encryptionService->decryptIdentity($params->identity);
+        $identity = $this->identityService->findIdentity($params->identity);
+        if ($identity === null) {
+            // no identity found, so no applications (yet)
+            return $this->encryptionService->encryptResponse(
+                EncryptedResponseStatus::OK,
+                new ApplicationList([]),
+                $params->publicKey
+            );
+        }
 
         /** @var array<Application> $apps */
         $apps = $this->appRepo->getMyApplications($identity)->toArray();

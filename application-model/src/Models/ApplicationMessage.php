@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 
 /**
  * @property-read string $id
@@ -48,13 +46,6 @@ class ApplicationMessage extends Model
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
-    }
-
-    protected function scopeEncryptedIdentity(Builder $builder, EncryptedIdentity $identity): void
-    {
-        $builder->whereHas('application', function (Builder $subBuilder) use ($identity) {
-            $subBuilder->scopes(['encryptedIdentity' => $identity]);
-        });
     }
 
     protected function scopeIdentity(Builder $builder, Identity $identity): void

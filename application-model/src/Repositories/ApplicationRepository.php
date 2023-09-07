@@ -15,7 +15,7 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -106,10 +106,13 @@ class ApplicationRepository
         return null;
     }
 
-    public function makeApplicationForSubsidyVersion(SubsidyVersion $subsidyVersion): Application
-    {
+    public function makeApplicationForIdentityAndSubsidyVersion(
+        Identity $identity,
+        SubsidyVersion $subsidyVersion
+    ): Application {
         $application = new Application();
-        $application->subsidy_version_id = $subsidyVersion->id;
+        $application->identity()->associate($identity);
+        $application->subsidyVersion()->associate($subsidyVersion);
         return $application;
     }
 
@@ -117,7 +120,7 @@ class ApplicationRepository
     {
         $applicationStage = new ApplicationStage();
         $applicationStage->application()->associate($application);
-        $applicationStage->subsidy_stage_id = $subsidyStage->id;
+        $applicationStage->subsidyStage()->associate($subsidyStage);
         return $applicationStage;
     }
 

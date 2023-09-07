@@ -16,17 +16,26 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListMessage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 readonly class MessageService
 {
     public function __construct(
         private EncryptionService $encryptionService,
-        private ApplicationMessageRepository $messageRepository
+        private ApplicationMessageRepository $messageRepository,
+        private IdentityService $identityService
     ) {
     }
 
     public function listMessages(MessageListParams $params): MessageList
     {
-        $applicationMessages = $this->messageRepository->getMyApplicationMessages($params->identity);
+        $identity = $this->identityService->findIdentity($params->identity);
+        if ($identity === null) {
+            return new MessageList([]);
+        }
+
+        $applicationMessages = $this->messageRepository->getMyApplicationMessages($identity);
 
         $messageListMessages = array_map(fn(ApplicationMessage $message) => new MessageListMessage(
             $message->id,
@@ -40,7 +49,16 @@ readonly class MessageService
 
     public function getMessage(MessageParams $params): EncryptedResponse
     {
-        $applicationMessage = $this->messageRepository->getMyApplicationMessage($params->identity, $params->id);
+        $identity = $this->identityService->findIdentity($params->identity);
+        if ($identity === null) {
+            return $this->encryptionService->encryptResponse(
+                EncryptedResponseStatus::NOT_FOUND,
+                null,
+                $params->publicKey
+            );
+        }
+
+        $applicationMessage = $this->messageRepository->getMyApplicationMessage($identity, $params->id);
 
         $message = new Message(
             $applicationMessage->id,
