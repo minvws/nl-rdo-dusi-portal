@@ -8,11 +8,18 @@ use MinVWS\DUSi\Application\API\Models\PortalUser;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use MinVWS\OpenIDConnectLaravel\Http\Responses\LoginResponseHandlerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class OidcLoginResponseHandler implements LoginResponseHandlerInterface
 {
+    public function __construct(
+        protected string $frontendBaseUrl,
+        protected ?OidcUserLoa $minimumLoa = null,
+    ) {
+    }
+
     /**
      * @throws AuthorizationException
      */
@@ -22,8 +29,13 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
         if ($user === null) {
             throw new AuthorizationException("Empty userinfo");
         }
+
+        if (!OidcUserLoa::isEqualOrHigher($this->minimumLoa, $user->loaAuthn)) {
+            return new RedirectResponse($this->frontendBaseUrl . '/login-callback?error=minimum_loa');
+        }
+
         // TODO: Log login to Calvin?
         Auth::setUser($user);
-        return new RedirectResponse(config('app.frontend_base_url') . '/login-callback');
+        return new RedirectResponse($this->frontendBaseUrl . '/login-callback');
     }
 }

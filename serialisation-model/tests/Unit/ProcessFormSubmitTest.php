@@ -8,7 +8,7 @@ use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
 use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFormSubmit;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Serialisation\Tests\TestCase;
 use Mockery;
@@ -18,12 +18,12 @@ class ProcessFormSubmitTest extends TestCase
     public function testHandleCallsInterface()
     {
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                '123456789'
+                random_bytes(100)
             ),
             new ApplicationMetadata(
-                'applicationStageId',
+                'applicationId',
                 'subsidyStageId',
             ),
             'encryptedData'

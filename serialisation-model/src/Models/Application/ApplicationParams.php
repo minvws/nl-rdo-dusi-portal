@@ -12,9 +12,9 @@ class ApplicationParams implements Codable
     use CodableSupport;
 
     public function __construct(
-        public readonly Identity $identity,
+        public readonly EncryptedIdentity $identity,
         public readonly ClientPublicKey $publicKey,
-        public readonly string $id,
+        public readonly string $reference,
         public readonly bool $includeData
     ) {
     }

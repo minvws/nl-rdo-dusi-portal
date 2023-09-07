@@ -8,7 +8,7 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 readonly class FileUpload
 {
     public function __construct(
-        public Identity $identity,
+        public EncryptedIdentity $identity,
         public ApplicationMetadata $applicationMetadata,
         public string $fieldCode,
         public string $id,

@@ -85,15 +85,22 @@ class ApplicationServiceTest extends TestCase
 
         // Configure the decryptData method to return the same value as the input parameter
         $encryptionServiceMock->expects($this->any())
-            ->method('decryptFileUpload')
+            ->method('decryptBase64EncodedData')
             ->willReturnCallback(function ($input) {
                 return $input;
             });
 
         $encryptionServiceMock->expects($this->any())
-            ->method('decryptFormSubmit')
+            ->method('decryptData')
             ->willReturnCallback(function ($input) {
                 return $input;
+            });
+
+        $encryptionServiceMock->expects($this->any())
+            ->method('decryptIdentity')
+            ->willReturnCallback(function ($input) {
+                assert($input instanceof EncryptedIdentity);
+                return new Identity($input->type, $input->encryptedIdentifier);
             });
 
         $encryptionServiceMock->expects($this->any())
@@ -124,9 +131,9 @@ class ApplicationServiceTest extends TestCase
             ]);
 
         $fileUpload = new FileUpload(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             $fileField->code,
@@ -140,12 +147,12 @@ class ApplicationServiceTest extends TestCase
         assert($applicationService instanceof ApplicationService);
         $applicationService->processFileUpload($fileUpload);
 
+        $application = Application::query()->find($fileUpload->applicationMetadata->applicationId);
+        $this->assertInstanceOf(Application::class, $application);
+
         $this->assertTrue(Storage::disk(Disk::APPLICATION_FILES)
-            ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
-        $applicationStage = ApplicationStage::query()->find($fileUpload->applicationMetadata->applicationStageId);
-        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Draft, $applicationStageVersion->status);
+            ->exists(sprintf("%s/%s", $application->currentApplicationStage->id, $fileField->code)));
+        $this->assertEquals(ApplicationStatus::Draft, $application->status);
     }
 
     /**
@@ -159,9 +166,9 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             json_encode($data)
@@ -169,16 +176,11 @@ class ApplicationServiceTest extends TestCase
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $applicationStage = $applicationService->processFormSubmit($formSubmit);
-        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
-        $this->assertNotNull($applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStageVersion->status);
+        $applicationService->processFormSubmit($formSubmit);
 
-        $applicationStage = ApplicationStage::query()->find($formSubmit->applicationMetadata->applicationStageId);
-        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
-        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStageVersion->status);
+        $application = Application::query()->find($formSubmit->applicationMetadata->applicationId);
+        $this->assertInstanceOf(Application::class, $application);
+        $this->assertEquals(ApplicationStatus::Submitted, $application->status);
     }
 
 
@@ -201,9 +203,9 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
             json_encode($data)
@@ -226,9 +228,9 @@ class ApplicationServiceTest extends TestCase
     public function testProcessFormSubmitInvalidForm(): void
     {
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
             json_encode([]) // Empty data for the form, which should be invalid
@@ -259,9 +261,9 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                '123456789'
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             json_encode($data)

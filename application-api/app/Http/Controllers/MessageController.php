@@ -28,7 +28,7 @@ class MessageController extends Controller
     public function index(MessageRequest $request): EncodableResponse
     {
         $params = new MessageListParams(
-            $this->stateService->getIdentity(),
+            $this->stateService->getEncryptedIdentity(),
             $request->validated('date_from'),
             $request->validated('date_to'),
             $request->validated('subsidies'),
@@ -48,7 +48,7 @@ class MessageController extends Controller
     public function view(string $id, ClientPublicKeyHelper $publicKeyHelper): Response|ResponseFactory
     {
         $params = new MessageParams(
-            $this->stateService->getIdentity(),
+            $this->stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $id
         );
@@ -62,7 +62,7 @@ class MessageController extends Controller
         ClientPublicKeyHelper $publicKeyHelper
     ): Response|ResponseFactory {
         $params = new MessageDownloadParams(
-            $this->stateService->getIdentity(),
+            $this->stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $id,
             MessageDownloadFormat::from($format)

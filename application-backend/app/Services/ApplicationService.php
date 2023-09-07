@@ -58,15 +58,17 @@ use Throwable;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings("LongVariable")
  */
-
 readonly class ApplicationService
 {
+    private const CREATE_REFERENCE_MAX_TRIES = 3;
+
     public function __construct(
         private SubsidyRepository $subsidyRepository,
         private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
         private ApplicationFileRepository $fileRepository,
+        private ApplicationReferenceService $applicationReferenceService,
         private ValidationService $validationService,
     ) {
     }
@@ -78,10 +80,11 @@ readonly class ApplicationService
         }
     }
 
-    private function loadApplicationStageIfExists(string $applicationStageId): ?ApplicationStage
+    private function loadApplicationStageIfExists(string $applicationId): ?ApplicationStage
     {
-        $this->validateUuid($applicationStageId);
-        return $this->appRepo->getApplicationStage($applicationStageId);
+        $this->validateUuid($applicationId);
+        $application = $this->appRepo->getApplication($applicationId);
+        return $application?->currentApplicationStage;
     }
 
     /**
@@ -98,13 +101,19 @@ readonly class ApplicationService
             $application->identity->identifier !== $identity->identifier
         ) {
             throw new EncryptionException(
-                sprintf('Identity mismatch for app with identifier "%s"', $applicationStage->id)
+                sprintf('Identity mismatch for app with identifier "%s"', $application->id)
+            );
+        }
+
+        if (!in_array($application->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges])) {
+            throw new ApplicationMetadataMismatchException(
+                sprintf('Current status does not allow editing for "%s', $application->id)
             );
         }
 
         if ($applicationStage->subsidy_stage_id !== $appMetadata->subsidyStageId) {
             throw new ApplicationMetadataMismatchException(
-                sprintf('Form mismatch for app with identifier "%s', $applicationStage->id)
+                sprintf('Form mismatch for app with identifier "%s', $application->id)
             );
         }
     }
@@ -121,61 +130,50 @@ readonly class ApplicationService
     /**
      * @throws Exception
      */
-    private function createApplication(Identity $identity, SubsidyStage $subsidyStage): Application
+    public function createApplication(string $id, Identity $identity, SubsidyStage $subsidyStage): Application
     {
-        if (!isset($subsidyStage->subsidyVersion)) {
-            throw new RuntimeException('SubsidyVersion is not set');
-        }
         $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
+        $app->id = $id;
         $app->application_title = $subsidyStage->title;
         $app->identity = $identity;
-        $this->appRepo->saveApplication($app);
-        return $app;
+        $app->status = ApplicationStatus::Draft;
+
+        $createReferenceTries = 0;
+        do {
+            try {
+                DB::transaction(function () use ($app) {
+                    $this->saveApplication($app);
+                });
+                return $app;
+            } catch (QueryException $queryException) {
+                //We assume a QueryException is caused by a Duplicate entry exception on the unique constraint of the
+                //reference field. We try again until CREATE_REFERENCE_MAX_TRIES.
+            }
+        } while (self::CREATE_REFERENCE_MAX_TRIES > $createReferenceTries++);
+
+        throw $queryException;
+    }
+
+    private function saveApplication(Application $application): void
+    {
+        $application->reference = $this->applicationReferenceService->generateUniqueReferenceByElevenRule(
+            $application->subsidyVersion->subsidy
+        );
+        $this->appRepo->saveApplication($application);
     }
 
     private function createApplicationStage(
-        string $appMetadataId,
+        string $applicationId,
         Identity $identity,
         SubsidyStage $subsidyStage
     ): ApplicationStage {
-        $this->validateUuid($appMetadataId);
-        $app = $this->createApplication($identity, $subsidyStage);
+        $this->validateUuid($applicationId);
+        $app = $this->createApplication($applicationId, $identity, $subsidyStage);
         $applicationStage = $this->appRepo->makeApplicationStage($app, $subsidyStage);
-        $applicationStage->id = $appMetadataId;
-        $applicationStage->stage = $subsidyStage->stage;
+        $applicationStage->sequence_number = 1;
+        $applicationStage->is_current = true;
         $this->appRepo->saveApplicationStage($applicationStage);
         return $applicationStage;
-    }
-
-    private function loadOrCreateApplicationStageVersion(ApplicationStage $applicationStage): ApplicationStageVersion
-    {
-        $latestApplicationStageVersion = $this->appRepo->getLatestApplicationStageVersion($applicationStage);
-        if (!isset($latestApplicationStageVersion)) {
-            $applicationStageVersion = $this->appRepo->makeApplicationStageVersion($applicationStage);
-            $applicationStageVersion->version = 0;
-            $applicationStageVersion->status = ApplicationStageVersionStatus::Draft;
-            $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
-            return $applicationStageVersion;
-        }
-        if ($latestApplicationStageVersion->status === ApplicationStageVersionStatus::Draft) {
-            return $latestApplicationStageVersion;
-        }
-        $applicationStageVersion = $this->appRepo->makeApplicationStageVersion($applicationStage);
-        $applicationStageVersion->version = $latestApplicationStageVersion->version + 1;
-        $applicationStageVersion->status = ApplicationStageVersionStatus::Draft;
-
-        $answers = array_map(
-            function (Answer $answer) use ($applicationStageVersion) {
-                $replicatedAnswer = $answer->replicate(['id']);
-                $replicatedAnswer->ApplicationStageVersion()->associate($applicationStageVersion);
-                $this->appRepo->saveAnswer($replicatedAnswer);
-                return $replicatedAnswer;
-            },
-            $latestApplicationStageVersion->answers()->get()->all()
-        );
-        $applicationStageVersion->answers()->saveMany($answers);
-        $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
-        return $applicationStageVersion;
     }
 
     /**
@@ -183,19 +181,20 @@ readonly class ApplicationService
      */
     private function loadOrCreateAppStageWithSubsidyStage(Identity $identity, ApplicationMetadata $appMetadata): array
     {
-        $applicationStage = $this->loadApplicationStageIfExists($appMetadata->applicationStageId);
         $subsidyStage = $this->loadSubsidyStage($appMetadata->subsidyStageId);
         if (!isset($subsidyStage)) {
-            throw new Exception('SubsidyStage is not set');
+            throw new Exception('Invalid subsidy stage');
         }
 
-        if (!isset($applicationStage)) {
+        $applicationStage = $this->loadApplicationStageIfExists($appMetadata->applicationId);
+        if ($applicationStage === null) {
             $applicationStage = $this->createApplicationStage(
-                $appMetadata->applicationStageId,
+                $appMetadata->applicationId,
                 $identity,
                 $subsidyStage
             );
         }
+
         $this->validateIdentityAndApplicationMetadata($identity, $appMetadata, $applicationStage);
 
         return [$applicationStage, $subsidyStage];
@@ -223,11 +222,11 @@ readonly class ApplicationService
      * @throws Exception
      */
     private function createOrUpdateAnswer(
-        ApplicationStageVersion $applicationStageVersion,
+        ApplicationStage $applicationStage,
         Field $field,
         mixed $value
     ): void {
-        $answer = $this->appRepo->makeAnswer($applicationStageVersion, $field);
+        $answer = $this->appRepo->makeAnswer($applicationStage, $field);
         $json = json_encode($value, JSON_UNESCAPED_SLASHES);
         if (!is_string($json)) {
             throw new Exception('JSON encoding failed. Invalid data provided.');
@@ -239,20 +238,20 @@ readonly class ApplicationService
     /**
      * @throws FileNotFoundException
      */
-    private function processFieldValue(ApplicationStageVersion $applicationStageVersion, FieldValue $value): void
+    private function processFieldValue(ApplicationStage $applicationStage, FieldValue $value): void
     {
         // answer for file already exists at this point
         if ($value->field->type === FieldType::Upload) {
             return;
         }
 
-        $this->createOrUpdateAnswer($applicationStageVersion, $value->field, $value->value);
+        $this->createOrUpdateAnswer($applicationStage, $value->field, $value->value);
     }
 
-    private function processFieldValues(ApplicationStageVersion $applicationStageVersion, array $fieldValues): void
+    private function processFieldValues(ApplicationStage $applicationStage, array $fieldValues): void
     {
         foreach ($fieldValues as $fieldValue) {
-            $this->processFieldValue($applicationStageVersion, $fieldValue);
+            $this->processFieldValue($applicationStage, $fieldValue);
         }
     }
 
@@ -270,14 +269,14 @@ readonly class ApplicationService
     /**
      * @throws Throwable
      */
-    public function processFormSubmit(FormSubmit $formSubmit): ApplicationStage
+    public function processFormSubmit(FormSubmit $formSubmit): void
     {
-        $applicationStage = DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
-            $formSubmit = $this->encryptionService->decryptFormSubmit($formSubmit);
-            $json = $formSubmit->encryptedData;
+        DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
+            $identity = $this->encryptionService->decryptIdentity($formSubmit->identity);
+            $json = $this->encryptionService->decryptBase64EncodedData($formSubmit->encryptedData);
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-                $this->getIdentityFromSerialisation($formSubmit->identity),
+                $identity,
                 $formSubmit->applicationMetadata
             );
 
@@ -295,23 +294,24 @@ readonly class ApplicationService
                 );
             }
 
-            $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
-
-            $validator = $this->validationService->getValidator($applicationStageVersion, $values);
-            $applicationStageVersion->status = ApplicationStageVersionStatus::Submitted;
+            $validator = $this->validationService->getValidator($applicationStage, $values);
+            $applicationStage->application->status = ApplicationStageVersionStatus::Submitted;
             if ($validator->fails()) {
-                $applicationStageVersion->status = ApplicationStageVersionStatus::Invalid;
+                $applicationStage->application->status = ApplicationStageVersionStatus::Invalid;
             }
 
-            $this->processInvalidFieldValues($applicationStageVersion, $values, $validator);
-            $this->processFieldValues($applicationStageVersion, $values);
+            $this->processInvalidFieldValues($applicationStage, $values, $validator);
+            $this->processFieldValues($applicationStage, $values);
 
-            $this->appRepo->saveApplicationStageVersion($applicationStageVersion);
+            $applicationStage->application->status = ApplicationStatus::Submitted;
+            $this->appRepo->saveApplication($applicationStage->application);
+
+            $applicationStage->is_current = false;
             $this->appRepo->saveApplicationStage($applicationStage);
 
-            return $applicationStage;
+            // TODO: make next application stage
+            // $this->appRepo->makeApplicationStage($applicationStage->application, $nextSubsidyStage);
         });
-        return $applicationStage;
     }
 
     /**
@@ -319,11 +319,13 @@ readonly class ApplicationService
      */
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
-        $fileUpload = $this->encryptionService->decryptFileUpload($fileUpload);
+        $identity = $this->encryptionService->decryptIdentity($fileUpload->identity);
+
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-            $this->getIdentityFromSerialisation($fileUpload->identity),
+            $identity,
             $fileUpload->applicationMetadata
         );
+
         $field = $this->loadField($subsidyStage, $fileUpload->fieldCode);
         if ($field->type !== FieldType::Upload) {
             throw new FieldTypeMismatchException(
@@ -337,7 +339,7 @@ readonly class ApplicationService
         }
 
         $size = strlen($fileUpload->encryptedContents);
-        $encryptedContents = $fileUpload->encryptedContents; // TODO: encrypt based on app specific key
+        $decryptedContents = $this->encryptionService->decryptBase64EncodedData($fileUpload->encryptedContents);
 
         $value = [
             'mimeType' => $fileUpload->mimeType,
@@ -345,20 +347,13 @@ readonly class ApplicationService
             'size' => $size
         ];
 
-        $applicationStageVersion = $this->loadOrCreateApplicationStageVersion($applicationStage);
-
-        [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
-            $this->getIdentityFromSerialisation($fileUpload->identity),
-            $fileUpload->applicationMetadata
-        );
-
         $this->createOrUpdateAnswer(
-            $applicationStageVersion,
+            $applicationStage,
             $field,
             $value
         );
 
-        $encryptedContents = $this->encryptionService->encryptData($encryptedContents);
+        $encryptedContents = $this->encryptionService->encryptData($decryptedContents);
         $result = $this->fileRepository->writeFile($applicationStage, $field, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
@@ -373,21 +368,41 @@ readonly class ApplicationService
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
     }
 
+    private function toApplicationListApplication(Application $app): ApplicationListApplication
+    {
+        // TODO: where to retrieve / base deadline on?
+        // TODO: application status
+        $subsidy = new Subsidy(
+            $app->subsidyVersion->subsidy->code,
+            $app->subsidyVersion->title,
+            $app->subsidyVersion->subsidy_page_url
+        );
+
+        return new ApplicationListApplication(
+            $app->reference,
+            $subsidy,
+            $app->created_at,
+            DateTimeImmutable::createFromInterface($app->created_at)->add(new DateInterval('30D')),
+            ApplicationStatus::Draft
+        );
+    }
+
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function listApplications(ApplicationListParams $params): ApplicationList
+    public function listApplications(ApplicationListParams $params): EncryptedResponse
     {
-        // TODO: fill list based on the applications in `applications`
-        return new ApplicationList([
-            new ApplicationListApplication(
-                Uuid::uuid4()->toString(),
-                new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie', 'https://www.dus-i.nl/'),
-                new DateTimeImmutable(),
-                new DateTimeImmutable("+30 days"),
-                ApplicationStatus::New
-            )
-        ]);
+        $identity = $this->encryptionService->decryptIdentity($params->identity);
+
+        /** @var array<Application> $apps */
+        $apps = $this->appRepo->getMyApplications($identity)->toArray();
+        $listApps = array_map(fn ($app) => $this->toApplicationListApplication($app), $apps);
+
+        return $this->encryptionService->encryptResponse(
+            EncryptedResponseStatus::OK,
+            new ApplicationList($listApps),
+            $params->publicKey
+        );
     }
 
     public function getApplication(ApplicationParams $params): EncryptedResponse
@@ -398,11 +413,11 @@ readonly class ApplicationService
         // response. If the application exists, retrieve all the answers, decrypt
         // them and structure them in the correct JSON format (compatible with the schema).
         $application = new ApplicationDTO(
-            $params->id,
+            $params->reference,
             new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie', 'https://www.dus-i.nl/'),
             new DateTimeImmutable(),
             new DateTimeImmutable("+30 days"),
-            ApplicationStatus::New,
+            ApplicationStatus::Draft,
             new Form(Uuid::uuid4()->toString(), 1),
             $params->includeData ? (object)['firstName' => 'John', 'lastName' => 'Doe'] : null
         );

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Console\Commands;
 
 use Illuminate\Console\Command;
-use MinVWS\DUSi\Shared\Application\Events\ApplicationStageVersionDecidedEvent;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Events\ApplicationStageDecidedEvent;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 
 class GeneratePdf extends Command
 {
@@ -15,7 +15,7 @@ class GeneratePdf extends Command
      *
      * @var string
      */
-    protected $signature = 'app:generate-pdf {--applicationVersionId=}';
+    protected $signature = 'app:generate-pdf {--applicationStageId=}';
 
     /**
      * The console command description.
@@ -33,19 +33,19 @@ class GeneratePdf extends Command
             throw new \RuntimeException('This command can only be use locally');
         }
 
-        if ($this->option('applicationVersionId')) {
-            $applicationStageVersion = ApplicationStageVersion::findOrFail($this->option('applicationVersionId'));
+        if ($this->option('applicationStageId')) {
+            $applicationStage = ApplicationStage::findOrFail($this->option('applicationStageId'));
         } else {
-            $applicationStageVersion = ApplicationStageVersion::orderBy('created_at', 'desc')->first();
+            $applicationStage = ApplicationStage::orderBy('created_at', 'desc')->first();
         }
 
-        if (!$applicationStageVersion) {
-            $this->error('No applicationStageVersion found!');
+        if (!$applicationStage) {
+            $this->error('No application stage found!');
             return;
         }
 
-        $this->line(sprintf('Dispatch letter generation event for %s', $applicationStageVersion->id));
+        $this->line(sprintf('Dispatch letter generation event for %s', $applicationStage->id));
 
-        ApplicationStageVersionDecidedEvent::dispatch($applicationStageVersion);
+        ApplicationStageDecidedEvent::dispatch($applicationStage);
     }
 }

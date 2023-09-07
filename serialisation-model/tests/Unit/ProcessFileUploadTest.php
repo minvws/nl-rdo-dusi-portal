@@ -8,8 +8,7 @@ use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
 use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use Mockery;
 use MinVWS\DUSi\Shared\Serialisation\Tests\TestCase;
@@ -19,12 +18,12 @@ class ProcessFileUploadTest extends TestCase
     public function testHandleCallsInterface()
     {
         $fileUpload = new FileUpload(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
-                '123456789'
+                random_bytes(100)
             ),
             new ApplicationMetadata(
-                'applicationStageId',
+                'applicationId',
                 'subsidyStageId',
             ),
             'fieldCode',

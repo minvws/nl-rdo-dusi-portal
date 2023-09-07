@@ -6,8 +6,9 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 
 enum ApplicationStatus: string
 {
-    case New = 'new';
+    case Draft = 'draft';
+    case Submitted = 'submitted';
     case Approved = 'approved';
-    case Denied = 'denied';
+    case Rejected = 'rejected';
     case RequestForChanges = 'requestForChanges';
 }
