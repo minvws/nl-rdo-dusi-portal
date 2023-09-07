@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Carbon\Carbon;
 use DateTimeImmutable;
 use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -169,6 +170,8 @@ readonly class ApplicationService
 
     /**
      * @throws Throwable
+     *
+     * @return array{ApplicationStage, SubsidyStage}
      */
     private function loadOrCreateAppStageWithSubsidyStage(Identity $identity, ApplicationMetadata $appMetadata): array
     {
@@ -313,6 +316,8 @@ readonly class ApplicationService
             $this->processFieldValues($applicationStage, $values);
 
             $applicationStage->application->status = ApplicationStatus::Submitted;
+            $applicationStage->application->final_review_deadline =
+                Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);
             $this->appRepo->saveApplication($applicationStage->application);
 
             $applicationStage->is_current = false;
@@ -392,6 +397,7 @@ readonly class ApplicationService
             $app->created_at,
             $app->final_review_deadline,
             $app->status,
+            in_array($app->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges])
         );
     }
 
