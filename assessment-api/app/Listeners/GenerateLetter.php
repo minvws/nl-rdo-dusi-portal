@@ -6,14 +6,14 @@ namespace MinVWS\DUSi\Assessment\API\Listeners;
 
 use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Assessment\API\Jobs\GenerateLetterJob;
-use MinVWS\DUSi\Shared\Application\Events\ApplicationStageVersionDecidedEvent;
+use MinVWS\DUSi\Shared\Application\Events\ApplicationStageDecidedEvent;
 
 class GenerateLetter
 {
-    public function handle(ApplicationStageVersionDecidedEvent $event): void
+    public function handle(ApplicationStageDecidedEvent $event): void
     {
         Log::debug('Dispatch letter generation job');
 
-        GenerateLetterJob::dispatch($event->applicationStageVersion);
+        GenerateLetterJob::dispatch($event->applicationStage);
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\DTO;
 
 use DateTime;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 
 /**
  * @throws \Exception
@@ -22,13 +22,13 @@ function createDateTimeOrNull(array $inputArray, mixed $key): ?DateTime
     return null;
 }
 
-function getStatusOrNull(array $inputArray, mixed $key): ?ApplicationStageVersionStatus
+function getStatusOrNull(array $inputArray, mixed $key): ?ApplicationStatus
 {
     if (array_key_exists($key, $inputArray)) {
-        if ($inputArray[$key] instanceof ApplicationStageVersionStatus) {
+        if ($inputArray[$key] instanceof ApplicationStatus) {
             return $inputArray[$key];
         } else {
-            return ApplicationStageVersionStatus::tryFrom($inputArray[$key]);
+            return ApplicationStatus::tryFrom($inputArray[$key]);
         }
     }
     return null;
@@ -44,7 +44,7 @@ class ApplicationsFilter
         public ?DateTime $dateLastModifiedTo,
         public ?DateTime $dateFinalReviewDeadlineFrom,
         public ?DateTime $dateFinalReviewDeadlineTo,
-        public ?ApplicationStageVersionStatus $status,
+        public ?ApplicationStatus $status,
         public ?string $subsidy,
     ) {
     }

@@ -9,12 +9,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use MinVWS\DUSi\Assessment\API\Services\EncryptionService;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 //TODO: Move logic to service
@@ -54,16 +54,13 @@ class ApplicationSubsidyVersionResource extends JsonResource
     public function toArray(Request $request): array
     {
         $stages = $this['subsidyVersion']->subsidyStages->map(function ($subsidyStage) {
-            $applicationStage = $this->resource['application']->applicationStages
+            $applicationStage = $this->resource['application']->applicationStages()
+                ->orderBy('sequence_number', 'desc')
                 ->filter(function ($applicationStage) use ($subsidyStage) {
                     return $applicationStage->subsidy_stage_id === $subsidyStage->id;
                 })->first();
-            $latestApplicationStageVersion = $applicationStage?->latestApplicationStageVersion;
-            if (
-                !isset($applicationStage)
-                || !isset($applicationStage->latestApplicationStageVersion)
-                || $latestApplicationStageVersion->status === ApplicationStageVersionStatus::Draft
-            ) {
+
+            if (!isset($applicationStage) || $applicationStage->is_current) {
                 $uiType = UIType::Input;
                 $ui = $subsidyStage->publishedUI?->input_ui;
             } else {
@@ -78,7 +75,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
                     "subjectOrganisation" => $subsidyStage->subject_organisation,
                 ],
                 'dataschema' => $this->createDataSchema($subsidyStage),
-                'values' => $this->createValues($latestApplicationStageVersion, $subsidyStage->fields),
+                'values' => $this->createValues($applicationStage, $subsidyStage->fields),
                 'uischema' => $ui,
             ];
         });
@@ -119,11 +116,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
     }
 
     /**
-     * @param ApplicationStageVersion|null $applicationStageVersion
      * @param Collection<string, Field> $fields
-     * @return array|null
      */
-    private function createValues(?ApplicationStageVersion $applicationStageVersion, Collection $fields): ?array
+    private function createValues(?ApplicationStage $applicationStage, Collection $fields): ?array
     {
         $fieldsById = $fields->mapToDictionary(function ($field) {
             return [ $field->id => $field->code ];
@@ -131,13 +126,23 @@ class ApplicationSubsidyVersionResource extends JsonResource
             ->map(function ($item) {
                 return $item[0];
             });
-        return $applicationStageVersion?->answers->map(function ($answer) use ($fieldsById) {
-            return [
-                $fieldsById[$answer->field_id] => $this->encrypt(
-                    $this->decrypt($answer->encrypted_answer)
-                )
-            ];
-        })->toArray();
+
+        /** @var array<Answer>|null $answers */
+        $answers = $applicationStage?->answers->all();
+        if ($answers === null || count($answers) === 0) {
+            return null;
+        }
+
+        return array_map(
+            function ($answer) use ($fieldsById) {
+                return [
+                    $fieldsById[$answer->field_id] => $this->encrypt(
+                        $this->decrypt($answer->encrypted_answer)
+                    )
+                ];
+            },
+            $answers
+        );
     }
 
     private function createMetadata(): array

@@ -7,10 +7,8 @@ namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use Generator;
@@ -20,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\Exceptions\ValueNotFoundException;
 use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
@@ -148,12 +147,12 @@ class ApplicationServiceTest extends TestCase
         assert($applicationService instanceof ApplicationService);
         $applicationService->processFileUpload($fileUpload);
 
+        $application = Application::query()->find($fileUpload->applicationMetadata->applicationId);
+        $this->assertInstanceOf(Application::class, $application);
+
         $this->assertTrue(Storage::disk(Disk::APPLICATION_FILES)
-            ->exists(sprintf("%s/%s", $fileUpload->applicationMetadata->applicationStageId, $fileField->code)));
-        $applicationStage = ApplicationStage::query()->find($fileUpload->applicationMetadata->applicationStageId);
-        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Draft, $applicationStageVersion->status);
+            ->exists(sprintf("%s/%s", $application->currentApplicationStage->id, $fileField->code)));
+        $this->assertEquals(ApplicationStatus::Draft, $application->status);
     }
 
     /**
@@ -177,16 +176,11 @@ class ApplicationServiceTest extends TestCase
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $applicationStage = $applicationService->processFormSubmit($formSubmit);
-        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
-        $this->assertNotNull($applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStageVersion->status);
+        $applicationService->processFormSubmit($formSubmit);
 
-        $applicationStage = ApplicationStage::query()->find($formSubmit->applicationMetadata->applicationStageId);
-        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
-        $this->assertInstanceOf(ApplicationStage::class, $applicationStage);
-        $this->assertEquals(ApplicationStageVersionStatus::Submitted, $applicationStageVersion->status);
+        $application = Application::query()->find($formSubmit->applicationMetadata->applicationId);
+        $this->assertInstanceOf(Application::class, $application);
+        $this->assertEquals(ApplicationStatus::Submitted, $application->status);
     }
 
 

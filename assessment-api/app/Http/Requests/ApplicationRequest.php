@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 
 class ApplicationRequest extends FormRequest
 {
@@ -30,7 +30,7 @@ class ApplicationRequest extends FormRequest
             'application_title' => 'string',
             'date_from' => 'date',
             'date_to' => 'date',
-            'status' => [new Enum(ApplicationStageVersionStatus::class)],
+            'status' => [new Enum(ApplicationStatus::class)],
             'subsidy' => 'string',
             'date_last_modified_from' => 'date',
             'date_last_modified_to' => 'date',

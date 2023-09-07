@@ -4,6 +4,7 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 
@@ -33,6 +34,7 @@ class ApplicationFactory extends Factory
             'application_title' => $this->faker->words(3, true),
             'final_review_deadline' => $this->faker->dateTimeBetween('now', '+1 year'),
             'locked_from' => null,
+            'status' => ApplicationStatus::Draft
         ];
     }
 }
