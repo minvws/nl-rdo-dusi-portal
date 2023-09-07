@@ -20,7 +20,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $pdf_path
  * @property DateTime $seen_at
  * @property DateTime $sent_at
- *
+ * @method static Builder<self> forIdentity(Identity $identity)
+ * @method Builder<self> forIdentity(Identity $identity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */

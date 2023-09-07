@@ -25,6 +25,7 @@ use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 
 /**
@@ -35,6 +36,7 @@ readonly class LetterService
 {
     public function __construct(
         private ApplicationRepository $applicationRepository,
+        private ApplicationMessageRepository $messageRepository,
         private FilesystemManager $filesystemManager,
         private RenderEngine $engine,
         private EncryptionService $encryptionService,
@@ -241,10 +243,7 @@ readonly class LetterService
         // TODO: encrypt
         $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($htmlPath, $html);
 
-        // TODO: save application_message
-//        $stageVersion->pdf_letter_path = $pdfPath;
-//        $stageVersion->view_letter_path = $htmlPath;
-//        $this->applicationRepository->saveApplicationStageVersion($stageVersion);
+        $this->messageRepository->createMessage($stage, $pdfPath, $htmlPath);
 
         $this->triggerMailNotification($stage, $data);
     }

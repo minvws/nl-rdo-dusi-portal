@@ -31,11 +31,12 @@ class MessageService
     public function listMessages(MessageListParams $params): MessageList
     {
         $identity = $this->identityService->findIdentity($params->identity);
-        if ($identity === null) {
+
+        if (empty($identity)) {
             return new MessageList([]);
         }
 
-        $applicationMessages = $this->messageRepository->getMyApplicationMessages($identity);
+        $applicationMessages = $this->messageRepository->getMyMessages($identity);
 
         $messageListMessages = array_map(fn(ApplicationMessage $message) => new MessageListMessage(
             $message->id,
@@ -50,11 +51,12 @@ class MessageService
     public function getMessage(MessageParams $params): EncryptedResponse
     {
         $identity = $this->identityService->findIdentity($params->identity);
-        if ($identity !== null) {
-            $applicationMessage = $this->messageRepository->getMyApplicationMessage($identity, $params->id);
+
+        if (!empty($identity)) {
+            $applicationMessage = $this->messageRepository->getMyMessage($identity, $params->id);
         }
 
-        if ($identity === null || $applicationMessage === null) {
+        if (empty($identity) || empty($applicationMessage)) {
             return $this->encryptionService->encryptResponse(
                 EncryptedResponseStatus::NOT_FOUND,
                 null,

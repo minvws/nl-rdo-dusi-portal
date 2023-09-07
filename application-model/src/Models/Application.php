@@ -28,7 +28,10 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTime $final_review_deadline
  * @property DateTime $created_at
  * @property-read SubsidyVersion $subsidyVersion
+ * @property-read HasMany<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage $currentApplicationStage
+ * @method static Builder<self> forIdentity(Identity $identity)
+ * @method Builder<self> forIdentity(Identity $identity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
