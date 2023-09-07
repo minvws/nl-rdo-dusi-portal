@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use DateTimeImmutable;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message;
@@ -14,37 +15,38 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListMessage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
-use Ramsey\Uuid\Uuid;
 
-class MessageService
+readonly class MessageService
 {
-    public function __construct(private readonly EncryptionService $encryptionService)
-    {
+    public function __construct(
+        private EncryptionService $encryptionService,
+        private ApplicationMessageRepository $messageRepository
+    ) {
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function listMessages(MessageListParams $params): MessageList
     {
-        // TODO: fill message list based on the available messages in `application_stage`
-        return new MessageList([
-            new MessageListMessage(
-                Uuid::uuid4()->toString(),
-                'Aanvraag ontvangen "Borstprothesen transvrouwen"',
-                new DateTimeImmutable(),
-                true
-            )
-        ]);
+        $applicationMessages = $this->messageRepository->getMyApplicationMessages($params->identity);
+
+        $messageListMessages = array_map(fn(ApplicationMessage $message) => new MessageListMessage(
+            $message->id,
+            $message->subject,
+            $message->sent_at,
+            $message->is_new,
+        ), $applicationMessages);
+
+        return new MessageList($messageListMessages);
     }
 
     public function getMessage(MessageParams $params): EncryptedResponse
     {
+        $applicationMessage = $this->messageRepository->getMyApplicationMessage($params->identity, $params->id);
+
         $message = new Message(
-            Uuid::uuid4()->toString(),
-            'Aanvraag ontvangen "Borstprothesen transvrouwen"',
-            new DateTimeImmutable(),
-            true,
+            $applicationMessage->id,
+            $applicationMessage->subject,
+            $applicationMessage->sent_at,
+            $applicationMessage->is_new,
             'Dit is een mock bericht.'
         );
 
@@ -54,6 +56,7 @@ class MessageService
     public function getMessageDownload(MessageDownloadParams $params): EncryptedResponse
     {
         $download = new MessageDownload('application/pdf', 'PDF mock');
+
         return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $download, $params->publicKey);
     }
 }

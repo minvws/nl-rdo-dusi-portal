@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
+use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
@@ -63,6 +65,11 @@ class Application extends Model
         return $this->hasMany(ApplicationHash::class, 'application_id', 'id');
     }
 
+    public function applicationMessages(): HasMany
+    {
+        return $this->hasMany(ApplicationMessage::class, 'application_id', 'id');
+    }
+
     public function applicationStages(): HasMany
     {
         return $this->hasMany(ApplicationStage::class, 'application_id', 'id');
@@ -97,6 +104,14 @@ class Application extends Model
                 'identity_identifier' => $identity->identifier
             ]
         );
+    }
+
+    public function scopeEncryptedIdentity(Builder $query, EncryptedIdentity $identity): Builder
+    {
+        return
+            $query
+                ->where('identity_type', $identity->type)
+                ->where('identity_identifier', $identity->encryptedIdentifier);
     }
 
     public function scopeIdentity(Builder $query, Identity $identity): Builder
