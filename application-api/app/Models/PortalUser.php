@@ -7,19 +7,20 @@ namespace MinVWS\DUSi\Application\API\Models;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Auth\Authenticatable;
+use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use RuntimeException;
 
 class PortalUser implements Authenticatable
 {
     /**
-     * @param string      $bsn
-     * @param string      $id
-     * @param string|null $loaAuthn
+     * @param string $bsn
+     * @param string $id
+     * @param OidcUserLoa|null $loaAuthn
      */
     public function __construct(
         public string $bsn,
         public string $id,
-        public string|null $loaAuthn,
+        public ?OidcUserLoa $loaAuthn,
     ) {
     }
 
@@ -44,7 +45,7 @@ class PortalUser implements Authenticatable
             return new PortalUser(
                 $oidcResponse->bsn, // @phpstan-ignore-line
                 $oidcResponse->bsn, // @phpstan-ignore-line
-                $oidcResponse->loa_authn ?? null
+                OidcUserLoa::tryFrom($oidcResponse->loa_authn ?? ''),
             );
         } catch (Exception $e) {
             report($e);
