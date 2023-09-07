@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Shared\Application\Models;
 
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,11 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
@@ -27,8 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property string $reference
  * @property string $subsidy_version_id
  * @property string $application_title
- * @property string $identity_type
- * @property string $identity_identifier
+ * @property string $identity_id
  * @property Identity $identity
  * @property DateTime $locked_from
  * @property DateTime $final_review_deadline
@@ -47,7 +41,6 @@ class Application extends Model
 
     protected $casts = [
         'status' => ApplicationStatus::class,
-        'identity_type' => IdentityType::class,
         'locked_from' => 'datetime',
         'final_review_deadline' => 'datetime',
     ];
@@ -84,42 +77,19 @@ class Application extends Model
                 ->limit(1);
     }
 
+    public function identity(): BelongsTo
+    {
+        return $this->belongsTo(Identity::class, 'identity_id', 'id');
+    }
+
     public function subsidyVersion(): BelongsTo
     {
         return $this->belongsTo(SubsidyVersion::class, 'subsidy_version_id', 'id');
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function identity(): Attribute
+    public function scopeForIdentity(Builder $query, Identity $identity): Builder
     {
-        return Attribute::make(
-            get: fn (mixed $value, array $attributes) => new Identity(
-                IdentityType::from($attributes['identity_type']),
-                $attributes['identity_identifier']
-            ),
-            set: fn (Identity $identity) => [
-                'identity_type' => $identity->type,
-                'identity_identifier' => $identity->identifier
-            ]
-        );
-    }
-
-    public function scopeEncryptedIdentity(Builder $query, EncryptedIdentity $identity): Builder
-    {
-        return
-            $query
-                ->where('identity_type', $identity->type)
-                ->where('identity_identifier', $identity->encryptedIdentifier);
-    }
-
-    public function scopeIdentity(Builder $query, Identity $identity): Builder
-    {
-        return
-            $query
-                ->where('identity_type', $identity->type)
-                ->where('identity_identifier', $identity->identifier);
+        return $query->where('identity_id', $identity->id);
     }
 
     public function scopeTitle(Builder $query, string $title): Builder

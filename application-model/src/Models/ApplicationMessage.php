@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 
 /**
  * @property-read string $id
@@ -22,6 +20,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
  * @property string $pdf_path
  * @property DateTime $seen_at
  * @property DateTime $sent_at
+ *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -50,17 +49,10 @@ class ApplicationMessage extends Model
         return $this->belongsTo(Application::class, 'application_id', 'id');
     }
 
-    protected function scopeEncryptedIdentity(Builder $builder, EncryptedIdentity $identity): void
+    protected function scopeForIdentity(Builder $builder, Identity $identity): void
     {
         $builder->whereHas('application', function (Builder $subBuilder) use ($identity) {
-            $subBuilder->scopes(['encryptedIdentity' => $identity]);
-        });
-    }
-
-    protected function scopeIdentity(Builder $builder, Identity $identity): void
-    {
-        $builder->whereHas('application', function (Builder $subBuilder) use ($identity) {
-            $subBuilder->scopes(['identity' => $identity]);
+            $subBuilder->scopes(['forIdentity' => $identity]);
         });
     }
 

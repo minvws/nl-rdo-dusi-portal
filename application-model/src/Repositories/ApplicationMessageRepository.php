@@ -4,23 +4,20 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
-use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
 
 class ApplicationMessageRepository
 {
-    public function getMyApplicationMessage(EncryptedIdentity $identity, mixed $id): ApplicationMessage
+    public function getMyApplicationMessage(Identity $identity, mixed $id): ?ApplicationMessage
     {
-        return ApplicationMessage::query()->scopes([
-            'encryptedIdentity' => $identity,
-        ])->find($id);
+        $message = ApplicationMessage::forIdentity($identity)->find($id);
+        assert($message === null || $message instanceof ApplicationMessage);
+        return $message;
     }
 
-    public function getMyApplicationMessages(EncryptedIdentity $identity): array
+    public function getMyApplicationMessages(Identity $identity): array
     {
-        return ApplicationMessage::query()->scopes([
-            'encryptedIdentity' => $identity,
-        ])->get()->toArray();
+        return ApplicationMessage::forIdentity($identity)->get()->toArray();
     }
 }

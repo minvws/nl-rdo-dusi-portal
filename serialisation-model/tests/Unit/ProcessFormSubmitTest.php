@@ -19,7 +19,7 @@ class ProcessFormSubmitTest extends TestCase
     {
         $formSubmit = new FormSubmit(
             new EncryptedIdentity(
-                IdentityType::EncryptedCitizenServiceNumber,
+                IdentityType::CitizenServiceNumber,
                 random_bytes(100)
             ),
             new ApplicationMetadata(

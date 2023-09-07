@@ -11,10 +11,8 @@ use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -148,14 +146,9 @@ class EncryptionService
         return $this->decryptAesEncrypted($dataArray['encrypted'], $aesKeyDecrypted, $dataArray['iv']);
     }
 
-    public function decryptIdentity(EncryptedIdentity $identity): Identity
-    {
-        return new Identity($identity->type, $this->decryptData($identity->encryptedIdentifier));
-    }
-
     public function encryptResponse(
         EncryptedResponseStatus $status,
-        Codable $payload,
+        ?Codable $payload,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
         $encoder = new JSONEncoder();
