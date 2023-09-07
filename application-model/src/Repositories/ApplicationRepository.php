@@ -185,7 +185,7 @@ class ApplicationRepository
     {
         return
             Application::query()
-                ->identity($identity)
+                ->forIdentity($identity)
                 ->with(['subsidyVersion', 'subsidyVersion.subsidy'])
                 ->get();
     }

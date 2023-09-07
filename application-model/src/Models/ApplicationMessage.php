@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $pdf_path
  * @property DateTime $seen_at
  * @property DateTime $sent_at
+ *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -48,10 +49,10 @@ class ApplicationMessage extends Model
         return $this->belongsTo(Application::class, 'application_id', 'id');
     }
 
-    protected function scopeIdentity(Builder $builder, Identity $identity): void
+    protected function scopeForIdentity(Builder $builder, Identity $identity): void
     {
         $builder->whereHas('application', function (Builder $subBuilder) use ($identity) {
-            $subBuilder->scopes(['identity' => $identity]);
+            $subBuilder->scopes(['forIdentity' => $identity]);
         });
     }
 

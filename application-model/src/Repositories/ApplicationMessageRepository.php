@@ -9,17 +9,15 @@ use MinVWS\DUSi\Shared\Application\Models\Identity;
 
 class ApplicationMessageRepository
 {
-    public function getMyApplicationMessage(Identity $identity, mixed $id): ApplicationMessage
+    public function getMyApplicationMessage(Identity $identity, mixed $id): ?ApplicationMessage
     {
-        return ApplicationMessage::query()->scopes([
-            'identity' => $identity,
-        ])->find($id);
+        $message = ApplicationMessage::forIdentity($identity)->find($id);
+        assert($message === null || $message instanceof ApplicationMessage);
+        return $message;
     }
 
     public function getMyApplicationMessages(Identity $identity): array
     {
-        return ApplicationMessage::query()->scopes([
-            'identity' => $identity,
-        ])->get()->toArray();
+        return ApplicationMessage::forIdentity($identity)->get()->toArray();
     }
 }

@@ -87,7 +87,7 @@ class Application extends Model
         return $this->belongsTo(SubsidyVersion::class, 'subsidy_version_id', 'id');
     }
 
-    public function scopeIdentity(Builder $query, Identity $identity): Builder
+    public function scopeForIdentity(Builder $query, Identity $identity): Builder
     {
         return $query->where('identity_id', $identity->id);
     }

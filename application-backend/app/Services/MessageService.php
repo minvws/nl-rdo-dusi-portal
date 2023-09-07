@@ -19,12 +19,12 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-readonly class MessageService
+class MessageService
 {
     public function __construct(
-        private EncryptionService $encryptionService,
-        private ApplicationMessageRepository $messageRepository,
-        private IdentityService $identityService
+        private readonly EncryptionService $encryptionService,
+        private readonly ApplicationMessageRepository $messageRepository,
+        private readonly IdentityService $identityService
     ) {
     }
 
@@ -50,15 +50,17 @@ readonly class MessageService
     public function getMessage(MessageParams $params): EncryptedResponse
     {
         $identity = $this->identityService->findIdentity($params->identity);
-        if ($identity === null) {
+        if ($identity !== null) {
+            $applicationMessage = $this->messageRepository->getMyApplicationMessage($identity, $params->id);
+        }
+
+        if ($identity === null || $applicationMessage === null) {
             return $this->encryptionService->encryptResponse(
                 EncryptedResponseStatus::NOT_FOUND,
                 null,
                 $params->publicKey
             );
         }
-
-        $applicationMessage = $this->messageRepository->getMyApplicationMessage($identity, $params->id);
 
         $message = new Message(
             $applicationMessage->id,
