@@ -58,7 +58,11 @@ class MessageService
             $applicationMessage = $this->messageRepository->getMyMessage($identity, $params->id);
         }
 
-        if (empty($identity) || empty($applicationMessage)) {
+        if (!empty($applicationMessage)) {
+            $htmlContent = $this->letterRepository->getHtmlContent($applicationMessage);
+        }
+
+        if (empty($identity) || empty($applicationMessage) || empty($htmlContent)) {
             return $this->encryptionService->encryptResponse(
                 EncryptedResponseStatus::NOT_FOUND,
                 null,
@@ -71,7 +75,7 @@ class MessageService
             $applicationMessage->subject,
             $applicationMessage->sent_at,
             $applicationMessage->is_new,
-            $this->letterRepository->getHtmlContent($applicationMessage),
+            $htmlContent,
         );
 
         return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $message, $params->publicKey);
@@ -85,7 +89,11 @@ class MessageService
             $applicationMessage = $this->messageRepository->getMyMessage($identity, $params->id);
         }
 
-        if (empty($identity) || empty($applicationMessage)) {
+        if (!empty($applicationMessage)) {
+            $pdfContent = $this->letterRepository->getPdfContent($applicationMessage);
+        }
+
+        if (empty($identity) || empty($applicationMessage) || empty($pdfContent)) {
             return $this->encryptionService->encryptResponse(
                 EncryptedResponseStatus::NOT_FOUND,
                 null,
@@ -93,8 +101,7 @@ class MessageService
             );
         }
 
-        $data = $this->letterRepository->getPdfContent($applicationMessage);
-        $download = new MessageDownload('application/pdf', $data);
+        $download = new MessageDownload('application/pdf', $pdfContent);
 
         return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $download, $params->publicKey);
     }

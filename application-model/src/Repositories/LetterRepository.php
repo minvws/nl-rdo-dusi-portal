@@ -18,13 +18,13 @@ class LetterRepository
         $this->filesystem = Storage::disk(Disk::APPLICATION_FILES);
     }
 
-    public function getHtmlContent(ApplicationMessage $message): string
+    public function getHtmlContent(ApplicationMessage $message): ?string
     {
-        return $this->filesystem->get($message->html_path) ?: '';
+        return $this->filesystem->get($message->html_path);
     }
 
-    public function getPdfContent(ApplicationMessage $message): string
+    public function getPdfContent(ApplicationMessage $message): ?string
     {
-        return $this->filesystem->get($message->pdf_path) ?: '';
+        return $this->filesystem->get($message->pdf_path);
     }
 }
