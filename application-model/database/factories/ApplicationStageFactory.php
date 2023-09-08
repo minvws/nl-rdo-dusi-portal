@@ -23,21 +23,14 @@ class ApplicationStageFactory extends Factory
      */
     public function definition(): array
     {
-        $_subsidy_version = null;
-        $subsidy_version = function () use (&$_subsidy_version) {
-            if (!isset($_subsidy_version)) {
-                $_subsidy_version = SubsidyVersion::factory()->for(Subsidy::factory())->create();
-            }
-            return $_subsidy_version;
-        };
         return [
             'id' => $this->faker->uuid,
-            'application_id' => fn() => Application::factory()->for($subsidy_version()),
+            'application_id' => fn () => Application::factory(),
+            'subsidy_stage_id' => fn () => SubsidyStage::factory(),
+            'sequence_number' => 1,
+            'is_current' => true,
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
-            'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
-            'subsidy_stage_id' => fn() => SubsidyStage::factory()->for($subsidy_version()),
-            'stage' => 1,
-            'user_id' => $this->faker->uuid,
+            'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now')
         ];
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use MinVWS\DUSi\Assessment\API\Services\LetterService;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 
 class GenerateLetterJob implements ShouldQueue
 {
@@ -20,12 +20,12 @@ class GenerateLetterJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public readonly ApplicationStageVersion $applicationStageVersion
+        public readonly ApplicationStage $applicationStage
     ) {
     }
 
     public function handle(LetterService $letterService): void
     {
-        $letterService->generateLetters($this->applicationStageVersion);
+        $letterService->generateLetters($this->applicationStage);
     }
 }

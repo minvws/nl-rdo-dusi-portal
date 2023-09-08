@@ -10,9 +10,9 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
@@ -23,6 +23,7 @@ class ApplicationRepositoryTest extends TestCase
 {
     private ApplicationRepository $repository;
 
+    private Identity $identity;
     private SubsidyVersion $subsidyVersion;
     private SubsidyStage $subsidyStage;
 
@@ -33,6 +34,7 @@ class ApplicationRepositoryTest extends TestCase
         $subsidy = Subsidy::factory()->create([
             'title' => 'some_subsidy_title',
         ]);
+        $this->identity = Identity::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create();
         $this->subsidyStage = SubsidyStage::factory()->for($this->subsidyVersion)->create(['stage' => 1]);
         $this->repository = new ApplicationRepository();
@@ -45,6 +47,7 @@ class ApplicationRepositoryTest extends TestCase
     {
         // Create a test application
         $application = Application::factory()
+            ->for($this->identity)
             ->for($this->subsidyVersion)
             ->create(
                 [
@@ -52,18 +55,14 @@ class ApplicationRepositoryTest extends TestCase
                 'updated_at' => new \DateTime('now'),
                 'created_at' => new \DateTime('now'),
                 'final_review_deadline' => new \DateTime('now'),
+                'status' => ApplicationStatus::Submitted
                 ]
             );
-        $appStageId = ApplicationStage::factory()
+
+        ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStage)
             ->create()->id;
-        ApplicationStageVersion::factory()->create(
-            [
-                'application_stage_id' => $appStageId,
-                'status' => ApplicationStageVersionStatus::Submitted,
-            ]
-        )->id;
 
         $filter = [
             'application_title' => 'some_application_title',
@@ -75,7 +74,7 @@ class ApplicationRepositoryTest extends TestCase
                 ->createFromFormat('U', (string)strtotime('yesterday')),
             'date_final_review_deadline_to' => (new \DateTime())
                 ->createFromFormat('U', (string)strtotime('tomorrow')),
-            'status' => ApplicationStageVersionStatus::Submitted,
+            'status' => ApplicationStatus::Submitted,
             'subsidy' => 'some_subsidy_title',
         ];
         $appFilter = ApplicationsFilter::fromArray($filter);
@@ -99,6 +98,7 @@ class ApplicationRepositoryTest extends TestCase
     {
         // Create a test application
         $application = Application::factory()
+            ->for($this->identity)
             ->for($this->subsidyVersion)
             ->create();
 
@@ -125,43 +125,33 @@ class ApplicationRepositoryTest extends TestCase
         $this->repository->getApplicationStage('invalid_application_stage_id');
     }
 
-    public function testGetApplicationStageVersion()
-    {
-        // Create a test application stage version
-        $applicationStageVersion = ApplicationStageVersion::factory()->create();
-
-        // Test valid application stage version
-        $foundApplicationStageVersion = $this->repository->getApplicationStageVersion($applicationStageVersion->id);
-        $this->assertInstanceOf(ApplicationStageVersion::class, $foundApplicationStageVersion);
-
-        // Test invalid application stage version
-        $this->expectException(QueryException::class);
-        $this->repository->getApplicationStageVersion('invalid_application_stage_version_id');
-    }
-
     public function testGetAnswer()
     {
         // Create test models
         $field = Field::factory()
             ->for($this->subsidyStage)
             ->create();
-        $applicationStageVersion = ApplicationStageVersion::factory()->create();
+
+        $appStage = ApplicationStage::factory()->create();
         Answer::factory()->create([
-            'application_stage_version_id' => $applicationStageVersion->id,
+            'application_stage_id' => $appStage->id,
             'field_id' => $field->id,
         ]);
 
-        $foundAnswer = $this->repository->getAnswer($applicationStageVersion, $field);
+        $foundAnswer = $this->repository->getAnswer($appStage, $field);
         $this->assertInstanceOf(Answer::class, $foundAnswer);
 
         $field2 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
-        $this->assertNull($this->repository->getAnswer($applicationStageVersion, $field2));
+        $this->assertNull($this->repository->getAnswer($appStage, $field2));
     }
 
     public function testMakeApplicationForSubsidyVersion()
     {
         // Test make application for subsidy version
-        $application = $this->repository->makeApplicationForSubsidyVersion($this->subsidyVersion);
+        $application = $this->repository->makeApplicationForIdentityAndSubsidyVersion(
+            $this->identity,
+            $this->subsidyVersion
+        );
         $this->assertInstanceOf(Application::class, $application);
         $this->assertEquals($this->subsidyVersion->id, $application->subsidy_version_id);
     }
@@ -170,6 +160,7 @@ class ApplicationRepositoryTest extends TestCase
     {
         // Create test models
         $application = Application::factory()
+            ->for($this->identity)
             ->for($this->subsidyVersion)
             ->create();
         $subsidyStage = SubsidyStage::factory()->create(['subsidy_version_id' => $this->subsidyVersion->id]);
@@ -181,27 +172,16 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertEquals($subsidyStage->id, $applicationStage->subsidy_stage_id);
     }
 
-    public function testMakeApplicationStageVersion()
-    {
-        // Create test models
-        $applicationStage = ApplicationStage::factory()->create();
-
-        // Test make application stage version
-        $applicationStageVersion = $this->repository->makeApplicationStageVersion($applicationStage);
-        $this->assertInstanceOf(ApplicationStageVersion::class, $applicationStageVersion);
-        $this->assertEquals($applicationStage->id, $applicationStageVersion->applicationStage->id);
-    }
-
     public function testMakeAnswer()
     {
         // Create test models
         $field = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
-        $applicationStageVersion = ApplicationStageVersion::factory()->create();
+        $applicationStage = ApplicationStage::factory()->create();
 
         // Test make answer
-        $answer = $this->repository->makeAnswer($applicationStageVersion, $field);
+        $answer = $this->repository->makeAnswer($applicationStage, $field);
         $this->assertInstanceOf(Answer::class, $answer);
-        $this->assertEquals($applicationStageVersion->id, $answer->applicationStageVersion->id);
+        $this->assertEquals($applicationStage->id, $answer->applicationStage->id);
         $this->assertEquals($field->id, $answer->field_id);
     }
 
@@ -209,6 +189,7 @@ class ApplicationRepositoryTest extends TestCase
     {
         // Create a test application
         $application = Application::factory()
+            ->for($this->identity)
             ->for($this->subsidyVersion)
             ->make();
 
@@ -216,17 +197,6 @@ class ApplicationRepositoryTest extends TestCase
         $this->repository->saveApplication($application);
 
         $this->assertDatabaseHas('applications', ['id' => $application->id]);
-    }
-
-    public function testSaveApplicationStageVersion()
-    {
-        // Create a test application stage version
-        $applicationStageVersion = ApplicationStageVersion::factory()->make();
-
-        // Test save application stage version
-        $this->repository->saveApplicationStageVersion($applicationStageVersion);
-
-        $this->assertDatabaseHas('application_stage_versions', ['id' => $applicationStageVersion->id]);
     }
 
     public function testSaveApplicationStage()
@@ -250,44 +220,8 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertDatabaseHas('answers', ['id' => $answer->id]);
     }
 
-    public function testGetLatestApplicationStageVersion()
-    {
-        // Create test models
-        $applicationStage = ApplicationStage::factory()->for($this->subsidyStage)->create();
-        $now = Carbon::now();
-        $expectedApplicationStageVersion = ApplicationStageVersion::factory()->create([
-            'application_stage_id' => $applicationStage->id,
-            'created_at' => $now,
-            'version' => '3',
-        ]);
-        ApplicationStageVersion::factory()->create([
-            'application_stage_id' => $applicationStage->id,
-            'created_at' => $now->modify('+1 day'),
-            'version' => '2',
-        ]);
-        ApplicationStageVersion::factory()->create([
-            'application_stage_id' => $applicationStage->id,
-            'created_at' => $now->modify('+2 day'),
-            'version' => '1',
-        ]);
-
-        // Test get latest application stage version
-        $latestApplicationStageVersion = $this->repository->getLatestApplicationStageVersion($applicationStage);
-        $this->assertInstanceOf(ApplicationStageVersion::class, $latestApplicationStageVersion);
-        $this->assertEquals($expectedApplicationStageVersion->id, $latestApplicationStageVersion->id);
-        $this->assertEquals($expectedApplicationStageVersion->id, $applicationStage->latestApplicationStageVersion->id);
-    }
-
     public function testGetAnswersForApplicationStagesUpToIncluding(): void
     {
-//        Subsidy::query()->truncate();
-//        SubsidyVersion::query()->truncate();
-//        Application::query()->truncate();
-//        ApplicationStage::query()->truncate();
-//        ApplicationStageVersion::query()->truncate();
-
-
-
         $stage1Field1 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
         $stage1Field2 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
 
@@ -299,6 +233,7 @@ class ApplicationRepositoryTest extends TestCase
         $stage2Field1 = Field::factory()->create(['subsidy_stage_id' => $subsidyStage2->id]);
 
         $application = Application::factory()->create([
+            'identity_id' => $this->identity->id,
             'subsidy_version_id' => $this->subsidyVersion->id,
             'updated_at' => Carbon::today(),
             'created_at' => Carbon::today(),
@@ -308,51 +243,42 @@ class ApplicationRepositoryTest extends TestCase
         $applicationStage1 = ApplicationStage::factory()->create([
             'application_id' => $application->id,
             'subsidy_stage_id' => $this->subsidyStage->id,
-            'stage' => $this->subsidyStage->stage
-        ]);
-
-        $applicationStage1Version = ApplicationStageVersion::factory()->create([
-            'application_stage_id' => $applicationStage1->id,
+            'sequence_number' => 1,
+            'is_current' => false
         ]);
 
         Answer::factory()->create([
-            'application_stage_version_id' => $applicationStage1Version->id,
+            'application_stage_id' => $applicationStage1->id,
             'field_id' => $stage1Field1->id
         ]);
 
         Answer::factory()->create([
-            'application_stage_version_id' => $applicationStage1Version->id,
+            'application_stage_id' => $applicationStage1->id,
             'field_id' => $stage1Field2->id
         ]);
 
         $applicationStage2 = ApplicationStage::factory()->create([
             'application_id' => $application->id,
             'subsidy_stage_id' => $subsidyStage2->id,
-            'stage' => $subsidyStage2->stage
-        ]);
-
-        $applicationStage2Version = ApplicationStageVersion::factory()->create([
-            'application_stage_id' => $applicationStage2->id,
+            'sequence_number' => 2,
+            'is_current' => true
         ]);
 
         Answer::factory()->create([
-            'application_stage_version_id' => $applicationStage2Version->id,
+            'application_stage_id' => $applicationStage2->id,
             'field_id' => $stage2Field1->id
         ]);
 
-        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage1Version);
+        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage1);
         $this->assertCount(1, $answers->stages);
         $this->assertCount(2, $answers->stages[0]->answers);
-        $this->assertEquals($applicationStage1Version->id, $answers->stages[0]->stageVersion->id);
         $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);
 
-        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage2Version);
+        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage2);
         $this->assertCount(2, $answers->stages);
         $this->assertCount(2, $answers->stages[0]->answers);
-        $this->assertEquals($applicationStage1Version->id, $answers->stages[0]->stageVersion->id);
         $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);
         $this->assertCount(1, $answers->stages[1]->answers);
-        $this->assertEquals($applicationStage2Version->id, $answers->stages[1]->stageVersion->id);
         $this->assertEquals($applicationStage2->id, $answers->stages[1]->stage->id);
     }
 }

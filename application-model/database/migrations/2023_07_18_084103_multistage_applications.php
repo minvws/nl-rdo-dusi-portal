@@ -7,9 +7,7 @@ use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 
 
 return new class extends Migration
@@ -64,7 +62,6 @@ return new class extends Migration
     public function down(): void
     {
         Answer::query()->truncate();
-        ApplicationStageVersion::query()->truncate();
         ApplicationStage::query()->truncate();
         ApplicationHash::query()->truncate();
         Application::query()->truncate();
@@ -81,7 +78,7 @@ return new class extends Migration
         });
         Schema::table('applications', function (Blueprint $table) {
             $table->renameColumn('subsidy_version_id', 'form_id');
-            $table->enum('status', [ApplicationStageVersionStatus::Draft->value, ApplicationStageVersionStatus::Submitted->value]);
+            $table->enum('status', ['draft', 'submitted']);
             $table->dropColumn('application_title');
             $table->dropColumn('final_review_deadline');
         });

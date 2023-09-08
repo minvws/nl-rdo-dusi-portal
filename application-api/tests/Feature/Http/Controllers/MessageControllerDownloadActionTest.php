@@ -27,7 +27,7 @@ class MessageControllerDownloadActionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->be(new PortalUser('123456789', '', ''));
+        $this->be(new PortalUser('123456789', '', null));
     }
 
     public function testMessageDownloadRequiresClientPublicKey(): void

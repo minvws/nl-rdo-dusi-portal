@@ -6,15 +6,15 @@ namespace MinVWS\DUSi\Shared\Application\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 
-class ApplicationStageVersionSubmitted
+class ApplicationSubmitted
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly ApplicationStageVersion $applicationStageVersion
+        public readonly Application $application
     ) {
     }
 }

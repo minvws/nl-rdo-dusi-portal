@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Shared\Application\DTO;
 
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 
 class ApplicationStageAnswers
 {
@@ -15,7 +14,6 @@ class ApplicationStageAnswers
      */
     public function __construct(
         public readonly ApplicationStage $stage,
-        public readonly ApplicationStageVersion $stageVersion,
         public readonly array $answers
     ) {
     }

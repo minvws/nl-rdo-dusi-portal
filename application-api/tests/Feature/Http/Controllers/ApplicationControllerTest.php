@@ -157,8 +157,8 @@ class ApplicationControllerTest extends TestCase
         $job = $jobs->first();
         $this->assertInstanceOf(ProcessFileUpload::class, $job);
         $this->assertEquals($fileId, $job->fileUpload->id);
-        $this->assertEquals(IdentityType::EncryptedCitizenServiceNumber, $job->fileUpload->identity->type);
-        $this->assertEquals($applicationId, $job->fileUpload->applicationMetadata->applicationStageId);
+        $this->assertEquals(IdentityType::CitizenServiceNumber, $job->fileUpload->identity->type);
+        $this->assertEquals($applicationId, $job->fileUpload->applicationMetadata->applicationId);
         $this->assertEquals($this->subsidyStage->id, $job->fileUpload->applicationMetadata->subsidyStageId);
         $this->assertEquals($this->field->code, $job->fileUpload->fieldCode);
         $this->assertEquals('pdf', $job->fileUpload->extension);
@@ -211,8 +211,8 @@ class ApplicationControllerTest extends TestCase
 
         $job = $jobs->first();
         $this->assertInstanceOf(ProcessFormSubmit::class, $job);
-        $this->assertEquals(IdentityType::EncryptedCitizenServiceNumber, $job->formSubmit->identity->type);
-        $this->assertEquals($applicationId, $job->formSubmit->applicationMetadata->applicationStageId);
+        $this->assertEquals(IdentityType::CitizenServiceNumber, $job->formSubmit->identity->type);
+        $this->assertEquals($applicationId, $job->formSubmit->applicationMetadata->applicationId);
         $this->assertEquals($this->subsidyStage->id, $job->formSubmit->applicationMetadata->subsidyStageId);
 
 

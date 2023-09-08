@@ -12,13 +12,13 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationReferenceExce
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @group application
@@ -202,8 +202,10 @@ class ApplicationReferenceServiceTest extends TestCase
             ->recycle($this->subsidyVersion)
             ->create();
 
+        // TODO: this test unnecessarily exposes the createApplication method
         return $this->applicationService->createApplication(
-            new Identity(IdentityType::EncryptedCitizenServiceNumber, $this->faker->word()),
+            Uuid::uuid4()->toString(),
+            Identity::factory()->create(),
             $subsidyStage
         );
     }

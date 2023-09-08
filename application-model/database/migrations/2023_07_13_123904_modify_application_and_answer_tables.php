@@ -5,7 +5,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 
 return new class extends Migration
@@ -18,9 +17,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->enum('identity_type', [IdentityType::EncryptedCitizenServiceNumber->value]);
+            $table->enum('identity_type', [IdentityType::CitizenServiceNumber->value]);
             $table->string('identity_identifier', 200);
-            $table->enum('status', [ApplicationStageVersionStatus::Draft->value, ApplicationStageVersionStatus::Submitted->value]);
+            $table->enum('status', ['draft', 'submitted']);
             $table->timestamp('updated_at')->useCurrent();
         });
 

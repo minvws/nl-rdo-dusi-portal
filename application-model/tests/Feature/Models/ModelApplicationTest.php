@@ -5,15 +5,11 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Tests\Feature\Models;
 
 use Carbon\Carbon;
-use Carbon\Traits\Date;
-use Faker\Core\DateTime;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Subsidy\Models\Connection as ConnectionSubsidy;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Application\Tests\Feature\TestCase;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
@@ -25,7 +21,6 @@ class ModelApplicationTest extends TestCase
     protected array $connectionsToTransact = [Connection::APPLICATION];
     private Application $application;
     private ApplicationStage $applicationStage;
-    private ApplicationStageVersion $applicationStageVersion;
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
     private SubsidyVersion $falseSubsidyVersion;
@@ -39,7 +34,6 @@ class ModelApplicationTest extends TestCase
         SubsidyVersion::query()->truncate();
         Application::query()->truncate();
         ApplicationStage::query()->truncate();
-        ApplicationStageVersion::query()->truncate();
 
         $this->subsidy = Subsidy::factory()->create([
             'title' => 'Test Subsidy',
@@ -53,14 +47,11 @@ class ModelApplicationTest extends TestCase
             'created_at' => '2021-01-01',
             'final_review_deadline' => '2021-01-01',
             'updated_at' => '2021-01-01',
+            'status' => ApplicationStatus::Submitted,
         ]);
 
         $this->applicationStage = ApplicationStage::factory()->create([
             'application_id' => $this->application->id,
-        ]);
-        $this->applicationStageVersion = ApplicationStageVersion::factory()->create([
-            'application_stage_id' => $this->applicationStage->id,
-            'status' => ApplicationStageVersionStatus::Submitted,
         ]);
         $this->falseSubsidyVersion = SubsidyVersion::factory()->create([
             'subsidy_id' => Subsidy::factory()->create()->id,
@@ -106,12 +97,13 @@ class ModelApplicationTest extends TestCase
 
     public function testScopeStatus()
     {
-        $query = Application::query()->status(ApplicationStageVersionStatus::Submitted)->get();
+        $query = Application::query()->status(ApplicationStatus::Submitted)->get();
 
         $this->assertTrue($query->contains('id', $this->application->id));
 
         $this->assertFalse($query->contains('id', $this->falseApplication->id));
     }
+
     public function testScopeSubsidyTitle()
     {
         $query = Application::query()->subsidyTitle('Test Subsidy')->get();

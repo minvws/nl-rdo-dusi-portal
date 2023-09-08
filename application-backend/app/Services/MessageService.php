@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use DateTimeImmutable;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\LetterRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message;
@@ -14,38 +16,62 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListMessage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
-use Ramsey\Uuid\Uuid;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class MessageService
 {
-    public function __construct(private readonly EncryptionService $encryptionService)
-    {
+    public function __construct(
+        private readonly EncryptionService $encryptionService,
+        private readonly ApplicationMessageRepository $messageRepository,
+        private readonly IdentityService $identityService,
+        private readonly LetterRepository $letterRepository,
+    ) {
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function listMessages(MessageListParams $params): MessageList
     {
-        // TODO: fill message list based on the available messages in `application_stage`
-        return new MessageList([
-            new MessageListMessage(
-                Uuid::uuid4()->toString(),
-                'Aanvraag ontvangen "Borstprothesen transvrouwen"',
-                new DateTimeImmutable(),
-                true
-            )
-        ]);
+        $identity = $this->identityService->findIdentity($params->identity);
+
+        if (empty($identity)) {
+            return new MessageList([]);
+        }
+
+        $applicationMessages = $this->messageRepository->getMyMessages($identity);
+
+        $messageListMessages = array_map(fn(ApplicationMessage $message) => new MessageListMessage(
+            $message->id,
+            $message->subject,
+            $message->sent_at,
+            $message->is_new,
+        ), $applicationMessages);
+
+        return new MessageList($messageListMessages);
     }
 
     public function getMessage(MessageParams $params): EncryptedResponse
     {
+        $identity = $this->identityService->findIdentity($params->identity);
+
+        if (!empty($identity)) {
+            $applicationMessage = $this->messageRepository->getMyMessage($identity, $params->id);
+        }
+
+        if (empty($identity) || empty($applicationMessage)) {
+            return $this->encryptionService->encryptResponse(
+                EncryptedResponseStatus::NOT_FOUND,
+                null,
+                $params->publicKey
+            );
+        }
+
         $message = new Message(
-            Uuid::uuid4()->toString(),
-            'Aanvraag ontvangen "Borstprothesen transvrouwen"',
-            new DateTimeImmutable(),
-            true,
-            'Dit is een mock bericht.'
+            $applicationMessage->id,
+            $applicationMessage->subject,
+            $applicationMessage->sent_at,
+            $applicationMessage->is_new,
+            $this->letterRepository->getHtmlContent($applicationMessage),
         );
 
         return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $message, $params->publicKey);
@@ -53,7 +79,23 @@ class MessageService
 
     public function getMessageDownload(MessageDownloadParams $params): EncryptedResponse
     {
-        $download = new MessageDownload('application/pdf', 'PDF mock');
+        $identity = $this->identityService->findIdentity($params->identity);
+
+        if (!empty($identity)) {
+            $applicationMessage = $this->messageRepository->getMyMessage($identity, $params->id);
+        }
+
+        if (empty($identity) || empty($applicationMessage)) {
+            return $this->encryptionService->encryptResponse(
+                EncryptedResponseStatus::NOT_FOUND,
+                null,
+                $params->publicKey
+            );
+        }
+
+        $data = $this->letterRepository->getPdfContent($applicationMessage);
+        $download = new MessageDownload('application/pdf', $data);
+
         return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $download, $params->publicKey);
     }
 }
