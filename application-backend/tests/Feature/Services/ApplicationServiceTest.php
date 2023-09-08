@@ -8,7 +8,6 @@ use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
-use MinVWS\Codable\Exceptions\ValueNotFoundException;
 use MinVWS\Codable\Exceptions\ValueTypeMismatchException;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
@@ -16,11 +15,11 @@ use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormSubmitInvalidBodyReceivedException;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
@@ -65,11 +64,13 @@ class ApplicationServiceTest extends TestCase
             'type' => FieldType::Text,
             'code' => 'text',
             'subsidy_stage_id' => $this->subsidyStage->id,
+            'is_required' => true,
         ]);
         $this->numericField = Field::factory()->create([
             'type' => FieldType::TextNumeric,
             'code' => 'number',
             'subsidy_stage_id' => $this->subsidyStage->id,
+            'is_required' => true,
         ]);
 
         $keyReader = $this->getMockBuilder(KeyReader::class)
@@ -187,15 +188,15 @@ class ApplicationServiceTest extends TestCase
     public static function invalidFormSubmitProvider(): Generator
     {
         yield 'text-should-be-string' => [123, 123, ValueTypeMismatchException::class];
-        yield 'text-should-not-be-null' => [null, 123, ValueNotFoundException::class];
+        yield 'text-could-be-null' => [null, 123, null];
         yield 'numeric-should-be-int' => ['text', 'text', ValueTypeMismatchException::class];
-        yield 'numeric-should-not-be-null' => ['text', null, ValueNotFoundException::class];
+        yield 'numeric-could-be-null' => ['text', null, null];
     }
 
     /**
      * @dataProvider invalidFormSubmitProvider
      */
-    public function testProcessFormSubmitInvalidFieldData(mixed $text, mixed $numeric, string $expectedException): void
+    public function testProcessFormSubmitInvalidFieldData(mixed $text, mixed $numeric, ?string $expectedException): void
     {
         $data = [
             $this->textField->code => $text, // Invalid data for a text field
@@ -221,7 +222,7 @@ class ApplicationServiceTest extends TestCase
             return;
         }
 
-        $this->fail("Expected exception $expectedException was not thrown");
+        $this->assertNull($expectedException, "Expected exception $expectedException was not thrown");
     }
 
 
@@ -238,8 +239,15 @@ class ApplicationServiceTest extends TestCase
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $this->expectException(FormSubmitInvalidBodyReceivedException::class);
+
         $applicationService->processFormSubmit($formSubmit);
+
+        // Load submitted application
+        $application = Application::query()->find($formSubmit->applicationMetadata->applicationId);
+
+        // The application stage version should be invalid, because the file is missing
+        $this->assertInstanceOf(Application::class, $application);
+        $this->assertEquals(ApplicationStatus::Invalid, $application->status);
     }
 
     public function testProcessFormSubmitMissingFile(): void
@@ -271,12 +279,14 @@ class ApplicationServiceTest extends TestCase
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $applicationStage = $applicationService->processFormSubmit($formSubmit);
+        $applicationService->processFormSubmit($formSubmit);
 
-        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        // Load submitted application
+        $application = Application::query()->find($formSubmit->applicationMetadata->applicationId);
+
         // The application stage version should be invalid, because the file is missing
-        $this->assertNotNull($applicationStageVersion);
-        $this->assertEquals(ApplicationStageVersionStatus::Invalid, $applicationStageVersion->status);
+        $this->assertInstanceOf(Application::class, $application);
+        $this->assertEquals(ApplicationStatus::Invalid, $application->status);
     }
 
     /**
@@ -304,7 +314,7 @@ class ApplicationServiceTest extends TestCase
         ];
 
         $formSubmit = new FormSubmit(
-            new Identity(
+            new EncryptedIdentity(
                 IdentityType::EncryptedCitizenServiceNumber,
                 base64_encode(openssl_random_pseudo_bytes(32))
             ),
@@ -314,11 +324,13 @@ class ApplicationServiceTest extends TestCase
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $applicationStage = $applicationService->processFormSubmit($formSubmit);
+        $applicationService->processFormSubmit($formSubmit);
 
-        $applicationStageVersion = (new ApplicationRepository())->getLatestApplicationStageVersion($applicationStage);
+        // Load submitted application
+        $application = Application::query()->find($formSubmit->applicationMetadata->applicationId);
+
         // The application stage version should be invalid, because the file is missing
-        $this->assertNotNull($applicationStageVersion);
-        $this->assertEquals(ApplicationStageVersionStatus::Invalid, $applicationStageVersion->status);
+        $this->assertInstanceOf(Application::class, $application);
+        $this->assertEquals(ApplicationStatus::Invalid, $application->status);
     }
 }

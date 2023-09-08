@@ -8,28 +8,26 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use DateInterval;
 use DateTimeImmutable;
 use Exception;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use JsonException;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormSubmitInvalidBodyReceivedException;
 use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
-use MinVWS\DUSi\Shared\Application\Models\Enums\ApplicationStageVersionStatus;
-use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Models\IdentityType;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
@@ -44,14 +42,13 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity as SerialisationIdentity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Ramsey\Uuid\Uuid;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -93,7 +90,7 @@ readonly class ApplicationService
     private function validateIdentityAndApplicationMetadata(
         Identity $identity,
         ApplicationMetadata $appMetadata,
-        ApplicationStage $applicationStage
+        ApplicationStage $applicationStage,
     ): void {
         $application = $applicationStage->application;
         if (
@@ -105,7 +102,7 @@ readonly class ApplicationService
             );
         }
 
-        if (!in_array($application->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges])) {
+        if (!in_array($application->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges], true)) {
             throw new ApplicationMetadataMismatchException(
                 sprintf('Current status does not allow editing for "%s', $application->id)
             );
@@ -118,9 +115,6 @@ readonly class ApplicationService
         }
     }
 
-    /**
-     * @throws FormNotFoundException
-     */
     private function loadSubsidyStage(string $subsidyStageId): ?SubsidyStage
     {
         $this->validateUuid($subsidyStageId);
@@ -227,9 +221,13 @@ readonly class ApplicationService
         mixed $value
     ): void {
         $answer = $this->appRepo->makeAnswer($applicationStage, $field);
-        $json = json_encode($value, JSON_UNESCAPED_SLASHES);
-        if (!is_string($json)) {
-            throw new Exception('JSON encoding failed. Invalid data provided.');
+        try {
+            $json = json_encode($value, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+        } catch (JsonException $exception) {
+            throw new Exception(
+                message: 'JSON encoding failed. Invalid data provided.',
+                previous: $exception,
+            );
         }
         $answer->encrypted_answer = $this->encryptionService->encryptData($json);
         $this->appRepo->saveAnswer($answer);
@@ -256,17 +254,6 @@ readonly class ApplicationService
     }
 
     /**
-     *
-     */
-    private function getIdentityFromSerialisation(SerialisationIdentity $serialisationIdentity): Identity
-    {
-        return new Identity(
-            IdentityType::from($serialisationIdentity->type->value),
-            $serialisationIdentity->identifier,
-        );
-    }
-
-    /**
      * @throws Throwable
      */
     public function processFormSubmit(FormSubmit $formSubmit): void
@@ -288,22 +275,23 @@ readonly class ApplicationService
                     previous: $exception,
                 );
             }
-            if (count($values) === 0) {
-                throw new FormSubmitInvalidBodyReceivedException(
-                    message: 'Form submit invalid, no values received',
-                );
-            }
 
             $validator = $this->validationService->getValidator($applicationStage, $values);
-            $applicationStage->application->status = ApplicationStageVersionStatus::Submitted;
+            $applicationStage->application->status = ApplicationStatus::Submitted;
+
             if ($validator->fails()) {
-                $applicationStage->application->status = ApplicationStageVersionStatus::Invalid;
+                $applicationStage->application->status = ApplicationStatus::Invalid;
+
+                // Get the values that failed validation and process them
+                $errorValues = Arr::only($values, $validator->errors()->keys());
+                $this->processInvalidFieldValues($applicationStage, $errorValues, $validator);
+
+                // Removed errored fields from values
+                $values = array_diff_key($values, $errorValues);
             }
 
-            $this->processInvalidFieldValues($applicationStage, $values, $validator);
             $this->processFieldValues($applicationStage, $values);
 
-            $applicationStage->application->status = ApplicationStatus::Submitted;
             $this->appRepo->saveApplication($applicationStage->application);
 
             $applicationStage->is_current = false;
@@ -430,7 +418,7 @@ readonly class ApplicationService
     }
 
     protected function processInvalidFieldValues(
-        ApplicationStageVersion $applicationStageVersion,
+        ApplicationStage $applicationStage,
         array $values,
         Validator $validator,
     ): void {

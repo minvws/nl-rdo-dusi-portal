@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\Rules\FileUploadRule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
 use MinVWS\DUSi\Application\Backend\Services\Validation\ValidatorFactory;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -22,14 +22,14 @@ class ValidationService
     }
 
     /**
-     * @param ApplicationStageVersion $applicationStageVersion
+     * @param ApplicationStage $applicationStage
      * @param FieldValue[] $fieldValues
      * @return Validator
      */
-    public function getValidator(ApplicationStageVersion $applicationStageVersion, array $fieldValues): Validator
+    public function getValidator(ApplicationStage $applicationStage, array $fieldValues): Validator
     {
         return $this->validatorFactory->getValidator(
-            applicationStageVersion: $applicationStageVersion,
+            applicationStage: $applicationStage,
             fieldValues: $fieldValues,
             data: $this->getFieldValuesData($fieldValues),
             rules: $this->getFieldValuesRules($fieldValues),
@@ -74,7 +74,7 @@ class ValidationService
         $data = [];
 
         foreach ($fieldValues as $fieldValue) {
-            $data[$fieldValue->field->id] = $fieldValue->value;
+            $data[$fieldValue->field->code] = $fieldValue->value;
         }
 
         return $data;
@@ -87,7 +87,7 @@ class ValidationService
         $rules = [];
 
         foreach ($fieldValues as $fieldValue) {
-            $rules[$fieldValue->field->id] = $this->getFieldValidationRules($fieldValue->field);
+            $rules[$fieldValue->field->code] = $this->getFieldValidationRules($fieldValue->field);
         }
 
         return $rules;

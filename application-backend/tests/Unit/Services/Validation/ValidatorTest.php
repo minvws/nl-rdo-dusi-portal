@@ -12,10 +12,10 @@ use Illuminate\Translation\Translator;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationFileRepositoryAwareRule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationRepositoryAwareRule;
-use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationStageVersionAwareRule;
+use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationStageAwareRule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\FieldValuesAwareRule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -49,7 +49,7 @@ class ValidatorTest extends TestCase
             ->with('someField', 'some value', Mockery::type(Closure::class))
             ->once();
 
-        $applicationStageVersion = new ApplicationStageVersion();
+        $applicationStage = new ApplicationStage();
 
         $mockApplicationFileRepository = Mockery::mock(ApplicationFileRepository::class);
         $mockApplicationRepository = Mockery::mock(ApplicationRepository::class);
@@ -62,7 +62,7 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => [$mockRule],
             ],
-            applicationStageVersion: $applicationStageVersion,
+            applicationStage: $applicationStage,
             fieldValues: $fieldValues,
             applicationFileRepository: $mockApplicationFileRepository,
             applicationRepository: $mockApplicationRepository,
@@ -77,12 +77,12 @@ class ValidatorTest extends TestCase
      */
     public function testApplicationStageVersionAwareRule(): void
     {
-        $applicationStageVersion = Mockery::mock(ApplicationStageVersion::class);
+        $applicationStage = Mockery::mock(ApplicationStage::class);
 
-        $mockRule = Mockery::mock(ValidationRule::class, ApplicationStageVersionAwareRule::class);
+        $mockRule = Mockery::mock(ValidationRule::class, ApplicationStageAwareRule::class);
         $mockRule
-            ->shouldReceive('setApplicationStageVersion')
-            ->with($applicationStageVersion)
+            ->shouldReceive('setApplicationStage')
+            ->with($applicationStage)
             ->once();
 
         $mockRule
@@ -101,7 +101,7 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => $mockRule,
             ],
-            applicationStageVersion: $applicationStageVersion,
+            applicationStage: $applicationStage,
             fieldValues: [
                 'someField' => new FieldValue(new Field(), 'some value'),
                 'anotherField' => new FieldValue(new Field(), 'another value'),
@@ -142,7 +142,7 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => $mockRule,
             ],
-            applicationStageVersion: new ApplicationStageVersion(),
+            applicationStage: new ApplicationStage(),
             fieldValues: [
                 'someField' => new FieldValue(new Field(), 'some value'),
                 'anotherField' => new FieldValue(new Field(), 'another value'),
@@ -183,7 +183,7 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => $mockRule,
             ],
-            applicationStageVersion: new ApplicationStageVersion(),
+            applicationStage: new ApplicationStage(),
             fieldValues: [
                 'someField' => new FieldValue(new Field(), 'some value'),
                 'anotherField' => new FieldValue(new Field(), 'another value'),
@@ -215,7 +215,7 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => [$mockRule],
             ],
-            applicationStageVersion: new ApplicationStageVersion(),
+            applicationStage: new ApplicationStage(),
             fieldValues: [
                 'someField' => new FieldValue(new Field(), 'some value'),
                 'anotherField' => new FieldValue(new Field(), 'another value'),

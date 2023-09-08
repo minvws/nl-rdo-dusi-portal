@@ -10,18 +10,18 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationFileRepositoryAwareRule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationRepositoryAwareRule;
-use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationStageVersionAwareRule;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationStageAwareRule;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 class FileUploadRule implements
     ValidationRule,
-    ApplicationStageVersionAwareRule,
+    ApplicationStageAwareRule,
     ApplicationFileRepositoryAwareRule,
     ApplicationRepositoryAwareRule
 {
-    protected ApplicationStageVersion $applicationStageVersion;
+    protected ApplicationStage $applicationStage;
     protected ApplicationRepository $applicationRepository;
     protected ApplicationFileRepository $applicationFileRepository;
 
@@ -41,7 +41,7 @@ class FileUploadRule implements
     {
         $fieldIsRequired = $this->field->is_required;
 
-        $answer = $this->applicationRepository->getAnswer($this->applicationStageVersion, $this->field);
+        $answer = $this->applicationRepository->getAnswer($this->applicationStage, $this->field);
         if (!$fieldIsRequired && $answer === null) {
             return;
         }
@@ -52,7 +52,7 @@ class FileUploadRule implements
         }
 
         $fileExists = $this->applicationFileRepository->fileExists(
-            applicationStage: $this->applicationStageVersion->applicationStage,
+            applicationStage: $this->applicationStage,
             field: $this->field,
         );
         if (!$fileExists) {
@@ -60,9 +60,9 @@ class FileUploadRule implements
         }
     }
 
-    public function setApplicationStageVersion(ApplicationStageVersion $applicationStageVersion): void
+    public function setApplicationStage(ApplicationStage $applicationStage): void
     {
-        $this->applicationStageVersion = $applicationStageVersion;
+        $this->applicationStage = $applicationStage;
     }
 
     public function setApplicationFileRepository(ApplicationFileRepository $applicationFileService): void

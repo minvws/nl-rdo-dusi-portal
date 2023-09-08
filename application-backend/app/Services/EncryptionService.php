@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Config;
 use Exception;
+use Illuminate\Support\Facades\Config;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
@@ -58,8 +58,9 @@ class EncryptionService
 
         $dataToBeSavedInDatabase = json_encode([
             "encrypted" =>      base64_encode($encrypted),
-            "encrypted_aes" =>  base64_encode($aesEncrypted),
+            "encrypted_aes" =>  base64_encode($aesEncrypted), // TODO: Save encrypted aes key with application
             "iv" =>             base64_encode($this->initializationVector),
+            // TODO: Add label of the decryption key in HSM with application
         ]);
         if ($dataToBeSavedInDatabase === false) {
             throw new Exception("Could not encode data");

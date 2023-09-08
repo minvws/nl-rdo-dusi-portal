@@ -13,8 +13,8 @@ class ApplicationReferenceService
     private const MAX_TRIES = 3;
 
     public function __construct(
-        private ApplicationRepository $applicationRepository,
-        private ApplicationReferenceGenerator $applicationReferenceGenerator,
+        private readonly ApplicationRepository $applicationRepository,
+        private readonly ApplicationReferenceGenerator $applicationReferenceGenerator,
     ) {
     }
 

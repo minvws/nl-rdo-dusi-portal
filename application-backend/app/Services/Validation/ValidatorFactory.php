@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Application\Backend\Services\Validation;
 use Illuminate\Translation\ArrayLoader;
 use Illuminate\Translation\Translator;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 
@@ -20,14 +20,14 @@ class ValidatorFactory
     }
 
     /**
-     * @param ApplicationStageVersion $applicationStageVersion
+     * @param ApplicationStage $applicationStage
      * @param array<string, FieldValue> $fieldValues
      * @param array<string, mixed> $data
      * @param array<string, mixed> $rules
      * @return Validator
      */
     public function getValidator(
-        ApplicationStageVersion $applicationStageVersion,
+        ApplicationStage $applicationStage,
         array $fieldValues,
         array $data,
         array $rules,
@@ -36,7 +36,7 @@ class ValidatorFactory
             translator: new Translator(new ArrayLoader(), 'nl'),
             data: $data,
             rules: $rules,
-            applicationStageVersion: $applicationStageVersion,
+            applicationStage: $applicationStage,
             fieldValues: $fieldValues,
             applicationFileRepository: $this->applicationFileService,
             applicationRepository: $this->applicationRepository,

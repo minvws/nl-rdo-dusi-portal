@@ -11,4 +11,5 @@ enum ApplicationStatus: string
     case Approved = 'approved';
     case Rejected = 'rejected';
     case RequestForChanges = 'requestForChanges';
+    case Invalid = 'invalid';
 }

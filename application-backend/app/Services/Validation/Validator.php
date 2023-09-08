@@ -9,7 +9,7 @@ use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Validation\InvokableValidationRule;
 use Illuminate\Validation\Validator as BaseValidator;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 
@@ -20,7 +20,7 @@ class Validator extends BaseValidator
      */
     protected array $fieldValues;
 
-    protected ApplicationStageVersion $applicationStageVersion;
+    protected ApplicationStage $applicationStage;
     protected ApplicationFileRepository $applicationFileRepository;
     protected ApplicationRepository $applicationRepository;
 
@@ -30,7 +30,7 @@ class Validator extends BaseValidator
      * @param Translator $translator
      * @param array $data
      * @param array $rules
-     * @param ApplicationStageVersion $applicationStageVersion
+     * @param ApplicationStage $applicationStage
      * @param array<string, FieldValue> $fieldValues
      * @param ApplicationFileRepository $applicationFileRepository
      * @param ApplicationRepository $applicationRepository
@@ -39,7 +39,7 @@ class Validator extends BaseValidator
         Translator $translator,
         array $data,
         array $rules,
-        ApplicationStageVersion $applicationStageVersion,
+        ApplicationStage $applicationStage,
         array $fieldValues,
         ApplicationFileRepository $applicationFileRepository,
         ApplicationRepository $applicationRepository,
@@ -47,7 +47,7 @@ class Validator extends BaseValidator
         parent::__construct($translator, $data, $rules);
 
         $this->fieldValues = $fieldValues;
-        $this->applicationStageVersion = $applicationStageVersion;
+        $this->applicationStage = $applicationStage;
         $this->applicationFileRepository = $applicationFileRepository;
         $this->applicationRepository = $applicationRepository;
     }
@@ -72,8 +72,8 @@ class Validator extends BaseValidator
             $invokableRule->setFieldValues($this->fieldValues);
         }
 
-        if ($invokableRule instanceof ApplicationStageVersionAwareRule) {
-            $invokableRule->setApplicationStageVersion($this->applicationStageVersion);
+        if ($invokableRule instanceof ApplicationStageAwareRule) {
+            $invokableRule->setApplicationStage($this->applicationStage);
         }
 
         if ($invokableRule instanceof ApplicationFileRepositoryAwareRule) {

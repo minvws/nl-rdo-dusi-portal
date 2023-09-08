@@ -8,51 +8,38 @@ use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Validation\Rules\FileUploadRule;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStageVersion;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Mockery;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
 class FileUploadRuleTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
     public function testUploadFieldNotRequiredAndAnswerNull(): void
     {
         $this->expectNotToPerformAssertions();
 
         $answer = null;
-
-        $mockApplicationRepository = Mockery::mock(ApplicationRepository::class);
-        $mockApplicationRepository
-            ->shouldReceive('getAnswer')
-            ->andReturn($answer);
-
-        $applicationStageVersion = new ApplicationStageVersion([
-            'id' => Uuid::uuid4(),
-            'application_id' => Uuid::uuid4(),
-            'application_stage_id' => Uuid::uuid4(),
-            'application_stage' => new ApplicationStage([
-                'id' => Uuid::uuid4(),
-                'application_form_id' => Uuid::uuid4()
-            ]),
-        ]);
-
+        $applicationStage = new ApplicationStage();
         $field = new Field([
-            'id' => Uuid::uuid4(),
             'type' => FieldType::Upload,
             'code' => 'uploadField',
             'title' => 'Upload field',
             'is_required' => false,
         ]);
 
+        $mockApplicationRepository = Mockery::mock(ApplicationRepository::class);
+        $mockApplicationRepository
+            ->shouldReceive('getAnswer')
+            ->withArgs([$applicationStage, $field])
+            ->andReturn($answer);
+
+
         $rule = new FileUploadRule($field);
         $rule->setApplicationRepository($mockApplicationRepository);
-        $rule->setApplicationStageVersion($applicationStageVersion);
+        $rule->setApplicationStage($applicationStage);
 
         $rule->validate('uploadField', null, fn ($message) => $this->fail('Should not fail!'));
     }
@@ -60,22 +47,7 @@ class FileUploadRuleTest extends TestCase
     public function testUploadFieldRequiredAndAnswerNull(): void
     {
         $answer = null;
-
-        $mockApplicationRepository = Mockery::mock(ApplicationRepository::class);
-        $mockApplicationRepository
-            ->shouldReceive('getAnswer')
-            ->andReturn($answer);
-
-        $applicationStageVersion = new ApplicationStageVersion([
-            'id' => Uuid::uuid4(),
-            'application_id' => Uuid::uuid4(),
-            'application_stage_id' => Uuid::uuid4(),
-            'application_stage' => new ApplicationStage([
-                'id' => Uuid::uuid4(),
-                'application_form_id' => Uuid::uuid4()
-            ]),
-        ]);
-
+        $applicationStage = new ApplicationStage();
         $field = new Field([
             'id' => Uuid::uuid4(),
             'type' => FieldType::Upload,
@@ -84,30 +56,24 @@ class FileUploadRuleTest extends TestCase
             'is_required' => true,
         ]);
 
+        $mockApplicationRepository = Mockery::mock(ApplicationRepository::class);
+        $mockApplicationRepository
+            ->shouldReceive('getAnswer')
+            ->withArgs([$applicationStage, $field])
+            ->andReturn($answer);
+
         $rule = new FileUploadRule($field);
         $rule->setApplicationRepository($mockApplicationRepository);
-        $rule->setApplicationStageVersion($applicationStageVersion);
+        $rule->setApplicationStage($applicationStage);
 
         $rule->validate('uploadField', null, fn ($message) => $this->assertEquals('Field is required!', $message));
     }
 
     public function testUploadFieldRequiredAndFileNotExists(): void
     {
-        $applicationStageVersionUuid = Uuid::uuid4();
+        $applicationStageUuid = Uuid::uuid4();
 
-        $applicationStageVersion = Mockery::mock(ApplicationStageVersion::class);
-
-        $applicationStageVersion
-            ->expects('getAttribute')
-            ->with('id')
-            ->andReturn($applicationStageVersionUuid);
-        $applicationStageVersion
-            ->expects('getAttribute')
-            ->with('applicationStage')
-            ->andReturn(new ApplicationStage([
-                'id' => $applicationStageVersionUuid,
-                'application_form_id' => Uuid::uuid4()
-            ]));
+        $applicationStage = Mockery::mock(ApplicationStage::class);
 
         $field = new Field([
             'id' => Uuid::uuid4(),
@@ -119,42 +85,34 @@ class FileUploadRuleTest extends TestCase
 
         $mockApplicationFileRepository = Mockery::mock(ApplicationFileRepository::class);
         $mockApplicationFileRepository->shouldReceive('fileExists')
+            ->withArgs([$applicationStage, $field])
             ->andReturn(false);
+
+        $answer = new Answer();
+        $answer->application_stage_id = $applicationStageUuid;
+        $answer->field_id = $field->id;
+        $answer->encrypted_answer = 'some value';
 
         $mockApplicationRepository = Mockery::mock(ApplicationRepository::class);
         $mockApplicationRepository->shouldReceive('getAnswer')
-            ->andReturn(new Answer([
-                'id' => Uuid::uuid4(),
-                'application_stage_version_id' => $applicationStageVersion->id,
-                'field_id' => $field->id,
-                'value' => 'some value',
-            ]));
+            ->withArgs([$applicationStage, $field])
+            ->andReturn($answer);
 
         $rule = new FileUploadRule($field);
         $rule->setApplicationFileRepository($mockApplicationFileRepository);
         $rule->setApplicationRepository($mockApplicationRepository);
-        $rule->setApplicationStageVersion($applicationStageVersion);
+        $rule->setApplicationStage($applicationStage);
 
         $rule->validate('uploadField', null, fn ($message) => $this->assertEquals('File not found!', $message));
     }
 
     public function testUploadFieldRequiredAndFileExists(): void
     {
-        $applicationStageVersionUuid = Uuid::uuid4();
+        $this->expectNotToPerformAssertions();
 
-        $applicationStageVersion = Mockery::mock(ApplicationStageVersion::class);
+        $applicationStageUuid = Uuid::uuid4();
 
-        $applicationStageVersion
-            ->expects('getAttribute')
-            ->with('id')
-            ->andReturn($applicationStageVersionUuid);
-        $applicationStageVersion
-            ->expects('getAttribute')
-            ->with('applicationStage')
-            ->andReturn(new ApplicationStage([
-                'id' => $applicationStageVersionUuid,
-                'application_form_id' => Uuid::uuid4()
-            ]));
+        $applicationStage = Mockery::mock(ApplicationStage::class);
 
         $field = new Field([
             'id' => Uuid::uuid4(),
@@ -166,22 +124,31 @@ class FileUploadRuleTest extends TestCase
 
         $mockApplicationFileRepository = Mockery::mock(ApplicationFileRepository::class);
         $mockApplicationFileRepository->shouldReceive('fileExists')
+            ->withArgs([$applicationStage, $field])
             ->andReturn(true);
+
+        $answer = new Answer();
+        $answer->application_stage_id = $applicationStageUuid;
+        $answer->field_id = $field->id;
+        $answer->encrypted_answer = 'some value';
 
         $mockApplicationRepository = Mockery::mock(ApplicationRepository::class);
         $mockApplicationRepository->shouldReceive('getAnswer')
-            ->andReturn(new Answer([
-                'id' => Uuid::uuid4(),
-                'application_stage_version_id' => $applicationStageVersion->id,
-                'field_id' => $field->id,
-                'value' => 'some value',
-            ]));
+            ->withArgs([$applicationStage, $field])
+            ->andReturn($answer);
 
         $rule = new FileUploadRule($field);
         $rule->setApplicationFileRepository($mockApplicationFileRepository);
         $rule->setApplicationRepository($mockApplicationRepository);
-        $rule->setApplicationStageVersion($applicationStageVersion);
+        $rule->setApplicationStage($applicationStage);
 
         $rule->validate('uploadField', null, fn($message) => $this->fail('Should not fail!'));
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+
+        parent::tearDown();
     }
 }
