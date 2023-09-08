@@ -61,13 +61,9 @@ class OidcLoginResponseHandlerTest extends TestCase
     }
 
     /**
-     * @dataProvider loaDataProvider
-     * @param OidcUserLoa|null $minimumLoa
-     * @param OidcUserLoa|null $userLoa
-     * @param bool $success
-     * @return void
+     * @dataProvider invalidDataProvider
      */
-    public function testInvalidLoginResponse(object $response): void
+    public function testInvalidLoginResponse(array $response): void
     {
         $responseHandler = new OidcLoginResponseHandler(
             frontendBaseUrl: 'https://example.com',
@@ -77,16 +73,16 @@ class OidcLoginResponseHandlerTest extends TestCase
 
         $this->expectException(AuthorizationException::class);
 
-        $responseHandler->handleLoginResponse($response);
+        $responseHandler->handleLoginResponse((object)$response);
     }
 
     public static function invalidDataProvider(): array
     {
         return [
-            'missing_data' => [(object)[]],
-            'missing_loa_authn' => [(object)['bsn' => '123456789']],
-            'missing_bsn' => [(object)['loa_authn' => OidcUserLoa::SUBSTANTIAL->value]],
-            'invalid_loa_authn' => [(object)['bsn' => '123456789', 'loa_authn' => 'does-not-exist']],
+            'missing_data' => [[]],
+            'missing_loa_authn' => [['bsn' => '123456789']],
+            'missing_bsn' => [['loa_authn' => OidcUserLoa::SUBSTANTIAL->value]],
+            'invalid_loa_authn' => [['bsn' => '123456789', 'loa_authn' => 'does-not-exist']],
         ];
     }
 }
