@@ -11,7 +11,7 @@ enum OidcUserLoa: string
     case SUBSTANTIAL = 'http://eidas.europa.eu/LoA/substantial';
     case HIGH = 'http://eidas.europa.eu/LoA/high';
 
-    public static function isEqualOrHigher(?self $minimumLoa, ?self $loa): bool
+    public static function isEqualOrHigher(self $minimumLoa, self $loa): bool
     {
         return match ($minimumLoa) {
             self::BASIC =>
@@ -27,8 +27,7 @@ enum OidcUserLoa: string
                 $loa === self::SUBSTANTIAL
                 || $loa === self::HIGH,
             self::HIGH =>
-                $loa === self::HIGH,
-            null => true,
+                $loa === self::HIGH
         };
     }
 }
