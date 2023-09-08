@@ -36,6 +36,7 @@
                             "scope": "#/properties/isWiaDecisionPostponed",
                             "label": "Is uw WIA-beslissing uitgesteld vanwege een (vrijwillege of verplichte) loondoorbetaling?",
                             "options": {
+                                "format": "radio"
                             }
                         },
                         {
@@ -136,6 +137,7 @@
                             "scope": "#/properties/hasBeenWorkingAtJudicialInstitution",
                             "label": "Heeft gewerkt in justitiële inrichting",
                             "options": {
+                               "format": "radio"
                             }
                         }
                     ]
@@ -168,6 +170,7 @@
                             "scope": "#/properties/hasPostCovidComplaints",
                             "label": "Heeft u langdurige post-COVID klachten?",
                             "options": {
+                                "format": "radio"
                             }
                         }
                     ]

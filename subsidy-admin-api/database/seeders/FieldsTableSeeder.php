@@ -187,6 +187,10 @@ class FieldsTableSeeder extends Seeder
 
         $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'truthfullyCompleted', title: '');
 
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_2_UUID, code: 'amount', title: 'Bedrag', options: [
+            "€ 15.000"
+        ]);
+
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'review', title: 'Beoordeling', options: [
                 "Onbeoordeeld",
                 "Aanvulling nodig",

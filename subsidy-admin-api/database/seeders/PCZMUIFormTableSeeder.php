@@ -8,7 +8,7 @@ use stdClass;
 
 class PCZMUIFormTableSeeder extends Seeder
 {
-    public const PCZM_V1_UUID = 'E6D5CD35-8C67-40C4-ABC4-B1D6BF8AFB97';
+    public const PCZM_STAGE1_V1_UUID = 'E6D5CD35-8C67-40C4-ABC4-B1D6BF8AFB97';
 
     private function resolveFileReferencesInArray(array $array, string $basePath): void
     {
@@ -79,10 +79,19 @@ class PCZMUIFormTableSeeder extends Seeder
                     "bankAccountNumber"
                 ]),
                 $this->buildPage(3, [
-                    "bankStatement",
-                    "extractPersonalRecordsDatabase",
-                    "proofOfMedicalTreatment",
-                    "proofOfTypeOfMedicalTreatment"
+                    "certifiedEmploymentDocument",
+                    "isWiaDecisionPostponed",
+                    "wiaDecisionPostponedLetter",
+                    "wiaDecisionDocument",
+                    "employmentContract",
+                    "employmentFunction",
+                    "employerKind",
+                    "otherEmployerKind",
+                    "employersDeclaration",
+                    "hasBeenWorkingAtJudicialInstitution",
+                    "socialMedicalAssessment",
+                    "hasPostCovidComplaints",
+                    "doctorsCertificate",
                 ]),
                 $this->buildPage(4, [
                     'truthfullyCompleted'
@@ -174,28 +183,73 @@ class PCZMUIFormTableSeeder extends Seeder
                     ]
                 ],
                 [
-                    'title' => 'files',
+                    'title' => 'UWV',
                     'elements' => [
                         [
                             "type"=>"file",
-                            "field"=>"bankStatement"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"extractPersonalRecordsDatabase"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"proofOfMedicalTreatment"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"proofOfTypeOfMedicalTreatment"
+                            "field"=>"certifiedEmploymentDocument"
                         ]
                     ]
-                ]
+                ],
+                [
+                    'title' => 'WIA',
+                    'elements' => [
+                        [
+                            "type"=>"select",
+                            "field"=>"isWiaDecisionPostponed"
+                        ],[
+                            "type"=>"file",
+                            "field"=>"wiaDecisionPostponedLetter"
+                        ],[
+                            "type"=>"file",
+                            "field"=>"wiaDecisionDocument"
+                        ]
+                    ]
+                ],
+                [
+                    'title' => 'Werkgever',
+                    'elements' => [
+                        [
+                            "type"=>"file",
+                            "field"=>"employmentContract"
+                        ],[
+                            "type"=>"multiselect",
+                            "field"=>"employmentFunction"
+                        ],[
+                            "type"=>"select",
+                            "field"=>"employerKind"
+                        ],[
+                            "type"=>"string",
+                            "field"=>"otherEmployerKind"
+                        ],[
+                            "type"=>"file",
+                            "field"=>"employersDeclaration"
+                        ],[
+                            "type"=>"select",
+                            "field"=>"hasBeenWorkingAtJudicialInstitution"
+                        ]
+                    ]
+                ],
+                [
+                    'title' => 'Medisch',
+                    'elements' => [
+                        [
+                            "type"=>"file",
+                            "field"=>"socialMedicalAssessment"
+                        ],[
+                            "type"=>"select",
+                            "field"=>"hasPostCovidComplaints"
+                        ],[
+                            "type"=>"file",
+                            "field"=>"doctorsCertificate"
+                        ]
+                    ]
+                ],
             ]];
 
         DB::table('subsidy_stage_uis')->insert([
-            'id' => self::PCZM_V1_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            'id' => self::PCZM_STAGE1_V1_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($ui),
