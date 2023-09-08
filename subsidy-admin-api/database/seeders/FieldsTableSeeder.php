@@ -124,23 +124,20 @@ class FieldsTableSeeder extends Seeder
 
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'certifiedEmploymentDocument', title: 'Gewaarmerkt verzekeringsbericht',);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'certifiedEmploymentDocument', title: 'Uw WIA-beslissing',);
-
-
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'isWiaDecisionPostponed', title: 'Is WIA beslissing uitgesteld?', options: [
             "Ja",
             "Nee",
         ]);
 
         //If isWiaDecisionPostponed === yes
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecissionPostponedLetter', title: 'Toekenningsbrief',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionPostponedLetter', title: 'Toekenningsbrief',);
 
         //If isWiaDecisionPostponed === no
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecissionDocument', title: 'WIA-Beslissing',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionDocument', title: 'WIA-Beslissing',);
 
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Arbeidsovereenkomst',);
 
-        $this->createMultiSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'employmentFunction', title: 'Functie', options: [
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentFunction', title: 'Functie', options: [
                 "Ambulancechauffeur",
                 "Anesthesiemedewerker en/of operatieassistent",
                 "Arts",
@@ -163,9 +160,7 @@ class FieldsTableSeeder extends Seeder
             "Andere organisatie",
         ]);
 
-        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerKind', title: 'Andere werkgever', maxLength: 300,);
-
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employersStatement', title: 'Werkgeversverklaring',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerDeclarationFile', title: 'Zorgaanbiedersverklaring',);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'hasBeenWorkingAtJudicialInstitution', title: 'Bent u werkzaamh geweest bij een justitiële inrichting?', options: [
             "Ja",

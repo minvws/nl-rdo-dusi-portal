@@ -46,6 +46,13 @@
                             "options": {
                                 "accept": "image/*,.pdf",
                                 "maxFileSize": 5242880
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/isWiaDecisionPostponed",
+                                    "schema": { "const": "Ja" }
+                                }
                             }
                         },
                         {
@@ -55,6 +62,13 @@
                             "options": {
                                 "accept": "image/*,.pdf",
                                 "maxFileSize": 5242880
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/isWiaDecisionPostponed",
+                                    "schema": { "const": "Nee" }
+                                }
                             }
                         }
                     ]
@@ -87,9 +101,25 @@
                             "scope": "#/properties/employmentFunction",
                             "label": "Functie",
                             "options": {
+                                "format": "select"
                             }
                         }
                     ]
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/otherEmploymentFunction",
+                    "label": "Andere functie",
+                    "options": {
+                        "placeholder": ""
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/employmentFunction",
+                            "schema": { "const": "Anders" }
+                        }
+                    }
                 },
                 {
                     "type": "VerticalLayout",
@@ -99,6 +129,7 @@
                             "scope": "#/properties/employerKind",
                             "label": "Werkgever",
                             "options": {
+                                "format": "radio"
                             }
                         }
                     ]
@@ -108,23 +139,18 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/otherEmployerKind",
-                            "label": "Werkgever",
-                            "options": {
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/employersDeclaration",
+                            "scope": "#/properties/otherEmployerDeclarationFile",
                             "label": "Zorgaanbiedersverklaring",
                             "options": {
                                 "accept": "image/*,.pdf",
                                 "maxFileSize": 5242880
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/employerKind",
+                                    "schema": { "const": "Andere organisatie" }
+                                }
                             }
                         }
                     ]
@@ -185,6 +211,13 @@
                             "options": {
                                 "accept": "image/*,.pdf",
                                 "maxFileSize": 5242880
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/hasPostCovidComplaints",
+                                    "schema": { "const": "Nee" }
+                                }
                             }
                         }
                     ]

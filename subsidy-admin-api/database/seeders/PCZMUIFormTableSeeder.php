@@ -81,17 +81,17 @@ class PCZMUIFormTableSeeder extends Seeder
                 $this->buildPage(3, [
                     "certifiedEmploymentDocument",
                     "isWiaDecisionPostponed",
-                    "wiaDecisionPostponedLetter",
-                    "wiaDecisionDocument",
+//                    "wiaDecisionPostponedLetter",
+//                    "wiaDecisionDocument",
                     "employmentContract",
                     "employmentFunction",
+//                    otherEmploymentFunction
                     "employerKind",
-                    "otherEmployerKind",
-                    "employersDeclaration",
+//                    "otherEmployerDeclarationFile",
                     "hasBeenWorkingAtJudicialInstitution",
                     "socialMedicalAssessment",
                     "hasPostCovidComplaints",
-                    "doctorsCertificate",
+//                    "doctorsCertificate",
                 ]),
                 $this->buildPage(4, [
                     'truthfullyCompleted'
@@ -219,11 +219,8 @@ class PCZMUIFormTableSeeder extends Seeder
                             "type"=>"select",
                             "field"=>"employerKind"
                         ],[
-                            "type"=>"string",
-                            "field"=>"otherEmployerKind"
-                        ],[
                             "type"=>"file",
-                            "field"=>"employersDeclaration"
+                            "field"=>"otherEmployerDeclarationFile"
                         ],[
                             "type"=>"select",
                             "field"=>"hasBeenWorkingAtJudicialInstitution"
