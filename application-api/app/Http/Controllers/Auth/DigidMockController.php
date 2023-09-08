@@ -13,7 +13,7 @@ class DigidMockController extends Controller
 {
     public function __construct(
         private readonly LoginResponseHandlerInterface $loginResponseHandler,
-        private readonly OidcUserLoa $mockLoa = null
+        private readonly OidcUserLoa $mockLoa
     ) {
     }
 

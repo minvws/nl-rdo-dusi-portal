@@ -36,7 +36,7 @@ class EncryptedResponse implements Codable
     public function encode(EncodingContainer $container): void
     {
         $container->{'status'} = $this->status;
-        $container->{'key'} = base64_encode($this->encryptedKey);
+        $container->{'key'} = base64_encode($this->key);
         $container->{'initializationVector'} = base64_encode($this->data);
         $container->{'data'} = base64_encode($this->data);
     }
