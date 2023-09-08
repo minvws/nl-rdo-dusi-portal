@@ -7,19 +7,21 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 use Config;
 use Exception;
 use MinVWS\Codable\Coding\Codable;
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use OpenSSLAsymmetricKey;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class EncryptionService
 {
-    private \OpenSSLAsymmetricKey $publicKey;
+    private OpenSSLAsymmetricKey $publicKey;
     private string $aesKey;
     private string $initializationVector;
 
@@ -146,6 +148,9 @@ class EncryptionService
         return $this->decryptAesEncrypted($dataArray['encrypted'], $aesKeyDecrypted, $dataArray['iv']);
     }
 
+    /**
+     * @throws Exception
+     */
     public function encryptResponse(
         EncryptedResponseStatus $status,
         ?Codable $payload,
@@ -153,7 +158,51 @@ class EncryptionService
     ): EncryptedResponse {
         $encoder = new JSONEncoder();
         $json = $encoder->encode($payload);
-        openssl_public_encrypt($json, $data, $publicKey->value, OPENSSL_PKCS1_OAEP_PADDING);
-        return new EncryptedResponse($status, $data);
+
+        $key = random_bytes(32);
+        if (!openssl_public_encrypt($key, $encryptedKey, $publicKey->value, OPENSSL_PKCS1_OAEP_PADDING)) {
+            throw new Exception('Encryption of key failed: ' . openssl_error_string());
+        }
+
+        $initializationVector = random_bytes(16);
+
+        $data = openssl_encrypt($json, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $initializationVector);
+        if ($data === false) {
+            throw new Exception('Encryption of data failed: ' . openssl_error_string());
+        }
+
+        return new EncryptedResponse($status, $encryptedKey, $initializationVector, $data);
+    }
+
+    /**
+     * @template T of Codable
+     *
+     * @param class-string<T> $expectedClass
+     *
+     * @return T|null
+     */
+    public function decryptResponse(
+        EncryptedResponse $response,
+        OpenSSLAsymmetricKey $privateKey,
+        string $expectedClass
+    ): ?Codable {
+        if (!openssl_private_decrypt($response->key, $key, $privateKey, OPENSSL_PKCS1_OAEP_PADDING)) {
+            throw new Exception('Decryption of key failed: ' . openssl_error_string());
+        }
+
+        $json = openssl_decrypt(
+            $response->data,
+            'AES-256-CBC',
+            $key,
+            OPENSSL_RAW_DATA,
+            $response->initializationVector
+        );
+
+        if ($json === false) {
+            throw new Exception('Decryption of data failed: ' . openssl_error_string());
+        }
+
+        $decoder = new JSONDecoder();
+        return $decoder->decode($json)->decodeObjectIfPresent($expectedClass);
     }
 }

@@ -23,7 +23,7 @@ class OidcServiceProvider extends ServiceProvider
             ->giveConfig('app.frontend_base_url');
         $this->app
             ->when(OidcLoginResponseHandler::class)
-            ->needs('$minimumLoa')
+            ->needs(OidcUserLoa::class)
             ->give(fn () => OidcUserLoa::from(Config::get('oidc.minimum_loa')));
 
         $this->app->singleton(LoginResponseHandlerInterface::class, OidcLoginResponseHandler::class);
@@ -31,7 +31,7 @@ class OidcServiceProvider extends ServiceProvider
 
         $this->app
             ->when(DigidMockController::class)
-            ->needs('mockLoa')
+            ->needs(OidcUserLoa::class)
             ->give(fn () => OidcUserLoa::from(Config::get('oidc.minimum_loa')));
     }
 }

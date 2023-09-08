@@ -59,15 +59,15 @@ class MessageControllerDownloadActionTest extends TestCase
             MessageService::class,
             Mockery::mock(MessageService::class, function (MockInterface $mock) use ($data) {
                 $mock->shouldReceive('getMessageDownload')->once()->andReturn(
-                    new EncryptedResponse(EncryptedResponseStatus::OK, $data)
+                    new EncryptedResponse(EncryptedResponseStatus::OK, '', '', $data)
                 );
             })
         );
 
         $params = ['id' => Uuid::uuid4(), 'format' => MessageDownloadFormat::PDF->value];
         $headers = [ClientPublicKeyHelper::HEADER_NAME => base64_encode(random_bytes(100))];
-        $response = $this->get(route('api.message-download', $params), $headers);
+        $response = $this->getJson(route('api.message-download', $params), $headers);
         $this->assertEquals(200, $response->status());
-        $this->assertEquals($data, $response->getContent());
+        $this->assertEquals($data, base64_decode($response->json('data')));
     }
 }

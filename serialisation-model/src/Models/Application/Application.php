@@ -18,6 +18,7 @@ class Application implements Codable
         public readonly DateTimeInterface $submittedAt,
         public readonly ?DateTimeInterface $deadlineForResponseAt,
         public readonly ApplicationStatus $status,
+        public readonly bool $isEditable,
         public readonly Form $form,
         public readonly ?object $data
     ) {
