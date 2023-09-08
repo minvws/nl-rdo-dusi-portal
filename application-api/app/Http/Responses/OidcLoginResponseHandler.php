@@ -18,8 +18,10 @@ use Symfony\Component\HttpFoundation\Response;
 class OidcLoginResponseHandler implements LoginResponseHandlerInterface
 {
     public function __construct(
-        protected string $frontendBaseUrl,
-        protected ?OidcUserLoa $minimumLoa = null,
+        private readonly string $frontendBaseUrl,
+        private readonly Decoder $decoder,
+        private readonly bool $digidMockEnabled = false,
+        private readonly ?OidcUserLoa $minimumLoa = null
     ) {
     }
 
@@ -29,18 +31,13 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
     public function handleLoginResponse(object $userInfo): Response
     {
         try {
-            $user = (new Decoder())->decode($userInfo)->decodeObject(PortalUser::class);
+            $user = $this->decoder->decode($userInfo)->decodeObject(PortalUser::class);
         } catch (CodableException $e) {
             Log::error("Trying to build an PortalUser from userinfo failed", [$e]);
             throw new AuthorizationException("Invalid user info", previous: $e);
         }
 
-        if (config('auth.digid_mock_enabled') && $user->loaAuthn === null) {
-            // digid mock doesn't provide the loaAuthn value
-            $user->loaAuthn = $this->minimumLoa;
-        }
-
-        if (!OidcUserLoa::isEqualOrHigher($this->minimumLoa, $user->loaAuthn)) {
+        if (!$this->digidMockEnabled && !OidcUserLoa::isEqualOrHigher($this->minimumLoa, $user->loaAuthn)) {
             return new RedirectResponse($this->frontendBaseUrl . '/login-callback?error=minimum_loa');
         }
 
