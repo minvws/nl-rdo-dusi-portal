@@ -31,6 +31,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $mail_to_name_field_identifier
  * @property string $mail_to_address_field_identifier
  * @property string $message_overview_subject
+ * @property int $review_period
  * @property-read Subsidy $subsidy
  * @property-read Collection<SubsidyStage> $subsidyStages
  * @property-read Collection<SubsidyLetter> $subsidyLetters
