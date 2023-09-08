@@ -12,14 +12,15 @@ class ApplicationMessageRepository
 {
     public function getMyMessage(Identity $identity, mixed $id): ?ApplicationMessage
     {
-        $message = ApplicationMessage::forIdentity($identity)->find($id);
+        $message = $identity->applicationMessages()->find($id);
+        /* @phpstan-ignore-next-line */
         assert($message === null || $message instanceof ApplicationMessage);
         return $message;
     }
 
     public function getMyMessages(Identity $identity): array
     {
-        return ApplicationMessage::forIdentity($identity)->get()->toArray();
+        return $identity->applicationMessages->toArray();
     }
 
     public function createMessage(ApplicationStage $stage, string $htmlPath, string $pdfPath): void

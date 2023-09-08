@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\LetterRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message;
@@ -24,7 +25,8 @@ class MessageService
     public function __construct(
         private readonly EncryptionService $encryptionService,
         private readonly ApplicationMessageRepository $messageRepository,
-        private readonly IdentityService $identityService
+        private readonly IdentityService $identityService,
+        private readonly LetterRepository $letterRepository,
     ) {
     }
 
@@ -69,7 +71,7 @@ class MessageService
             $applicationMessage->subject,
             $applicationMessage->sent_at,
             $applicationMessage->is_new,
-            'Dit is een mock bericht.'
+            $this->letterRepository->getHtmlContent($applicationMessage),
         );
 
         return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $message, $params->publicKey);
@@ -77,7 +79,22 @@ class MessageService
 
     public function getMessageDownload(MessageDownloadParams $params): EncryptedResponse
     {
-        $download = new MessageDownload('application/pdf', 'PDF mock');
+        $identity = $this->identityService->findIdentity($params->identity);
+
+        if (!empty($identity)) {
+            $applicationMessage = $this->messageRepository->getMyMessage($identity, $params->id);
+        }
+
+        if (empty($identity) || empty($applicationMessage)) {
+            return $this->encryptionService->encryptResponse(
+                EncryptedResponseStatus::NOT_FOUND,
+                null,
+                $params->publicKey
+            );
+        }
+
+        $data = $this->letterRepository->getPdfContent($applicationMessage);
+        $download = new MessageDownload('application/pdf', $data);
 
         return $this->encryptionService->encryptResponse(EncryptedResponseStatus::OK, $download, $params->publicKey);
     }
