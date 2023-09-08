@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Models;
 
-use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Auth\Authenticatable;
+use MinVWS\Codable\Decoding\Decodable;
+use MinVWS\Codable\Decoding\DecodableSupport;
+use MinVWS\Codable\Reflection\Attributes\CodableName;
 use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use RuntimeException;
 
-class PortalUser implements Authenticatable
+class PortalUser implements Authenticatable, Decodable
 {
+    use DecodableSupport;
+
     /**
      * @param string $bsn
      * @param string $id
@@ -19,39 +22,9 @@ class PortalUser implements Authenticatable
      */
     public function __construct(
         public string $bsn,
-        public string $id,
-        public ?OidcUserLoa $loaAuthn,
+        #[CodableName('bsn')] public string $id,
+        #[CodableName('loa_authn')] public ?OidcUserLoa $loaAuthn,
     ) {
-    }
-
-    /**
-     * @param object $oidcResponse
-     * @return PortalUser|null
-     */
-    public static function deserializeFromObject(object $oidcResponse): ?PortalUser
-    {
-        $requiredKeys = ["bsn"];
-        $missingKeys = [];
-        foreach ($requiredKeys as $key) {
-            if (!property_exists($oidcResponse, $key)) {
-                $missingKeys[] = $key;
-            }
-        }
-        if (count($missingKeys) > 0) {
-            return null;
-        }
-
-        try {
-            return new PortalUser(
-                $oidcResponse->bsn, // @phpstan-ignore-line
-                $oidcResponse->bsn, // @phpstan-ignore-line
-                OidcUserLoa::tryFrom($oidcResponse->loa_authn ?? ''),
-            );
-        } catch (Exception $e) {
-            report($e);
-            Log::error("Trying to build an PortalUser from userinfo failed", [$e]);
-            return null;
-        }
     }
 
     /**
