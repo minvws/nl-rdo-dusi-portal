@@ -34,7 +34,7 @@ class Identity extends Model
 
     public function applications(): HasMany
     {
-        return $this->hasMany(Application::class, 'application_id', 'id');
+        return $this->hasMany(Application::class, 'identity_id', 'id');
     }
 
     public function applicationMessages(): HasManyThrough

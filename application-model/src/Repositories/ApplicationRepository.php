@@ -181,13 +181,17 @@ class ApplicationRepository
         return new AnswersByApplicationStage(stages: $stages);
     }
 
-    public function getMyApplications(Identity $identity): Collection
+    /**
+     * @return array<Application>
+     */
+    public function getMyApplications(Identity $identity): array
     {
-        return
-            Application::query()
-                ->forIdentity($identity)
-                ->with(['subsidyVersion', 'subsidyVersion.subsidy'])
-                ->get();
+        return $identity->applications()->with(['subsidyVersion', 'subsidyVersion.subsidy'])->get()->all();
+    }
+
+    public function getMyApplication(Identity $identity, string $reference): ?Application
+    {
+        return $identity->applications()->where('reference', $reference)->first();
     }
 
     public function isReferenceUnique(string $applicationReference): bool

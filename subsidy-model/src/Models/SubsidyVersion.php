@@ -20,6 +20,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 /**
  * @property string $id
+ * @property int $version
  * @property string $created_at
  * @property string $subsidy_id
  * @property string $title
