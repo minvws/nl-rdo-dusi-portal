@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Application\API\Providers;
 
 use Config;
 use MinVWS\DUSi\Application\API\Exceptions\OidcExceptionHandler;
+use MinVWS\DUSi\Application\API\Http\Controllers\Auth\DigidMockController;
 use MinVWS\DUSi\Application\API\Http\Responses\OidcLoginResponseHandler;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
@@ -24,12 +25,13 @@ class OidcServiceProvider extends ServiceProvider
             ->when(OidcLoginResponseHandler::class)
             ->needs('$minimumLoa')
             ->give(fn () => OidcUserLoa::from(Config::get('oidc.minimum_loa')));
-        $this->app
-            ->when(OidcLoginResponseHandler::class)
-            ->needs('$digidMockEnabled')
-            ->giveConfig('auth.digid_mock_enabled');
 
         $this->app->singleton(LoginResponseHandlerInterface::class, OidcLoginResponseHandler::class);
         $this->app->bind(ExceptionHandlerInterface::class, OidcExceptionHandler::class);
+
+        $this->app
+            ->when(DigidMockController::class)
+            ->needs('mockLoa')
+            ->give(fn () => OidcUserLoa::from(Config::get('oidc.minimum_loa')));
     }
 }

@@ -8,6 +8,7 @@ use MinVWS\DUSi\Application\API\Models\PortalUser;
 use MinVWS\DUSi\Application\API\Services\ApplicationService;
 use MinVWS\DUSi\Application\API\Services\CacheService;
 use MinVWS\DUSi\Application\API\Services\Exceptions\DataEncryptionException;
+use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Application\API\Services\SubsidyStageService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -53,7 +54,7 @@ class ApplicationControllerTest extends TestCase
         $this->user = new PortalUser(
             base64_encode(openssl_random_pseudo_bytes(32)),
             Uuid::uuid4()->toString(),
-            null
+            OidcUserLoa::SUBSTANTIAL
         );
         $this->subsidy = Subsidy::factory()->create();
         $this->subsidyVersion = $this->subsidy
@@ -133,7 +134,7 @@ class ApplicationControllerTest extends TestCase
         $user = new PortalUser(
             base64_encode(openssl_random_pseudo_bytes(32)),
             Uuid::uuid4()->toString(),
-            null
+            OidcUserLoa::SUBSTANTIAL
         );
 
         $cachedForm = $this->app->get(SubsidyStageService::class)->getSubsidyStage($this->subsidyStage->id);
@@ -195,7 +196,7 @@ class ApplicationControllerTest extends TestCase
         $user = new PortalUser(
             base64_encode(openssl_random_pseudo_bytes(32)),
             Uuid::uuid4()->toString(),
-            null
+            OidcUserLoa::SUBSTANTIAL
         );
 
         $cachedForm = $this->app->get(SubsidyStageService::class)->getSubsidyStage($this->subsidyStage->id);

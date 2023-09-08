@@ -18,12 +18,12 @@ class PortalUser implements Authenticatable, Decodable
     /**
      * @param string $bsn
      * @param string $id
-     * @param OidcUserLoa|null $loaAuthn
+     * @param OidcUserLoa $loaAuthn
      */
     public function __construct(
         public string $bsn,
         #[CodableName('bsn')] public string $id,
-        #[CodableName('loa_authn')] public ?OidcUserLoa $loaAuthn,
+        #[CodableName('loa_authn')] public OidcUserLoa $loaAuthn,
     ) {
     }
 

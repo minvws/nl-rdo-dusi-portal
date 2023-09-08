@@ -20,8 +20,7 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
     public function __construct(
         private readonly string $frontendBaseUrl,
         private readonly Decoder $decoder,
-        private readonly bool $digidMockEnabled = false,
-        private readonly ?OidcUserLoa $minimumLoa = null
+        private readonly OidcUserLoa $minimumLoa
     ) {
     }
 
@@ -37,7 +36,7 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
             throw new AuthorizationException("Invalid user info", previous: $e);
         }
 
-        if (!$this->digidMockEnabled && !OidcUserLoa::isEqualOrHigher($this->minimumLoa, $user->loaAuthn)) {
+        if (!OidcUserLoa::isEqualOrHigher($this->minimumLoa, $user->loaAuthn)) {
             return new RedirectResponse($this->frontendBaseUrl . '/login-callback?error=minimum_loa');
         }
 

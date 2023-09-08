@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Application\API\Tests\Feature\Http\Controllers;
 use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Models\PortalUser;
 use MinVWS\DUSi\Application\API\Services\MessageService;
+use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Application\API\Tests\TestCase;
@@ -27,7 +28,7 @@ class MessageControllerDownloadActionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->be(new PortalUser('123456789', '', null));
+        $this->be(new PortalUser('123456789', '', OidcUserLoa::SUBSTANTIAL));
     }
 
     public function testMessageDownloadRequiresClientPublicKey(): void
