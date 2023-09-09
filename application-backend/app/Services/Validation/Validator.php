@@ -16,7 +16,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 class Validator extends BaseValidator
 {
     /**
-     * @var array<string, FieldValue> $fieldValues
+     * @var array<int|string, FieldValue> $fieldValues
      */
     protected array $fieldValues;
 
@@ -31,7 +31,7 @@ class Validator extends BaseValidator
      * @param array $data
      * @param array $rules
      * @param ApplicationStage $applicationStage
-     * @param array<string, FieldValue> $fieldValues
+     * @param array<int|string, FieldValue> $fieldValues
      * @param ApplicationFileRepository $applicationFileRepository
      * @param ApplicationRepository $applicationRepository
      */

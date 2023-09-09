@@ -14,14 +14,14 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 class ValidatorFactory
 {
     public function __construct(
-        protected ApplicationFileRepository $applicationFileService,
+        protected ApplicationFileRepository $fileRepository,
         protected ApplicationRepository $applicationRepository,
     ) {
     }
 
     /**
      * @param ApplicationStage $applicationStage
-     * @param array<string, FieldValue> $fieldValues
+     * @param array<int|string, FieldValue> $fieldValues
      * @param array<string, mixed> $data
      * @param array<string, mixed> $rules
      * @return Validator
@@ -38,7 +38,7 @@ class ValidatorFactory
             rules: $rules,
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
-            applicationFileRepository: $this->applicationFileService,
+            applicationFileRepository: $this->fileRepository,
             applicationRepository: $this->applicationRepository,
         );
     }

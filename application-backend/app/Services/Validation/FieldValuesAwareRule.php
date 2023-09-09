@@ -10,7 +10,7 @@ interface FieldValuesAwareRule
 {
     /**
      * Set the field values under validation.
-     * @param array<string, FieldValue> $fieldValues
+     * @param array<int|string, FieldValue> $fieldValues
      * @return void
      */
     public function setFieldValues(array $fieldValues): void;

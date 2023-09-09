@@ -23,7 +23,7 @@ class ValidationService
 
     /**
      * @param ApplicationStage $applicationStage
-     * @param FieldValue[] $fieldValues
+     * @param array<int|string, FieldValue> $fieldValues
      * @return Validator
      */
     public function getValidator(ApplicationStage $applicationStage, array $fieldValues): Validator
@@ -60,7 +60,7 @@ class ValidationService
             FieldType::TextArea => [...$this->getTextFieldRules($field)],
             FieldType::TextEmail => ['email:strict', ...$this->getTextFieldRules($field)],
             FieldType::TextTel => [...$this->getTextFieldRules($field)],
-            FieldType::TextNumeric => [...$this->getTextFieldRules($field)],
+            FieldType::TextNumeric => [...$this->getNumericFieldRules($field)],
             FieldType::TextUrl => [],
             FieldType::Upload => [new FileUploadRule($field)],
         }];
@@ -115,7 +115,6 @@ class ValidationService
             !in_array($field->type, [
             FieldType::Text,
             FieldType::TextArea,
-            FieldType::TextNumeric,
             FieldType::TextTel
             ], true)
         ) {
@@ -124,9 +123,35 @@ class ValidationService
 
         $rules = [];
 
+        $maxLength = $field->params['minLength'] ?? null;
+        if (!empty($maxLength)) {
+            $rules[] = 'min:' . $field->params['minLength'];
+        }
+
         $maxLength = $field->params['maxLength'] ?? null;
         if (!empty($maxLength)) {
             $rules[] = 'max:' . $field->params['maxLength'];
+        }
+
+        return $rules;
+    }
+
+    protected function getNumericFieldRules(Field $field): array
+    {
+        if ($field->type !== FieldType::TextNumeric) {
+            return [];
+        }
+
+        $rules = [];
+
+        $maxLength = $field->params['minimum'] ?? null;
+        if (!empty($maxLength)) {
+            $rules[] = 'min:' . $field->params['minimum'];
+        }
+
+        $maxLength = $field->params['maximum'] ?? null;
+        if (!empty($maxLength)) {
+            $rules[] = 'max:' . $field->params['maximum'];
         }
 
         return $rules;
