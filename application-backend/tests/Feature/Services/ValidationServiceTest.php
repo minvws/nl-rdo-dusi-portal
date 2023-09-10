@@ -29,7 +29,7 @@ class ValidationServiceTest extends TestCase
     public function testRules(
         FieldType $fieldType,
         array $fieldParams,
-        string|int|bool|float|null $value,
+        string|int|bool|float|array|null $value,
         bool $passes
     ): void {
         $application = Application::factory()->create();
@@ -232,7 +232,7 @@ class ValidationServiceTest extends TestCase
                 'A',
                 true,
             ],
-            'test select field value not array' => [
+            'test select field value not in array' => [
                 FieldType::Select,
                 [
                     'options' => [
@@ -244,7 +244,42 @@ class ValidationServiceTest extends TestCase
                 'D',
                 false,
             ],
-            // TODO: Test multiselect array value ...
+            'test multiselect field value in array' => [
+                FieldType::Multiselect,
+                [
+                    'options' => [
+                        'A',
+                        'B',
+                        'C',
+                    ],
+                ],
+                ['A'],
+                true,
+            ],
+            'test multiselect field multiple values in array' => [
+                FieldType::Multiselect,
+                [
+                    'options' => [
+                        'A',
+                        'B',
+                        'C',
+                    ],
+                ],
+                ['A', 'B'],
+                true,
+            ],
+            'test multiselect field value not in array' => [
+                FieldType::Multiselect,
+                [
+                    'options' => [
+                        'A',
+                        'B',
+                        'C',
+                    ],
+                ],
+                ['D'],
+                false,
+            ],
         ];
     }
 }

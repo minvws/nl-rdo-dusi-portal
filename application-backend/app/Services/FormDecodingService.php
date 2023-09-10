@@ -31,6 +31,7 @@ readonly class FormDecodingService
         $type = match ($field->type) {
             FieldType::TextNumeric => 'int',
             FieldType::Checkbox => 'bool',
+            FieldType::Multiselect => 'array',
             default => 'string'
         };
 
