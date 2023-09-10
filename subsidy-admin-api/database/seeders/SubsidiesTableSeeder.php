@@ -37,7 +37,7 @@ class SubsidiesTableSeeder extends Seeder
                         'contact_mail_address' => 'dienstpostbus@minvws.nl',
                         'mail_to_address_field_identifier' => 'email',
                         'mail_to_name_field_identifier' => 'firstName;infix;lastName',
-                        'message_overview_subject' => 'Onderwerp voor overzicht',
+                        'message_overview_subject' => 'Onderwerp voor overzicht'
                     ]
                 )
                     ->create()

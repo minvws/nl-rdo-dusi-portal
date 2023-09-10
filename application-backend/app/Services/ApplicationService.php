@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Carbon\Carbon;
 use DateInterval;
 use DateTimeImmutable;
 use Exception;
@@ -67,6 +68,7 @@ readonly class ApplicationService
         private ApplicationFileRepository $fileRepository,
         private ApplicationReferenceService $applicationReferenceService,
         private ValidationService $validationService,
+        private IdentityService $identityService,
     ) {
     }
 
@@ -93,10 +95,7 @@ readonly class ApplicationService
         ApplicationStage $applicationStage,
     ): void {
         $application = $applicationStage->application;
-        if (
-            $application->identity->type !== $identity->type || // @phpstan-ignore-line
-            $application->identity->identifier !== $identity->identifier
-        ) {
+        if ($application->identity->id !== $identity->id) {
             throw new EncryptionException(
                 sprintf('Identity mismatch for app with identifier "%s"', $application->id)
             );
@@ -126,10 +125,9 @@ readonly class ApplicationService
      */
     public function createApplication(string $id, Identity $identity, SubsidyStage $subsidyStage): Application
     {
-        $app = $this->appRepo->makeApplicationForSubsidyVersion($subsidyStage->subsidyVersion);
+        $app = $this->appRepo->makeApplicationForIdentityAndSubsidyVersion($identity, $subsidyStage->subsidyVersion);
         $app->id = $id;
         $app->application_title = $subsidyStage->title;
-        $app->identity = $identity;
         $app->status = ApplicationStatus::Draft;
 
         $createReferenceTries = 0;
@@ -172,6 +170,8 @@ readonly class ApplicationService
 
     /**
      * @throws Throwable
+     *
+     * @return array{ApplicationStage, SubsidyStage}
      */
     private function loadOrCreateAppStageWithSubsidyStage(Identity $identity, ApplicationMetadata $appMetadata): array
     {
@@ -259,7 +259,7 @@ readonly class ApplicationService
     public function processFormSubmit(FormSubmit $formSubmit): void
     {
         DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
-            $identity = $this->encryptionService->decryptIdentity($formSubmit->identity);
+            $identity = $this->identityService->findOrCreateIdentity($formSubmit->identity);
             $json = $this->encryptionService->decryptBase64EncodedData($formSubmit->encryptedData);
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
@@ -292,6 +292,10 @@ readonly class ApplicationService
 
             $this->processFieldValues($applicationStage, $values);
 
+            if ($applicationStage->application->status === ApplicationStatus::Submitted) {
+                $applicationStage->application->final_review_deadline =
+                    Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);
+            }
             $this->appRepo->saveApplication($applicationStage->application);
 
             $applicationStage->is_current = false;
@@ -307,7 +311,7 @@ readonly class ApplicationService
      */
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
-        $identity = $this->encryptionService->decryptIdentity($fileUpload->identity);
+        $identity = $this->identityService->findOrCreateIdentity($fileUpload->identity);
 
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
             $identity,

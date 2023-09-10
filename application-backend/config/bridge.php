@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use MinVWS\DUSi\Application\Backend\Services\ActionableService;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
 use MinVWS\DUSi\Application\Backend\Services\MessageService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
@@ -21,11 +21,11 @@ $bindings = [
     ],
     RPCMethods::LIST_APPLICATIONS => [
         'paramsClass' => ApplicationListParams::class,
-        'callback' => [ApplicationService::class, 'listApplications']
+        'callback' => [ApplicationRetrievalService::class, 'listApplications']
     ],
     RPCMethods::GET_APPLICATION => [
         'paramsClass' => ApplicationListParams::class,
-        'callback' => [ApplicationService::class, 'getApplication']
+        'callback' => [ApplicationRetrievalService::class, 'getApplication']
     ],
     RPCMethods::LIST_MESSAGES => [
         'paramsClass' => MessageListParams::class,
