@@ -9,8 +9,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Carbon\Carbon;
-use DateInterval;
-use DateTimeImmutable;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
@@ -29,27 +27,17 @@ use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Identity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use Ramsey\Uuid\Uuid;
 use Throwable;
 
 /**
@@ -358,67 +346,6 @@ readonly class ApplicationService
     public function processFileUpload(FileUpload $fileUpload): void
     {
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
-    }
-
-    private function toApplicationListApplication(Application $app): ApplicationListApplication
-    {
-        // TODO: where to retrieve / base deadline on?
-        // TODO: application status
-        $subsidy = new Subsidy(
-            $app->subsidyVersion->subsidy->code,
-            $app->subsidyVersion->title,
-            $app->subsidyVersion->subsidy_page_url
-        );
-
-        return new ApplicationListApplication(
-            $app->reference,
-            $subsidy,
-            $app->created_at,
-            DateTimeImmutable::createFromInterface($app->created_at)->add(new DateInterval('30D')),
-            ApplicationStatus::Draft
-        );
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function listApplications(ApplicationListParams $params): EncryptedResponse
-    {
-        $identity = $this->encryptionService->decryptIdentity($params->identity);
-
-        /** @var array<Application> $apps */
-        $apps = $this->appRepo->getMyApplications($identity)->toArray();
-        $listApps = array_map(fn ($app) => $this->toApplicationListApplication($app), $apps);
-
-        return $this->encryptionService->encryptResponse(
-            EncryptedResponseStatus::OK,
-            new ApplicationList($listApps),
-            $params->publicKey
-        );
-    }
-
-    public function getApplication(ApplicationParams $params): EncryptedResponse
-    {
-        // TODO:
-        // Retrieve application from the database and verify the identity. If the
-        // application doesn't exist or doesn't belong to the user return a not found
-        // response. If the application exists, retrieve all the answers, decrypt
-        // them and structure them in the correct JSON format (compatible with the schema).
-        $application = new ApplicationDTO(
-            $params->reference,
-            new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie', 'https://www.dus-i.nl/'),
-            new DateTimeImmutable(),
-            new DateTimeImmutable("+30 days"),
-            ApplicationStatus::Draft,
-            new Form(Uuid::uuid4()->toString(), 1),
-            $params->includeData ? (object)['firstName' => 'John', 'lastName' => 'Doe'] : null
-        );
-
-        return $this->encryptionService->encryptResponse(
-            EncryptedResponseStatus::OK,
-            $application,
-            $params->publicKey
-        );
     }
 
     protected function processInvalidFieldValues(

@@ -275,8 +275,8 @@ class ApplicationServiceTest extends TestCase
 
         $formSubmit = new FormSubmit(
             new EncryptedIdentity(
-                IdentityType::EncryptedCitizenServiceNumber,
-                base64_encode(openssl_random_pseudo_bytes(32))
+                IdentityType::CitizenServiceNumber,
+                '123456789'
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             json_encode($data)
