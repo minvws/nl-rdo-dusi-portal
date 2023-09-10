@@ -15,8 +15,7 @@ class EncryptedResponse implements Codable
      */
     public function __construct(
         public readonly EncryptedResponseStatus $status,
-        public readonly string $key,
-        public readonly string $initializationVector,
+        public readonly string $contentType,
         public readonly string $data
     ) {
     }
@@ -27,17 +26,15 @@ class EncryptedResponse implements Codable
     public static function decode(DecodingContainer $container, ?object $object = null): self
     {
         $status = $container->{'status'}->decodeEnum(EncryptedResponseStatus::class);
-        $encryptedKey = base64_decode($container->{'key'}->decodeString());
-        $initializationVector = base64_decode($container->{'initializationVector'}->decodeString());
-        $encryptedData = base64_decode($container->{'data'}->decodeString());
-        return new self($status, $encryptedKey, $initializationVector, $encryptedData);
+        $contentType = $container->{'contentType'}->decodeString();
+        $data = base64_decode($container->{'data'}->decodeString());
+        return new self($status, $contentType, $data);
     }
 
     public function encode(EncodingContainer $container): void
     {
         $container->{'status'} = $this->status;
-        $container->{'key'} = base64_encode($this->key);
-        $container->{'initializationVector'} = base64_encode($this->data);
+        $container->{'contentType'} = $this->contentType;
         $container->{'data'} = base64_encode($this->data);
     }
 }

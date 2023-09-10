@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ClientPublicKeyHelper
 {
-    public const HEADER_NAME = 'X-DUS-I-Public-Key';
+    public const HEADER_NAME = 'X-Dus-I-Public-Key';
 
     public function __construct(private readonly Request $request)
     {

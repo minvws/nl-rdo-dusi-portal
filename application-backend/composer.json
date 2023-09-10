@@ -16,7 +16,8 @@
         "minvws/dusi-application-model": "@dev",
         "minvws/dusi-serialisation-model": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "ext-openssl": "*"
+        "ext-openssl": "*",
+        "ext-sodium": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

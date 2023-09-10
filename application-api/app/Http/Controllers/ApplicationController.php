@@ -17,8 +17,6 @@ use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\ResponseFactory;
 use MinVWS\DUSi\Application\API\Services\StateService;
-use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
-use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponseBuilder;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use Throwable;
@@ -74,13 +72,13 @@ class ApplicationController extends Controller
         StateService $stateService,
         ApplicationService $applicationService,
         ClientPublicKeyHelper $publicKeyHelper
-    ): EncodableResponse {
+    ): Response|ResponseFactory {
         $params = new ApplicationListParams(
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey()
         );
         $response = $applicationService->listApplications($params);
-        return EncodableResponseBuilder::create($response, $response->status->value)->build();
+        return $this->encryptedResponse($response);
     }
 
     /**
@@ -91,7 +89,7 @@ class ApplicationController extends Controller
         ClientPublicKeyHelper $publicKeyHelper,
         StateService $stateService,
         ApplicationService $applicationService
-    ): EncodableResponse {
+    ): Response {
         $params = new ApplicationParams(
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
@@ -99,6 +97,6 @@ class ApplicationController extends Controller
             true
         );
         $response = $applicationService->getApplication($params);
-        return EncodableResponseBuilder::create($response, $response->status->value)->build();
+        return $this->encryptedResponse($response);
     }
 }

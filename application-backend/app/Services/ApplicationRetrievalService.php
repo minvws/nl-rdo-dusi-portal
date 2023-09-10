@@ -15,6 +15,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 
 readonly class ApplicationRetrievalService
 {
@@ -31,7 +32,7 @@ readonly class ApplicationRetrievalService
         $identity = $this->identityService->findIdentity($params->identity);
         if (empty($identity)) {
             // no identity found, so no applications (yet)
-            return $this->encryptionService->encryptResponse(
+            return $this->encryptionService->encryptCodableResponse(
                 EncryptedResponseStatus::OK,
                 new ApplicationList([]),
                 $params->publicKey
@@ -41,7 +42,7 @@ readonly class ApplicationRetrievalService
         $apps = $this->appRepo->getMyApplications($identity);
         $list = $this->applicationMapper->mapApplicationArrayToApplicationListDTO($apps);
 
-        return $this->encryptionService->encryptResponse(
+        return $this->encryptionService->encryptCodableResponse(
             EncryptedResponseStatus::OK,
             $list,
             $params->publicKey
@@ -51,16 +52,20 @@ readonly class ApplicationRetrievalService
     public function getApplication(ApplicationParams $params): EncryptedResponse
     {
         $identity = $this->identityService->findIdentity($params->identity);
-
-        if (!empty($identity)) {
-            $app = $this->appRepo->getMyApplication($identity, $params->reference);
+        if ($identity === null) {
+            return $this->encryptionService->encryptCodableResponse(
+                EncryptedResponseStatus::NOT_FOUND,
+                new Error('identity_not_found', 'Identity not registered yet.'),
+                $params->publicKey
+            );
         }
 
-        if (empty($identity) || empty($app)) {
-            // no identity found, so no application yet, unknown application, or application of other user
-            return $this->encryptionService->encryptResponse(
+        $app = $this->appRepo->getMyApplication($identity, $params->reference);
+        if ($app === null) {
+            // application not found (for this identity)
+            return $this->encryptionService->encryptCodableResponse(
                 EncryptedResponseStatus::NOT_FOUND,
-                null,
+                new Error('application_not_found', 'Application not found.'),
                 $params->publicKey
             );
         }
@@ -69,7 +74,7 @@ readonly class ApplicationRetrievalService
         $data = $params->includeData ? (object)[] : null;
         $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data);
 
-        return $this->encryptionService->encryptResponse(
+        return $this->encryptionService->encryptCodableResponse(
             EncryptedResponseStatus::OK,
             $dto,
             $params->publicKey

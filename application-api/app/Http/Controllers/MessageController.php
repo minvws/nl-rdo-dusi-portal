@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
+use Illuminate\Http\Response;
 use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Http\Requests\MessageRequest;
 use MinVWS\DUSi\Application\API\Http\Resources\MessageFiltersResource;
 use MinVWS\DUSi\Application\API\Services\MessageService;
 use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
-use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponseBuilder;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
@@ -44,7 +44,7 @@ class MessageController extends Controller
         return $this->messageService->getFilters();
     }
 
-    public function view(string $id, ClientPublicKeyHelper $publicKeyHelper): EncodableResponse
+    public function view(string $id, ClientPublicKeyHelper $publicKeyHelper): Response
     {
         $params = new MessageParams(
             $this->stateService->getEncryptedIdentity(),
@@ -52,14 +52,14 @@ class MessageController extends Controller
             $id
         );
         $response = $this->messageService->getMessage($params);
-        return EncodableResponseBuilder::create($response, $response->status->value)->build();
+        return $this->encryptedResponse($response);
     }
 
     public function download(
         string $id,
         string $format,
         ClientPublicKeyHelper $publicKeyHelper
-    ): EncodableResponse {
+    ): Response {
         $params = new MessageDownloadParams(
             $this->stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
@@ -67,6 +67,6 @@ class MessageController extends Controller
             MessageDownloadFormat::from($format)
         );
         $response = $this->messageService->getMessageDownload($params);
-        return EncodableResponseBuilder::create($response, $response->status->value)->build();
+        return $this->encryptedResponse($response);
     }
 }
