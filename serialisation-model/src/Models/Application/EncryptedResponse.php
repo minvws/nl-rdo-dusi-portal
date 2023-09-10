@@ -27,8 +27,7 @@ class EncryptedResponse implements Codable
     {
         $status = $container->{'status'}->decodeEnum(EncryptedResponseStatus::class);
         $contentType = $container->{'contentType'}->decodeString();
-        $encodedData = $container->{'data'}->decodeString();
-        $data = base64_decode($encodedData);
+        $data = base64_decode($container->{'data'}->decodeString());
         return new self($status, $contentType, $data);
     }
 
