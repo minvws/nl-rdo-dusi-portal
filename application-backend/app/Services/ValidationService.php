@@ -46,16 +46,18 @@ class ValidationService
 
         if ($field->is_required) {
             $rules[] = 'required';
+        } else {
+            $rules[] = 'nullable';
         }
 
         return [...$rules , ...match ($field->type) {
-            FieldType::Checkbox => ['boolean'],
+            FieldType::Checkbox => [...$this->getBooleanFieldRules($field)],
             FieldType::CustomBankAccount => [],
             FieldType::CustomCountry => [],
             FieldType::CustomPostalCode => [],
             FieldType::Date => [],
             FieldType::Multiselect => ['array', ...$this->getSelectFieldRules($field)],
-            FieldType::Select => [...$this->getSelectFieldRules($field)],
+            FieldType::Select => ['string', ...$this->getSelectFieldRules($field)],
             FieldType::Text => [...$this->getTextFieldRules($field)],
             FieldType::TextArea => [...$this->getTextFieldRules($field)],
             FieldType::TextEmail => ['email:strict', ...$this->getTextFieldRules($field)],
@@ -121,7 +123,9 @@ class ValidationService
             return [];
         }
 
-        $rules = [];
+        $rules = [
+            'string',
+        ];
 
         $maxLength = $field->params['minLength'] ?? null;
         if (!empty($maxLength)) {
@@ -142,7 +146,9 @@ class ValidationService
             return [];
         }
 
-        $rules = [];
+        $rules = [
+            'integer'
+        ];
 
         $maxLength = $field->params['minimum'] ?? null;
         if (!empty($maxLength)) {
@@ -152,6 +158,23 @@ class ValidationService
         $maxLength = $field->params['maximum'] ?? null;
         if (!empty($maxLength)) {
             $rules[] = 'max:' . $field->params['maximum'];
+        }
+
+        return $rules;
+    }
+
+    protected function getBooleanFieldRules(Field $field): array
+    {
+        if ($field->type !== FieldType::Checkbox) {
+            return [];
+        }
+
+        $rules = [
+            'boolean',
+        ];
+
+        if ($field->is_required) {
+            $rules[] = 'accepted';
         }
 
         return $rules;

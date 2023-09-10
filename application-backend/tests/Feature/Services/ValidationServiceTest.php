@@ -23,50 +23,6 @@ class ValidationServiceTest extends TestCase
     use DatabaseTransactions;
     use WithFaker;
 
-    public function testSelectFieldRules(): void
-    {
-//        $this->markTestSkipped('TODO: implement testSelectFieldRules()');
-//
-//        // TODO: Write tests for select and multi select ... with dataprovider
-//
-//        $application = Application::factory()->create();
-//        $applicationStage = ApplicationStage::factory()->create([
-//            'application_id' => $application->id,
-//        ]);
-//
-//        $fileRepository = Mockery::mock(ApplicationFileRepository::class);
-//        $applicationRepository = Mockery::mock(ApplicationRepository::class);
-//
-//        $factory = new ValidatorFactory(
-//            fileRepository: $fileRepository,
-//            applicationRepository: $applicationRepository,
-//        );
-//
-//        $validationService = new ValidationService(
-//            validatorFactory: $factory,
-//        );
-//
-//        $validator = $validationService->getValidator(
-//            applicationStage: $applicationStage,
-//            fieldValues: [
-//                new FieldValue(
-//                    new Field([
-//                        'code' => 'code1',
-//                        'type' => 'select',
-//                        'is_required' => true,
-//                        'options' => [
-//                            'value1' => 'label1',
-//                            'value2' => 'label2',
-//                        ],
-//                    ]),
-//                    value: 'value1',
-//                ),
-//            ],
-//        );
-//
-//        $this->assertEquals($validator->passes(), true);
-    }
-
     /**
      * @dataProvider dataProviderTestFieldRules
      */
@@ -111,8 +67,6 @@ class ValidationServiceTest extends TestCase
                 $fieldValue,
             ],
         );
-
-//        dump($validator->passes(), $validator->failed());
 
         $this->assertEquals($passes, $validator->passes());
     }
@@ -179,30 +133,118 @@ class ValidationServiceTest extends TestCase
                 'ABCDEFGHIJKL',
                 true,
             ],
-//            'test numeric field with valid minimum 10 and value 10' => [
-//                FieldType::TextNumeric,
-//                [
-//                    'minimum' => 10,
-//                ],
-//                10,
-//                true,
-//            ],
-//            'test numeric field with valid minimum 10 and value 11' => [
-//                FieldType::TextNumeric,
-//                [
-//                    'minimum' => 10,
-//                ],
-//                11,
-//                true,
-//            ],
-//            'test numeric field with invalid minimum 10 and value 9' => [
-//                FieldType::TextNumeric,
-//                [
-//                    'minimum' => 10,
-//                ],
-//                9,
-//                false,
-//            ],
+            'test numeric field with valid minimum 10 and value 10' => [
+                FieldType::TextNumeric,
+                [
+                    'minimum' => 10,
+                ],
+                10,
+                true,
+            ],
+            'test numeric field with valid minimum 10 and value 11' => [
+                FieldType::TextNumeric,
+                [
+                    'minimum' => 10,
+                ],
+                11,
+                true,
+            ],
+            'test numeric field with invalid minimum 10 and value 9' => [
+                FieldType::TextNumeric,
+                [
+                    'minimum' => 10,
+                ],
+                9,
+                false,
+            ],
+            'test numeric field with valid maximum 10 and value 10' => [
+                FieldType::TextNumeric,
+                [
+                    'maximum' => 10,
+                ],
+                10,
+                true,
+            ],
+            'test numeric field with valid maximum 10 and value 9' => [
+                FieldType::TextNumeric,
+                [
+                    'maximum' => 10,
+                ],
+                9,
+                true,
+            ],
+            'test numeric field with invalid minimum 10 and value 11' => [
+                FieldType::TextNumeric,
+                [
+                    'maximum' => 10,
+                ],
+                11,
+                false,
+            ],
+            'test numeric field with valid minimum and maximum value' => [
+                FieldType::TextNumeric,
+                [
+                    'minimum' => 10,
+                    'maximum' => 10,
+                ],
+                10,
+                true,
+            ],
+            'test numeric field with invalid minimum and maximum value' => [
+                FieldType::TextNumeric,
+                [
+                    'minimum' => 10,
+                    'maximum' => 10,
+                ],
+                11,
+                false,
+            ],
+            'test numeric field with valid minimum and maximum value in between' => [
+                FieldType::TextNumeric,
+                [
+                    'minimum' => 5,
+                    'maximum' => 15,
+                ],
+                8,
+                true,
+            ],
+            'test required checkbox field value true' => [
+                FieldType::Checkbox,
+                [],
+                true,
+                true,
+            ],
+            'test required checkbox field value false' => [
+                FieldType::Checkbox,
+                [],
+                false,
+                false,
+            ],
+            'test select field value in array' => [
+                FieldType::Select,
+                [
+                    'options' => [
+                        'A',
+                        'B',
+                        'C',
+                    ],
+                ],
+                'A',
+                true,
+            ],
+            'test select field value not array' => [
+                FieldType::Select,
+                [
+                    'options' => [
+                        'A',
+                        'B',
+                        'C',
+                    ],
+                ],
+                'D',
+                false,
+            ],
+            // TODO: Test multiselect array value ...
         ];
     }
 }
