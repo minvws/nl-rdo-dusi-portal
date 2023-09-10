@@ -14,6 +14,7 @@ use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use OpenSSLAsymmetricKey;
 
 /**
@@ -148,61 +149,71 @@ class EncryptionService
         return $this->decryptAesEncrypted($dataArray['encrypted'], $aesKeyDecrypted, $dataArray['iv']);
     }
 
+    public function encryptResponse(
+        EncryptedResponseStatus $status,
+        string $payload,
+        string $contentType,
+        ClientPublicKey $publicKey
+    ): EncryptedResponse {
+        $data = sodium_crypto_box_seal($payload, $publicKey->value);
+        return new EncryptedResponse($status, $contentType, $data);
+    }
+
     /**
      * @throws Exception
      */
-    public function encryptResponse(
+    public function encryptCodableResponse(
         EncryptedResponseStatus $status,
-        ?Codable $payload,
+        Codable $payload,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
         $encoder = new JSONEncoder();
         $json = $encoder->encode($payload);
+        return $this->encryptResponse($status, $json, 'application/json', $publicKey);
+    }
 
-        $key = random_bytes(32);
-        if (!openssl_public_encrypt($key, $encryptedKey, $publicKey->value, OPENSSL_PKCS1_OAEP_PADDING)) {
-            throw new Exception('Encryption of key failed: ' . openssl_error_string());
-        }
-
-        $initializationVector = random_bytes(16);
-
-        $data = openssl_encrypt($json, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $initializationVector);
-        if ($data === false) {
-            throw new Exception('Encryption of data failed: ' . openssl_error_string());
-        }
-
-        return new EncryptedResponse($status, $encryptedKey, $initializationVector, $data);
+    public function encryptErrorResponse(
+        EncryptedResponseStatus $status,
+        string $code,
+        string $message,
+        ClientPublicKey $publicKey
+    ): EncryptedResponse {
+        return $this->encryptCodableResponse($status, new Error($code, $message), $publicKey);
     }
 
     /**
-     * @template T of Codable
+     * Decrypt response, mainly used for testing.
      *
-     * @param class-string<T> $expectedClass
-     *
-     * @return T|null
+     * @throws Exception
      */
     public function decryptResponse(
         EncryptedResponse $response,
-        OpenSSLAsymmetricKey $privateKey,
-        string $expectedClass
-    ): ?Codable {
-        if (!openssl_private_decrypt($response->key, $key, $privateKey, OPENSSL_PKCS1_OAEP_PADDING)) {
-            throw new Exception('Decryption of key failed: ' . openssl_error_string());
+        string $keyPair
+    ): string {
+        $data = sodium_crypto_box_seal_open($response->data, $keyPair);
+        if ($data === false) {
+            throw new Exception('Decryption failed, invalid key pair?');
         }
 
-        $json = openssl_decrypt(
-            $response->data,
-            'AES-256-CBC',
-            $key,
-            OPENSSL_RAW_DATA,
-            $response->initializationVector
-        );
+        return $data;
+    }
 
-        if ($json === false) {
-            throw new Exception('Decryption of data failed: ' . openssl_error_string());
-        }
-
+    /**
+     * Decrypt response, mainly used for testing.
+     *
+     * @template T of Codable
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
+     */
+    public function decryptCodableResponse(
+        EncryptedResponse $response,
+        string $class,
+        string $keyPair
+    ): Codable {
+        $json = $this->decryptResponse($response, $keyPair);
         $decoder = new JSONDecoder();
-        return $decoder->decode($json)->decodeObjectIfPresent($expectedClass);
+        return $decoder->decode($json)->decodeObject($class);
     }
 }

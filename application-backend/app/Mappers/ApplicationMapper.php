@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Mappers;
 
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList as ApplicationListDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication as ApplicationListApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message as MessageDTO;
 
 class ApplicationMapper
 {
@@ -57,6 +59,17 @@ class ApplicationMapper
             in_array($app->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges]),
             $form,
             $data
+        );
+    }
+
+    public function mapApplicationMessageToMessageDTO(ApplicationMessage $message, string $body): MessageDTO
+    {
+        return new MessageDTO(
+            $message->id,
+            $message->subject,
+            $message->sent_at,
+            $message->is_new,
+            $body
         );
     }
 }
