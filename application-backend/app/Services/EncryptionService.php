@@ -172,15 +172,6 @@ class EncryptionService
         return $this->encryptResponse($status, $json, 'application/json', $publicKey);
     }
 
-    public function encryptErrorResponse(
-        EncryptedResponseStatus $status,
-        string $code,
-        string $message,
-        ClientPublicKey $publicKey
-    ): EncryptedResponse {
-        return $this->encryptCodableResponse($status, new Error($code, $message), $publicKey);
-    }
-
     /**
      * Decrypt response, mainly used for testing.
      *
