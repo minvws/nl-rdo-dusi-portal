@@ -173,7 +173,7 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/bigNumberJudicialInstitution",
+                            "scope": "#/properties/BIGNumberJudicialInstitution",
                             "label": "BIG-nummer",
                             "options": {
                             },
