@@ -167,6 +167,25 @@
                             }
                         }
                     ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/bigNumberJudicialInstitution",
+                            "label": "BIG-nummer",
+                            "options": {
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/hasBeenWorkingAtJudicialInstitution",
+                                    "schema": { "const": "Ja" }
+                                }
+                            }
+                        }
+                    ]
                 }
             ]
         },
