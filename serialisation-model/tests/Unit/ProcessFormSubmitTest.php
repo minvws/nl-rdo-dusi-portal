@@ -25,6 +25,7 @@ class ProcessFormSubmitTest extends TestCase
             new ApplicationMetadata(
                 'applicationId',
                 'subsidyStageId',
+                false,
             ),
             'encryptedData'
         );
