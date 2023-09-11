@@ -21,7 +21,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MessageService
+class ApplicationMessageService
 {
     public function __construct(
         private readonly EncryptionService $encryptionService,
@@ -55,6 +55,7 @@ class MessageService
     public function getMessage(MessageParams $params): EncryptedResponse
     {
         $identity = $this->identityService->findIdentity($params->identity);
+
         if ($identity === null) {
             return $this->encryptionService->encryptCodableResponse(
                 EncryptedResponseStatus::NOT_FOUND,
@@ -64,6 +65,7 @@ class MessageService
         }
 
         $message = $this->messageRepository->getMyMessage($identity, $params->id);
+
         if ($message === null) {
             return $this->encryptionService->encryptCodableResponse(
                 EncryptedResponseStatus::NOT_FOUND,
@@ -73,6 +75,7 @@ class MessageService
         }
 
         $body = $this->letterRepository->getHtmlContent($message);
+
         if ($body === null) {
             return $this->encryptionService->encryptCodableResponse(
                 EncryptedResponseStatus::NOT_FOUND,
@@ -82,6 +85,7 @@ class MessageService
         }
 
         $dto = $this->applicationMapper->mapApplicationMessageToMessageDTO($message, $body);
+
         return $this->encryptionService->encryptCodableResponse(
             EncryptedResponseStatus::OK,
             $dto,
@@ -92,6 +96,7 @@ class MessageService
     public function getMessageDownload(MessageDownloadParams $params): EncryptedResponse
     {
         $identity = $this->identityService->findIdentity($params->identity);
+
         if ($identity === null) {
             return $this->encryptionService->encryptCodableResponse(
                 EncryptedResponseStatus::NOT_FOUND,
@@ -101,6 +106,7 @@ class MessageService
         }
 
         $message = $this->messageRepository->getMyMessage($identity, $params->id);
+
         if ($message === null) {
             return $this->encryptionService->encryptCodableResponse(
                 EncryptedResponseStatus::NOT_FOUND,

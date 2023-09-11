@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use MinVWS\DUSi\Application\Backend\Services\ActionableService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
-use MinVWS\DUSi\Application\Backend\Services\MessageService;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
@@ -29,16 +29,16 @@ $bindings = [
     ],
     RPCMethods::LIST_MESSAGES => [
         'paramsClass' => MessageListParams::class,
-        'callback' => [MessageService::class, 'listMessages']
+        'callback' => [ApplicationMessageService::class, 'listMessages']
     ],
 
     RPCMethods::GET_MESSAGE => [
         'paramsClass' => MessageParams::class,
-        'callback' => [MessageService::class, 'getMessage']
+        'callback' => [ApplicationMessageService::class, 'getMessage']
     ],
     RPCMethods::GET_MESSAGE_DOWNLOAD => [
         'paramsClass' => MessageDownloadParams::class,
-        'callback' => [MessageService::class, 'getMessageDownload']
+        'callback' => [ApplicationMessageService::class, 'getMessageDownload']
     ],
     RPCMethods::GET_ACTIONABLE_COUNTS => [
         'paramsClass' => ActionableCountsParams::class,

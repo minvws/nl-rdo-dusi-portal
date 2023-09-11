@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message;
 
 class ApplicationMessageRepository
 {
@@ -19,14 +19,10 @@ class ApplicationMessageRepository
         return $message;
     }
 
-    /**
-     * @return array<ApplicationMessage>
-     */
+    /* @return array<ApplicationMessage> */
     public function getMyMessages(Identity $identity): array
     {
-        /** @var array<ApplicationMessage> $messages */
-        $messages = $identity->applicationMessages->toArray();
-        return $messages;
+        return $identity->applicationMessages->all();
     }
 
     public function createMessage(ApplicationStage $stage, string $htmlPath, string $pdfPath): void
