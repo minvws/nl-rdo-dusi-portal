@@ -12,6 +12,8 @@ class RPCMethods
 
     public const LIST_APPLICATIONS = 'listApplications';
     public const GET_APPLICATION = 'getApplication';
+    public const GET_APPLICATION_FILE = 'getApplicationFile';
+    public const DELETE_APPLICATION_FILE = 'deleteApplicationFile';
 
     public const GET_ACTIONABLE_COUNTS = 'getActionableCounts';
 }
