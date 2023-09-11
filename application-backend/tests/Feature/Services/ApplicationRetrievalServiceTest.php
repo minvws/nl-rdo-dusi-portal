@@ -63,12 +63,13 @@ class ApplicationRetrievalServiceTest extends TestCase
         $this->publicKey = new ClientPublicKey($publicKey);
     }
 
-    public function testGetApplicationWithoutData(): void
+    public function testGetApplicationWithoutDataAndFiles(): void
     {
         $params = new ApplicationParams(
             new EncryptedIdentity(IdentityType::CitizenServiceNumber, $this->identity->hashed_identifier),
             $this->publicKey,
             $this->application->reference,
+            false,
             false
         );
 
@@ -82,14 +83,16 @@ class ApplicationRetrievalServiceTest extends TestCase
 
         $this->assertEquals($this->application->reference, $app->reference);
         $this->assertNull($app->data);
+        $this->assertNull($app->files);
     }
 
-    public function testGetApplicationWithData(): void
+    public function testGetApplicationWithDataAndFiles(): void
     {
         $params = new ApplicationParams(
             new EncryptedIdentity(IdentityType::CitizenServiceNumber, $this->identity->hashed_identifier),
             $this->publicKey,
             $this->application->reference,
+            true,
             true
         );
 
@@ -106,6 +109,7 @@ class ApplicationRetrievalServiceTest extends TestCase
         $this->assertObjectHasProperty($this->answer->field->code, $app->data);
         $answerValue = json_decode($encryptionService->decryptBase64EncodedData($this->answer->encrypted_answer));
         $this->assertEquals($answerValue, $app->data->{$this->answer->field->code});
+        $this->assertIsArray($app->files);
     }
 
     public static function useRealIdentityProvider(): array
@@ -130,6 +134,7 @@ class ApplicationRetrievalServiceTest extends TestCase
             ),
             $this->publicKey,
             $this->application->reference,
+            false,
             false
         );
 

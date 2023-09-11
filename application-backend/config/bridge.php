@@ -3,11 +3,13 @@
 declare(strict_types=1);
 
 use MinVWS\DUSi\Application\Backend\Services\ActionableService;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
@@ -27,11 +29,18 @@ $bindings = [
         'paramsClass' => ApplicationListParams::class,
         'callback' => [ApplicationRetrievalService::class, 'getApplication']
     ],
+    RPCMethods::GET_APPLICATION_FILE => [
+        'paramsClass' => ApplicationFileParams::class,
+        'callback' => [ApplicationFileService::class, 'getApplicationFile']
+    ],
+    RPCMethods::DELETE_APPLICATION_FILE => [
+        'paramsClass' => ApplicationFileParams::class,
+        'callback' => [ApplicationFileService::class, 'deleteApplicationFile']
+    ],
     RPCMethods::LIST_MESSAGES => [
         'paramsClass' => MessageListParams::class,
         'callback' => [ApplicationMessageService::class, 'listMessages']
     ],
-
     RPCMethods::GET_MESSAGE => [
         'paramsClass' => MessageParams::class,
         'callback' => [ApplicationMessageService::class, 'getMessage']

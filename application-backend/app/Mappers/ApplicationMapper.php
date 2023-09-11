@@ -45,7 +45,7 @@ class ApplicationMapper
         return new ApplicationListDTO($apps);
     }
 
-    public function mapApplicationToApplicationDTO(Application $app, ?object $data): ApplicationDTO
+    public function mapApplicationToApplicationDTO(Application $app, ?object $data, ?array $files): ApplicationDTO
     {
         $subsidy = $this->subsidyMapper->mapSubsidyVersionToSubsidyDTO($app->subsidyVersion);
         $form = $this->subsidyMapper->mapSubsidyVersionToFormDTO($app->subsidyVersion);
@@ -56,9 +56,10 @@ class ApplicationMapper
             $app->created_at, // TODO: $app->submitted_at,
             $app->final_review_deadline,
             $app->status,
-            in_array($app->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges]),
+            $app->status->isEditableForApplicant(),
             $form,
-            $data
+            $data,
+            $files
         );
     }
 

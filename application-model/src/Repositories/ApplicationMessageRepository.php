@@ -19,10 +19,14 @@ class ApplicationMessageRepository
         return $message;
     }
 
-    /* @return array<ApplicationMessage> */
+    /**
+     * @return array<ApplicationMessage>
+     */
     public function getMyMessages(Identity $identity): array
     {
-        return $identity->applicationMessages->all();
+        /** @var array<ApplicationMessage> $result */
+        $result = $identity->applicationMessages->all();
+        return $result;
     }
 
     public function createMessage(ApplicationStage $stage, string $htmlPath, string $pdfPath): void
