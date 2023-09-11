@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\DBAL\TimestampType;
 use MinVWS\DUSi\Assessment\API\Models\Connection;
 use Illuminate\Support\Str;
 
@@ -138,7 +139,11 @@ return [
                 'local_pk' => env('REDIS_TLS_LOCAL_PK', ''),
             ]
         ],
-
         ],
 
+        'dbal' => [
+        'types' => [
+            'timestamp' => TimestampType::class,
+        ],
+        ],
 ];

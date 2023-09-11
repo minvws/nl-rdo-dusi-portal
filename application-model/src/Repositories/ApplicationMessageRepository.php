@@ -27,7 +27,7 @@ class ApplicationMessageRepository
 
     public function createMessage(ApplicationStage $stage, string $htmlPath, string $pdfPath): void
     {
-        $stage->application->applicationMessages->create([
+        $stage->application->applicationMessages()->create([
             'html_path' => $htmlPath,
             'is_new' => true,
             'pdf_path' => $pdfPath,

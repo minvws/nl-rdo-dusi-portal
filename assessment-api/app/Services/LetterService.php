@@ -159,11 +159,11 @@ readonly class LetterService
         $cssPath = $this->getCssPath();
         $logoPath = public_path('img/vws_dusi_logo.svg');
 
-        assert($stage->accessor_decision !== null);
+        assert($stage->assessor_decision !== null);
 
         return new LetterData(
             subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
-            decision: $stage->accessor_decision->value,
+            decision: $stage->assessor_decision->value,
             stages: $data,
             createdAt: $stage->application->created_at,
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
