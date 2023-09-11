@@ -10,6 +10,7 @@ readonly class ApplicationMetadata
     public function __construct(
         public string $applicationId,
         public string $subsidyStageId,
+        public bool $isDraft,
     ) {
     }
 }

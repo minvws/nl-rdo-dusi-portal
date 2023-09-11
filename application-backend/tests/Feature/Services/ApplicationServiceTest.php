@@ -96,7 +96,7 @@ class ApplicationServiceTest extends TestCase
                 IdentityType::CitizenServiceNumber,
                 '123456789'
             ),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
+            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id, false),
             $fileField->code,
             Uuid::uuid4()->toString(),
             'application/pdf',
@@ -131,7 +131,7 @@ class ApplicationServiceTest extends TestCase
                 IdentityType::CitizenServiceNumber,
                 '123456789'
             ),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
+            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id, false),
             json_encode($data)
         );
 
@@ -168,7 +168,7 @@ class ApplicationServiceTest extends TestCase
                 IdentityType::CitizenServiceNumber,
                 '123456789'
             ),
-            new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
+            new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id, false),
             json_encode($data)
         );
 
@@ -193,7 +193,7 @@ class ApplicationServiceTest extends TestCase
                 IdentityType::CitizenServiceNumber,
                 '123456789'
             ),
-            new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
+            new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id, false),
             json_encode([]) // Empty data for the form, which should be invalid
         );
 
@@ -205,7 +205,7 @@ class ApplicationServiceTest extends TestCase
         // Load submitted application
         $application = Application::query()->find($formSubmit->applicationMetadata->applicationId);
 
-        // The application stage version should be invalid, because the file is missing
+        // The application stage version should be invalid, because required fields missing
         $this->assertInstanceOf(Application::class, $application);
         $this->assertEquals(ApplicationStatus::Invalid, $application->status);
     }
@@ -233,7 +233,7 @@ class ApplicationServiceTest extends TestCase
                 IdentityType::CitizenServiceNumber,
                 '123456789'
             ),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
+            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id, false),
             json_encode($data)
         );
 
@@ -278,7 +278,7 @@ class ApplicationServiceTest extends TestCase
                 IdentityType::CitizenServiceNumber,
                 '123456789'
             ),
-            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
+            new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id, false),
             json_encode($data)
         );
 
@@ -292,5 +292,86 @@ class ApplicationServiceTest extends TestCase
         // The application stage version should be invalid, because the file is missing
         $this->assertInstanceOf(Application::class, $application);
         $this->assertEquals(ApplicationStatus::Invalid, $application->status);
+    }
+
+
+    /**
+     * Test field validation fails when a field value is invalid
+     * Also checks that the old answer is removed
+     *
+     * @return void
+     * @throws \JsonException
+     */
+    public function testValidationFailsFieldInvalidAndOldAnswerIsRemoved(): void
+    {
+        $subsidy = Subsidy::factory()->create();
+        $subsidyVersion = SubsidyVersion::factory()
+            ->for($subsidy)
+            ->create([
+                'status' => VersionStatus::Published,
+            ]);
+        $subsidyStage = SubsidyStage::factory()
+            ->for($subsidyVersion)
+            ->create();
+
+        $textField = Field::factory()
+            ->for($subsidyStage)
+            ->create([
+                'type' => FieldType::Text,
+                'code' => 'something_a',
+                'is_required' => true,
+                'params' => [
+                    'maxLength' => 19,
+                ],
+            ]);
+
+        $identity = new EncryptedIdentity(
+            IdentityType::CitizenServiceNumber,
+            '123456789'
+        );
+
+        $applicationMetadata = new ApplicationMetadata(
+            applicationId: Uuid::uuid4()->toString(),
+            subsidyStageId: $subsidyStage->id,
+            isDraft: true,
+        );
+
+        $formSubmit = new FormSubmit(
+            identity: $identity,
+            applicationMetadata: $applicationMetadata,
+            encryptedData: json_encode([
+                $textField->code => 'this-string-is-fine',
+            ], JSON_THROW_ON_ERROR)
+        );
+
+        $applicationService = $this->app->get(ApplicationService::class);
+        assert($applicationService instanceof ApplicationService);
+        $applicationService->processFormSubmit($formSubmit);
+
+        // Load submitted application
+        $application = Application::query()->find($formSubmit->applicationMetadata->applicationId);
+
+        // The application stage should be submitted
+        $this->assertInstanceOf(Application::class, $application);
+        $this->assertEquals(ApplicationStatus::Draft, $application->status);
+        $this->assertEquals(1, $application->currentApplicationStage->answers()->count());
+
+        $formSubmit = new FormSubmit(
+            identity: $identity,
+            applicationMetadata: $applicationMetadata,
+            encryptedData: json_encode([
+                $textField->code => 'this-string-is-too-long',
+            ], JSON_THROW_ON_ERROR)
+        );
+
+        $applicationService->processFormSubmit($formSubmit);
+
+        // Load submitted application
+        $application = Application::query()->find($formSubmit->applicationMetadata->applicationId);
+
+        // The application stage version should be invalid, because the file is missing
+        $this->assertInstanceOf(Application::class, $application);
+        $this->assertEquals(ApplicationStatus::Draft, $application->status);
+        $this->assertEquals(0, $application->currentApplicationStage->answers()->count());
     }
 }

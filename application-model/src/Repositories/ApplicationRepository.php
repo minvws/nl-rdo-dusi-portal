@@ -148,6 +148,11 @@ class ApplicationRepository
         $answer->save();
     }
 
+    public function deleteAnswer(Answer $answer): void
+    {
+        $answer->delete();
+    }
+
     public function getAnswersForApplicationStagesUpToIncluding(
         ApplicationStage $stage
     ): AnswersByApplicationStage {

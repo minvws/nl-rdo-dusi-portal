@@ -23,7 +23,6 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormSubmitInvalidBodyReceivedException;
-use MinVWS\DUSi\Application\Backend\Services\Validation\Validator;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
@@ -250,9 +249,11 @@ readonly class ApplicationService
             $identity = $this->identityService->findOrCreateIdentity($formSubmit->identity);
             $json = $this->encryptionService->decryptBase64EncodedData($formSubmit->encryptedData);
 
+            $metadata = $formSubmit->applicationMetadata;
+
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
                 $identity,
-                $formSubmit->applicationMetadata
+                $metadata
             );
 
             try {
@@ -265,14 +266,12 @@ readonly class ApplicationService
             }
 
             $validator = $this->validationService->getValidator($applicationStage, $values);
-            $applicationStage->application->status = ApplicationStatus::Submitted;
-
-            if ($validator->fails()) {
-                $applicationStage->application->status = ApplicationStatus::Invalid;
-
+            $validatorFails = $validator->fails();
+            if ($validatorFails) {
                 // Get the values that failed validation and process them
+                /** @var array<string, FieldValue> $errorValues */
                 $errorValues = Arr::only($values, $validator->errors()->keys());
-                $this->processInvalidFieldValues($applicationStage, $errorValues, $validator);
+                $this->processInvalidFieldValues($applicationStage, $errorValues);
 
                 // Removed errored fields from values
                 $values = array_diff_key($values, $errorValues);
@@ -280,18 +279,32 @@ readonly class ApplicationService
 
             $this->processFieldValues($applicationStage, $values);
 
+            $applicationStage->application->status = $this->getApplicationStatus($metadata->isDraft, $validatorFails);
             if ($applicationStage->application->status === ApplicationStatus::Submitted) {
                 $applicationStage->application->final_review_deadline =
                     Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);
+                $applicationStage->is_current = false;
             }
-            $this->appRepo->saveApplication($applicationStage->application);
 
-            $applicationStage->is_current = false;
+            $this->appRepo->saveApplication($applicationStage->application);
             $this->appRepo->saveApplicationStage($applicationStage);
 
             // TODO: make next application stage
             // $this->appRepo->makeApplicationStage($applicationStage->application, $nextSubsidyStage);
         });
+    }
+
+    private function getApplicationStatus(bool $isDraft, bool $validatorFails): ApplicationStatus
+    {
+        if ($isDraft) {
+            return ApplicationStatus::Draft;
+        }
+
+        if ($validatorFails) {
+            return ApplicationStatus::Invalid;
+        }
+
+        return ApplicationStatus::Submitted;
     }
 
     /**
@@ -348,12 +361,27 @@ readonly class ApplicationService
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
     }
 
+    /**
+     * @param ApplicationStage $applicationStage
+     * @param array<string, FieldValue> $values
+     * @return void
+     */
     protected function processInvalidFieldValues(
         ApplicationStage $applicationStage,
         array $values,
-        Validator $validator,
     ): void {
-        // TODO: Process invalid fields ...
-        // TODO: Reset values for invalid fields ...
+        foreach ($values as $fieldValue) {
+            $answer = $this->appRepo->getAnswer($applicationStage, $fieldValue->field);
+            if ($answer === null) {
+                continue;
+            }
+
+            if ($fieldValue->field->type === FieldType::Upload) {
+                // TODO: delete file if exists and validating went wrong?
+            }
+
+            // Delete the old answer if it exists
+            $this->appRepo->deleteAnswer($answer);
+        }
     }
 }
