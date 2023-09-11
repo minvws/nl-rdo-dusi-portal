@@ -182,6 +182,24 @@ class ApplicationRepository
     }
 
     /**
+     * @param Application $application
+     * @param int $stage
+     * @return array<Answer>
+     */
+    public function getApplicationStageAnswersByStageNumber(Application $application, int $stage): array
+    {
+        $stage =
+            $application
+                ->applicationStages()
+                ->whereRelation('subsidyStage', 'stage', '=', $stage)
+                ->orderBy('sequence_number', 'desc')
+                ->with(['answers', 'answers.field'])
+                ->first();
+
+        return $stage?->answers?->all() ?? [];
+    }
+
+    /**
      * @return array<Application>
      */
     public function getMyApplications(Identity $identity): array

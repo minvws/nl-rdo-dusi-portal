@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message;
 
 class ApplicationMessageRepository
 {
@@ -18,9 +19,14 @@ class ApplicationMessageRepository
         return $message;
     }
 
+    /**
+     * @return array<ApplicationMessage>
+     */
     public function getMyMessages(Identity $identity): array
     {
-        return $identity->applicationMessages->toArray();
+        /** @var array<ApplicationMessage> $messages */
+        $messages = $identity->applicationMessages->toArray();
+        return $messages;
     }
 
     public function createMessage(ApplicationStage $stage, string $htmlPath, string $pdfPath): void
