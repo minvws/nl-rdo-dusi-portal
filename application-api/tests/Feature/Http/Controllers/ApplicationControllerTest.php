@@ -17,6 +17,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
 use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Jobs\ProcessFormSubmit;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -203,7 +204,7 @@ class ApplicationControllerTest extends TestCase
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $data['data'] = 'This should be an encrypted string';
         $response = $this->actingAs($user)
-            ->putJson(route('api.application-submit', ['application' => $applicationId]), $data);
+            ->putJson(route('api.application-submit', ['application' => $applicationId, 'status' => ApplicationStatus::Submitted]), $data);
         $this->assertEquals(202, $response->status());
 
         Queue::assertPushed(ProcessFormSubmit::class);

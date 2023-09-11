@@ -9,6 +9,8 @@ use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Http\Requests\ApplicationSubmitRequest;
 use MinVWS\DUSi\Application\API\Http\Requests\ApplicationUploadFileRequest;
 use MinVWS\DUSi\Application\API\Models\Application;
+use MinVWS\DUSi\Application\API\Models\DraftApplication;
+use MinVWS\DUSi\Application\API\Models\SubmittedApplication;
 use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
 use MinVWS\DUSi\Application\API\Services\ApplicationService;
 use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
@@ -21,6 +23,7 @@ use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
 use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponseBuilder;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use Throwable;
 
 /**
@@ -57,12 +60,18 @@ class ApplicationController extends Controller
     }
 
     public function submit(
-        Application $application,
+        DraftApplication $application,
         ApplicationSubmitRequest $request,
         ApplicationService $applicationService
     ): Response|ResponseFactory {
-        $encryptedData = $request->safe()['data'];
+        $encryptedData = $request->validated('data');
+        $status = $request->validated('status');
         assert(is_string($encryptedData));
+
+        if ($status === ApplicationStatus::Submitted) {
+            $application = SubmittedApplication::fromDraft($application);
+        }
+
         $applicationService->submit($application, $encryptedData);
         return response(status: 202);
     }

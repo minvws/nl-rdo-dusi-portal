@@ -16,6 +16,6 @@ class DraftApplication implements Application
 
     public function getMetadata(): ApplicationMetadata
     {
-        return new ApplicationMetadata($this->id, $this->formId);
+        return new ApplicationMetadata($this->id, $this->formId, true);
     }
 }
