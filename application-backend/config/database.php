@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\DBAL\TimestampType;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
 
 return [
@@ -66,4 +67,9 @@ return [
     */
     'migrations' => 'migrations',
 
+    'dbal' => [
+        'types' => [
+            'timestamp' => TimestampType::class,
+        ],
+    ],
 ];

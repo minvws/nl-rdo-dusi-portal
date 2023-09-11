@@ -92,8 +92,6 @@ if $INSTALL ; then
     fi
 fi
 
-vendor/bin/sail up -d --remove-orphans
-
 # Copy app key from user-admin-api to own env file
 USER_APP_KEY=$(grep -m 1 "APP_KEY" ../user-admin-api/.env)
 APP_KEY=$(grep -m 1 "APP_KEY" .env)
@@ -105,3 +103,7 @@ APP_KEY_ESCAPED=$(echo "$APP_KEY" | sed 's/[\*\.&\/]/\\&/g')
 # Use the escaped variables in the sed command
 sed -i -e "s%$APP_KEY_ESCAPED%$USER_APP_KEY_ESCAPED%" .env
 
+npm install
+npx vite install
+
+vendor/bin/sail up -d --remove-orphans

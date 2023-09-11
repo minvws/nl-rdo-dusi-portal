@@ -22,7 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
  * @property int $sequence_number
  * @property boolean $is_current
  * @property string|null $assessor_user_id
- * @property ApplicationStageDecision|null $accessor_decision
+ * @property ApplicationStageDecision|null $assessor_decision
  * @property DateTime $created_at
  * @property DateTime $updated_at
  * @property-read Application $application
