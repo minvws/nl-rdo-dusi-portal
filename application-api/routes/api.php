@@ -37,7 +37,7 @@ Route::middleware('auth')->group(
 
         // TODO: move more routes to this once the frontend is ready
         Route::middleware(RequireClientPublicKey::class)->group(function () {
-            Route::get('applications/{id}', [ApplicationController::class, 'view']);
+            Route::get('applications/{reference}', [ApplicationController::class, 'show']);
 
             Route::get('messages/{id}', [MessageController::class, 'view'])
                 ->name('message-view');

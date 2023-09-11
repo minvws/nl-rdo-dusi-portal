@@ -85,7 +85,7 @@ class ApplicationController extends Controller
      * @throws Exception
      */
     public function show(
-        string $id,
+        string $reference,
         ClientPublicKeyHelper $publicKeyHelper,
         StateService $stateService,
         ApplicationService $applicationService
@@ -93,7 +93,7 @@ class ApplicationController extends Controller
         $params = new ApplicationParams(
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
-            $id,
+            $reference,
             true
         );
         $response = $applicationService->getApplication($params);
