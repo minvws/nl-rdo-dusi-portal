@@ -204,7 +204,10 @@ class ApplicationControllerTest extends TestCase
         $applicationId = $this->app->get(ApplicationService::class)->createDraft($cachedForm);
         $data['data'] = 'This should be an encrypted string';
         $response = $this->actingAs($user)
-            ->putJson(route('api.application-submit', ['application' => $applicationId, 'status' => ApplicationStatus::Submitted]), $data);
+            ->putJson(route('api.application-submit', [
+                'application' => $applicationId,
+                'status' => ApplicationStatus::Submitted
+            ]), $data);
         $this->assertEquals(202, $response->status());
 
         Queue::assertPushed(ProcessFormSubmit::class);
