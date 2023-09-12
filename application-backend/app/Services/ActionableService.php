@@ -16,6 +16,6 @@ class ActionableService
     {
         // TODO: messageCount is the number of messages marked as new
         // TODO: applicationCount is the number of applications that have a status REQUEST_FOR_CHANGES
-        return new ActionableCounts(2, 1);
+        return new ActionableCounts(0, 0);
     }
 }

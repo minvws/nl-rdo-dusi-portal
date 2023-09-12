@@ -9,6 +9,7 @@ use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
@@ -26,7 +27,7 @@ $bindings = [
         'callback' => [ApplicationRetrievalService::class, 'listApplications']
     ],
     RPCMethods::GET_APPLICATION => [
-        'paramsClass' => ApplicationListParams::class,
+        'paramsClass' => ApplicationParams::class,
         'callback' => [ApplicationRetrievalService::class, 'getApplication']
     ],
     RPCMethods::GET_APPLICATION_FILE => [
