@@ -1855,11 +1855,11 @@
         },
         {
             "name": "minvws/dusi-application-model",
-            "version": "dev-feature/fix-route",
+            "version": "dev-feature/package-updates",
             "dist": {
                 "type": "path",
                 "url": "../application-model",
-                "reference": "11d1cc7bf1755dce60c7d6ca5103ce4015d2addf"
+                "reference": "307b259045c21f193373fefba9ef4b0e1eacfd7e"
             },
             "require": {
                 "laravel/framework": "^10.17",
@@ -1930,11 +1930,11 @@
         },
         {
             "name": "minvws/dusi-serialisation-model",
-            "version": "dev-feature/fix-route",
+            "version": "dev-feature/package-updates",
             "dist": {
                 "type": "path",
                 "url": "../serialisation-model",
-                "reference": "d4784c75ddd7fb46dc7b6e394a7d6152fdc4fb0a"
+                "reference": "f78a8fe3a1379c63816023c1a3290c1e5244b1f2"
             },
             "require": {
                 "laravel/framework": "^10.16",
@@ -1993,11 +1993,11 @@
         },
         {
             "name": "minvws/dusi-subsidy-model",
-            "version": "dev-feature/fix-route",
+            "version": "dev-feature/package-updates",
             "dist": {
                 "type": "path",
                 "url": "../subsidy-model",
-                "reference": "b1e98fa119251911ef218a4e4a2343eaa1cc8790"
+                "reference": "82339dc54f4fe4b41a3d18eef6792db5f76b8005"
             },
             "require": {
                 "laravel/framework": "^10.16",
@@ -2063,11 +2063,11 @@
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
-            "version": "dev-feature/fix-route",
+            "version": "dev-feature/package-updates",
             "dist": {
                 "type": "path",
                 "url": "../bridge",
-                "reference": "76398df1ea756df2b4f7121add5a32e4d7981404"
+                "reference": "b1e1246f61691565e730d5f62dc29eabb6d6223b"
             },
             "require": {
                 "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
@@ -11425,16 +11425,16 @@
         },
         {
             "name": "spatie/ray",
-            "version": "1.37.7",
+            "version": "1.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/ray.git",
-                "reference": "31e07c3eadc736e180810efff72a0ff882dcddb6"
+                "reference": "b77656d7475875375fcbccf28441eedf1596acd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/ray/zipball/31e07c3eadc736e180810efff72a0ff882dcddb6",
-                "reference": "31e07c3eadc736e180810efff72a0ff882dcddb6",
+                "url": "https://api.github.com/repos/spatie/ray/zipball/b77656d7475875375fcbccf28441eedf1596acd5",
+                "reference": "b77656d7475875375fcbccf28441eedf1596acd5",
                 "shasum": ""
             },
             "require": {
@@ -11485,7 +11485,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/ray/issues",
-                "source": "https://github.com/spatie/ray/tree/1.37.7"
+                "source": "https://github.com/spatie/ray/tree/1.38.0"
             },
             "funding": [
                 {
@@ -11497,7 +11497,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-09-08T12:08:25+00:00"
+            "time": "2023-09-12T10:41:10+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
