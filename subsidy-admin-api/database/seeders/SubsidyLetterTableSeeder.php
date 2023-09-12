@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 class SubsidyLetterTableSeeder extends Seeder
 {
     public const BTV_LETTER_UUID = '0cf71600-0793-406e-ad19-1bb7b8c665af';
+    public const PCZM_LETTER_UUID = 'C51302F6-E131-45FF-8D4B-F4FF4A39B52F';
 
     public function run(): void
     {
@@ -19,6 +20,15 @@ class SubsidyLetterTableSeeder extends Seeder
             'created_at' => '2019-02-01',
             'content_pdf' => file_get_contents(__DIR__ . '/resources/btv/btv-letter-pdf.latte'),
             'content_view' => file_get_contents(__DIR__ . '/resources/btv/btv-letter-view.latte'),
+        ]);
+        DB::table('subsidy_letters')->insert([
+            'id' => self::PCZM_LETTER_UUID,
+            'subsidy_version_id' => SubsidyVersionsTableSeeder::PCZM_VERSION_UUID,
+            'version' => 1,
+            'status' => "published", //TODO should be an enum
+            'created_at' => '2019-02-01',
+            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-pdf.latte'),
+            'content_view' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-view.latte'),
         ]);
     }
 }

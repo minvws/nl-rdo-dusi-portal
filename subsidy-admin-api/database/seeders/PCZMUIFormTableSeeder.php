@@ -6,9 +6,9 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use stdClass;
 
-class BTVUIFormTableSeeder extends Seeder
+class PCZMUIFormTableSeeder extends Seeder
 {
-    public const BTV_STAGE1_V1_UUID = '72475863-7987-4375-94d7-21e04ff6552b';
+    public const PCZM_STAGE1_V1_UUID = 'E6D5CD35-8C67-40C4-ABC4-B1D6BF8AFB97';
 
     private function resolveFileReferencesInArray(array $array, string $basePath): void
     {
@@ -36,11 +36,11 @@ class BTVUIFormTableSeeder extends Seeder
 
     private function loadStep(int $step): stdClass
     {
-        $json = file_get_contents(__DIR__ . '/resources/btv/step' . $step . '.json');
+        $json = file_get_contents(__DIR__ . '/resources/pczm/step' . $step . '.json');
         assert(is_string($json));
         $step = json_decode($json);
         assert($step instanceof stdClass);
-        $this->resolveFileReferences($step, __DIR__ . '/resources/btv');
+        $this->resolveFileReferences($step, __DIR__ . '/resources/pczm');
         return $step;
     }
 
@@ -79,10 +79,19 @@ class BTVUIFormTableSeeder extends Seeder
                     "bankAccountNumber"
                 ]),
                 $this->buildPage(3, [
-                    "bankStatement",
-                    "extractPersonalRecordsDatabase",
-                    "proofOfMedicalTreatment",
-                    "proofOfTypeOfMedicalTreatment"
+                    "certifiedEmploymentDocument",
+                    "isWiaDecisionPostponed",
+//                    "wiaDecisionPostponedLetter",
+//                    "wiaDecisionDocument",
+                    "employmentContract",
+                    "employmentFunction",
+//                    otherEmploymentFunction
+                    "employerKind",
+//                    "otherEmployerDeclarationFile",
+                    "hasBeenWorkingAtJudicialInstitution",
+                    "socialMedicalAssessment",
+                    "hasPostCovidComplaints",
+//                    "doctorsCertificate",
                 ]),
                 $this->buildPage(4, [
                     'truthfullyCompleted'
@@ -174,28 +183,70 @@ class BTVUIFormTableSeeder extends Seeder
                     ]
                 ],
                 [
-                    'title' => 'files',
+                    'title' => 'UWV',
                     'elements' => [
                         [
                             "type"=>"file",
-                            "field"=>"bankStatement"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"extractPersonalRecordsDatabase"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"proofOfMedicalTreatment"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"proofOfTypeOfMedicalTreatment"
+                            "field"=>"certifiedEmploymentDocument"
                         ]
                     ]
-                ]
+                ],
+                [
+                    'title' => 'WIA',
+                    'elements' => [
+                        [
+                            "type"=>"select",
+                            "field"=>"isWiaDecisionPostponed"
+                        ],[
+                            "type"=>"file",
+                            "field"=>"wiaDecisionPostponedLetter"
+                        ],[
+                            "type"=>"file",
+                            "field"=>"wiaDecisionDocument"
+                        ]
+                    ]
+                ],
+                [
+                    'title' => 'Werkgever',
+                    'elements' => [
+                        [
+                            "type"=>"file",
+                            "field"=>"employmentContract"
+                        ],[
+                            "type"=>"multiselect",
+                            "field"=>"employmentFunction"
+                        ],[
+                            "type"=>"select",
+                            "field"=>"employerKind"
+                        ],[
+                            "type"=>"file",
+                            "field"=>"otherEmployerDeclarationFile"
+                        ],[
+                            "type"=>"select",
+                            "field"=>"hasBeenWorkingAtJudicialInstitution"
+                        ]
+                    ]
+                ],
+                [
+                    'title' => 'Medisch',
+                    'elements' => [
+                        [
+                            "type"=>"file",
+                            "field"=>"socialMedicalAssessment"
+                        ],[
+                            "type"=>"select",
+                            "field"=>"hasPostCovidComplaints"
+                        ],[
+                            "type"=>"file",
+                            "field"=>"doctorsCertificate"
+                        ]
+                    ]
+                ],
             ]];
 
         DB::table('subsidy_stage_uis')->insert([
-            'id' => self::BTV_STAGE1_V1_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            'id' => self::PCZM_STAGE1_V1_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($ui),
