@@ -61,3 +61,10 @@ on how to resolve things.
   is missing a variable used in the docker(-compose) file.
 
 [laravel-docs]: https://laravel.com/docs/9.x
+
+## Testing
+
+### SurePay
+
+> Please note that the sandbox environment is only available from 07:00-20:00 on working days. Outside of these hours
+> you’d receive a timeout error. Also, be aware that the IP needs to be whitelisted before you can initiate an API call.

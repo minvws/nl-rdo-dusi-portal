@@ -13,13 +13,14 @@ use MinVWS\DUSi\Application\Backend\Handlers\FormSubmitHandler;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use MinVWS\DUSi\Application\Backend\Services\FileKeyReader;
+use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
+use MinVWS\DUSi\Application\Backend\Services\SurePay\SurePayService;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmInfoCommand;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmLocalClearCommand;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmLocalInitCommand;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use RuntimeException;
 
 /**
@@ -58,6 +59,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->app->singleton(SurePayService::class, function () {
+            $config = config('surepay_api');
+
+            if (empty($config->get('endpoint'))) {
+                throw new RuntimeException('SurePay API endpoint URL must be set in the environment config.
+                Please set SUREPAY_ENDPOINT.');
+            }
+
+            return new SurePayService(
+                client: new Client([
+                    'base_uri' => $config->get('endpoint'),
+                    'verify' => false,
+                ]),
+            );
+        });
+
         $this->app->singleton(HsmService::class, function (Application $app) {
             $config = $app->make('config');
 
