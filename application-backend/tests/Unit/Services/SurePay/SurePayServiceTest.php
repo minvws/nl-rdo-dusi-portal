@@ -10,6 +10,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Application\Backend\Services\SurePay\Exceptions\SurePayServiceException;
 use MinVWS\DUSi\Application\Backend\Services\SurePay\SurePayService;
@@ -109,7 +110,7 @@ class SurePayServiceTest extends TestCase
         // Arrange & Assert
         $this->expectException(SurePayServiceException::class);
 
-        $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(new AccesstokenResponseFake()));
+        $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(AccesstokenResponseFake::build()));
         $checkOrganisationsAccountResponse = new Response(status: 500);
 
         $sut = $this->initSUT([
@@ -127,7 +128,7 @@ class SurePayServiceTest extends TestCase
      */
     public function testCheckOrganisationsAccountCallsClientRequestAndReturnsResponse()
     {
-        $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(new AccesstokenResponseFake()));
+        $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(AccesstokenResponseFake::build()));
         $checkOrganisationsAccountResponse = new Response(status: 200, body: json_encode(new CheckOrganisationsAccountResponseFake()));
 
         $sut = $this->initSUT([
@@ -148,7 +149,7 @@ class SurePayServiceTest extends TestCase
     public function testAccessTokenReuse()
     {
         $sut = $this->initSUT([
-            new Response(status: 200, body: json_encode(new AccesstokenResponseFake())),
+            new Response(status: 200, body: json_encode(AccesstokenResponseFake::build())),
             new Response(status: 200, body: json_encode(new CheckOrganisationsAccountResponseFake())),
             new Response(status: 200, body: json_encode(new CheckOrganisationsAccountResponseFake())),
         ]);

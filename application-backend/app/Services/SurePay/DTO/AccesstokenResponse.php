@@ -49,7 +49,6 @@ class AccesstokenResponse
      */
     public static function fromJson($jsonResponse): AccesstokenResponse
     {
-        Log::debug($jsonResponse);
         $data = json_decode($jsonResponse, true);
 
         return new self($data);

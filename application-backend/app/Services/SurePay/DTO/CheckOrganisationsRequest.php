@@ -2,11 +2,9 @@
 
 namespace MinVWS\DUSi\Application\Backend\Services\SurePay\DTO;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Application\Backend\Services\SurePay\Exceptions\SurePayServiceException;
-use mysql_xdevapi\Exception;
 
 class CheckOrganisationsRequest
 {
@@ -18,8 +16,6 @@ class CheckOrganisationsRequest
      */
     public function __construct($request)
     {
-        Log::debug($request);
-
         $this->throwIfInvalid($request);
 
         $this->accountId = $request['accountId'];

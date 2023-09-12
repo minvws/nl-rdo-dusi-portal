@@ -2,8 +2,6 @@
 
 namespace MinVWS\DUSi\Application\Backend\Services\SurePay\DTO;
 
-use Illuminate\Support\Facades\Log;
-
 /**
  * Object holding the following bank account details.
  *
@@ -65,8 +63,6 @@ class CheckOrganisationsAccountResponse
 
     public function __construct($response)
     {
-        Log::debug($response);
-
         $this->accountNumberValidation = $response['accountNumberValidation'];
         $this->paymentPreValidation = $response['paymentPreValidation'];
         $this->status = $response['status'];
@@ -78,7 +74,6 @@ class CheckOrganisationsAccountResponse
 
     public static function fromJson($jsonResponse): CheckOrganisationsAccountResponse
     {
-        Log::debug($jsonResponse);
         $decoded = json_decode($jsonResponse, true);
 
         return new self($decoded);

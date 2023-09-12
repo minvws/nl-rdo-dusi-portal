@@ -16,7 +16,7 @@ class TestCase extends BaseTestCase
     protected function SetUp(): void
     {
         parent::setUp();
-        $this->loadCustomMigrations();
+//        $this->loadCustomMigrations();
     }
 
     protected function loadCustomMigrations(): void

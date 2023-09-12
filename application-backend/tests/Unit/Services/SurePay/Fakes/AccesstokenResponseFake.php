@@ -9,13 +9,13 @@ use Faker\Factory;
 use MinVWS\DUSi\Application\Backend\Services\SurePay\DTO\AccesstokenResponse;
 
 
-class AccesstokenResponseFake extends AccesstokenResponse
+class AccesstokenResponseFake
 {
-    public function __construct()
+    public static function build(): array
     {
         $faker = Factory::create();
 
-        $response = [
+        return [
             'refresh_token_expires_in' => $faker->numberBetween(0, 10),
             'api_product_list' => implode(',', $faker->words(4)),
             'api_product_list_json' => $faker->words(4),
@@ -31,7 +31,5 @@ class AccesstokenResponseFake extends AccesstokenResponse
             'refresh_count' => 0,
             'status' => 'approved',
         ];
-
-        parent::__construct($response);
     }
 }
