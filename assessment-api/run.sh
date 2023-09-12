@@ -104,6 +104,6 @@ APP_KEY_ESCAPED=$(echo "$APP_KEY" | sed 's/[\*\.&\/]/\\&/g')
 sed -i -e "s%$APP_KEY_ESCAPED%$USER_APP_KEY_ESCAPED%" .env
 
 npm install
-npx vite install
+npm run build
 
 vendor/bin/sail up -d --remove-orphans
