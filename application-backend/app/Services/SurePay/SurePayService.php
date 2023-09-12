@@ -166,7 +166,7 @@ class SurePayService
             $this->accessToken = $this->fetchAccessToken();
         }
 
-        return $this->accessToken->access_token;
+        return $this->accessToken->accessToken;
     }
 
     /**
@@ -178,8 +178,8 @@ class SurePayService
         if (!isset($this->accessToken)) return true;
 
         // -100 seconds to be on the safe side.
-        $expiresInSeconds = ($this->accessToken->expires_in - 100);
-        $tokenExpiresAt = Carbon::createFromTimestamp($this->accessToken->issued_at)->addSeconds($expiresInSeconds);
+        $expiresInSeconds = ($this->accessToken->expiresIn - 100);
+        $tokenExpiresAt = Carbon::createFromTimestamp($this->accessToken->issuedAt)->addSeconds($expiresInSeconds);
 
         return $tokenExpiresAt->isPast();
     }

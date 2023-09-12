@@ -8,18 +8,18 @@ use Illuminate\Validation\ValidationException;
 
 class AccesstokenResponse
 {
-    public int $refresh_token_expires_in;
-    public string $api_product_list;
-    public array $api_product_list_json;
-    public string $organization_name;
-    public string $token_type;
-    public int $issued_at;
-    public string $client_id;
-    public string $access_token;
-    public string $application_name;
+    public int $refreshTokenExpiresIn;
+    public string $apiProductList;
+    public array $apiProductListJson;
+    public string $organizationName;
+    public string $tokenType;
+    public int $issuedAt;
+    public string $clientId;
+    public string $accessToken;
+    public string $applicationName;
     public string $scope;
-    public int $expires_in;
-    public int $refresh_count;
+    public int $expiresIn;
+    public int $refreshCount;
     public string $status;
 
     /**
@@ -27,21 +27,20 @@ class AccesstokenResponse
      */
     public function __construct($response)
     {
-        Log::debug($response);
         $this->throwIfInvalid($response);
 
-        $this->refresh_token_expires_in = $response['refresh_token_expires_in'];
-        $this->api_product_list = $response['api_product_list'];
-        $this->api_product_list_json = $response['api_product_list_json'];
-        $this->organization_name = $response['organization_name'];
-        $this->token_type = $response['token_type'];
-        $this->issued_at = $response['issued_at'];
-        $this->client_id = $response['client_id'];
-        $this->access_token = $response['access_token'];
-        $this->application_name = $response['application_name'];
+        $this->refreshTokenExpiresIn = $response['refresh_token_expires_in'];
+        $this->apiProductList = $response['api_product_list'];
+        $this->apiProductListJson = $response['api_product_list_json'];
+        $this->organizationName = $response['organization_name'];
+        $this->tokenType = $response['token_type'];
+        $this->issuedAt = $response['issued_at'];
+        $this->clientId = $response['client_id'];
+        $this->accessToken = $response['access_token'];
+        $this->applicationName = $response['application_name'];
         $this->scope = $response['scope'];
-        $this->expires_in = $response['expires_in'];
-        $this->refresh_count = $response['refresh_count'];
+        $this->expiresIn = $response['expires_in'];
+        $this->refreshCount = $response['refresh_count'];
         $this->status = $response['status'];
     }
 
