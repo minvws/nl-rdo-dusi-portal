@@ -18,8 +18,8 @@ return new class extends Migration
                 'type',
                 array_map(fn ($d) => $d->value, IdentityType::cases())
             );
-            $table->string('encrypted_identifier');
-            $table->string('hashed_identifier')->unique();
+            $table->text('encrypted_identifier');
+            $table->string('hashed_identifier', 64)->unique();
             $table->timestamps();
         });
 

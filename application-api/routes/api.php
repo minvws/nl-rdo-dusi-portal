@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use MinVWS\DUSi\Application\API\Http\Controllers\ActionableController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationController;
+use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationFileController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MessageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MockedResourceController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
@@ -37,7 +38,16 @@ Route::middleware('auth')->group(
 
         // TODO: move more routes to this once the frontend is ready
         Route::middleware(RequireClientPublicKey::class)->group(function () {
-            Route::get('applications/{id}', [ApplicationController::class, 'view']);
+            Route::get('applications/{reference}', [ApplicationController::class, 'show']);
+
+            Route::get(
+                'applications/{applicationReference}/fields/{fieldCode}/files/{id}',
+                [ApplicationFileController::class, 'show']
+            );
+            Route::delete(
+                'applications/{applicationReference}/fields/{fieldCode}/files/{id}',
+                [ApplicationFileController::class, 'delete']
+            );
 
             Route::get('messages/{id}', [MessageController::class, 'view'])
                 ->name('message-view');

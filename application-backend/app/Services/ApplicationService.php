@@ -41,7 +41,6 @@ use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings("LongVariable")
  */
 readonly class ApplicationService
 {
@@ -54,6 +53,8 @@ readonly class ApplicationService
         private ApplicationRepository $appRepo,
         private ApplicationFileRepository $fileRepository,
         private ApplicationReferenceService $applicationReferenceService,
+        private IdentityService $identityService,
+        private FrontendDecryption $frontendDecryptionService,
         private ValidationService $validationService,
         private IdentityService $identityService,
     ) {
@@ -88,7 +89,7 @@ readonly class ApplicationService
             );
         }
 
-        if (!in_array($application->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges], true)) {
+        if (!$application->status->isEditableForApplicant()) {
             throw new ApplicationMetadataMismatchException(
                 sprintf('Current status does not allow editing for "%s', $application->id)
             );
@@ -220,9 +221,6 @@ readonly class ApplicationService
         $this->appRepo->saveAnswer($answer);
     }
 
-    /**
-     * @throws FileNotFoundException
-     */
     private function processFieldValue(ApplicationStage $applicationStage, FieldValue $value): void
     {
         // answer for file already exists at this point
@@ -247,7 +245,7 @@ readonly class ApplicationService
     {
         DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
             $identity = $this->identityService->findOrCreateIdentity($formSubmit->identity);
-            $json = $this->encryptionService->decryptBase64EncodedData($formSubmit->encryptedData);
+            $json = $this->frontendDecryptionService->decrypt($formSubmit->encryptedData);
 
             $metadata = $formSubmit->applicationMetadata;
 

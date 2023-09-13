@@ -36,4 +36,11 @@ class ApplicationFactory extends Factory
             'status' => ApplicationStatus::Draft
         ];
     }
+
+    public function forIdentity(Identity $identity): self
+    {
+        return $this->state(fn(array $attributes) => [
+            'identity_id' => $identity,
+        ]);
+    }
 }

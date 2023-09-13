@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
@@ -18,14 +19,19 @@ class ApplicationMessageRepository
         return $message;
     }
 
+    /**
+     * @return array<ApplicationMessage>
+     */
     public function getMyMessages(Identity $identity): array
     {
-        return $identity->applicationMessages->toArray();
+        /** @var array<ApplicationMessage> $result */
+        $result = $identity->applicationMessages->all();
+        return $result;
     }
 
     public function createMessage(ApplicationStage $stage, string $htmlPath, string $pdfPath): void
     {
-        $stage->application->applicationMessages->create([
+        $stage->application->applicationMessages()->create([
             'html_path' => $htmlPath,
             'is_new' => true,
             'pdf_path' => $pdfPath,

@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^2.0",
+        "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
         "laravel/framework": "^10.17",
@@ -14,8 +15,8 @@
         "latte/latte": "^3.0",
         "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
         "minvws/dusi-application-model": "@dev",
-        "minvws/dusi-subsidy-model": "@dev",
         "minvws/dusi-serialisation-model": "@dev",
+        "minvws/dusi-subsidy-model": "@dev",
         "predis/predis": "^2.2"
     },
     "require-dev": {

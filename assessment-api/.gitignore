@@ -11,6 +11,7 @@
 
 # Files
 .env
+.env-e
 .env.backup
 .phpunit.result.cache
 Homestead.json

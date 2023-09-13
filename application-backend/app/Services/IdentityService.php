@@ -22,7 +22,7 @@ class IdentityService
     public function hashIdentifier(IdentityType $type, string $identifier): string
     {
         $input = implode('|', [$type->value, $identifier]);
-        return base64_encode(hash_hmac($this->hashAlgorithm, $input, $this->hashSecret, true));
+        return hash_hmac($this->hashAlgorithm, $input, $this->hashSecret);
     }
 
     public function findOrCreateIdentity(EncryptedIdentity $encryptedIdentity): Identity

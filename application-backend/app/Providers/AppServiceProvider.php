@@ -143,5 +143,19 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->when(IdentityService::class)->needs('$hashSecret')->giveConfig('identity.hash_secret');
         $this->app->when(IdentityService::class)->needs('$hashAlgorithm')->giveConfig('identity.hash_algorithm');
+
+        $this->app->when(ApplicationFileRepository::class)
+            ->needs(Filesystem::class)
+            ->give(function (Application $app) {
+                return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
+            });
+
+        $this->app->bind(FrontendDecryption::class, FrontendDecryptionService::class);
+        $this->app->when(FrontendDecryptionService::class)
+            ->needs('$publicKey')
+            ->giveConfig('frontend.form_encryption.public_key');
+        $this->app->when(FrontendDecryptionService::class)
+            ->needs('$privateKey')
+            ->giveConfig('frontend.form_encryption.private_key');
     }
 }
