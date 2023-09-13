@@ -5,6 +5,7 @@ declare(strict_types=1);
 use MinVWS\DUSi\Application\API\Http\Controllers\ActionableController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationFileController;
+use MinVWS\DUSi\Application\API\Http\Controllers\DeprecatedApplicationController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MessageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MockedResourceController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
@@ -25,12 +26,14 @@ Route::get('forms/{form}', [SubsidyStageController::class, 'show'])->name('form-
 
 Route::middleware('auth')->group(
     function () {
-        Route::post('forms/{form}/applications', [ApplicationController::class, 'createDraft'])
+        // deprecated
+        Route::post('forms/{form}/applications', [DeprecatedApplicationController::class, 'createDraft'])
             ->name('application-create-draft');
-        Route::put('applications/{application}', [ApplicationController::class, 'submit'])
+        Route::put('applications/{application}', [DeprecatedApplicationController::class, 'submit'])
             ->name('application-submit');
-        Route::post('applications/{application}/files', [ApplicationController::class, 'uploadFile'])
+        Route::post('applications/{application}/files', [DeprecatedApplicationController::class, 'uploadFile'])
             ->name('application-upload-file');
+        // end of deprecated
 
         Route::get('applications', [ApplicationController::class, 'index']);
 
@@ -38,6 +41,12 @@ Route::middleware('auth')->group(
 
         // TODO: move more routes to this once the frontend is ready
         Route::middleware(RequireClientPublicKey::class)->group(function () {
+            Route::post('applications', [ApplicationController::class, 'create']);
+            Route::put('applications2/{reference}', [ApplicationController::class, 'save'])
+                ->name('application-save');
+            Route::post('applications2/{reference}/files', [ApplicationController::class, 'uploadFile'])
+                ->name('application2-upload-file');
+
             Route::get('applications/{reference}', [ApplicationController::class, 'show']);
 
             Route::get(

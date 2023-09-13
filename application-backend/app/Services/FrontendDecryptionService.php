@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Exception;
+use MinVWS\Codable\Coding\Codable;
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionMissingKeyPairException;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use SodiumException;
 
 class FrontendDecryptionService implements FrontendDecryption
@@ -46,9 +49,14 @@ class FrontendDecryptionService implements FrontendDecryption
      * @return string Decrypted data
      * @throws FrontendDecryptionFailedException
      */
-    public function decrypt(string $encryptedData): string
+    public function decrypt(string $encryptedData, bool $isRaw = false): string
     {
-        $data = base64_decode($encryptedData, true);
+        if ($isRaw) {
+            $data = $encryptedData;
+        } else {
+            $data = base64_decode($encryptedData, true);
+        }
+
         if ($data === false) {
             throw new FrontendDecryptionFailedException('Could not base64_decode data');
         }
@@ -66,5 +74,20 @@ class FrontendDecryptionService implements FrontendDecryption
         }
 
         return $decryptedData;
+    }
+
+
+    /**
+     * @param class-string<T> $class
+     * @return T
+     * @template T of Codable
+     */
+    public function decryptCodable(
+        BinaryData|string $data,
+        string $class
+    ): Codable {
+        $json = $this->decrypt($data instanceof BinaryData ? $data->data : $data);
+        $decoder = new JSONDecoder();
+        return $decoder->decode($json)->decodeObject($class);
     }
 }
