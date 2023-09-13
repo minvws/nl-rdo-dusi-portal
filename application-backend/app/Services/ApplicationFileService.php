@@ -8,20 +8,19 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 readonly class ApplicationFileService
 {
     use HandleException;
@@ -34,6 +33,32 @@ readonly class ApplicationFileService
         private IdentityService $identityService,
         private LoggerInterface $logger
     ) {
+    }
+
+    private function doSaveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
+    {
+        $identity = $this->loadIdentity($params->identity);
+        $this->loadApplication($identity, $params->applicationReference);
+        throw new EncryptedResponseException(
+            EncryptedResponseStatus::SERVICE_UNAVAILABLE,
+            'not_implemented',
+            'Not implemented yet!'
+        );
+    }
+
+    public function saveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
+    {
+        return DB::transaction(function () use ($params) {
+            try {
+                return $this->doSaveApplicationFile($params);
+            } catch (EncryptedResponseException $e) {
+                return $this->encryptionService->encryptCodableResponse(
+                    $e->getStatus(),
+                    $e->getError(),
+                    $params->publicKey
+                );
+            }
+        });
     }
 
     public function getApplicationFile(ApplicationFileParams $params): EncryptedResponse

@@ -16,6 +16,7 @@ use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -197,6 +198,16 @@ class ApplicationRepository
                 ->first();
 
         return $stage?->answers?->all() ?? [];
+    }
+
+    public function findMyApplicationForSubsidy(Identity $identity, Subsidy $subsidy): ?Application
+    {
+        return
+            $identity
+                ->applications()
+                ->whereRelation('subsidyVersion', 'subsidy_id', '=', $subsidy->id)
+                ->orderBy('created_at', 'desc')
+                ->first();
     }
 
     /**
