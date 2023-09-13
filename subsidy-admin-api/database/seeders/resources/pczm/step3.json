@@ -17,7 +17,7 @@
                             "label": "Gewaarmerkt verzekeringsbericht",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             }
                         }
                     ]
@@ -33,6 +33,15 @@
                     "elements": [
                         {
                             "type": "CustomControl",
+                            "scope": "#/properties/wiaDecisionDocument",
+                            "label": "WIA-Beslissing",
+                            "options": {
+                                "accept": "image/*,.pdf",
+                                "maxFileSize": 20971520
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
                             "scope": "#/properties/isWiaDecisionPostponed",
                             "label": "Is uw WIA-beslissing uitgesteld vanwege een (vrijwillege of verplichte) loondoorbetaling?",
                             "options": {
@@ -45,29 +54,13 @@
                             "label": "Toekenningsbrief",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             },
                             "rule": {
                                 "effect": "SHOW",
                                 "condition": {
                                     "scope": "#/properties/isWiaDecisionPostponed",
                                     "schema": { "const": "Ja" }
-                                }
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/wiaDecisionDocument",
-                            "label": "WIA-Beslissing",
-                            "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
-                            },
-                            "rule": {
-                                "effect": "SHOW",
-                                "condition": {
-                                    "scope": "#/properties/isWiaDecisionPostponed",
-                                    "schema": { "const": "Nee" }
                                 }
                             }
                         }
@@ -85,10 +78,10 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/employmentContract",
-                            "label": "Arbeidsovereenkomst",
+                            "label": "Bewijs van uw dienstverband",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             }
                         }
                     ]
@@ -140,10 +133,10 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/otherEmployerDeclarationFile",
-                            "label": "Zorgaanbiedersverklaring",
+                            "label": "Verklaring zorgaanbieder",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -199,10 +192,10 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/socialMedicalAssessment",
-                            "label": "Sociaal-medische beoordeling",
+                            "label": "Medisch onderzoeksverslag (medische rapportage)",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             }
                         }
                     ]
@@ -212,8 +205,8 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/hasPostCovidComplaints",
-                            "label": "Heeft u langdurige post-COVID klachten?",
+                            "scope": "#/properties/hasPostCovidDiagnose",
+                            "label": "Bevat uw medisch onderzoeksverslag de diagnose langdurige post-COVID?",
                             "options": {
                                 "format": "radio"
                             }
@@ -229,12 +222,12 @@
                             "label": "Verklaring arts",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             },
                             "rule": {
                                 "effect": "SHOW",
                                 "condition": {
-                                    "scope": "#/properties/hasPostCovidComplaints",
+                                    "scope": "#/properties/hasPostCovidDiagnose",
                                     "schema": { "const": "Nee" }
                                 }
                             }
