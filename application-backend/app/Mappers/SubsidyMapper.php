@@ -15,6 +15,7 @@ class SubsidyMapper
         return new SubsidyDTO(
             $subsidyVersion->subsidy->code,
             $subsidyVersion->title ?? $subsidyVersion->subsidy->title,
+            $subsidyVersion->subsidy->description,
             $subsidyVersion->subsidy_page_url
         );
     }

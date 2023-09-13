@@ -14,6 +14,7 @@ class Subsidy implements Codable
     public function __construct(
         public readonly string $id,
         public readonly string $title,
+        public readonly string $description,
         public readonly string $pageUrl
     ) {
     }
