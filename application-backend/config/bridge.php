@@ -64,11 +64,12 @@ return [
             'user' => env('RABBITMQ_USER', 'guest'),
             'password' => env('RABBITMQ_PASSWORD', 'guest'),
             'queue' => env('BRIDGE_RPC_QUEUE', 'rpc_queue'),
-            'declare_exchange_and_queue' => env('BRIDGE_DECLARE_EXCHANGE_AND_QUEUE', true),
         ]
     ],
 
     'defaultConnection' => 'default',
+
+    'declare_exchange_and_queue' => env('BRIDGE_DECLARE_EXCHANGE_AND_QUEUE', true),
 
     'servers' => [
         'default' => [
