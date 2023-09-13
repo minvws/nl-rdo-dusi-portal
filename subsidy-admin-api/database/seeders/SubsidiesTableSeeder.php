@@ -29,7 +29,7 @@ class SubsidiesTableSeeder extends Seeder
         ]);
         DB::table('subsidies')->insert([
             'id' => self::PCZM_UUID,
-            'title' => 'Zorgmedewerkers met post-Covid',
+            'title' => 'Aanvraagformulier financiële ondersteuning Zorgmedewerkers met langdurige post-COVID klachten',
             'reference_prefix' => 'PCZM23',
             'code' => 'PCZM',
             'description' => "De regeling Zorgmedewerkers met langdurige post-COVID klachten richt zich op zorgmedewerkers die tijdens de eerste golf van de COVID-19 pandemie besmet zijn geraakt met COVID-19 en sindsdien langdurige post-COVID klachten hebben. Deze klachten hebben grote invloed op het werk en het privéleven van deze zorgmedewerkers. Zij kunnen soms hun eigen werk als zorgmedewerker niet meer (volledig) doen. Voor deze specifieke groep zorgmedewerkers is een eenmalige financiële ondersteuning van €15.000 beschikbaar.",

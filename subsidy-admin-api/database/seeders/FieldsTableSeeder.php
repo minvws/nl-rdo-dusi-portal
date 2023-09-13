@@ -135,7 +135,7 @@ class FieldsTableSeeder extends Seeder
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionPostponedLetter', title: 'Toekenningsbrief',);
 
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Arbeidsovereenkomst',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Bewijs dienstverband',);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentFunction', title: 'Functie', options: [
                 "Ambulancechauffeur",
@@ -171,7 +171,7 @@ class FieldsTableSeeder extends Seeder
 
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Sociaal-medische beoordeling',);
 
-        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'hasPostCovidComplaints', title: 'Heeft langdurige post-COVID klachten', options: [
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'hasPostCovidDiagnose', title: 'Heeft langdurige post-COVID klachten', options: [
             "Ja",
             "Nee",
         ]);

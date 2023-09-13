@@ -109,7 +109,7 @@ class PCZMUIFormTableSeeder extends Seeder
                         "employerKind",
                         "hasBeenWorkingAtJudicialInstitution",
                         "socialMedicalAssessment",
-                        "hasPostCovidComplaints",
+                        "hasPostCovidDiagnose",
                     ]
                 ),
                 $this->buildPage(4,
@@ -259,7 +259,7 @@ class PCZMUIFormTableSeeder extends Seeder
                             "field"=>"socialMedicalAssessment"
                         ],[
                             "type"=>"select",
-                            "field"=>"hasPostCovidComplaints"
+                            "field"=>"hasPostCovidDiagnose"
                         ],[
                             "type"=>"file",
                             "field"=>"doctorsCertificate"
