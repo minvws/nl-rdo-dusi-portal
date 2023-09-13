@@ -142,8 +142,8 @@ return [
         ],
 
         'dbal' => [
-        'types' => [
-            'timestamp' => TimestampType::class,
-        ],
+            'types' => [
+                'timestamp' => TimestampType::class,
+            ],
         ],
 ];
