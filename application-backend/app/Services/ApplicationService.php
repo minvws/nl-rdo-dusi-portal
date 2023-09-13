@@ -10,10 +10,11 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
+use InvalidArgumentException;
+use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
-use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
@@ -21,7 +22,6 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
@@ -32,7 +32,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Exception;
-use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
@@ -50,16 +49,16 @@ readonly class ApplicationService
         private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
-        private FilesystemManager $filesystemManager,
+        private ApplicationFileRepository $fileRepository,
         private ApplicationReferenceService $applicationReferenceService,
-        private IdentityService $identityService
+        private IdentityService $identityService,
     ) {
     }
 
     private function validateUuid(string $uuid): void
     {
         if (!Str::isUuid($uuid)) {
-            throw new \InvalidArgumentException('Invalid UUID');
+            throw new InvalidArgumentException('Invalid UUID');
         }
     }
 
@@ -79,15 +78,13 @@ readonly class ApplicationService
         ApplicationStage $applicationStage
     ): void {
         $application = $applicationStage->application;
-        if (
-            $application->identity->id !== $identity->id
-        ) {
+        if ($application->identity->id !== $identity->id) {
             throw new EncryptionException(
                 sprintf('Identity mismatch for app with identifier "%s"', $application->id)
             );
         }
 
-        if (!in_array($application->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges])) {
+        if (!$application->status->isEditableForApplicant()) {
             throw new ApplicationMetadataMismatchException(
                 sprintf('Current status does not allow editing for "%s', $application->id)
             );
@@ -201,29 +198,6 @@ readonly class ApplicationService
         return $field;
     }
 
-    private function getFilePath(ApplicationStage $applicationStage, Field $field): string
-    {
-        return sprintf('%s/%s', $applicationStage->id, $field->code);
-    }
-
-    /**
-     * @throws FileNotFoundException
-     */
-    private function validateFileAnswer(
-        ApplicationStage $applicationStage,
-        Field $field
-    ): void {
-        $answer = $this->appRepo->getAnswer($applicationStage, $field);
-        if ($answer === null) {
-            throw new FileNotFoundException("Answer for file {$field->code} not found!");
-        }
-
-        $path = $this->getFilePath($applicationStage, $field);
-        if (!$this->filesystemManager->disk(Disk::APPLICATION_FILES)->exists($path)) {
-            throw new FileNotFoundException("File not found!");
-        }
-    }
-
     /**
      * @throws Exception
      */
@@ -241,47 +215,20 @@ readonly class ApplicationService
         $this->appRepo->saveAnswer($answer);
     }
 
-    /**
-     * @throws FileNotFoundException
-     */
     private function processFieldValue(ApplicationStage $applicationStage, FieldValue $value): void
     {
         // answer for file already exists at this point
-        if ($value->field->type !== FieldType::Upload) {
-            $this->createOrUpdateAnswer($applicationStage, $value->field, $value->value);
+        if ($value->field->type === FieldType::Upload) {
+            return;
         }
+
+        $this->createOrUpdateAnswer($applicationStage, $value->field, $value->value);
     }
 
     private function processFieldValues(ApplicationStage $applicationStage, array $fieldValues): void
     {
         foreach ($fieldValues as $fieldValue) {
             $this->processFieldValue($applicationStage, $fieldValue);
-        }
-    }
-
-    /**
-     * @throws Throwable
-     */
-    private function validateFieldValue(
-        ApplicationStage $applicationStage,
-        FieldValue $value
-    ): void {
-        if ($value->field->type === FieldType::Upload) {
-            $this->validateFileAnswer($applicationStage, $value->field);
-        }
-
-        // TODO: validate format of certain fields
-    }
-
-    /**
-     * @throws Throwable
-     */
-    private function validateFieldValues(
-        ApplicationStage $applicationStage,
-        array $fieldValues
-    ): void {
-        foreach ($fieldValues as $fieldValue) {
-            $this->validateFieldValue($applicationStage, $fieldValue);
         }
     }
 
@@ -301,7 +248,7 @@ readonly class ApplicationService
 
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
 
-            $this->validateFieldValues($applicationStage, $values);
+            // TODO: Validation will be in other PR
             $this->processFieldValues($applicationStage, $values);
 
             $applicationStage->application->status = ApplicationStatus::Submitted;
@@ -356,9 +303,8 @@ readonly class ApplicationService
             $value
         );
 
-        $path = $this->getFilePath($applicationStage, $field);
         $encryptedContents = $this->encryptionService->encryptData($decryptedContents);
-        $result = $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($path, $encryptedContents);
+        $result = $this->fileRepository->writeFile($applicationStage, $field, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
         }

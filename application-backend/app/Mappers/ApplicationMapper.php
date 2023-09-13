@@ -9,7 +9,6 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList as ApplicationListDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication as ApplicationListApplicationDTO;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message as MessageDTO;
 
 class ApplicationMapper
@@ -29,7 +28,7 @@ class ApplicationMapper
             $app->created_at,
             $app->final_review_deadline,
             $app->status,
-            in_array($app->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges])
+            $app->status->isEditableForApplicant(),
         );
     }
 

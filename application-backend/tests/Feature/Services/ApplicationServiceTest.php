@@ -8,7 +8,6 @@ use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -222,7 +221,7 @@ class ApplicationServiceTest extends TestCase
             json_encode($data)
         );
 
-        $this->expectException(FileNotFoundException::class);
+        // TODO: Field validation will be added, exception wont be thrown anymore
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
         $applicationService->processFormSubmit($formSubmit);

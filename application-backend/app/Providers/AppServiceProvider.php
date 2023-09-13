@@ -6,14 +6,18 @@ namespace MinVWS\DUSi\Application\Backend\Providers;
 
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Application\Backend\Handlers\FileUploadHandler;
 use MinVWS\DUSi\Application\Backend\Handlers\FormSubmitHandler;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
+use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use MinVWS\DUSi\Application\Backend\Services\FileKeyReader;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
+use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmInfoCommand;
@@ -132,5 +136,11 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->when(IdentityService::class)->needs('$hashSecret')->giveConfig('identity.hash_secret');
         $this->app->when(IdentityService::class)->needs('$hashAlgorithm')->giveConfig('identity.hash_algorithm');
+
+        $this->app->when(ApplicationFileRepository::class)
+            ->needs(Filesystem::class)
+            ->give(function (Application $app) {
+                return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
+            });
     }
 }
