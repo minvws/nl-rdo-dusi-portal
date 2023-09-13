@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Application\API\Services;
 
 use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
 use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
-use Illuminate\Support\Facades\Log;
 
 class SubsidyStageService
 {
@@ -21,7 +20,6 @@ class SubsidyStageService
     public function getSubsidyStage(string $id): SubsidyStageData
     {
         $subsidyStage = $this->cacheService->getCachedSubsidyStage($id);
-        Log::info('subsidyStage', [$subsidyStage]);
         if ($subsidyStage === null) {
             throw new SubsidyStageNotFoundException();
         }
