@@ -102,6 +102,7 @@ class PCZMUIFormTableSeeder extends Seeder
                     'Documenten toevoegen',
                     [
                         "certifiedEmploymentDocument",
+                        "wiaDecisionDocument",
                         "isWiaDecisionPostponed",
                         "employmentContract",
                         "employmentFunction",

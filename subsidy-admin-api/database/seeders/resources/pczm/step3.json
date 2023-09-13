@@ -17,7 +17,7 @@
                             "label": "Gewaarmerkt verzekeringsbericht",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             }
                         }
                     ]
@@ -33,6 +33,15 @@
                     "elements": [
                         {
                             "type": "CustomControl",
+                            "scope": "#/properties/wiaDecisionDocument",
+                            "label": "WIA-Beslissing",
+                            "options": {
+                                "accept": "image/*,.pdf",
+                                "maxFileSize": 20971520
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
                             "scope": "#/properties/isWiaDecisionPostponed",
                             "label": "Is uw WIA-beslissing uitgesteld vanwege een (vrijwillege of verplichte) loondoorbetaling?",
                             "options": {
@@ -45,29 +54,13 @@
                             "label": "Toekenningsbrief",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             },
                             "rule": {
                                 "effect": "SHOW",
                                 "condition": {
                                     "scope": "#/properties/isWiaDecisionPostponed",
                                     "schema": { "const": "Ja" }
-                                }
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/wiaDecisionDocument",
-                            "label": "WIA-Beslissing",
-                            "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
-                            },
-                            "rule": {
-                                "effect": "SHOW",
-                                "condition": {
-                                    "scope": "#/properties/isWiaDecisionPostponed",
-                                    "schema": { "const": "Nee" }
                                 }
                             }
                         }
@@ -88,7 +81,7 @@
                             "label": "Arbeidsovereenkomst",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             }
                         }
                     ]
@@ -143,7 +136,7 @@
                             "label": "Zorgaanbiedersverklaring",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -202,7 +195,7 @@
                             "label": "Sociaal-medische beoordeling",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             }
                         }
                     ]
@@ -229,7 +222,7 @@
                             "label": "Verklaring arts",
                             "options": {
                                 "accept": "image/*,.pdf",
-                                "maxFileSize": 5242880
+                                "maxFileSize": 20971520
                             },
                             "rule": {
                                 "effect": "SHOW",

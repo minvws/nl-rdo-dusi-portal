@@ -124,6 +124,8 @@ class FieldsTableSeeder extends Seeder
 
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'certifiedEmploymentDocument', title: 'Gewaarmerkt verzekeringsbericht',);
 
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionDocument', title: 'WIA-Beslissing',);
+
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'isWiaDecisionPostponed', title: 'Is WIA beslissing uitgesteld?', options: [
             "Ja",
             "Nee",
@@ -132,8 +134,6 @@ class FieldsTableSeeder extends Seeder
         //If isWiaDecisionPostponed === yes
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionPostponedLetter', title: 'Toekenningsbrief',);
 
-        //If isWiaDecisionPostponed === no
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionDocument', title: 'WIA-Beslissing',);
 
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Arbeidsovereenkomst',);
 
