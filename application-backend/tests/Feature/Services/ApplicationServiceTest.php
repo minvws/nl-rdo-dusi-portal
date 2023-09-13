@@ -50,6 +50,8 @@ class ApplicationServiceTest extends TestCase
     {
         parent::setUp();
         $this->loadCustomMigrations();
+        $this->withoutFrontendEncryption();
+
         $subsidy = Subsidy::factory()->create();
         $subsidyVersion = SubsidyVersion::factory()
             ->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);

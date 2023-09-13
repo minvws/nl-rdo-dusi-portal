@@ -4,14 +4,27 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests;
 
+use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Repositories\IdentityRepository;
 use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
+use Mockery;
 
 trait MocksEncryptionAndHashing
 {
+    public function withoutFrontendEncryption(): void
+    {
+        $frontendDecryption = Mockery::mock(FrontendDecryption::class);
+        $frontendDecryption->shouldReceive('decrypt')
+            ->andReturnUsing(function ($input) {
+                return $input;
+            });
+
+        $this->app->instance(FrontendDecryption::class, $frontendDecryption);
+    }
+
     public function setupMocksEncryptionAndHashing(): void
     {
         $keyReader = $this->getMockBuilder(KeyReader::class)

@@ -12,10 +12,12 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Application\Backend\Handlers\FileUploadHandler;
 use MinVWS\DUSi\Application\Backend\Handlers\FormSubmitHandler;
+use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use MinVWS\DUSi\Application\Backend\Services\FileKeyReader;
+use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
@@ -142,5 +144,13 @@ class AppServiceProvider extends ServiceProvider
             ->give(function (Application $app) {
                 return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
             });
+
+        $this->app->bind(FrontendDecryption::class, FrontendDecryptionService::class);
+        $this->app->when(FrontendDecryptionService::class)
+            ->needs('$publicKey')
+            ->giveConfig('frontend.form_encryption.public_key');
+        $this->app->when(FrontendDecryptionService::class)
+            ->needs('$privateKey')
+            ->giveConfig('frontend.form_encryption.private_key');
     }
 }

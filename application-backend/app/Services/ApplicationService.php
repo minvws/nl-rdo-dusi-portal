@@ -11,6 +11,7 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use InvalidArgumentException;
+use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -38,7 +39,6 @@ use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings("LongVariable")
  */
 readonly class ApplicationService
 {
@@ -52,6 +52,7 @@ readonly class ApplicationService
         private ApplicationFileRepository $fileRepository,
         private ApplicationReferenceService $applicationReferenceService,
         private IdentityService $identityService,
+        private FrontendDecryption $frontendDecryptionService,
     ) {
     }
 
@@ -239,7 +240,7 @@ readonly class ApplicationService
     {
         DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
             $identity = $this->identityService->findOrCreateIdentity($formSubmit->identity);
-            $json = $this->encryptionService->decryptBase64EncodedData($formSubmit->encryptedData);
+            $json = $this->frontendDecryptionService->decrypt($formSubmit->encryptedData);
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
                 $identity,
