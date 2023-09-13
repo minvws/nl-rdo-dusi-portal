@@ -24,8 +24,11 @@ class Server
      */
     private array $bindings = [];
 
-    public function __construct(private readonly Connection $connection, private readonly LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly LoggerInterface $logger,
+        private readonly bool $declareQueue
+    ) {
     }
 
     /**
@@ -44,7 +47,12 @@ class Server
     {
         $channel = $this->connection->connection->channel();
 
-        [$queue] = $channel->queue_declare($this->connection->queue, auto_delete: false) ?? [];
+        if ($this->declareQueue) {
+            [$queue] = $channel->queue_declare($this->connection->queue, auto_delete: false) ?? [];
+        } else {
+            $queue = $this->connection->queue;
+        }
+
         assert(is_string($queue));
 
         $channel->basic_qos(0, 1, false);
