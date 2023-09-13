@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
-use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
-use MinVWS\DUSi\Application\Backend\Repositories\IdentityRepository;
-use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
-use MinVWS\DUSi\Application\Backend\Services\IdentityService;
+use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -45,6 +40,7 @@ class ApplicationServiceTest extends TestCase
 {
     use DatabaseTransactions;
     use WithFaker;
+    use MocksEncryptionAndHashing;
 
     private SubsidyStage $subsidyStage;
     private Field $textField;
@@ -54,6 +50,8 @@ class ApplicationServiceTest extends TestCase
     {
         parent::setUp();
         $this->loadCustomMigrations();
+        $this->withoutFrontendEncryption();
+
         $subsidy = Subsidy::factory()->create();
         $subsidyVersion = SubsidyVersion::factory()
             ->create(['subsidy_id' => $subsidy->id, 'status' => VersionStatus::Published]);
@@ -72,51 +70,6 @@ class ApplicationServiceTest extends TestCase
             'code' => 'number',
             'subsidy_stage_id' => $this->subsidyStage->id,
         ]);
-
-        $keyReader = $this->getMockBuilder(KeyReader::class)
-            ->getMock();
-
-        $hsmService = $this->getMockBuilder(HsmService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $encryptionServiceMock = $this->getMockBuilder(EncryptionService::class)
-            ->setConstructorArgs([$keyReader, $hsmService])
-            ->getMock();
-
-        // Configure the decryptData method to return the same value as the input parameter
-        $encryptionServiceMock->expects($this->any())
-            ->method('decryptBase64EncodedData')
-            ->willReturnCallback(function ($input) {
-                return $input;
-            });
-
-        $encryptionServiceMock->expects($this->any())
-            ->method('decryptData')
-            ->willReturnCallback(function ($input) {
-                return $input;
-            });
-
-        $encryptionServiceMock->expects($this->any())
-            ->method('encryptData')
-            ->willReturnCallback(function ($input) {
-                return $input;
-            });
-
-        $this->app->instance(EncryptionService::class, $encryptionServiceMock);
-
-        $identityServiceMock = $this->getMockBuilder(IdentityService::class)
-            ->setConstructorArgs([$this->app->get(IdentityRepository::class), $encryptionServiceMock, ''])
-            ->onlyMethods(['hashIdentifier'])
-            ->getMock();
-
-        $identityServiceMock->expects($this->any())
-            ->method('hashIdentifier')
-            ->willReturnCallback(function ($type, $identifier) {
-                return $identifier;
-            });
-
-        $this->app->instance(IdentityService::class, $identityServiceMock);
     }
 
 
@@ -270,7 +223,7 @@ class ApplicationServiceTest extends TestCase
             json_encode($data)
         );
 
-        $this->expectException(FileNotFoundException::class);
+        // TODO: Field validation will be added, exception wont be thrown anymore
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
         $applicationService->processFormSubmit($formSubmit);

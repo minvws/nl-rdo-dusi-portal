@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Http\Requests\MessageRequest;
@@ -45,7 +44,7 @@ class MessageController extends Controller
         return $this->messageService->getFilters();
     }
 
-    public function view(string $id, ClientPublicKeyHelper $publicKeyHelper): Response|ResponseFactory
+    public function view(string $id, ClientPublicKeyHelper $publicKeyHelper): Response
     {
         $params = new MessageParams(
             $this->stateService->getEncryptedIdentity(),
@@ -53,14 +52,14 @@ class MessageController extends Controller
             $id
         );
         $response = $this->messageService->getMessage($params);
-        return response($response->data, $response->status->value);
+        return $this->encryptedResponse($response);
     }
 
     public function download(
         string $id,
         string $format,
         ClientPublicKeyHelper $publicKeyHelper
-    ): Response|ResponseFactory {
+    ): Response {
         $params = new MessageDownloadParams(
             $this->stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
@@ -68,6 +67,6 @@ class MessageController extends Controller
             MessageDownloadFormat::from($format)
         );
         $response = $this->messageService->getMessageDownload($params);
-        return response($response->data, $response->status->value);
+        return $this->encryptedResponse($response);
     }
 }

@@ -25,6 +25,7 @@ use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 
 /**
@@ -35,6 +36,7 @@ readonly class LetterService
 {
     public function __construct(
         private ApplicationRepository $applicationRepository,
+        private ApplicationMessageRepository $messageRepository,
         private FilesystemManager $filesystemManager,
         private RenderEngine $engine,
         private EncryptionService $encryptionService,
@@ -157,11 +159,11 @@ readonly class LetterService
         $cssPath = $this->getCssPath();
         $logoPath = public_path('img/vws_dusi_logo.svg');
 
-        assert($stage->accessor_decision !== null);
+        assert($stage->assessor_decision !== null);
 
         return new LetterData(
             subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
-            decision: $stage->accessor_decision->value,
+            decision: $stage->assessor_decision->value,
             stages: $data,
             createdAt: $stage->application->created_at,
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
@@ -241,10 +243,7 @@ readonly class LetterService
         // TODO: encrypt
         $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($htmlPath, $html);
 
-        // TODO: save application_message
-//        $stageVersion->pdf_letter_path = $pdfPath;
-//        $stageVersion->view_letter_path = $htmlPath;
-//        $this->applicationRepository->saveApplicationStageVersion($stageVersion);
+        $this->messageRepository->createMessage($stage, $pdfPath, $htmlPath);
 
         $this->triggerMailNotification($stage, $data);
     }

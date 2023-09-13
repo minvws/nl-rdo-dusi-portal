@@ -8,6 +8,7 @@ use MinVWS\DUSi\Application\API\Models\PortalUser;
 use MinVWS\DUSi\Application\API\Services\ApplicationService;
 use MinVWS\DUSi\Application\API\Services\CacheService;
 use MinVWS\DUSi\Application\API\Services\Exceptions\DataEncryptionException;
+use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Application\API\Services\SubsidyStageService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -22,6 +23,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageUI;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Uuid;
@@ -53,22 +55,21 @@ class ApplicationControllerTest extends TestCase
         $this->user = new PortalUser(
             base64_encode(openssl_random_pseudo_bytes(32)),
             Uuid::uuid4()->toString(),
-            null
+            OidcUserLoa::SUBSTANTIAL
         );
         $this->subsidy = Subsidy::factory()->create();
-        $this->subsidyVersion = $this->subsidy
-            ->subsidyVersions()
-            ->create(
-                [
-                    'status' => VersionStatus::Published,
-                    'version' => 1,
-                    'subsidy_page_url' => 'https://dus-i.nl',
-                    'contact_mail_address' => 'dienstpostbus@minvws.nl',
-                    'mail_to_address_field_identifier' => 'email',
-                    'mail_to_name_field_identifier' => 'firstName;infix;lastName',
-                    'message_overview_subject' => 'Onderwerp test',
-                ]
-            );
+        $this->subsidyVersion = SubsidyVersion::factory()->create(
+            [
+                'subsidy_id' => $this->subsidy->id,
+                'status' => VersionStatus::Published,
+                'version' => 1,
+                'subsidy_page_url' => 'https://dus-i.nl',
+                'contact_mail_address' => 'dienstpostbus@minvws.nl',
+                'mail_to_address_field_identifier' => 'email',
+                'mail_to_name_field_identifier' => 'firstName;infix;lastName',
+                'message_overview_subject' => 'Onderwerp test',
+            ]
+        );
         $this->subsidyStage = SubsidyStage::factory()->create(
             ['subsidy_version_id' => $this->subsidyVersion->id]
         );
@@ -133,7 +134,7 @@ class ApplicationControllerTest extends TestCase
         $user = new PortalUser(
             base64_encode(openssl_random_pseudo_bytes(32)),
             Uuid::uuid4()->toString(),
-            null
+            OidcUserLoa::SUBSTANTIAL
         );
 
         $cachedForm = $this->app->get(SubsidyStageService::class)->getSubsidyStage($this->subsidyStage->id);
@@ -195,7 +196,7 @@ class ApplicationControllerTest extends TestCase
         $user = new PortalUser(
             base64_encode(openssl_random_pseudo_bytes(32)),
             Uuid::uuid4()->toString(),
-            null
+            OidcUserLoa::SUBSTANTIAL
         );
 
         $cachedForm = $this->app->get(SubsidyStageService::class)->getSubsidyStage($this->subsidyStage->id);

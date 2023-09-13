@@ -78,25 +78,26 @@ class ApplicationController extends Controller
             $publicKeyHelper->getClientPublicKey()
         );
         $response = $applicationService->listApplications($params);
-        return response($response->data, $response->status->value);
+        return $this->encryptedResponse($response);
     }
 
     /**
      * @throws Exception
      */
     public function show(
-        string $id,
+        string $reference,
         ClientPublicKeyHelper $publicKeyHelper,
         StateService $stateService,
         ApplicationService $applicationService
-    ): Response|ResponseFactory {
+    ): Response {
         $params = new ApplicationParams(
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
-            $id,
+            $reference,
+            true,
             true
         );
         $response = $applicationService->getApplication($params);
-        return response($response->data, $response->status->value);
+        return $this->encryptedResponse($response);
     }
 }

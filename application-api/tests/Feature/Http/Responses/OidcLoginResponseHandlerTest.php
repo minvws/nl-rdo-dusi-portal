@@ -4,28 +4,15 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Tests\Feature\Http\Responses;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
+use MinVWS\Codable\Decoding\Decoder;
 use MinVWS\DUSi\Application\API\Http\Responses\OidcLoginResponseHandler;
 use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use MinVWS\DUSi\Application\API\Tests\TestCase;
 
 class OidcLoginResponseHandlerTest extends TestCase
 {
-    public function testWithoutMinimumLoa(): void
-    {
-        $responseHandler = new OidcLoginResponseHandler(
-            frontendBaseUrl: 'https://example.com',
-            minimumLoa: null,
-        );
-
-        $redirectResponse = $responseHandler->handleLoginResponse((object) [
-            'bsn' => '1234567890',
-        ]);
-
-        $this->assertEquals($redirectResponse::class, RedirectResponse::class);
-        $this->assertEquals($redirectResponse->getTargetUrl(), 'https://example.com/login-callback');
-    }
-
     /**
      * @dataProvider loaDataProvider
      * @param OidcUserLoa|null $minimumLoa
@@ -37,6 +24,7 @@ class OidcLoginResponseHandlerTest extends TestCase
     {
         $responseHandler = new OidcLoginResponseHandler(
             frontendBaseUrl: 'https://example.com',
+            decoder: new Decoder(),
             minimumLoa: $minimumLoa,
         );
 
@@ -55,7 +43,8 @@ class OidcLoginResponseHandlerTest extends TestCase
         } else {
             $this->assertEquals(
                 expected: $redirectResponse->getTargetUrl(),
-                actual: 'https://example.com/login-callback?error=minimum_loa',
+                actual: 'https://example.com/login-callback?error=minimum_loa&minimum_loa='
+                . $minimumLoa->code() . '&current_loa=' . $userLoa->code(),
             );
         }
     }
@@ -63,15 +52,38 @@ class OidcLoginResponseHandlerTest extends TestCase
     public static function loaDataProvider(): array
     {
         return [
-            'without minimum loa and user has null loa' => [null, null, true],
-             'without minimum loa and user has substantial loa' => [null, OidcUserLoa::SUBSTANTIAL, true],
             'with substantial loa and user has substantial loa' => [
                 OidcUserLoa::SUBSTANTIAL,
                 OidcUserLoa::SUBSTANTIAL,
                 true
             ],
-            'with substantial loa and user has null loa' => [OidcUserLoa::SUBSTANTIAL, null, false],
             'with high loa and user has substantial loa' => [OidcUserLoa::HIGH, OidcUserLoa::SUBSTANTIAL, false],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidDataProvider
+     */
+    public function testInvalidLoginResponse(array $response): void
+    {
+        $responseHandler = new OidcLoginResponseHandler(
+            frontendBaseUrl: 'https://example.com',
+            decoder: new Decoder(),
+            minimumLoa: OidcUserLoa::SUBSTANTIAL
+        );
+
+        $this->expectException(AuthorizationException::class);
+
+        $responseHandler->handleLoginResponse((object)$response);
+    }
+
+    public static function invalidDataProvider(): array
+    {
+        return [
+            'missing_data' => [[]],
+            'missing_loa_authn' => [['bsn' => '123456789']],
+            'missing_bsn' => [['loa_authn' => OidcUserLoa::SUBSTANTIAL->value]],
+            'invalid_loa_authn' => [['bsn' => '123456789', 'loa_authn' => 'does-not-exist']],
         ];
     }
 }

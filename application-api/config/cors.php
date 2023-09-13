@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use MinVWS\DUSi\Application\API\Http\Controllers\Controller;
+
 return [
 
     /*
@@ -27,7 +29,7 @@ return [
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => [],
+    'exposed_headers' => [Controller::ENCRYPTED_HEADER_NAME],
 
     'max_age' => 0,
 

@@ -79,7 +79,7 @@
         },
         {
             "type": "Group",
-            "label": "Medische erklaring van het type behandeling",
+            "label": "Medische verklaring van het type behandeling",
             "elements": [
                 {
                     "type": "VerticalLayout",

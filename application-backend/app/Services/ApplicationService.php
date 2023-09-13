@@ -8,48 +8,37 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use DateTimeImmutable;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
+use InvalidArgumentException;
+use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
+use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
-use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\FileNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Exception;
-use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Ramsey\Uuid\Uuid;
 use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings("LongVariable")
  */
 readonly class ApplicationService
 {
@@ -60,16 +49,17 @@ readonly class ApplicationService
         private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
-        private FilesystemManager $filesystemManager,
+        private ApplicationFileRepository $fileRepository,
         private ApplicationReferenceService $applicationReferenceService,
-        private IdentityService $identityService
+        private IdentityService $identityService,
+        private FrontendDecryption $frontendDecryptionService,
     ) {
     }
 
     private function validateUuid(string $uuid): void
     {
         if (!Str::isUuid($uuid)) {
-            throw new \InvalidArgumentException('Invalid UUID');
+            throw new InvalidArgumentException('Invalid UUID');
         }
     }
 
@@ -89,15 +79,13 @@ readonly class ApplicationService
         ApplicationStage $applicationStage
     ): void {
         $application = $applicationStage->application;
-        if (
-            $application->identity->id !== $identity->id
-        ) {
+        if ($application->identity->id !== $identity->id) {
             throw new EncryptionException(
                 sprintf('Identity mismatch for app with identifier "%s"', $application->id)
             );
         }
 
-        if (!in_array($application->status, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges])) {
+        if (!$application->status->isEditableForApplicant()) {
             throw new ApplicationMetadataMismatchException(
                 sprintf('Current status does not allow editing for "%s', $application->id)
             );
@@ -169,6 +157,8 @@ readonly class ApplicationService
 
     /**
      * @throws Throwable
+     *
+     * @return array{ApplicationStage, SubsidyStage}
      */
     private function loadOrCreateAppStageWithSubsidyStage(Identity $identity, ApplicationMetadata $appMetadata): array
     {
@@ -209,29 +199,6 @@ readonly class ApplicationService
         return $field;
     }
 
-    private function getFilePath(ApplicationStage $applicationStage, Field $field): string
-    {
-        return sprintf('%s/%s', $applicationStage->id, $field->code);
-    }
-
-    /**
-     * @throws FileNotFoundException
-     */
-    private function validateFileAnswer(
-        ApplicationStage $applicationStage,
-        Field $field
-    ): void {
-        $answer = $this->appRepo->getAnswer($applicationStage, $field);
-        if ($answer === null) {
-            throw new FileNotFoundException("Answer for file {$field->code} not found!");
-        }
-
-        $path = $this->getFilePath($applicationStage, $field);
-        if (!$this->filesystemManager->disk(Disk::APPLICATION_FILES)->exists($path)) {
-            throw new FileNotFoundException("File not found!");
-        }
-    }
-
     /**
      * @throws Exception
      */
@@ -249,15 +216,14 @@ readonly class ApplicationService
         $this->appRepo->saveAnswer($answer);
     }
 
-    /**
-     * @throws FileNotFoundException
-     */
     private function processFieldValue(ApplicationStage $applicationStage, FieldValue $value): void
     {
         // answer for file already exists at this point
-        if ($value->field->type !== FieldType::Upload) {
-            $this->createOrUpdateAnswer($applicationStage, $value->field, $value->value);
+        if ($value->field->type === FieldType::Upload) {
+            return;
         }
+
+        $this->createOrUpdateAnswer($applicationStage, $value->field, $value->value);
     }
 
     private function processFieldValues(ApplicationStage $applicationStage, array $fieldValues): void
@@ -270,37 +236,11 @@ readonly class ApplicationService
     /**
      * @throws Throwable
      */
-    private function validateFieldValue(
-        ApplicationStage $applicationStage,
-        FieldValue $value
-    ): void {
-        if ($value->field->type === FieldType::Upload) {
-            $this->validateFileAnswer($applicationStage, $value->field);
-        }
-
-        // TODO: validate format of certain fields
-    }
-
-    /**
-     * @throws Throwable
-     */
-    private function validateFieldValues(
-        ApplicationStage $applicationStage,
-        array $fieldValues
-    ): void {
-        foreach ($fieldValues as $fieldValue) {
-            $this->validateFieldValue($applicationStage, $fieldValue);
-        }
-    }
-
-    /**
-     * @throws Throwable
-     */
     public function processFormSubmit(FormSubmit $formSubmit): void
     {
         DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
             $identity = $this->identityService->findOrCreateIdentity($formSubmit->identity);
-            $json = $this->encryptionService->decryptBase64EncodedData($formSubmit->encryptedData);
+            $json = $this->frontendDecryptionService->decrypt($formSubmit->encryptedData);
 
             [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
                 $identity,
@@ -309,10 +249,12 @@ readonly class ApplicationService
 
             $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
 
-            $this->validateFieldValues($applicationStage, $values);
+            // TODO: Validation will be in other PR
             $this->processFieldValues($applicationStage, $values);
 
             $applicationStage->application->status = ApplicationStatus::Submitted;
+            $applicationStage->application->final_review_deadline =
+                Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);
             $this->appRepo->saveApplication($applicationStage->application);
 
             $applicationStage->is_current = false;
@@ -362,9 +304,8 @@ readonly class ApplicationService
             $value
         );
 
-        $path = $this->getFilePath($applicationStage, $field);
         $encryptedContents = $this->encryptionService->encryptData($decryptedContents);
-        $result = $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($path, $encryptedContents);
+        $result = $this->fileRepository->writeFile($applicationStage, $field, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
         }
@@ -376,72 +317,5 @@ readonly class ApplicationService
     public function processFileUpload(FileUpload $fileUpload): void
     {
         DB::connection(Connection::APPLICATION)->transaction(fn () => $this->doProcessFileUpload($fileUpload));
-    }
-
-    private function toApplicationListApplication(Application $app): ApplicationListApplication
-    {
-        $subsidy = new Subsidy(
-            $app->subsidyVersion->subsidy->code,
-            $app->subsidyVersion->title,
-            $app->subsidyVersion->subsidy_page_url
-        );
-
-        return new ApplicationListApplication(
-            $app->reference,
-            $subsidy,
-            $app->created_at,
-            $app->final_review_deadline,
-            $app->status,
-        );
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function listApplications(ApplicationListParams $params): EncryptedResponse
-    {
-        $identity = $this->identityService->findIdentity($params->identity);
-        if ($identity === null) {
-            // no identity found, so no applications (yet)
-            return $this->encryptionService->encryptResponse(
-                EncryptedResponseStatus::OK,
-                new ApplicationList([]),
-                $params->publicKey
-            );
-        }
-
-        /** @var array<Application> $apps */
-        $apps = $this->appRepo->getMyApplications($identity)->toArray();
-        $listApps = array_map(fn ($app) => $this->toApplicationListApplication($app), $apps);
-
-        return $this->encryptionService->encryptResponse(
-            EncryptedResponseStatus::OK,
-            new ApplicationList($listApps),
-            $params->publicKey
-        );
-    }
-
-    public function getApplication(ApplicationParams $params): EncryptedResponse
-    {
-        // TODO:
-        // Retrieve application from the database and verify the identity. If the
-        // application doesn't exist or doesn't belong to the user return a not found
-        // response. If the application exists, retrieve all the answers, decrypt
-        // them and structure them in the correct JSON format (compatible with the schema).
-        $application = new ApplicationDTO(
-            $params->reference,
-            new Subsidy(Uuid::uuid4()->toString(), 'Voorbeeld subsidie', 'https://www.dus-i.nl/'),
-            new DateTimeImmutable(),
-            new DateTimeImmutable("+30 days"),
-            ApplicationStatus::Draft,
-            new Form(Uuid::uuid4()->toString(), 1),
-            $params->includeData ? (object)['firstName' => 'John', 'lastName' => 'Doe'] : null
-        );
-
-        return $this->encryptionService->encryptResponse(
-            EncryptedResponseStatus::OK,
-            $application,
-            $params->publicKey
-        );
     }
 }

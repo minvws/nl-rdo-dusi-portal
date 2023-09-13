@@ -4,20 +4,47 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 
 class ApplicationMessageRepository
 {
-    public function getMyApplicationMessage(Identity $identity, mixed $id): ?ApplicationMessage
+    public function getMyMessage(Identity $identity, mixed $id): ?ApplicationMessage
     {
-        $message = ApplicationMessage::forIdentity($identity)->find($id);
+        $message = $identity->applicationMessages()->find($id);
+        /* @phpstan-ignore-next-line */
         assert($message === null || $message instanceof ApplicationMessage);
         return $message;
     }
 
-    public function getMyApplicationMessages(Identity $identity): array
+    /**
+     * @return array<ApplicationMessage>
+     */
+    public function getMyMessages(Identity $identity): array
     {
-        return ApplicationMessage::forIdentity($identity)->get()->toArray();
+        /** @var array<ApplicationMessage> $result */
+        $result = $identity->applicationMessages->all();
+        return $result;
+    }
+
+    public function createMessage(ApplicationStage $stage, string $htmlPath, string $pdfPath): void
+    {
+        $stage->application->applicationMessages()->create([
+            'html_path' => $htmlPath,
+            'is_new' => true,
+            'pdf_path' => $pdfPath,
+            'subject' => $this->getSubject($stage),
+        ]);
+    }
+
+    private function getSubject(ApplicationStage $stage): string
+    {
+        // TODO: verbosity on subject
+
+        return vsprintf('%s', [
+            $stage->subsidyStage->subsidyVersion->subsidy->title,
+        ]);
     }
 }

@@ -10,6 +10,9 @@ class SubsidyStagesTableSeeder extends Seeder
     public const BTV_STAGE_1_UUID = '721c1c28-e674-415f-b1c3-872a631ed045';
     public const BTV_STAGE_2_UUID = '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c';
 
+    public const PCZM_STAGE_1_UUID = '7E5D64E9-35F0-4FEE-B8D2-DCA967B43183';
+    public const PCZM_STAGE_2_UUID = '8027C102-93EF-4735-AB66-97AA63B836EB';
+
     /**
      * Run the database seeds.
      */
@@ -27,6 +30,24 @@ class SubsidyStagesTableSeeder extends Seeder
         DB::table('subsidy_stages')->insert([
             'id' => self::BTV_STAGE_2_UUID,
             'subsidy_version_id' => SubsidyVersionsTableSeeder::BTV_VERSION_UUID,
+            'title' => 'Beoordeling',
+            'subject_role' => 'assessor',
+            'stage' => 2,
+            'final_review_deadline' => '2033-12-31 23:59:59',
+            'final_review_time_in_s_after_submission' => 604800, // 7 days
+        ]);
+        DB::table('subsidy_stages')->insert([
+            'id' => self::PCZM_STAGE_1_UUID,
+            'subsidy_version_id' => SubsidyVersionsTableSeeder::PCZM_VERSION_UUID,
+            'title' => 'Aanvraag',
+            'subject_role' => 'applicant',
+            'stage' => 1,
+            'final_review_deadline' => '2033-12-31 23:59:59',
+            'final_review_time_in_s_after_submission' => 604800, // 7 days
+        ]);
+        DB::table('subsidy_stages')->insert([
+            'id' => self::PCZM_STAGE_2_UUID,
+            'subsidy_version_id' => SubsidyVersionsTableSeeder::PCZM_VERSION_UUID,
             'title' => 'Beoordeling',
             'subject_role' => 'assessor',
             'stage' => 2,

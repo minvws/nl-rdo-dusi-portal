@@ -10,13 +10,13 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "minvws/dusi-subsidy-model": "@dev",
+        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
         "minvws/dusi-serialisation-model": "@dev",
+        "minvws/dusi-subsidy-model": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.5",
-        "predis/predis": "^2.2",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev"
+        "predis/predis": "^2.2",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",

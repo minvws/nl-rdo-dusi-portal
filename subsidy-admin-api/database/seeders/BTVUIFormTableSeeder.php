@@ -8,7 +8,7 @@ use stdClass;
 
 class BTVUIFormTableSeeder extends Seeder
 {
-    public const BTV_V1_UUID = '72475863-7987-4375-94d7-21e04ff6552b';
+    public const BTV_STAGE1_V1_UUID = '72475863-7987-4375-94d7-21e04ff6552b';
 
     private function resolveFileReferencesInArray(array $array, string $basePath): void
     {
@@ -194,7 +194,7 @@ class BTVUIFormTableSeeder extends Seeder
             ]];
 
         DB::table('subsidy_stage_uis')->insert([
-            'id' => self::BTV_V1_UUID,
+            'id' => self::BTV_STAGE1_V1_UUID,
             'subsidy_stage_id' => SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             'version' => 1,
             'status' => 'published',

@@ -21,7 +21,7 @@ class AnswerFactory extends Factory
             'application_stage_id' => fn () => ApplicationStage::factory(),
             'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'field_id' => Field::factory(),
-            'encrypted_answer' => $this->faker->text,
+            'encrypted_answer' => json_encode($this->faker->text),
         ];
     }
 }

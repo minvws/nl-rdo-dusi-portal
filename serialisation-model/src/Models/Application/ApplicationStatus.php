@@ -11,4 +11,9 @@ enum ApplicationStatus: string
     case Approved = 'approved';
     case Rejected = 'rejected';
     case RequestForChanges = 'requestForChanges';
+
+    public function isEditableForApplicant(): bool
+    {
+        return in_array($this, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges], true);
+    }
 }

@@ -181,13 +181,35 @@ class ApplicationRepository
         return new AnswersByApplicationStage(stages: $stages);
     }
 
-    public function getMyApplications(Identity $identity): Collection
+    /**
+     * @param Application $application
+     * @param int $stage
+     * @return array<Answer>
+     */
+    public function getApplicationStageAnswersByStageNumber(Application $application, int $stage): array
     {
-        return
-            Application::query()
-                ->forIdentity($identity)
-                ->with(['subsidyVersion', 'subsidyVersion.subsidy'])
-                ->get();
+        $stage =
+            $application
+                ->applicationStages()
+                ->whereRelation('subsidyStage', 'stage', '=', $stage)
+                ->orderBy('sequence_number', 'desc')
+                ->with(['answers', 'answers.field'])
+                ->first();
+
+        return $stage?->answers?->all() ?? [];
+    }
+
+    /**
+     * @return array<Application>
+     */
+    public function getMyApplications(Identity $identity): array
+    {
+        return $identity->applications()->with(['subsidyVersion', 'subsidyVersion.subsidy'])->get()->all();
+    }
+
+    public function getMyApplication(Identity $identity, string $reference): ?Application
+    {
+        return $identity->applications()->where('reference', $reference)->first();
     }
 
     public function isReferenceUnique(string $applicationReference): bool

@@ -1,0 +1,56 @@
+[{
+    "if": {
+        "properties": {
+            "isWiaDecisionPostponed": {
+                "const": "Ja"
+            }
+        }
+    },
+    "then": {
+        "required": ["wiaDecisionPostponedLetter"]
+    }
+}, {
+    "if": {
+        "properties": {
+            "employerKind": {
+                "const": "Andere organisatie"
+            }
+        }
+    },
+    "then": {
+        "required": ["otherEmployerDeclarationFile"]
+    }
+}, {
+    "if": {
+        "properties": {
+            "hasBeenWorkingAtJudicialInstitution": {
+                "const": "Ja"
+            }
+        }
+    },
+    "then": {
+        "required": ["BIGNumberJudicialInstitution"]
+    }
+}, {
+    "if": {
+        "properties": {
+            "employmentFunction": {
+                "const": "Anders"
+            }
+        }
+    },
+    "then": {
+        "required": ["otherEmploymentFunction"]
+    }
+}, {
+    "if": {
+        "properties": {
+            "hasPostCovidDiagnose": {
+                "const": "Nee"
+            }
+        }
+    },
+    "then": {
+        "required": ["doctorsCertificate"]
+    }
+}]

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationMessageFactory;
 
 /**
  * @property-read string $id
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $pdf_path
  * @property DateTime $seen_at
  * @property DateTime $sent_at
- *
+ * @property-read Application $application
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -35,6 +36,8 @@ class ApplicationMessage extends Model
 
     protected $casts = [
         'is_new' => 'boolean',
+        'seen_at' => 'datetime',
+        'sent_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -67,5 +70,10 @@ class ApplicationMessage extends Model
                 $self->setAttribute('seen_at', $self->freshTimestamp());
             }
         });
+    }
+
+    protected static function newFactory(): ApplicationMessageFactory
+    {
+        return ApplicationMessageFactory::new();
     }
 }

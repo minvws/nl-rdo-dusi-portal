@@ -3,11 +3,14 @@
 declare(strict_types=1);
 
 use MinVWS\DUSi\Application\Backend\Services\ActionableService;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
-use MinVWS\DUSi\Application\Backend\Services\MessageService;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
+use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
@@ -21,24 +24,31 @@ $bindings = [
     ],
     RPCMethods::LIST_APPLICATIONS => [
         'paramsClass' => ApplicationListParams::class,
-        'callback' => [ApplicationService::class, 'listApplications']
+        'callback' => [ApplicationRetrievalService::class, 'listApplications']
     ],
     RPCMethods::GET_APPLICATION => [
-        'paramsClass' => ApplicationListParams::class,
-        'callback' => [ApplicationService::class, 'getApplication']
+        'paramsClass' => ApplicationParams::class,
+        'callback' => [ApplicationRetrievalService::class, 'getApplication']
+    ],
+    RPCMethods::GET_APPLICATION_FILE => [
+        'paramsClass' => ApplicationFileParams::class,
+        'callback' => [ApplicationFileService::class, 'getApplicationFile']
+    ],
+    RPCMethods::DELETE_APPLICATION_FILE => [
+        'paramsClass' => ApplicationFileParams::class,
+        'callback' => [ApplicationFileService::class, 'deleteApplicationFile']
     ],
     RPCMethods::LIST_MESSAGES => [
         'paramsClass' => MessageListParams::class,
-        'callback' => [MessageService::class, 'listMessages']
+        'callback' => [ApplicationMessageService::class, 'listMessages']
     ],
-
     RPCMethods::GET_MESSAGE => [
         'paramsClass' => MessageParams::class,
-        'callback' => [MessageService::class, 'getMessage']
+        'callback' => [ApplicationMessageService::class, 'getMessage']
     ],
     RPCMethods::GET_MESSAGE_DOWNLOAD => [
         'paramsClass' => MessageDownloadParams::class,
-        'callback' => [MessageService::class, 'getMessageDownload']
+        'callback' => [ApplicationMessageService::class, 'getMessageDownload']
     ],
     RPCMethods::GET_ACTIONABLE_COUNTS => [
         'paramsClass' => ActionableCountsParams::class,
@@ -54,6 +64,7 @@ return [
             'user' => env('RABBITMQ_USER', 'guest'),
             'password' => env('RABBITMQ_PASSWORD', 'guest'),
             'queue' => env('BRIDGE_RPC_QUEUE', 'rpc_queue'),
+            'declare_exchange_and_queue' => env('BRIDGE_DECLARE_EXCHANGE_AND_QUEUE', true),
         ]
     ],
 

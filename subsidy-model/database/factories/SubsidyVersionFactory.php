@@ -32,6 +32,7 @@ class SubsidyVersionFactory extends Factory
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
             'message_overview_subject' => $this->faker->words(3, true),
+            'review_period' => rand(1, 20) * 7
         ];
     }
 }

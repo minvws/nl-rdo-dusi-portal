@@ -7,19 +7,21 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 use Config;
 use Exception;
 use MinVWS\Codable\Coding\Codable;
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use OpenSSLAsymmetricKey;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class EncryptionService
 {
-    private \OpenSSLAsymmetricKey $publicKey;
+    private OpenSSLAsymmetricKey $publicKey;
     private string $aesKey;
     private string $initializationVector;
 
@@ -148,12 +150,60 @@ class EncryptionService
 
     public function encryptResponse(
         EncryptedResponseStatus $status,
-        ?Codable $payload,
+        string $payload,
+        string $contentType,
+        ClientPublicKey $publicKey
+    ): EncryptedResponse {
+        $data = sodium_crypto_box_seal($payload, $publicKey->value);
+        return new EncryptedResponse($status, $contentType, $data);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function encryptCodableResponse(
+        EncryptedResponseStatus $status,
+        Codable $payload,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
         $encoder = new JSONEncoder();
         $json = $encoder->encode($payload);
-        openssl_public_encrypt($json, $data, $publicKey->value, OPENSSL_PKCS1_OAEP_PADDING);
-        return new EncryptedResponse($status, $data);
+        return $this->encryptResponse($status, $json, 'application/json', $publicKey);
+    }
+
+    /**
+     * Decrypt response, mainly used for testing.
+     *
+     * @throws Exception
+     */
+    public function decryptResponse(
+        EncryptedResponse $response,
+        string $keyPair
+    ): string {
+        $data = sodium_crypto_box_seal_open($response->data, $keyPair);
+        if ($data === false) {
+            throw new Exception('Decryption failed, invalid key pair?');
+        }
+
+        return $data;
+    }
+
+    /**
+     * Decrypt response, mainly used for testing.
+     *
+     * @template T of Codable
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
+     */
+    public function decryptCodableResponse(
+        EncryptedResponse $response,
+        string $class,
+        string $keyPair
+    ): Codable {
+        $json = $this->decryptResponse($response, $keyPair);
+        $decoder = new JSONDecoder();
+        return $decoder->decode($json)->decodeObject($class);
     }
 }
