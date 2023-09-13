@@ -167,7 +167,7 @@ class FieldsTableSeeder extends Seeder
             "Nee",
         ]);
 
-        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'BIGNumber', title: 'BIG-nummer', maxLength: 11,);
+        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'BIGNumberJudicialInstitution', title: 'BIG-nummer', maxLength: 11,);
 
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Sociaal-medische beoordeling',);
 

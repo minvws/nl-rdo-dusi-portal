@@ -44,14 +44,28 @@ class PCZMUIFormTableSeeder extends Seeder
         return $step;
     }
 
-    private function buildPage(int $step, array $required): stdClass
+    private function loadAllOfStep(int $step): array
+    {
+        $stepFilePath = __DIR__ . '/resources/pczm/allOfStep' . $step . '.json';
+        if(!file_exists($stepFilePath)) {
+            return [];
+        }
+        $json = file_get_contents($stepFilePath);
+        assert(is_string($json));
+        $allOf = json_decode($json);
+
+        return $allOf;
+    }
+
+    private function buildPage(int $step, string $label, array $required): stdClass
     {
         return (object)[
             'type' => 'CustomPageControl',
-            'label' => 'Start',
+            'label' => $label,
             'elements' => [$this->loadStep($step)],
             'options' => (object)[
-                'required' => $required
+                'required' => $required,
+                'allOf' => $this->loadAllOfStep($step)
             ]
         ];
     }
@@ -61,40 +75,46 @@ class PCZMUIFormTableSeeder extends Seeder
         $ui = [
             'type' => 'CustomPageNavigationControl',
             'elements' => [
-                $this->buildPage(1, [
+                $this->buildPage(
+                    1,
+                    'Start',
+                    [
                     'permissionToProcessPersonalData'
                 ]),
-                $this->buildPage(2, [
-                    "firstName",
-                    "lastName",
-                    "street",
-                    "dateOfBirth",
-                    "houseNumber",
-                    "postalCode",
-                    "city",
-                    "country",
-                    "phoneNumber",
-                    "email",
-                    "bankAccountHolder",
-                    "bankAccountNumber"
-                ]),
-                $this->buildPage(3, [
-                    "certifiedEmploymentDocument",
-                    "isWiaDecisionPostponed",
-//                    "wiaDecisionPostponedLetter",
-//                    "wiaDecisionDocument",
-                    "employmentContract",
-                    "employmentFunction",
-//                    otherEmploymentFunction
-                    "employerKind",
-//                    "otherEmployerDeclarationFile",
-                    "hasBeenWorkingAtJudicialInstitution",
-                    "socialMedicalAssessment",
-                    "hasPostCovidComplaints",
-//                    "doctorsCertificate",
-                ]),
-                $this->buildPage(4, [
-                    'truthfullyCompleted'
+                $this->buildPage(2,
+                    'Persoonsgegevens toevoegen',
+                    [
+                        "firstName",
+                        "lastName",
+                        "street",
+                        "dateOfBirth",
+                        "houseNumber",
+                        "postalCode",
+                        "city",
+                        "country",
+                        "phoneNumber",
+                        "email",
+                        "bankAccountHolder",
+                        "bankAccountNumber"
+                    ]
+                ),
+                $this->buildPage(3,
+                    'Documenten toevoegen',
+                    [
+                        "certifiedEmploymentDocument",
+                        "isWiaDecisionPostponed",
+                        "employmentContract",
+                        "employmentFunction",
+                        "employerKind",
+                        "hasBeenWorkingAtJudicialInstitution",
+                        "socialMedicalAssessment",
+                        "hasPostCovidComplaints",
+                    ]
+                ),
+                $this->buildPage(4,
+                    'Controleren en ondertekenen',
+                    [
+                        'truthfullyCompleted'
                 ])
             ]
         ];
@@ -224,6 +244,9 @@ class PCZMUIFormTableSeeder extends Seeder
                         ],[
                             "type"=>"select",
                             "field"=>"hasBeenWorkingAtJudicialInstitution"
+                        ],[
+                            "type"=>"string",
+                            "field"=>"BIGNumberJudicialInstitution"
                         ]
                     ]
                 ],
