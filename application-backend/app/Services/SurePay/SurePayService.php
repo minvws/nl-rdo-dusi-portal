@@ -92,7 +92,6 @@ class SurePayService
             );
 
             return AccesstokenResponse::fromJson($response->getBody()->getContents());
-
         } catch (GuzzleException $e) {
             throw new SurePayServiceException('Unable to get accesstoken', 0, $e);
         }
@@ -105,8 +104,11 @@ class SurePayService
      * @return CheckOrganisationsAccountResponse
      * @throws ValidationException
      */
-    public function checkOrganisationsAccount(string $accountOwner, string $accountNumber, string $accountType = 'IBAN'): CheckOrganisationsAccountResponse
-    {
+    public function checkOrganisationsAccount(
+        string $accountOwner,
+        string $accountNumber,
+        string $accountType = 'IBAN'
+    ): CheckOrganisationsAccountResponse {
         try {
             $response = $this->client->request(
                 'POST',
@@ -140,18 +142,21 @@ class SurePayService
     {
         try {
             Validator::make($this->config, [
-                'key' => 'required',
-                'secret' => 'required',
-                'endpoint' => 'required|url',
-                'debug' => 'required|boolean',
-                'request_timeout_seconds' => 'required|integer',
-                'connect_timeout_seconds' => 'required|integer',
-                'endpoint_request_accesstoken' => 'required|doesnt_start_with:/,http',
-                'endpoint_check_organisations' => 'required|doesnt_start_with:/,http',
-            ])->validate();
+                    'key' => 'required',
+                    'secret' => 'required',
+                    'endpoint' => 'required|url',
+                    'debug' => 'required|boolean',
+                    'request_timeout_seconds' => 'required|integer',
+                    'connect_timeout_seconds' => 'required|integer',
+                    'endpoint_request_accesstoken' => 'required|doesnt_start_with:/,http',
+                    'endpoint_check_organisations' => 'required|doesnt_start_with:/,http',
+                ])->validate();
         } catch (ValidationException $e) {
             throw new SurePayServiceException(
-                'SurePay API config invalid it must be set in the environment config.', 0, $e);
+                'SurePay API config invalid it must be set in the environment config.',
+                0,
+                $e
+            );
         }
     }
 
@@ -175,7 +180,9 @@ class SurePayService
      */
     private function shouldFetchToken(): bool
     {
-        if (!isset($this->accessToken)) return true;
+        if (!isset($this->accessToken)) {
+            return true;
+        }
 
         // -100 seconds to be on the safe side.
         $expiresInSeconds = ($this->accessToken->expiresIn - 100);

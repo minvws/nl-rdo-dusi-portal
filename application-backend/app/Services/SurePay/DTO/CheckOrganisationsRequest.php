@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Application\Backend\Services\SurePay\DTO;
 
 use Illuminate\Support\Facades\Validator;
@@ -11,9 +13,6 @@ class CheckOrganisationsRequest
     public array $accountId;
     public string $name;
 
-    /**
-     * @throws ValidationException
-     */
     public function __construct($request)
     {
         $this->throwIfInvalid($request);
@@ -23,7 +22,8 @@ class CheckOrganisationsRequest
     }
 
     /**
-     * @throws ValidationException
+     * @param $arrayData
+     * @return CheckOrganisationsRequest
      */
     public static function fromArray($arrayData): CheckOrganisationsRequest
     {
@@ -31,20 +31,23 @@ class CheckOrganisationsRequest
     }
 
     /**
-     * @param $accountName string
-     * Name of the account holder. Mandatory when not using at least 1 type of companyId. The max. length - 140 characters.
-     * @param $accountNumber string
+     * @param string $acountOwner
+     * Name of the account holder. Mandatory when not using at least 1 type of companyId.
+     * The max. length - 140 characters.
+     * @param string $accountNumber
      *  The identifier of the account to be checked. The max allowed length depends on the type.
      *  [A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30} (For IBAN, just capital letters are accepted, without white spaces).
      * @param string $accountType
-     * Describes the type of the account that needs to be found. For now it can be IBAN, SortCodeAccountNumber, AccountNumber,
-     * ShortenedAccount, Email or Phone. Even though there are many types available in the model, only checks with IBANS are
-     * functionally available for the EU corporate market.
+     * Describes the type of the account that needs to be found. For now it can be IBAN, SortCodeAccountNumber,
+     * AccountNumber, ShortenedAccount, Email or Phone. Even though there are many types available in the model,
+     * only checks with IBAN'S are functionally available for the EU corporate market.
      * @return CheckOrganisationsRequest
-     * @throws ValidationException
      */
-    public static function build(string $acountOwner, string $accountNumber, string $accountType = 'IBAN'): CheckOrganisationsRequest
-    {
+    public static function build(
+        string $acountOwner,
+        string $accountNumber,
+        string $accountType = 'IBAN'
+    ): CheckOrganisationsRequest {
         return new self([
             'accountId' => [
                 'value' => $accountNumber,
@@ -55,7 +58,7 @@ class CheckOrganisationsRequest
     }
 
     /**
-     * @throws ValidationException
+     * @return CheckOrganisationsRequest
      */
     public function toArray(): CheckOrganisationsRequest
     {

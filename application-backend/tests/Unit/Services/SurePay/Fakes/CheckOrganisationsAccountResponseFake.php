@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay\Fakes;
 
 use Faker\Factory;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\DTO\CheckOrganisationsAccountResponse;
 
-class CheckOrganisationsAccountResponseFake extends CheckOrganisationsAccountResponse{
-    public function __construct()
+class CheckOrganisationsAccountResponseFake
+{
+    public static function build(): array
     {
         $faker = Factory::create();
 
-        $response = [
+        return [
             'accountNumberValidation' => 'VALID',
             'paymentPreValidation' => 'PASS',
             'status' => 'ACTIVE',
@@ -21,7 +21,5 @@ class CheckOrganisationsAccountResponseFake extends CheckOrganisationsAccountRes
             'numberOfAccountHolders' => $faker->numberBetween(1, 5),
             'countryCode' => $faker->countryCode
         ];
-
-        parent::__construct($response);
     }
 }

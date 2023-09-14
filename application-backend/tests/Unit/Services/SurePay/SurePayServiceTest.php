@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay;
 
+use Faker\Factory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Application\Backend\Services\SurePay\Exceptions\SurePayServiceException;
 use MinVWS\DUSi\Application\Backend\Services\SurePay\SurePayService;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay\Fakes\AccesstokenResponseFake;
 use MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
+
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 
@@ -49,6 +50,8 @@ class SurePayServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->faker = Factory::create();
 
         Config::set('surepay_api', [
             'key' => env('SUREPAY_KEY'),
@@ -94,11 +97,11 @@ class SurePayServiceTest extends TestCase
         // Arrange & Assert
         $this->expectException(SurePayServiceException::class);
 
-        $body401 = '{"ErrorCode": "invalid_request", "Error": "Invalid client id : AVD7ztXReEYyjpLFkkPiZpLEjeF2aYAz. ClientId is Invalid"}';
+        $body401 = '{"ErrorCode": "invalid_request", "Error": "Invalid client id : abc. ClientId is Invalid"}';
         $sut = $this->initSUT([new Response(status: 401, body: $body401)]);
 
         // Act
-        $sut->checkOrganisationsAccount('Valdosta Textiles', 'NL42RABO2288983183');
+        $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban('NL'));
     }
 
     /**
@@ -119,7 +122,7 @@ class SurePayServiceTest extends TestCase
         ]);
 
         // Act
-        $sut->checkOrganisationsAccount('', 'NL42RABO2288983183');
+        $sut->checkOrganisationsAccount('', $this->faker->iban('NL'));
     }
 
     /**
@@ -129,7 +132,10 @@ class SurePayServiceTest extends TestCase
     public function testCheckOrganisationsAccountCallsClientRequestAndReturnsResponse()
     {
         $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(AccesstokenResponseFake::build()));
-        $checkOrganisationsAccountResponse = new Response(status: 200, body: json_encode(new CheckOrganisationsAccountResponseFake()));
+        $checkOrganisationsAccountResponse = new Response(
+            status: 200,
+            body: json_encode(CheckOrganisationsAccountResponseFake::build())
+        );
 
         $sut = $this->initSUT([
             $fetchAccessTokenResponse,
@@ -137,7 +143,7 @@ class SurePayServiceTest extends TestCase
         ]);
 
         // Act
-        $response = $sut->checkOrganisationsAccount('John Paul Waldo', 'NL87MOYO9876543212');
+        $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban);
 
         assertEquals($response->status, 'ACTIVE');
     }
@@ -150,18 +156,20 @@ class SurePayServiceTest extends TestCase
     {
         $sut = $this->initSUT([
             new Response(status: 200, body: json_encode(AccesstokenResponseFake::build())),
-            new Response(status: 200, body: json_encode(new CheckOrganisationsAccountResponseFake())),
-            new Response(status: 200, body: json_encode(new CheckOrganisationsAccountResponseFake())),
+            new Response(status: 200, body: json_encode(CheckOrganisationsAccountResponseFake::build())),
+            new Response(status: 200, body: json_encode(CheckOrganisationsAccountResponseFake::build())),
         ]);
 
         // Act
-        $response = $sut->checkOrganisationsAccount('John Paul Waldo', 'NL87MOYO9876543212');
-        assertCount(2, $this->container, 'Expect 2 calls, 1 for fetching the token second for checkOrganisationsAccount.');
+        $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban('NL'));
+        $twoCallsMessage = 'Expect 2 calls, 1 for fetching the token second for checkOrganisationsAccount.';
+        assertCount(2, $this->container, $twoCallsMessage);
         assertEquals($response->status, 'ACTIVE');
 
-        $response = $sut->checkOrganisationsAccount('John Paul Waldo', 'NL87MOYO9876543212');
-        assertCount(3, $this->container,
-            'Expect 3 calls, 1 for fetching the token and 2 for checkOrganisationsAccount. In the second call token should be reused');
+        $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban('NL'));
+        $threeCallsMessage = 'Expect 3 calls, 1 for fetching the token and 2 for checkOrganisationsAccount.
+        In the second call token should be reused';
+        assertCount(3, $this->container, $threeCallsMessage);
         assertEquals($response->status, 'ACTIVE');
     }
 }

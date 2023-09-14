@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Application\Backend\Services\SurePay\DTO;
 
 /**
@@ -16,11 +18,13 @@ class CheckOrganisationsAccountResponse
     public string $accountNumberValidation;
 
     /**
-     * @var string $paymentPreValidation Returns the pre-validation status of the payment.Only applicable for Surepay Scheme.
-     * - PASS - is returned when the account identification was successfully validated to an account that can receive funds.
+     * @var string $paymentPreValidation Returns the pre-validation status of the payment.Only applicable for Surepay
+     * Scheme.
+     * - PASS - is returned when the account identification was successfully validated to an account that can receive
+     * funds.
      * - WILL_FAIL - is returned if the payment will definitely fail.
-     * - WARNING - is returned in case the account identification was not successfully validated to an account that can receive
-     * funds, however, the responding bank is unable to provide a definitive answer.
+     * - WARNING - is returned in case the account identification was not successfully validated to an account that can
+     * receive funds, however, the responding bank is unable to provide a definitive answer.
      */
     public string $paymentPreValidation;
 
@@ -29,8 +33,8 @@ class CheckOrganisationsAccountResponse
      * - ACTIVE account is a valid account and supported for checks.
      * - INACTIVE account is a valid account marked by the account holding bank as inactive.
      * - NOT_SUPPORTED account status stands for an account that is valid but is not supported to perform any checks.
-     * - NOT_FOUND account status stands for an account that is valid but could not be found in any of the connected data
-     * sources.
+     * - NOT_FOUND account status stands for an account that is valid but could not be found in any of the connected
+     * data sources.
      * - UNKNOWN account status is for an account that is either found as part of DERIVED data or a NOT_VALID account.
      */
     public string $status;
@@ -44,17 +48,20 @@ class CheckOrganisationsAccountResponse
      * It only returns the 'accountTypeMatchResult’.
      */
     public string $accountType;
+
     /**
      * @var bool Indicates whether there is more than one account holder associated with the checked account.
      * True if there is more than 1 account holder. Otherwise, it’s retrieved as False.
      * Only returned in NL and when nameMatchResult is a MATCH or CLOSE_MATCH
      */
     public bool $jointAccount;
+
     /**
      * @var int Contains the number of account holders.
      * Only returned in NL and when nameMatchResult is a MATCH or CLOSE_MATCH
      */
     public int $numberOfAccountHolders;
+
     /**
      * @var string 'Two letter' country code from the IBAN or derived based on account Id type. In ISO 3166-1
      * alpha-2 format.
@@ -77,5 +84,18 @@ class CheckOrganisationsAccountResponse
         $decoded = json_decode($jsonResponse, true);
 
         return new self($decoded);
+    }
+
+    public function asJson(): string
+    {
+        return json_encode([
+            'accountNumberValidation' => $this->accountNumberValidation,
+            'paymentPreValidation' => $this->paymentPreValidation,
+            'status' => $this->status,
+            'accountType' => $this->accountType,
+            'jointAccount' => $this->jointAccount,
+            'numberOfAccountHolders' => $this->numberOfAccountHolders,
+            'countryCode' => $this->countryCode,
+        ]);
     }
 }

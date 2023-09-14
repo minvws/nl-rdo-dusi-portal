@@ -6,8 +6,6 @@ namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay\Fakes;
 
 use Carbon\Carbon;
 use Faker\Factory;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\DTO\AccesstokenResponse;
-
 
 class AccesstokenResponseFake
 {
