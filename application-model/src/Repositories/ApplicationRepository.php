@@ -182,15 +182,22 @@ class ApplicationRepository
         return new AnswersByApplicationStage(stages: $stages);
     }
 
-    public function getApplicationStageByStageNumber(Application $application, int $stage, bool $includeAnswers = false): ?ApplicationStage
-    {
-        return
+    public function getApplicationStageByStageNumber(
+        Application $application,
+        int $stage,
+        bool $includeAnswers = false
+    ): ?ApplicationStage {
+        $query =
             $application
                 ->applicationStages()
                 ->whereRelation('subsidyStage', 'stage', '=', $stage)
-                ->orderBy('sequence_number', 'desc')
-                ->with(['answers', 'answers.field'])
-                ->first();
+                ->orderBy('sequence_number', 'desc');
+
+        if ($includeAnswers) {
+            $query->with(['answers', 'answers.field']);
+        }
+
+        return $query->first();
     }
 
     /**

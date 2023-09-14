@@ -24,6 +24,9 @@ class FileList implements Codable
         $container->encodeArray($this->items);
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function decode(DecodingContainer $container, ?Decodable $object = null): Decodable
     {
         // TODO: remove, is only for backwards compatibility
