@@ -25,6 +25,7 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -205,7 +206,13 @@ readonly class ApplicationService
     public function processFormSubmit(FormSubmit $formSubmit): void
     {
         DB::connection(Connection::APPLICATION)->transaction(function () use ($formSubmit) {
-            $identity = $this->identityService->findOrCreateIdentity($formSubmit->identity);
+            // TEMP WORKAROUND UNTIL THIS CODE IS REMOVED
+            $tmpIdentity = new EncryptedIdentity(
+                $formSubmit->identity->type,
+                base64_decode($formSubmit->identity->encryptedIdentifier)
+            );
+            $identity = $this->identityService->findOrCreateIdentity($tmpIdentity);
+
             $json = $this->frontendDecryptionService->decrypt($formSubmit->encryptedData);
 
             [$applicationStage] = $this->loadOrCreateAppStageWithSubsidyStage(
@@ -233,7 +240,12 @@ readonly class ApplicationService
      */
     private function doProcessFileUpload(FileUpload $fileUpload): void
     {
-        $identity = $this->identityService->findOrCreateIdentity($fileUpload->identity);
+        // TEMP WORKAROUND UNTIL THIS CODE IS REMOVED
+        $tmpIdentity = new EncryptedIdentity(
+            $fileUpload->identity->type,
+            base64_decode($fileUpload->identity->encryptedIdentifier)
+        );
+        $identity = $this->identityService->findOrCreateIdentity($tmpIdentity);
 
         [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
             $identity,

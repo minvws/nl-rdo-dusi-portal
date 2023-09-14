@@ -49,17 +49,13 @@ class FrontendDecryptionService implements FrontendDecryption
      */
     public function decrypt(string|BinaryData $encryptedData): string
     {
-        if ($encryptedData instanceof BinaryData) {
-            $data = $encryptedData->data;
-        } else {
-            $data = base64_decode($encryptedData, true);
-        }
-
-        if ($data === false) {
-            throw new FrontendDecryptionFailedException('Could not base64_decode data');
-        }
-
         try {
+            if ($encryptedData instanceof BinaryData) {
+                $data = $encryptedData->data;
+            } else {
+                $data = sodium_base642bin($encryptedData, SODIUM_BASE64_VARIANT_ORIGINAL);
+            }
+
             $decryptedData = sodium_crypto_box_seal_open($data, $this->keyPair);
         } catch (SodiumException $e) {
             throw new FrontendDecryptionFailedException(
@@ -73,7 +69,6 @@ class FrontendDecryptionService implements FrontendDecryption
 
         return $decryptedData;
     }
-
 
     /**
      * @param class-string<T> $class
