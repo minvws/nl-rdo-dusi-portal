@@ -44,8 +44,10 @@ Route::middleware('auth')->group(
             Route::post('applications', [ApplicationController::class, 'create']);
             Route::put('applications2/{reference}', [ApplicationController::class, 'save'])
                 ->name('application-save');
-            Route::post('applications2/{reference}/files', [ApplicationController::class, 'uploadFile'])
-                ->name('application2-upload-file');
+            Route::post(
+                'applications2/{applicationReference}/fields/{fieldCode}/files',
+                [ApplicationController::class, 'uploadFile']
+            )->name('application2-upload-file');
 
             Route::get('applications/{reference}', [ApplicationController::class, 'show']);
 

@@ -305,7 +305,7 @@ readonly class ApplicationService
         );
 
         $encryptedContents = $this->encryptionService->encryptData($decryptedContents);
-        $result = $this->fileRepository->writeFile($applicationStage, $field, $encryptedContents);
+        $result = $this->fileRepository->writeFile($applicationStage, $field, $field->code, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
         }

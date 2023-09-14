@@ -45,14 +45,12 @@ class FrontendDecryptionService implements FrontendDecryption
     }
 
     /**
-     * @param string $encryptedData Base64 encoded sodium encrypted data
-     * @return string Decrypted data
      * @throws FrontendDecryptionFailedException
      */
-    public function decrypt(string $encryptedData, bool $isRaw = false): string
+    public function decrypt(string|BinaryData $encryptedData): string
     {
-        if ($isRaw) {
-            $data = $encryptedData;
+        if ($encryptedData instanceof BinaryData) {
+            $data = $encryptedData->data;
         } else {
             $data = base64_decode($encryptedData, true);
         }
@@ -86,7 +84,7 @@ class FrontendDecryptionService implements FrontendDecryption
         BinaryData|string $data,
         string $class
     ): Codable {
-        $json = $this->decrypt($data instanceof BinaryData ? $data->data : $data);
+        $json = $this->decrypt($data);
         $decoder = new JSONDecoder();
         return $decoder->decode($json)->decodeObject($class);
     }

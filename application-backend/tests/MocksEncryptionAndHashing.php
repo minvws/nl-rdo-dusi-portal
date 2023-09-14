@@ -21,7 +21,7 @@ trait MocksEncryptionAndHashing
         $frontendDecryption = Mockery::mock(FrontendDecryption::class);
         $frontendDecryption->shouldReceive('decrypt')
             ->andReturnUsing(function ($input) {
-                return $input;
+                return $input instanceof BinaryData ? $input->data : $input;
             });
         $frontendDecryption->shouldReceive('decryptCodable')
             ->andReturnUsing(function ($input, $class) {

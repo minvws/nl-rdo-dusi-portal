@@ -30,7 +30,7 @@ $bindings = [
     ],
     RPCMethods::UPLOAD_APPLICATION_FILE => [
         'paramsClass' => ApplicationFindOrCreateParams::class,
-        'callback' => [ApplicationMutationService::class, 'uploadApplicationFile']
+        'callback' => [ApplicationFileService::class, 'saveApplicationFile']
     ],
     RPCMethods::SAVE_APPLICATION => [
         'paramsClass' => ApplicationFindOrCreateParams::class,

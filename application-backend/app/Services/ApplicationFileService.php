@@ -9,16 +9,24 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
+use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUploadResult;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Throwable;
 
 readonly class ApplicationFileService
@@ -29,20 +37,72 @@ readonly class ApplicationFileService
 
     public function __construct(
         private EncryptionService $encryptionService,
-        private ApplicationRepository $applicationRepository,
         private IdentityService $identityService,
+        private FrontendDecryption $decryptionService,
+        private ApplicationRepository $applicationRepository,
+        private ApplicationFileRepository $applicationFileRepository,
+        private SubsidyRepository $subsidyRepository,
         private LoggerInterface $logger
     ) {
+    }
+
+    private function loadApplicationStage(Application $application): ApplicationStage
+    {
+        if (!$application->status->isEditableForApplicant()) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::FORBIDDEN,
+                'application_readonly',
+                'Application is read-only'
+            );
+        }
+
+        $applicationStage = $application->currentApplicationStage;
+        if ($applicationStage->subsidyStage->stage !== 1) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::FORBIDDEN,
+                'application_readonly',
+                'Application is read-only'
+            );
+        }
+
+        return $applicationStage;
+    }
+
+    private function loadField(ApplicationStage $applicationStage, string $fieldCode): Field
+    {
+        $field = $this->subsidyRepository->getFieldForSubsidyStageAndCode(
+            $applicationStage->subsidyStage,
+            $fieldCode
+        );
+
+        if ($field === null) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::NOT_FOUND,
+                'field_not_found',
+                'Field does not exist for this application stage'
+            );
+        }
+
+        return $field;
     }
 
     private function doSaveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
     {
         $identity = $this->loadIdentity($params->identity);
-        $this->loadApplication($identity, $params->applicationReference);
-        throw new EncryptedResponseException(
-            EncryptedResponseStatus::SERVICE_UNAVAILABLE,
-            'not_implemented',
-            'Not implemented yet!'
+        $application = $this->loadApplication($identity, $params->applicationReference);
+        $applicationStage = $this->loadApplicationStage($application);
+        $field = $this->loadField($applicationStage, $params->fieldCode);
+
+        $id = Uuid::uuid4()->toString();
+
+        $decryptedContent = $this->decryptionService->decrypt($params->data);
+        $encryptedContent = $this->encryptionService->encryptData($decryptedContent);
+        $this->applicationFileRepository->writeFile($applicationStage, $field, $id, $encryptedContent);
+
+        return $this->encryptionService->encryptCodableResponse(
+            EncryptedResponseStatus::CREATED,
+            new FileUploadResult($id),
+            $params->publicKey
         );
     }
 
