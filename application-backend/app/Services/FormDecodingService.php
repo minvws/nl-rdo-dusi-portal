@@ -8,6 +8,7 @@ use MinVWS\Codable\Decoding\Decoder;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\JSON\JSONDecoder;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -28,15 +29,11 @@ readonly class FormDecodingService
         $type = match ($field->type) {
             FieldType::TextNumeric => 'int',
             FieldType::Checkbox => 'bool',
+            FieldType::Upload => FileList::class,
             default => 'string'
         };
 
-        if ($field->is_required) {
-            $value = $container->decode($type);
-        } else {
-            $value = $container->decodeIfExists($type);
-        }
-
+        $value = $container->decodeIfPresent($type);
         return new FieldValue($field, $value);
     }
 

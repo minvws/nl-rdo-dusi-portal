@@ -10,7 +10,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 class SubsidyMapper
 {
-    public function mapSubsidyVersionToSubsidyDTO(SubsidyVersion $subsidyVersion): SubsidyDTO
+    public function mapSubsidyVersionToSubsidyDTO(SubsidyVersion $subsidyVersion): SubsidyDTOgit
     {
         return new SubsidyDTO(
             $subsidyVersion->subsidy->code,

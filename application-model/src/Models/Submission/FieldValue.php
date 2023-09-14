@@ -11,7 +11,7 @@ readonly class FieldValue
 {
     public function __construct(
         public Field $field,
-        public string|int|bool|float|null $value
+        public FileList|string|int|bool|float|null $value
     ) {
     }
 }

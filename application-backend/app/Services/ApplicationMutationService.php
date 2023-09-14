@@ -41,7 +41,6 @@ readonly class ApplicationMutationService
     public function __construct(
         private ApplicationService $applicationService,
         private ApplicationDataService $applicationDataService,
-        private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
@@ -155,10 +154,7 @@ readonly class ApplicationMutationService
             );
         }
 
-        $values = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $body->data);
-
-        // TODO: Validation will be in other PR
-        $this->applicationService->processFieldValues($applicationStage, $values);
+        $this->applicationDataService->saveApplicationData($applicationStage, $body->data);
 
         if ($body->status === ApplicationStatus::Submitted) {
             $application->status = ApplicationStatus::Submitted;
