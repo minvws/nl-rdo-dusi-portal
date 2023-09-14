@@ -10,18 +10,13 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use MinVWS\DUSi\Application\Backend\Handlers\FileUploadHandler;
-use MinVWS\DUSi\Application\Backend\Handlers\FormSubmitHandler;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
 use MinVWS\DUSi\Application\Backend\Services\FileKeyReader;
 use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
-use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
-use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmInfoCommand;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmLocalClearCommand;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmLocalInitCommand;
@@ -41,19 +36,6 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(KeyReader::class, FileKeyReader::class);
-
-        $this->app->bind(
-            FileUploadHandlerInterface::class,
-            function (Application $app) {
-                return new FileUploadHandler($app->get(ApplicationService::class));
-            }
-        );
-        $this->app->bind(
-            FormSubmitHandlerInterface::class,
-            function (Application $app) {
-                return new FormSubmitHandler($app->get(ApplicationService::class));
-            }
-        );
     }
 
     /**

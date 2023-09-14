@@ -18,7 +18,8 @@
         "minvws/dusi-serialisation-model": "@dev",
         "minvws/dusi-subsidy-model": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

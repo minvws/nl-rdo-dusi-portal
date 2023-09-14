@@ -15,18 +15,47 @@ class ApplicationFileRepository
     ) {
     }
 
-    public function writeFile(ApplicationStage $applicationStage, Field $field, string $contents): bool
+    public function readFile(ApplicationStage $applicationStage, Field $field, string $id): ?string
     {
-        return $this->filesystem->put($this->getFilePath($applicationStage, $field), $contents);
+        return $this->filesystem->get($this->getFilePath($applicationStage, $field, $id));
     }
 
-    public function fileExists(ApplicationStage $applicationStage, Field $field): bool
+    public function writeFile(ApplicationStage $applicationStage, Field $field, string $id, string $contents): bool
     {
-        return $this->filesystem->exists($this->getFilePath($applicationStage, $field));
+        return $this->filesystem->put($this->getFilePath($applicationStage, $field, $id), $contents);
     }
 
-    protected function getFilePath(ApplicationStage $applicationStage, Field $field): string
+    public function unlinkFile(ApplicationStage $applicationStage, Field $field, string $id): bool
+    {
+        return $this->filesystem->delete($this->getFilePath($applicationStage, $field, $id));
+    }
+
+    public function unlinkUnusedFiles(ApplicationStage $applicationStage, Field $field, array $usedIds): void
+    {
+        $files = array_map(
+            'basename',
+            $this->filesystem->files($this->getFieldPath($applicationStage, $field))
+        );
+
+        $unusedIds = array_diff($files, $usedIds);
+
+        foreach ($unusedIds as $unusedId) {
+            $this->unlinkFile($applicationStage, $field, $unusedId);
+        }
+    }
+
+    public function fileExists(ApplicationStage $applicationStage, Field $field, string $id): bool
+    {
+        return $this->filesystem->exists($this->getFilePath($applicationStage, $field, $id));
+    }
+
+    protected function getFieldPath(ApplicationStage $applicationStage, Field $field): string
     {
         return sprintf('%s/%s', $applicationStage->id, $field->code);
+    }
+
+    protected function getFilePath(ApplicationStage $applicationStage, Field $field, string $id): string
+    {
+        return sprintf('%s/%s', $this->getFieldPath($applicationStage, $field), $id);
     }
 }

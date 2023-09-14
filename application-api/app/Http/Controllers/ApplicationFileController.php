@@ -38,23 +38,4 @@ class ApplicationFileController extends Controller
         $response = $this->applicationFileService->getApplicationFile($params);
         return $this->encryptedResponse($response);
     }
-
-    /**
-     * @throws Exception
-     */
-    public function delete(
-        string $applicationReference,
-        string $fieldCode,
-        string $id
-    ): Response {
-        $params = new ApplicationFileParams(
-            $this->stateService->getEncryptedIdentity(),
-            $this->publicKeyHelper->getClientPublicKey(),
-            $applicationReference,
-            $fieldCode,
-            $id
-        );
-        $response = $this->applicationFileService->deleteApplicationFile($params);
-        return $this->encryptedResponse($response);
-    }
 }

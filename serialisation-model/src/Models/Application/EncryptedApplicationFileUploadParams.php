@@ -15,6 +15,7 @@ class EncryptedApplicationFileUploadParams implements Codable
         public readonly EncryptedIdentity $identity,
         public readonly ClientPublicKey $publicKey,
         public readonly string $applicationReference,
+        public readonly string $fieldCode,
         public readonly BinaryData $data
     ) {
     }

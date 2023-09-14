@@ -12,8 +12,8 @@ class ApplicationSaveBody implements Codable
     use CodableSupport;
 
     public function __construct(
-        public readonly ApplicationStatus $status,
-        public readonly object $data
+        public readonly object $data,
+        public readonly bool $submit
     ) {
     }
 }

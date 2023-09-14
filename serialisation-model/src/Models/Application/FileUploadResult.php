@@ -5,11 +5,15 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 
-readonly class ApplicationMetadata
+use MinVWS\Codable\Coding\Codable;
+use MinVWS\Codable\Coding\CodableSupport;
+
+readonly class FileUploadResult implements Codable
 {
+    use CodableSupport;
+
     public function __construct(
-        public string $applicationId,
-        public string $subsidyStageId,
+        public string $id
     ) {
     }
 }

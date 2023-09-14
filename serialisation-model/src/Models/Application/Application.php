@@ -13,9 +13,6 @@ class Application implements Codable
 {
     use CodableSupport;
 
-    /**
-     * @param array<ApplicationFile>|null $files
-     */
     public function __construct(
         public readonly string $reference,
         public readonly Subsidy $subsidy,
@@ -24,8 +21,7 @@ class Application implements Codable
         public readonly ApplicationStatus $status,
         public readonly bool $isEditable,
         public readonly Form $form,
-        public readonly ?object $data,
-        #[CodableArray(elementType: ApplicationFile::class)] public readonly ?array $files
+        public readonly ?object $data
     ) {
     }
 }
