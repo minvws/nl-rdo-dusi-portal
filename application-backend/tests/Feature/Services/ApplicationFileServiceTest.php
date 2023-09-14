@@ -17,6 +17,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
@@ -83,14 +84,14 @@ class ApplicationFileServiceTest extends TestCase
         Storage::fake(Disk::APPLICATION_FILES);
     }
 
-    public function testApplicationFileUpload(): void
+    public function testApplicationFileUpload(?BinaryData $data = null): string
     {
         $params = new EncryptedApplicationFileUploadParams(
             new EncryptedIdentity(IdentityType::CitizenServiceNumber, $this->identity->hashed_identifier),
             $this->publicKey,
             $this->application->reference,
             $this->field->code,
-            new BinaryData(random_bytes(50))
+            $data ?? new BinaryData(random_bytes(50))
         );
 
         $encryptedResponse = $this->app->get(ApplicationFileService::class)->saveApplicationFile($params);
@@ -112,5 +113,34 @@ class ApplicationFileServiceTest extends TestCase
             $params->data->data,
             $fileRepository->readFile($this->applicationStage, $this->field, $result->id)
         ); // this only works because encryption is mocked
+
+        return $result->id;
+    }
+
+    public function testApplicationFileDownload(): void
+    {
+        $data = new BinaryData('content');
+        $fileId = $this->testApplicationFileUpload($data);
+
+        $params = new ApplicationFileParams(
+            new EncryptedIdentity(IdentityType::CitizenServiceNumber, $this->identity->hashed_identifier),
+            $this->publicKey,
+            $this->application->reference,
+            $this->field->code,
+            $fileId
+        );
+
+        $encryptedResponse = $this->app->get(ApplicationFileService::class)->getApplicationFile($params);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+        $this->assertEquals('text/plain', $encryptedResponse->contentType);
+
+        $encryptionService = $this->app->get(EncryptionService::class);
+        assert($encryptionService instanceof EncryptionService);
+        $decryptedResponse = $encryptionService->decryptResponse(
+            $encryptedResponse,
+            $this->keyPair
+        );
+        $this->assertEquals($data->data, $decryptedResponse);
     }
 }
