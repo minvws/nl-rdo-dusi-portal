@@ -103,14 +103,10 @@ class ApplicationService
      */
     public function submit(Application $application, string $formData): void
     {
-        // TODO: remove encryption here when frontend implements encryption
-        $encryptedData = Config::get('encryption.encrypt_till_support') ?
-            $this->encryptionService->encryptData($formData) : $formData;
-
         $formSubmit = new FormSubmit(
             identity: $this->stateService->getEncryptedIdentity(),
             applicationMetadata: $application->getMetadata(),
-            encryptedData: $encryptedData
+            encryptedData: $formData
         );
 
         ProcessFormSubmit::dispatch($formSubmit);
