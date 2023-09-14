@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Repositories;
+namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Repositories;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\WithFaker;
