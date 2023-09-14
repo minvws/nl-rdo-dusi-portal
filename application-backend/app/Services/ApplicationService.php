@@ -226,7 +226,7 @@ readonly class ApplicationService
         $this->createOrUpdateAnswer($applicationStage, $value->field, $value->value);
     }
 
-    private function processFieldValues(ApplicationStage $applicationStage, array $fieldValues): void
+    public function processFieldValues(ApplicationStage $applicationStage, array $fieldValues): void
     {
         foreach ($fieldValues as $fieldValue) {
             $this->processFieldValue($applicationStage, $fieldValue);

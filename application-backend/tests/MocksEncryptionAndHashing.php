@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests;
 
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Repositories\IdentityRepository;
 use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use Mockery;
 
 trait MocksEncryptionAndHashing
@@ -21,7 +23,13 @@ trait MocksEncryptionAndHashing
             ->andReturnUsing(function ($input) {
                 return $input;
             });
-
+        $frontendDecryption->shouldReceive('decryptCodable')
+            ->andReturnUsing(function ($input, $class) {
+                return
+                    (new JSONDecoder())
+                        ->decode($input instanceof BinaryData ? $input->data : $input)
+                        ->decodeObject($class);
+            });
         $this->app->instance(FrontendDecryption::class, $frontendDecryption);
     }
 

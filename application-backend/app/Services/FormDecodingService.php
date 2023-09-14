@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use MinVWS\Codable\Decoding\Decoder;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\JSON\JSONDecoder;
@@ -43,10 +44,16 @@ readonly class FormDecodingService
      * @return array<int|string, FieldValue>
      * @throws Throwable
      */
-    public function decodeFormValues(SubsidyStage $subsidyStage, string $data): array
+    public function decodeFormValues(SubsidyStage $subsidyStage, object|string $data): array
     {
-        $decoder = new JSONDecoder();
-        $container = $decoder->decode($data);
+        if (is_object($data)) {
+            $decoder = new Decoder();
+            $container = $decoder->decode($data);
+        } else {
+            $decoder = new JSONDecoder();
+            $container = $decoder->decode($data);
+        }
+
         $values = [];
         $fields = $this->subsidyRepository->getFields($subsidyStage);
         foreach ($fields as $field) {

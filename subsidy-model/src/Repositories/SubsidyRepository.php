@@ -214,4 +214,16 @@ class SubsidyRepository
     {
         return Subsidy::query()->active()->ordered()->pluck('code');
     }
+
+    public function findSubsidyByCode(string $code): ?Subsidy
+    {
+        return Subsidy::query()->where('code', '=', $code)->first();
+    }
+
+    public function getFirstStageForSubsidyVersion(SubsidyVersion $subsidyVersion): SubsidyStage
+    {
+        $stage = $subsidyVersion->subsidyStages()->where('stage', '=', 1)->first();
+        assert($stage instanceof SubsidyStage);
+        return $stage;
+    }
 }

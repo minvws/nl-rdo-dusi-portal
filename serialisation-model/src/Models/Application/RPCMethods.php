@@ -10,6 +10,9 @@ class RPCMethods
     public const GET_MESSAGE = 'getMessage';
     public const GET_MESSAGE_DOWNLOAD = 'getMessageDownload';
 
+    public const FIND_OR_CREATE_APPLICATION = 'findOrCreateApplication';
+    public const UPLOAD_APPLICATION_FILE = 'uploadApplicationFile';
+    public const SAVE_APPLICATION = 'saveApplication';
     public const LIST_APPLICATIONS = 'listApplications';
     public const GET_APPLICATION = 'getApplication';
     public const GET_APPLICATION_FILE = 'getApplicationFile';
