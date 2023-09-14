@@ -216,11 +216,9 @@ class ApplicationControllerTest extends TestCase
         $this->assertEquals($applicationId, $job->formSubmit->applicationMetadata->applicationId);
         $this->assertEquals($this->subsidyStage->id, $job->formSubmit->applicationMetadata->subsidyStageId);
 
-
-
         $this->assertEquals(
-            base64_encode($data['data']),
-            $this->decryptData($job->formSubmit->encryptedData, $privateKey)
+            $data['data'],
+            $job->formSubmit->encryptedData
         );
     }
 

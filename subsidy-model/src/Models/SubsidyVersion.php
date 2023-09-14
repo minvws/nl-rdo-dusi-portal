@@ -34,8 +34,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $message_overview_subject
  * @property int $review_period
  * @property-read Subsidy $subsidy
- * @property-read Collection<SubsidyStage> $subsidyStages
- * @property-read Collection<SubsidyLetter> $subsidyLetters
+ * @property-read Collection<int, SubsidyStage> $subsidyStages
+ * @property-read Collection<int, SubsidyLetter> $subsidyLetters
  * @property-read ?SubsidyLetter $publishedSubsidyLetter
  */
 

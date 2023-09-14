@@ -20,6 +20,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
@@ -82,8 +83,10 @@ class ApplicationService
             throw new Exception('Mime type is null');
         }
 
+        // TEMP WORKAROUND UNTIL THIS CODE IS REMOVED
+        $identity = $this->stateService->getEncryptedIdentity();
         $fileUpload = new FileUpload(
-            identity: $this->stateService->getEncryptedIdentity(),
+            identity: new EncryptedIdentity($identity->type, base64_encode($identity->encryptedIdentifier)),
             applicationMetadata: $application->getMetadata(),
             fieldCode: $fieldCode,
             id: $id,
@@ -103,8 +106,10 @@ class ApplicationService
      */
     public function submit(Application $application, string $formData): void
     {
+        // TEMP WORKAROUND UNTIL THIS CODE IS REMOVED
+        $identity = $this->stateService->getEncryptedIdentity();
         $formSubmit = new FormSubmit(
-            identity: $this->stateService->getEncryptedIdentity(),
+            identity: new EncryptedIdentity($identity->type, base64_encode($identity->encryptedIdentifier)),
             applicationMetadata: $application->getMetadata(),
             encryptedData: $formData
         );
