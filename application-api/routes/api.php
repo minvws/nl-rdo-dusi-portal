@@ -30,7 +30,7 @@ Route::middleware('auth')->group(
         // TODO: move more routes to this once the frontend is ready
         Route::middleware(RequireClientPublicKey::class)->group(function () {
             Route::post('subsidies/{subsidyCode}/applications', [ApplicationController::class, 'create'])
-                ->name('application->create');
+                ->name('application-create');
 
             Route::get('applications', [ApplicationController::class, 'index'])
                 ->name('application-index');
