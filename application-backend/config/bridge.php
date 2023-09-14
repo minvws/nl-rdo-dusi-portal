@@ -48,10 +48,6 @@ $bindings = [
         'paramsClass' => ApplicationFileParams::class,
         'callback' => [ApplicationFileService::class, 'getApplicationFile']
     ],
-    RPCMethods::DELETE_APPLICATION_FILE => [
-        'paramsClass' => ApplicationFileParams::class,
-        'callback' => [ApplicationFileService::class, 'deleteApplicationFile']
-    ],
     RPCMethods::LIST_MESSAGES => [
         'paramsClass' => MessageListParams::class,
         'callback' => [ApplicationMessageService::class, 'listMessages']

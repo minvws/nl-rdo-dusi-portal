@@ -15,8 +15,7 @@ class ApplicationParams implements Codable
         public readonly EncryptedIdentity $identity,
         public readonly ClientPublicKey $publicKey,
         public readonly string $reference,
-        public readonly bool $includeData,
-        public readonly bool $includeFiles
+        public readonly bool $includeData
     ) {
     }
 }

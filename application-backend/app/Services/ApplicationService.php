@@ -24,7 +24,6 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationMetadataMisma
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldNotFoundException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FieldTypeMismatchException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FormNotFoundException;
-use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationMetadata;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUpload;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FormSubmit;
@@ -39,14 +38,15 @@ use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @deprecated
  */
 readonly class ApplicationService
 {
     private const CREATE_REFERENCE_MAX_TRIES = 3;
 
     public function __construct(
+        private ApplicationDataService $applicationDataService,
         private SubsidyRepository $subsidyRepository,
-        private FormDecodingService $decodingService,
         private EncryptionService $encryptionService,
         private ApplicationRepository $appRepo,
         private ApplicationFileRepository $fileRepository,
@@ -200,40 +200,6 @@ readonly class ApplicationService
     }
 
     /**
-     * @throws Exception
-     */
-    private function createOrUpdateAnswer(
-        ApplicationStage $applicationStage,
-        Field $field,
-        mixed $value
-    ): void {
-        $answer = $this->appRepo->makeAnswer($applicationStage, $field);
-        $json = json_encode($value, JSON_UNESCAPED_SLASHES);
-        if (!is_string($json)) {
-            throw new Exception('JSON encoding failed. Invalid data provided.');
-        }
-        $answer->encrypted_answer = $this->encryptionService->encryptData($json);
-        $this->appRepo->saveAnswer($answer);
-    }
-
-    private function processFieldValue(ApplicationStage $applicationStage, FieldValue $value): void
-    {
-        // answer for file already exists at this point
-        if ($value->field->type === FieldType::Upload) {
-            return;
-        }
-
-        $this->createOrUpdateAnswer($applicationStage, $value->field, $value->value);
-    }
-
-    public function processFieldValues(ApplicationStage $applicationStage, array $fieldValues): void
-    {
-        foreach ($fieldValues as $fieldValue) {
-            $this->processFieldValue($applicationStage, $fieldValue);
-        }
-    }
-
-    /**
      * @throws Throwable
      */
     public function processFormSubmit(FormSubmit $formSubmit): void
@@ -242,15 +208,12 @@ readonly class ApplicationService
             $identity = $this->identityService->findOrCreateIdentity($formSubmit->identity);
             $json = $this->frontendDecryptionService->decrypt($formSubmit->encryptedData);
 
-            [$applicationStage, $subsidyStage] = $this->loadOrCreateAppStageWithSubsidyStage(
+            [$applicationStage] = $this->loadOrCreateAppStageWithSubsidyStage(
                 $identity,
                 $formSubmit->applicationMetadata
             );
 
-            $values = $this->decodingService->decodeFormValues($subsidyStage, $json);
-
-            // TODO: Validation will be in other PR
-            $this->processFieldValues($applicationStage, $values);
+            $this->applicationDataService->saveApplicationData($applicationStage, $json);
 
             $applicationStage->application->status = ApplicationStatus::Submitted;
             $applicationStage->application->final_review_deadline =
@@ -289,23 +252,9 @@ readonly class ApplicationService
             );
         }
 
-        $size = strlen($fileUpload->encryptedContents);
         $decryptedContents = $this->encryptionService->decryptBase64EncodedData($fileUpload->encryptedContents);
-
-        $value = [
-            'mimeType' => $fileUpload->mimeType,
-            'extension' => $fileUpload->extension,
-            'size' => $size
-        ];
-
-        $this->createOrUpdateAnswer(
-            $applicationStage,
-            $field,
-            $value
-        );
-
         $encryptedContents = $this->encryptionService->encryptData($decryptedContents);
-        $result = $this->fileRepository->writeFile($applicationStage, $field, $field->code, $encryptedContents);
+        $result = $this->fileRepository->writeFile($applicationStage, $field, $fileUpload->id, $encryptedContents);
         if (!$result) {
             throw new Exception('Failed to write file to disk!');
         }

@@ -103,7 +103,6 @@ class ApplicationController extends Controller
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $reference,
-            true,
             true
         );
         $response = $applicationService->getApplication($params);

@@ -33,7 +33,12 @@ readonly class FormDecodingService
             default => 'string'
         };
 
-        $value = $container->decodeIfPresent($type);
+        if ($field->is_required) {
+            $value = $container->decode($type);
+        } else {
+            $value = $container->decodeIfPresent($type);
+        }
+
         return new FieldValue($field, $value);
     }
 

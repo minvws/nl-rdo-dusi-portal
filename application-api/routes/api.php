@@ -55,10 +55,6 @@ Route::middleware('auth')->group(
                 'applications/{applicationReference}/fields/{fieldCode}/files/{id}',
                 [ApplicationFileController::class, 'show']
             );
-            Route::delete(
-                'applications/{applicationReference}/fields/{fieldCode}/files/{id}',
-                [ApplicationFileController::class, 'delete']
-            );
 
             Route::get('messages/{id}', [MessageController::class, 'view'])
                 ->name('message-view');

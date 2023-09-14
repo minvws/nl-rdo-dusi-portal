@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
+use Exception;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
@@ -192,7 +193,7 @@ class ApplicationServiceTest extends TestCase
 
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $applicationService->processFormSubmit($formSubmit);
     }
 
@@ -223,9 +224,10 @@ class ApplicationServiceTest extends TestCase
             json_encode($data)
         );
 
-        // TODO: Field validation will be added, exception wont be thrown anymore
         $applicationService = $this->app->get(ApplicationService::class);
         assert($applicationService instanceof ApplicationService);
+
+        $this->expectException(Exception::class);
         $applicationService->processFormSubmit($formSubmit);
     }
 }

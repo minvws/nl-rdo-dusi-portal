@@ -73,12 +73,7 @@ readonly class ApplicationRetrievalService
                 $data = $this->applicationDataService->getApplicationData($app);
             }
 
-            $files = null;
-            if ($params->includeFiles) {
-                $files = $this->applicationDataService->getApplicationFiles($app);
-            }
-
-            $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data, $files);
+            $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data);
 
             return $this->encryptionService->encryptCodableResponse(
                 EncryptedResponseStatus::OK,
