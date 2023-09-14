@@ -79,7 +79,7 @@ class FrontendDecryptionServiceTest extends TestCase
         );
 
         $encryptedData = sodium_crypto_box_seal('test', sodium_crypto_box_publickey($this->keyPair));
-        $decryptedData = $service->decrypt(base64_encode($encryptedData));
+        $decryptedData = $service->decrypt(sodium_bin2base64($encryptedData, SODIUM_BASE64_VARIANT_ORIGINAL));
 
         $this->assertEquals('test', $decryptedData);
     }
@@ -97,7 +97,7 @@ class FrontendDecryptionServiceTest extends TestCase
         $this->expectException(FrontendDecryptionFailedException::class);
         $this->expectExceptionMessage('Could not decrypt data');
 
-        $service->decrypt(base64_encode($encryptedData));
+        $service->decrypt(sodium_bin2base64($encryptedData, SODIUM_BASE64_VARIANT_ORIGINAL));
     }
 
     public function testCannotDecryptWithoutBase64EncodedData(): void
@@ -108,7 +108,7 @@ class FrontendDecryptionServiceTest extends TestCase
         );
 
         $this->expectException(FrontendDecryptionFailedException::class);
-        $this->expectExceptionMessage('Could not base64_decode data');
+        $this->expectExceptionMessage('Could not decrypt data');
 
         $service->decrypt('#$%&*()');
     }
@@ -123,6 +123,6 @@ class FrontendDecryptionServiceTest extends TestCase
         $this->expectException(FrontendDecryptionFailedException::class);
         $this->expectExceptionMessage('Could not decrypt data');
 
-        $service->decrypt(base64_encode('this is not encrypted data'));
+        $service->decrypt(sodium_bin2base64('this is not encrypted data', SODIUM_BASE64_VARIANT_ORIGINAL));
     }
 }

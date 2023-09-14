@@ -94,7 +94,7 @@ class ApplicationServiceTest extends TestCase
         $fileUpload = new FileUpload(
             new EncryptedIdentity(
                 IdentityType::CitizenServiceNumber,
-                '123456789'
+                base64_encode('123456789')
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             $fileField->code,
@@ -129,7 +129,7 @@ class ApplicationServiceTest extends TestCase
         $formSubmit = new FormSubmit(
             new EncryptedIdentity(
                 IdentityType::CitizenServiceNumber,
-                '123456789'
+                base64_encode('123456789')
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             json_encode($data)
@@ -166,7 +166,7 @@ class ApplicationServiceTest extends TestCase
         $formSubmit = new FormSubmit(
             new EncryptedIdentity(
                 IdentityType::CitizenServiceNumber,
-                '123456789'
+                base64_encode('123456789')
             ),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
             json_encode($data)
@@ -184,7 +184,7 @@ class ApplicationServiceTest extends TestCase
         $formSubmit = new FormSubmit(
             new EncryptedIdentity(
                 IdentityType::CitizenServiceNumber,
-                '123456789'
+                base64_encode('123456789')
             ),
             new ApplicationMetadata($this->faker->uuid, $this->subsidyStage->id),
             json_encode([]) // Empty data for the form, which should be invalid
@@ -217,7 +217,7 @@ class ApplicationServiceTest extends TestCase
         $formSubmit = new FormSubmit(
             new EncryptedIdentity(
                 IdentityType::CitizenServiceNumber,
-                '123456789'
+                base64_encode('123456789')
             ),
             new ApplicationMetadata(Uuid::uuid4()->toString(), $this->subsidyStage->id),
             json_encode($data)
