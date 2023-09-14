@@ -25,14 +25,15 @@ Route::get('forms/{form}', [SubsidyStageController::class, 'show'])->name('form-
 
 Route::middleware('auth')->group(
     function () {
-        Route::get('applications', [ApplicationController::class, 'index']);
-
         Route::get('messages', [MessageController::class, 'index']);
 
         // TODO: move more routes to this once the frontend is ready
         Route::middleware(RequireClientPublicKey::class)->group(function () {
             Route::post('subsidies/{subsidyCode}/applications', [ApplicationController::class, 'create'])
                 ->name('application->create');
+
+            Route::get('applications', [ApplicationController::class, 'index'])
+                ->name('application-index');
             Route::put('applications/{reference}', [ApplicationController::class, 'save'])
                 ->name('application-save');
             Route::post(
