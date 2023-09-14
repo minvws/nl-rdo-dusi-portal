@@ -14,6 +14,8 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateP
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
@@ -29,11 +31,11 @@ $bindings = [
         'callback' => [ApplicationMutationService::class, 'findOrCreateApplication']
     ],
     RPCMethods::UPLOAD_APPLICATION_FILE => [
-        'paramsClass' => ApplicationFindOrCreateParams::class,
+        'paramsClass' => EncryptedApplicationFileUploadParams::class,
         'callback' => [ApplicationFileService::class, 'saveApplicationFile']
     ],
     RPCMethods::SAVE_APPLICATION => [
-        'paramsClass' => ApplicationFindOrCreateParams::class,
+        'paramsClass' => EncryptedApplicationSaveParams::class,
         'callback' => [ApplicationMutationService::class, 'saveApplication']
     ],
     RPCMethods::LIST_APPLICATIONS => [

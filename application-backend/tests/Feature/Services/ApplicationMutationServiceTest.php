@@ -164,23 +164,23 @@ class ApplicationMutationServiceTest extends TestCase
     public static function saveApplicationDataProvider(): array
     {
         return [
-            [ApplicationStatus::Draft],
-            [ApplicationStatus::Submitted]
+            [false, ApplicationStatus::Draft],
+            [true, ApplicationStatus::Submitted]
         ];
     }
 
     /**
      * @dataProvider saveApplicationDataProvider
      */
-    public function testSaveApplication(ApplicationStatus $status): void
+    public function testSaveApplication(bool $submit, ApplicationStatus $expectedStatus): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
         $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage);
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $body = new ApplicationSaveBody(
-            $status,
-            (object)[$this->textField->code => $this->faker->text]
+            (object)[$this->textField->code => $this->faker->text],
+            $submit
         );
 
         $json = (new JSONEncoder())->encode($body);
@@ -204,7 +204,7 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertCount(1, get_object_vars($app->data));
         $this->assertObjectHasProperty($this->textField->code, $app->data);
         $this->assertEquals($body->data->{$this->textField->code}, $app->data->{$this->textField->code});
-        $this->assertEquals($status, $app->status);
+        $this->assertEquals($expectedStatus, $app->status);
     }
 
     public static function saveApplicationOnlyAllowedForEditableStatusesProvider(): array
@@ -232,8 +232,8 @@ class ApplicationMutationServiceTest extends TestCase
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $body = new ApplicationSaveBody(
-            $status,
-            (object)[$this->textField->code => $this->faker->text]
+            (object)[$this->textField->code => $this->faker->text],
+            true
         );
 
         $json = (new JSONEncoder())->encode($body);
@@ -266,7 +266,6 @@ class ApplicationMutationServiceTest extends TestCase
         $fileRepository->writeFile($applicationStage, $this->uploadField, $fileId, random_bytes(100));
 
         $body = new ApplicationSaveBody(
-            ApplicationStatus::Draft,
             (object)[
                 $this->textField->code => $this->faker->text,
                 $this->uploadField->code => [(object)[
@@ -274,7 +273,8 @@ class ApplicationMutationServiceTest extends TestCase
                     'name' => 'filename.pdf',
                     'mimeType' => 'application/pdf'
                 ]]
-            ]
+            ],
+            false
         );
 
         $json = (new JSONEncoder())->encode($body);
@@ -312,7 +312,6 @@ class ApplicationMutationServiceTest extends TestCase
         $fileId = Uuid::uuid4()->toString();
 
         $body = new ApplicationSaveBody(
-            ApplicationStatus::Draft,
             (object)[
                 $this->textField->code => $this->faker->text,
                 $this->uploadField->code => [(object)[
@@ -320,7 +319,8 @@ class ApplicationMutationServiceTest extends TestCase
                     'name' => 'filename.pdf',
                     'mimeType' => 'application/pdf'
                 ]]
-            ]
+            ],
+            false
         );
 
         $json = (new JSONEncoder())->encode($body);

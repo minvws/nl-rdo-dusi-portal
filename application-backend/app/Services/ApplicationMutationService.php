@@ -28,6 +28,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Throwable;
 
 /**
@@ -70,8 +71,13 @@ readonly class ApplicationMutationService
 
     private function doFindOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
     {
-        $identity = $this->identityService->findOrCreateIdentity($params->identity);
-        $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
+        if (Uuid::isValid($params->subsidyCode)) {
+            // TODO: once frontend uses subsidy code, we can remove this code
+            $subsidy = $this->subsidyRepository->getSubsidyStage($params->subsidyCode)?->subsidyVersion?->subsidy;
+        } else {
+            $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
+        }
+
         if ($subsidy === null) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
@@ -79,6 +85,8 @@ readonly class ApplicationMutationService
                 'Subsidy with the given code does not exist.'
             );
         }
+
+        $identity = $this->identityService->findOrCreateIdentity($params->identity);
 
         $application = $this->applicationRepository->findMyApplicationForSubsidy($identity, $subsidy);
         if ($application !== null && $application->status->isEditableForApplicant()) {
@@ -153,7 +161,7 @@ readonly class ApplicationMutationService
 
         $this->applicationDataService->saveApplicationData($applicationStage, $body->data);
 
-        if ($body->status === ApplicationStatus::Submitted) {
+        if ($body->submit) {
             $application->status = ApplicationStatus::Submitted;
             $application->final_review_deadline =
                 Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);

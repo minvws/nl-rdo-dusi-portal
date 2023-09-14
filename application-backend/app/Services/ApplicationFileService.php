@@ -10,7 +10,6 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
 use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
@@ -43,7 +42,6 @@ readonly class ApplicationFileService
     public function __construct(
         private EncryptionService $encryptionService,
         private IdentityService $identityService,
-        private FrontendDecryption $decryptionService,
         private ApplicationRepository $applicationRepository,
         private ApplicationFileRepository $applicationFileRepository,
         private SubsidyRepository $subsidyRepository,
@@ -100,7 +98,7 @@ readonly class ApplicationFileService
 
         $id = Uuid::uuid4()->toString();
 
-        $decryptedContent = $this->decryptionService->decrypt($params->data);
+        $decryptedContent = $params->data->data; // TODO: $this->decryptionService->decrypt($params->data);
         $encryptedContent = $this->encryptionService->encryptData($decryptedContent);
         $this->applicationFileRepository->writeFile($applicationStage, $field, $id, $encryptedContent);
 
