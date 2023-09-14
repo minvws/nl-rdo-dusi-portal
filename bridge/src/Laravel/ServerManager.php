@@ -56,7 +56,8 @@ class ServerManager
         assert(!isset($config['connection']) || is_string($config['connection']));
         $connection = $this->connectionManager->connection($config['connection'] ?? null);
 
-        $server = new Server($connection, $this->logger, $config['declare_exchange_and_queue']);
+        $declareExchangeAndQueue = $this->app['config']['bridge.declare_exchange_and_queue'] ?? true;
+        $server = new Server($connection, $this->logger, $declareExchangeAndQueue);
 
         assert(is_array($config['bindings']));
         foreach ($config['bindings'] as $method => $binding) {
