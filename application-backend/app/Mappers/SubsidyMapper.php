@@ -22,6 +22,6 @@ class SubsidyMapper
 
     public function mapSubsidyVersionToFormDTO(SubsidyVersion $subsidyVersion): FormDTO
     {
-        return new FormDTO($subsidyVersion->id, $subsidyVersion->version);
+        return new FormDTO($subsidyVersion->subsidy->id, $subsidyVersion->version);
     }
 }
