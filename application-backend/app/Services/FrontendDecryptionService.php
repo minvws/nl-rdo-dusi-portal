@@ -54,7 +54,7 @@ class FrontendDecryptionService implements FrontendDecryption
         if ($isRaw) {
             $data = $encryptedData;
         } else {
-            $data = base64_decode($encryptedData, true);
+            $data = sodium_base642bin($encryptedData, SODIUM_BASE64_VARIANT_ORIGINAL);
         }
 
         if ($data === false) {
