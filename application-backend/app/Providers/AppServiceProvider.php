@@ -65,6 +65,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registerSurePayService();
+
+        $this->registerHsmService();
+
+        $this->registerHsmCommands();
+
+        $this->registerIdentityService();
+
+        $this->registerApplicationfileRepository();
+
+        $this->registerFrontendDecryption();
+    }
+
+    /**
+     * @return void
+     */
+    public function registerSurePayService () : void {
         $this->app->singleton(SurePayService::class, function () {
             $config = config('surepay_api');
 
@@ -75,12 +92,17 @@ class AppServiceProvider extends ServiceProvider
 
             return new SurePayService(
                 client: new Client([
-                    'base_uri' => $config->get('endpoint'),
-                    'verify' => false,
-                ]),
+                                       'base_uri' => $config->get('endpoint'),
+                                       'verify'   => false,
+                                   ]),
             );
         });
+    }
 
+    /**
+     * @return void
+     */
+    public function registerHsmService () : void {
         $this->app->singleton(HsmService::class, function (Application $app) {
             $config = $app->make('config');
 
@@ -106,25 +128,30 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return new HsmService(
-                client: new Client([
-                    'base_uri' => $config->get('hsm_api.endpoint_url'),
-                    'verify' => false,
-                    'cert' => $config->get('hsm_api.client_certificate_path'),
-                    'ssl_key' => $config->get('hsm_api.client_certificate_key_path')
-                ]),
+                client     : new Client([
+                                            'base_uri' => $config->get('hsm_api.endpoint_url'),
+                                            'verify'   => false,
+                                            'cert'     => $config->get('hsm_api.client_certificate_path'),
+                                            'ssl_key'  => $config->get('hsm_api.client_certificate_key_path')
+                                        ]),
                 endpointUrl: $config->get('hsm_api.endpoint_url'),
-                module: $config->get('hsm_api.module'),
-                slot: $config->get('hsm_api.slot'),
+                module     : $config->get('hsm_api.module'),
+                slot       : $config->get('hsm_api.slot'),
             );
         });
+    }
 
+    /**
+     * @return void
+     */
+    public function registerHsmCommands () : void {
         $this->app->singleton(HsmInfoCommand::class, function (Application $app) {
             $config = $app->make('config');
 
             return new HsmInfoCommand(
-                service: $app->make(HsmService::class),
-                hsmApiModule: $config->get('hsm_api.module') ?? '',
-                hsmApiSlot: $config->get('hsm_api.slot') ?? '',
+                service                 : $app->make(HsmService::class),
+                hsmApiModule            : $config->get('hsm_api.module') ?? '',
+                hsmApiSlot              : $config->get('hsm_api.slot') ?? '',
                 hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
             );
         });
@@ -133,11 +160,11 @@ class AppServiceProvider extends ServiceProvider
             $config = $app->make('config');
 
             return new HsmLocalClearCommand(
-                environment: $config->get('app.env'),
-                debugModeEnabled: $config->get('app.debug'),
-                service: $app->make(HsmService::class),
-                hsmApiModule: $config->get('hsm_api.module') ?? '',
-                hsmApiSlot: $config->get('hsm_api.slot') ?? '',
+                environment             : $config->get('app.env'),
+                debugModeEnabled        : $config->get('app.debug'),
+                service                 : $app->make(HsmService::class),
+                hsmApiModule            : $config->get('hsm_api.module') ?? '',
+                hsmApiSlot              : $config->get('hsm_api.slot') ?? '',
                 hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
             );
         });
@@ -146,22 +173,26 @@ class AppServiceProvider extends ServiceProvider
             $config = $app->make('config');
 
             return new HsmLocalInitCommand(
-                service: $app->make(HsmService::class),
-                hsmApiModule: $config->get('hsm_api.module') ?? '',
-                hsmApiSlot: $config->get('hsm_api.slot') ?? '',
+                service                 : $app->make(HsmService::class),
+                hsmApiModule            : $config->get('hsm_api.module') ?? '',
+                hsmApiSlot              : $config->get('hsm_api.slot') ?? '',
                 hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
             );
         });
+    }
 
+    /**
+     * @return void
+     */
+    public function registerIdentityService () : void {
         $this->app->when(IdentityService::class)->needs('$hashSecret')->giveConfig('identity.hash_secret');
         $this->app->when(IdentityService::class)->needs('$hashAlgorithm')->giveConfig('identity.hash_algorithm');
+    }
 
-        $this->app->when(ApplicationFileRepository::class)
-            ->needs(Filesystem::class)
-            ->give(function (Application $app) {
-                return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
-            });
-
+    /**
+     * @return void
+     */
+    public function registerFrontendDecryption () : void {
         $this->app->bind(FrontendDecryption::class, FrontendDecryptionService::class);
         $this->app->when(FrontendDecryptionService::class)
             ->needs('$publicKey')
@@ -169,5 +200,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->when(FrontendDecryptionService::class)
             ->needs('$privateKey')
             ->giveConfig('frontend.form_encryption.private_key');
+    }
+
+    /**
+     * @return void
+     */
+    public function registerApplicationfileRepository () : void {
+        $this->app->when(ApplicationFileRepository::class)
+            ->needs(Filesystem::class)
+            ->give(function (Application $app) {
+                return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
+            });
     }
 }
