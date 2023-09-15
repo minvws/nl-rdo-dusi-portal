@@ -9,6 +9,9 @@ use DateTime;
 
 readonly class LetterData
 {
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function __construct(
         public string $subsidyTitle,
         public string $decision,
