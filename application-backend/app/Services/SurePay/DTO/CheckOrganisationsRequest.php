@@ -22,15 +22,6 @@ class CheckOrganisationsRequest
     }
 
     /**
-     * @param $arrayData
-     * @return CheckOrganisationsRequest
-     */
-    public static function fromArray($arrayData): CheckOrganisationsRequest
-    {
-        return new self($arrayData);
-    }
-
-    /**
      * @param string $acountOwner
      * Name of the account holder. Mandatory when not using at least 1 type of companyId.
      * The max. length - 140 characters.

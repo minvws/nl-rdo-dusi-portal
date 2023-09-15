@@ -171,6 +171,10 @@ class SurePayService
             $this->accessToken = $this->fetchAccessToken();
         }
 
+        if (!isset($this->accessToken->accessToken)) {
+            throw new SurePayServiceException('Accesstoken not set');
+        }
+
         return $this->accessToken->accessToken;
     }
 
