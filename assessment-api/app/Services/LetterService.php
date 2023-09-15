@@ -254,7 +254,7 @@ readonly class LetterService
         // TODO: encrypt
         $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($htmlPath, $html);
 
-        $this->messageRepository->createMessage($stage, $pdfPath, $htmlPath);
+        $this->messageRepository->createMessage($stage, $htmlPath, $pdfPath);
 
         $this->triggerMailNotification($stage, $data);
     }

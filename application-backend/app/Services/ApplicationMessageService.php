@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
+use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\LetterRepository;
@@ -17,18 +18,23 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListMessage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ApplicationMessageService
 {
+    use HandleException;
+
     public function __construct(
         private readonly EncryptionService $encryptionService,
         private readonly ApplicationMessageRepository $messageRepository,
         private readonly IdentityService $identityService,
         private readonly LetterRepository $letterRepository,
-        private readonly ApplicationMapper $applicationMapper
+        private readonly ApplicationMapper $applicationMapper,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -54,6 +60,15 @@ class ApplicationMessageService
 
     public function getMessage(MessageParams $params): EncryptedResponse
     {
+        try {
+            return $this->doGetMessage($params);
+        } catch (Throwable $e) {
+            return $this->handleException(__METHOD__, $e, $params->publicKey);
+        }
+    }
+
+    private function doGetMessage(MessageParams $params): EncryptedResponse
+    {
         $identity = $this->identityService->findIdentity($params->identity);
 
         if ($identity === null) {
@@ -75,6 +90,7 @@ class ApplicationMessageService
         }
 
         $body = $this->letterRepository->getHtmlContent($message);
+        // TODO: should be encrypted $body = $this->encryptionService->decryptData($body);
 
         if ($body === null) {
             return $this->encryptionService->encryptCodableResponse(
