@@ -13,7 +13,7 @@ class CheckOrganisationsRequest
     public array $accountId;
     public string $name;
 
-    public function __construct($request)
+    public function __construct(array $request)
     {
         $this->throwIfInvalid($request);
 

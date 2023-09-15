@@ -24,9 +24,9 @@ class AccesstokenResponse
     public string $status;
 
     /**
-     * @throws ValidationException
+     * @param $response
      */
-    public function __construct($response)
+    public function __construct(array $response)
     {
         $this->throwIfInvalid($response);
 
@@ -48,7 +48,7 @@ class AccesstokenResponse
     /**
      * @throws ValidationException
      */
-    public static function fromJson($jsonResponse): AccesstokenResponse
+    public static function fromJson(string $jsonResponse): AccesstokenResponse
     {
         $data = json_decode($jsonResponse, true);
 
@@ -58,7 +58,7 @@ class AccesstokenResponse
     /**
      * @throws ValidationException
      */
-    private function throwIfInvalid($response): void
+    private function throwIfInvalid(array $response): void
     {
         Validator::make($response, [
             'refresh_token_expires_in' => 'required|integer',

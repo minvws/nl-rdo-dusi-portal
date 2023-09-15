@@ -68,7 +68,7 @@ class CheckOrganisationsAccountResponse
      */
     public string $countryCode;
 
-    public function __construct($response)
+    public function __construct(array $response)
     {
         $this->accountNumberValidation = $response['accountNumberValidation'];
         $this->paymentPreValidation = $response['paymentPreValidation'];
@@ -79,23 +79,10 @@ class CheckOrganisationsAccountResponse
         $this->countryCode = $response['countryCode'];
     }
 
-    public static function fromJson($jsonResponse): CheckOrganisationsAccountResponse
+    public static function fromJson(string $jsonResponse): CheckOrganisationsAccountResponse
     {
         $decoded = json_decode($jsonResponse, true);
 
         return new self($decoded);
-    }
-
-    public function asJson(): string
-    {
-        return json_encode([
-            'accountNumberValidation' => $this->accountNumberValidation,
-            'paymentPreValidation' => $this->paymentPreValidation,
-            'status' => $this->status,
-            'accountType' => $this->accountType,
-            'jointAccount' => $this->jointAccount,
-            'numberOfAccountHolders' => $this->numberOfAccountHolders,
-            'countryCode' => $this->countryCode,
-        ]);
     }
 }
