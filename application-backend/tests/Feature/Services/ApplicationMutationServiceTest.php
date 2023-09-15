@@ -136,6 +136,33 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertEquals(ApplicationStatus::Draft, $app->status);
     }
 
+    public function testFindOrCreateApplicationCreatesNewApplicationWhenOnlyARejectedApplicationExists(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create([
+            'status' => ApplicationStatus::Rejected
+        ]);
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage);
+        Answer::factory()->for($applicationStage)->for($this->textField)->create();
+
+        $params = new ApplicationFindOrCreateParams(
+            new EncryptedIdentity(IdentityType::CitizenServiceNumber, $this->identity->hashed_identifier),
+            $this->publicKey,
+            $this->subsidy->code
+        );
+
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->findOrCreateApplication($params);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::CREATED, $encryptedResponse->status);
+
+        $encryptionService = $this->app->get(EncryptionService::class);
+        $app = $encryptionService->decryptCodableResponse($encryptedResponse, ApplicationDTO::class, $this->keyPair);
+        $this->assertNotNull($app);
+        $this->assertNotNull($app->data);
+        $this->assertCount(0, get_object_vars($app->data));
+        $this->assertEquals($this->subsidy->code, $app->subsidy->code);
+        $this->assertEquals(ApplicationStatus::Draft, $app->status);
+    }
+
     public function testFindOrCreateApplicationReturnsErrorIfApplicationAlreadyExistsAndIsNotEditable(): void
     {
         $application =

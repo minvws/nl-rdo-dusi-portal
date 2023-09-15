@@ -93,6 +93,11 @@ readonly class ApplicationMutationService
             return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
         }
 
+        if ($application !== null && $application->status->isNewApplicationAllowed()) {
+            // ignore existing and create a new one
+            $application = null;
+        }
+
         if ($application !== null) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
