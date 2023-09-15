@@ -120,7 +120,7 @@
                         "fields": {
                             "WIA-Beslissing": "{wiaDecisionDocument}",
                             "WIA-Beslissing uitgesteld": "{isWiaDecisionPostponed}",
-                            "Toekenningsbrief": "{Toekenningsbrief}"
+                            "Toekenningsbrief (indien uitgesteld)": "{Toekenningsbrief}"
                         }
                     }
                 }
@@ -141,9 +141,9 @@
                             "Bewijs van dienstverband": "{employmentContract}",
                             "Functie": "{employmentFunction}",
                             "Werkgever": "{employerKind}",
-                            "Verklaring zorgaanbieder": "{otherEmployerDeclarationFile}",
+                            "Verklaring zorgaanbieder (indien anders)": "{otherEmployerDeclarationFile}",
                             "Heeft gewerkt in justitiële inrichting": "{hasBeenWorkingAtJudicialInstitution}",
-                            "BIG-nummer": "{BIGNumberJudicialInstitution}"
+                            "BIG-nummer justitiële inrichting": "{BIGNumberJudicialInstitution}"
                         }
                     }
                 }
@@ -163,7 +163,7 @@
                         "fields": {
                             "Medisch onderzoeksverslag (medische rapportage)": "{socialMedicalAssessment}",
                             "Bevat uw medisch onderzoeksverslag de diagnose langdurige post-COVID?": "{hasPostCovidDiagnose}",
-                            "Verklaring arts": "{doctorsCertificate}"
+                            "Verklaring arts (indien geen diagnose)": "{doctorsCertificate}"
                         }
                     }
                 }
