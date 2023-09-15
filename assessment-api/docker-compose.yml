@@ -23,6 +23,7 @@ services:
             - '../application-model:/var/www/html/vendor/minvws/dusi-application-model'
             - '../subsidy-model:/var/www/html/vendor/minvws/dusi-subsidy-model'
             - '../serialisation-model:/var/www/html/vendor/minvws/dusi-serialisation-model'
+            - '../application-backend/storage/application-files:/var/www/html/storage/application-files'
         networks:
             portal-backend:
             user-admin-web:
