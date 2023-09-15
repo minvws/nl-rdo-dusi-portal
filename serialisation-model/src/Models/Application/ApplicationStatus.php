@@ -16,4 +16,9 @@ enum ApplicationStatus: string
     {
         return in_array($this, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges], true);
     }
+
+    public function isNewApplicationAllowed(): bool
+    {
+        return $this === ApplicationStatus::Rejected;
+    }
 }
