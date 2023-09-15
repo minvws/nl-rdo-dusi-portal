@@ -47,13 +47,13 @@ class AppServiceProvider extends ServiceProvider
             FileUploadHandlerInterface::class,
             function (Application $app) {
                 return new FileUploadHandler($app->get(ApplicationService::class));
-            }
+            },
         );
         $this->app->bind(
             FormSubmitHandlerInterface::class,
             function (Application $app) {
                 return new FormSubmitHandler($app->get(ApplicationService::class));
-            }
+            },
         );
     }
 
@@ -81,20 +81,23 @@ class AppServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    public function registerSurePayService () : void {
+    public function registerSurePayService(): void
+    {
         $this->app->singleton(SurePayService::class, function () {
             $config = config('surepay_api');
 
             if (empty($config->get('endpoint'))) {
-                throw new RuntimeException('SurePay API endpoint URL must be set in the environment config.
-                Please set SUREPAY_ENDPOINT.');
+                throw new RuntimeException(
+                    'SurePay API endpoint URL must be set in the environment config.
+                Please set SUREPAY_ENDPOINT.',
+                );
             }
 
             return new SurePayService(
                 client: new Client([
-                                       'base_uri' => $config->get('endpoint'),
-                                       'verify'   => false,
-                                   ]),
+                    'base_uri' => $config->get('endpoint'),
+                    'verify'   => false,
+                ]),
             );
         });
     }
@@ -102,38 +105,49 @@ class AppServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    public function registerHsmService () : void {
+    public function registerHsmService(): void
+    {
         $this->app->singleton(HsmService::class, function (Application $app) {
             $config = $app->make('config');
 
             if (empty($config->get('hsm_api.endpoint_url'))) {
-                throw new RuntimeException('HSM API endpoint URL must be set in the environment config.
-                Please set HSM_API_ENDPOINT_URL.');
+                throw new RuntimeException(
+                    'HSM API endpoint URL must be set in the environment config.
+                Please set HSM_API_ENDPOINT_URL.',
+                );
             }
             if (empty($config->get('hsm_api.client_certificate_path'))) {
-                throw new RuntimeException('HSM API Client certificate path must be set in the environment
-                config. Please set HSM_API_CLIENT_CERTIFICATE_PATH.');
+                throw new RuntimeException(
+                    'HSM API Client certificate path must be set in the environment
+                config. Please set HSM_API_CLIENT_CERTIFICATE_PATH.',
+                );
             }
             if (empty($config->get('hsm_api.client_certificate_key_path'))) {
-                throw new RuntimeException('HSM API Client certificate key path must be set in the environment
-                 config. Please set HSM_API_CLIENT_CERTIFICATE_KEY_PATH.');
+                throw new RuntimeException(
+                    'HSM API Client certificate key path must be set in the environment
+                 config. Please set HSM_API_CLIENT_CERTIFICATE_KEY_PATH.',
+                );
             }
             if (empty($config->get('hsm_api.module'))) {
-                throw new RuntimeException('HSM API module must be set in the environment config. Please set
-                 HSM_API_MODULE.');
+                throw new RuntimeException(
+                    'HSM API module must be set in the environment config. Please set
+                 HSM_API_MODULE.',
+                );
             }
             if (empty($config->get('hsm_api.slot'))) {
-                throw new RuntimeException('HSM API slot must be set in the environment config. Please set
-                 HSM_API_SLOT.');
+                throw new RuntimeException(
+                    'HSM API slot must be set in the environment config. Please set
+                 HSM_API_SLOT.',
+                );
             }
 
             return new HsmService(
                 client     : new Client([
-                                            'base_uri' => $config->get('hsm_api.endpoint_url'),
-                                            'verify'   => false,
-                                            'cert'     => $config->get('hsm_api.client_certificate_path'),
-                                            'ssl_key'  => $config->get('hsm_api.client_certificate_key_path')
-                                        ]),
+                    'base_uri' => $config->get('hsm_api.endpoint_url'),
+                    'verify'   => false,
+                    'cert'     => $config->get('hsm_api.client_certificate_path'),
+                    'ssl_key'  => $config->get('hsm_api.client_certificate_key_path'),
+                ]),
                 endpointUrl: $config->get('hsm_api.endpoint_url'),
                 module     : $config->get('hsm_api.module'),
                 slot       : $config->get('hsm_api.slot'),
@@ -144,7 +158,8 @@ class AppServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    public function registerHsmCommands () : void {
+    public function registerHsmCommands(): void
+    {
         $this->app->singleton(HsmInfoCommand::class, function (Application $app) {
             $config = $app->make('config');
 
@@ -184,7 +199,8 @@ class AppServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    public function registerIdentityService () : void {
+    public function registerIdentityService(): void
+    {
         $this->app->when(IdentityService::class)->needs('$hashSecret')->giveConfig('identity.hash_secret');
         $this->app->when(IdentityService::class)->needs('$hashAlgorithm')->giveConfig('identity.hash_algorithm');
     }
@@ -192,7 +208,8 @@ class AppServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    public function registerFrontendDecryption () : void {
+    public function registerFrontendDecryption(): void
+    {
         $this->app->bind(FrontendDecryption::class, FrontendDecryptionService::class);
         $this->app->when(FrontendDecryptionService::class)
             ->needs('$publicKey')
@@ -205,7 +222,8 @@ class AppServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    public function registerApplicationfileRepository () : void {
+    public function registerApplicationfileRepository(): void
+    {
         $this->app->when(ApplicationFileRepository::class)
             ->needs(Filesystem::class)
             ->give(function (Application $app) {
