@@ -161,15 +161,6 @@ readonly class LetterService
         $cssPath = $this->getCssPath();
         $logoPath = public_path('img/vws_dusi_logo.svg');
 
-        // TODO/FIXME: This is temporal code to be able te generate letters easily from the command app:generate-pdf
-        // or on application submit (application-backend)
-        $generateLettersBypassConfig = Config('services.letter_service.generate_letters_bypass_assertions', false);
-        if (is_null($stage->assessor_decision) && $generateLettersBypassConfig) {
-            /** @var ApplicationStageDecision $randomDecision */
-            $randomDecision = Collection::make(ApplicationStageDecision::cases())->random();
-            $stage->assessor_decision = $randomDecision;
-        }
-
         assert($stage->assessor_decision !== null);
 
         return new LetterData(

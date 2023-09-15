@@ -32,10 +32,4 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
-    'letter_service' => [
-        'generate_letters_bypass_assertions' => env('GENERATE_LETTERS_BYPASS_ASSERTIONS', false),
-    ],
-
-
 ];
