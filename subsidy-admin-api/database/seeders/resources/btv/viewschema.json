@@ -1,0 +1,131 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "FormGroupControl",
+            "label": "Metagegevens",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Dossiernummer": "{assessmentId}",
+                            "Aangevraagd op": "{validFrom}",
+                            "Uiterste behandeldatum": "{validTo}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Persoonlijke informatie",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Voornaam": "{firstName}",
+                            "Tussenvoegsel": "{infix}",
+                            "Achternaam": "{lastName}",
+                            "Geboortedatum": "{dateOfBirth}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Adres",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Land": "{country}",
+                            "Straatnaam": "{street}",
+                            "Huisnummer": "{houseNumber}",
+                            "Huisnummer toevoeging": "{houseNumberSuffix}",
+                            "Postcode": "{postalCode}",
+                            "Plaatsnaam": "{city}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Contact",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Telefoonnummer": "{phoneNumber}",
+                            "E-mailadres": "{email}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Bank",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "IBAN": "{bankAccountNumber}",
+                            "Naam rekeninghouder": "{bankAccountHolder}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Bestanden",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Kopie bankafschrift": "{bankStatement}",
+                            "Uitreksel bevolkingsregister": "{extractPersonalRecordsDatabase}",
+                            "Verklaring behandeltraject": "{proofOfMedicalTreatment}",
+                            "Verklaring type behandeling": "{proofOfTypeOfMedicalTreatment}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

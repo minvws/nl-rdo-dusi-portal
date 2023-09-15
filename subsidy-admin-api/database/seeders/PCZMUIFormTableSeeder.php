@@ -70,6 +70,17 @@ class PCZMUIFormTableSeeder extends Seeder
         ];
     }
 
+    private function buildViewSchema(): array
+    {
+        $filePath = __DIR__ . '/resources/pczm/viewschema.json';
+        if(!file_exists($filePath)) {
+            return [];
+        }
+        $json = file_get_contents($filePath);
+        assert(is_string($json));
+        return json_decode($json, true);
+    }
+
     public function run(): void
     {
         $ui = [
@@ -120,153 +131,7 @@ class PCZMUIFormTableSeeder extends Seeder
             ]
         ];
 
-        $view_ui = [
-            'sections' => [
-                [
-                    'title' => 'meta',
-                    'elements' => [
-                        [
-                            "type"=>"string",
-                            "field"=>"assessmentId"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"validFrom"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"validTo"
-                        ]
-                    ]
-                ],
-                [
-                    'title' => 'personal',
-                    'elements' => [
-                        [
-                            "type"=>"string",
-                            "field"=>"firstName"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"infix"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"lastName"
-                        ],[
-                            "type"=>"date",
-                            "field"=>"dateOfBirth"
-                        ]
-                    ]
-                ],
-                [
-                    'title' => 'address',
-                    'elements'=> [
-                        [
-                            "type"=>"string",
-                            "field"=>"street"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"houseNumber"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"houseNumberSuffix"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"postalCode"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"city"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"country"
-                        ],
-                    ]
-                ],
-                [
-                    'title' => 'contact',
-                    'elements' => [
-                        [
-                            "type"=>"string",
-                            "field"=>"phoneNumber"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"email"
-                        ]
-                    ]
-                ],
-                [
-                    'title' => 'bank',
-                    'elements' => [
-                        [
-                            "type"=>"string",
-                            "field"=>"bankAccountNumber"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"bankAccountHolder"
-                        ]
-                    ]
-                ],
-                [
-                    'title' => 'UWV',
-                    'elements' => [
-                        [
-                            "type"=>"file",
-                            "field"=>"certifiedEmploymentDocument"
-                        ]
-                    ]
-                ],
-                [
-                    'title' => 'WIA',
-                    'elements' => [
-                        [
-                            "type"=>"select",
-                            "field"=>"isWiaDecisionPostponed"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"wiaDecisionPostponedLetter"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"wiaDecisionDocument"
-                        ]
-                    ]
-                ],
-                [
-                    'title' => 'Werkgever',
-                    'elements' => [
-                        [
-                            "type"=>"file",
-                            "field"=>"employmentContract"
-                        ],[
-                            "type"=>"multiselect",
-                            "field"=>"employmentFunction"
-                        ],[
-                            "type"=>"select",
-                            "field"=>"employerKind"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"otherEmployerDeclarationFile"
-                        ],[
-                            "type"=>"select",
-                            "field"=>"hasBeenWorkingAtJudicialInstitution"
-                        ],[
-                            "type"=>"string",
-                            "field"=>"BIGNumberJudicialInstitution"
-                        ]
-                    ]
-                ],
-                [
-                    'title' => 'Medisch',
-                    'elements' => [
-                        [
-                            "type"=>"file",
-                            "field"=>"socialMedicalAssessment"
-                        ],[
-                            "type"=>"select",
-                            "field"=>"hasPostCovidDiagnose"
-                        ],[
-                            "type"=>"file",
-                            "field"=>"doctorsCertificate"
-                        ]
-                    ]
-                ],
-            ]];
+        $view_ui = $this->buildViewSchema();
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_STAGE1_V1_UUID,
