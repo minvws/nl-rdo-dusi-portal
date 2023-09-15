@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class PCZMUIAssessmentTableSeeder extends Seeder
 {
-    public const PCZM_STAGE2_V1_UUID = '71F71916-C0ED-45BC-8186-1B4F5DFB69E8';
+    public const PCZM_STAGE2_V1_UUID = '71f71916-c0ed-45bc-8186-1b4f5dfb69e8';
 
     public function run(): void
     {

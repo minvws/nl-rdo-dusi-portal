@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class SubsidyVersionsTableSeeder extends Seeder
 {
     public const BTV_VERSION_UUID = '907bb399-0d19-4e1a-ac75-25a864df27c6';
-    public const PCZM_VERSION_UUID = '513011CD-789B-4628-BA5C-2FEE231F8959';
+    public const PCZM_VERSION_UUID = '513011cd-789b-4628-ba5c-2fee231f8959';
 
     /**
      * Run the database seeds.

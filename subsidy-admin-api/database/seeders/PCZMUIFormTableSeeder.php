@@ -8,7 +8,7 @@ use stdClass;
 
 class PCZMUIFormTableSeeder extends Seeder
 {
-    public const PCZM_STAGE1_V1_UUID = 'E6D5CD35-8C67-40C4-ABC4-B1D6BF8AFB97';
+    public const PCZM_STAGE1_V1_UUID = 'e6d5cd35-8c67-40c4-abc4-b1d6bf8afb97';
 
     private function resolveFileReferencesInArray(array $array, string $basePath): void
     {

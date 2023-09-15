@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class SubsidyLetterTableSeeder extends Seeder
 {
     public const BTV_LETTER_UUID = '0cf71600-0793-406e-ad19-1bb7b8c665af';
-    public const PCZM_LETTER_UUID = 'C51302F6-E131-45FF-8D4B-F4FF4A39B52F';
+    public const PCZM_LETTER_UUID = 'c51302f6-e131-45ff-8d4b-f4ff4a39b52f';
 
     public function run(): void
     {
