@@ -28,15 +28,13 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MinVWS\\DUSi\\Shared\\Application\\Tests\\": "tests/Application/",
-            "MinVWS\\DUSi\\Shared\\Subsidy\\Tests\\": "tests/Subsidy/"
+            "MinVWS\\DUSi\\Shared\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "MinVWS\\DUSi\\Shared\\Application\\ApplicationServiceProvider",
-                "MinVWS\\DUSi\\Shared\\Subsidy\\SubsidyServiceProvider"
+                "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider"
             ]
         }
     },

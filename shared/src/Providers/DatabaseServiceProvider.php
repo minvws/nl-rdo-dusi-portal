@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application;
+namespace MinVWS\DUSi\Shared\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class ApplicationServiceProvider extends ServiceProvider
+class DatabaseServiceProvider extends ServiceProvider
 {
     public function register()
     {

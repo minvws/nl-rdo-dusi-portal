@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Subsidy\Tests\Feature\Repositories;
+namespace MinVWS\DUSi\Shared\Tests\Feature\Repositories;
 
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -14,7 +14,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyLetter;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use MinVWS\DUSi\Shared\Subsidy\Tests\Feature\TestCase;
+use MinVWS\DUSi\Shared\Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertNull;

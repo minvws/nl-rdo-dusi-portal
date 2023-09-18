@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\Tests\Feature\Repositories;
+namespace MinVWS\DUSi\Shared\Tests\Feature\Repositories;
 
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
@@ -17,7 +17,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use MinVWS\DUSi\Shared\Application\Tests\Feature\TestCase;
+use MinVWS\DUSi\Shared\Tests\TestCase;
 
 class ApplicationRepositoryTest extends TestCase
 {
@@ -26,7 +26,6 @@ class ApplicationRepositoryTest extends TestCase
     private Identity $identity;
     private SubsidyVersion $subsidyVersion;
     private SubsidyStage $subsidyStage;
-
 
     protected function setUp(): void
     {

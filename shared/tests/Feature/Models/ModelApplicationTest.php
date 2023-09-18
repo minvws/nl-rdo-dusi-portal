@@ -2,23 +2,21 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\Tests\Feature\Models;
+namespace MinVWS\DUSi\Shared\Tests\Feature\Models;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Application\Tests\Feature\TestCase;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Tests\TestCase;
 
 class ModelApplicationTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected array $connectionsToTransact = [Connection::APPLICATION];
     private Application $application;
     private ApplicationStage $applicationStage;
     private Subsidy $subsidy;
