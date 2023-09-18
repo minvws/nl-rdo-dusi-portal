@@ -13,6 +13,7 @@ use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -29,7 +30,7 @@ class ValidationServiceTest extends TestCase
     public function testRules(
         FieldType $fieldType,
         array $fieldParams,
-        string|int|bool|float|array|null $value,
+        string|int|bool|float|FileList|array|null $value,
         bool $passes
     ): void {
         $application = Application::factory()->create();

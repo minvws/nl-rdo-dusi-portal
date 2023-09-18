@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
-use JsonException;
+use MinVWS\Codable\Decoding\Decoder;
 use MinVWS\DUSi\Application\Backend\Services\FormDecodingService;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
+use MinVWS\DUSi\Shared\Application\Models\Submission\File;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
@@ -17,7 +19,7 @@ class FormDecodingServiceTest extends TestCase
     /**
      * @dataProvider dataProviderTestDecodeFormValues
      */
-    public function testDecodeFormValues(FieldType $fieldType, string $jsonFormData, mixed $value): void
+    public function testDecodeFormValues(FieldType $fieldType, object $data, mixed $value, mixed $expectedValue): void
     {
         $subsidyStage = SubsidyStage::factory()->create();
 
@@ -28,21 +30,25 @@ class FormDecodingServiceTest extends TestCase
         ]);
 
         $repository = app(SubsidyRepository::class);
+        $decoder = app(Decoder::class);
 
-        $decodingService = new FormDecodingService($repository);
+        $decodingService = new FormDecodingService($repository, $decoder);
         $values = $decodingService->decodeFormValues(
             $subsidyStage,
-            $jsonFormData,
+            $data,
         );
 
         $this->assertCount(1, $values);
         $this->assertArrayHasKey('code', $values);
-        $this->assertSame($value, $values['code']->value);
+
+        if ($fieldType === FieldType::Upload) {
+            $this->assertEquals($expectedValue, $values['code']->value);
+            return;
+        }
+
+        $this->assertSame($expectedValue, $values['code']->value);
     }
 
-    /**
-     * @throws JsonException
-     */
     public static function dataProviderTestDecodeFormValues(): array
     {
         return [
@@ -56,7 +62,15 @@ class FormDecodingServiceTest extends TestCase
             'field type multiselect' => self::getTestDataForField(FieldType::Multiselect, ['a', 'b']),
             'field type select' => self::getTestDataForField(FieldType::Select, 'a'),
             'field type textarea' => self::getTestDataForField(FieldType::TextArea, 'b'),
-            'field type upload' => self::getTestDataForField(FieldType::Upload, 'c'),
+            'field type upload' => self::getTestDataForField(FieldType::Upload, [
+                [
+                    'id' => '225654e6-1db3-445c-8ff8-48679dd802c2',
+                    'name' => 'file1.pdf',
+                    'mimeType' => 'application/pdf'
+                ],
+            ], new FileList([
+                new File('225654e6-1db3-445c-8ff8-48679dd802c2', 'file1.pdf', 'application/pdf'),
+            ])),
             'field type date' => self::getTestDataForField(FieldType::Date, '2023-12-31'),
             'field type custom postal code' => self::getTestDataForField(FieldType::CustomPostalCode, '1234AB'),
             'field type custom country' => self::getTestDataForField(FieldType::CustomCountry, 'NL'),
@@ -65,19 +79,24 @@ class FormDecodingServiceTest extends TestCase
         ];
     }
 
-    /**
-     * @throws JsonException
-     */
-    protected static function getTestDataForField(FieldType $fieldType, mixed $value): array
-    {
+    protected static function getTestDataForField(
+        FieldType $fieldType,
+        mixed $value,
+        mixed $expectedValue = null
+    ): array {
         $form = [
             'code' => $value,
         ];
 
+        if ($expectedValue === null) {
+            $expectedValue = $value;
+        }
+
         return [
             $fieldType,
-            json_encode($form, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
+            (object) $form,
             $value,
+            $expectedValue,
         ];
     }
 }

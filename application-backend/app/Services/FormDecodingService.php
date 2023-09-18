@@ -31,6 +31,7 @@ readonly class FormDecodingService
             FieldType::TextNumeric => 'int',
             FieldType::Checkbox => 'bool',
             FieldType::Upload => FileList::class,
+            FieldType::Multiselect => 'array',
             default => 'string'
         };
 

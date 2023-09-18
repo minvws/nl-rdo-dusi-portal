@@ -12,6 +12,7 @@ use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationFileRepositor
 use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationRepositoryAwareRule;
 use MinVWS\DUSi\Application\Backend\Services\Validation\ApplicationStageAwareRule;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
@@ -34,29 +35,35 @@ class FileUploadRule implements
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter) no need to check $value because answer should already exist
      * @param string $attribute
-     * @param mixed $value The value under validation does not need to be checked because answer should already exist.
+     * @param mixed $value should be FileList
      * @param Closure(string): PotentiallyTranslatedString $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $fieldIsRequired = $this->field->is_required;
-
-        $answer = $this->applicationRepository->getAnswer($this->applicationStage, $this->field);
-        if (!$fieldIsRequired && $answer === null) {
+        if (!$fieldIsRequired && $value === null) {
             return;
         }
 
-        if ($fieldIsRequired && $answer === null) {
+        if ($fieldIsRequired && $value === null) {
             $fail("Field is required!");
             return;
         }
 
-        $fileExists = $this->applicationFileRepository->fileExists(
-            applicationStage: $this->applicationStage,
-            field: $this->field,
-        );
-        if (!$fileExists) {
-            $fail("File not found!");
+        if (!($value instanceof FileList)) {
+            $fail("Value is not a FileList!");
+            return;
+        }
+
+        foreach ($value->items as $file) {
+            $fileExists = $this->applicationFileRepository->fileExists(
+                applicationStage: $this->applicationStage,
+                field: $this->field,
+                id: $file->id,
+            );
+            if (!$fileExists) {
+                $fail("File not found!");
+            }
         }
     }
 
