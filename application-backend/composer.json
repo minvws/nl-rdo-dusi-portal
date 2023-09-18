@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-fileinfo": "*",
         "ext-openssl": "*",
         "ext-sodium": "*",
         "doctrine/dbal": "^3.6",
@@ -16,7 +17,7 @@
         "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "ext-fileinfo": "*"
+        "sunspikes/clamav-validator": "^2.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
