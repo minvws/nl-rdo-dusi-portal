@@ -33,7 +33,6 @@ use Illuminate\Support\Collection;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-
 readonly class LetterService
 {
     public function __construct(
@@ -166,9 +165,7 @@ readonly class LetterService
         // or on application submit (application-backend)
         $generateLettersBypassConfig = Config('services.letter_service.generate_letters_bypass_assertions', false);
         if (is_null($stage->assessor_decision) && $generateLettersBypassConfig) {
-            /** @var ApplicationStageDecision $randomDecision */
-            $randomDecision = Collection::make(ApplicationStageDecision::cases())->random();
-            $stage->assessor_decision = $randomDecision;
+            $stage->assessor_decision = Collection::make(ApplicationStageDecision::cases())->random();
         }
 
         assert($stage->assessor_decision !== null);
