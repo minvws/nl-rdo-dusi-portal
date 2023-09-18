@@ -16,7 +16,6 @@
         "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
         "ext-fileinfo": "*"
     },
     "require-dev": {

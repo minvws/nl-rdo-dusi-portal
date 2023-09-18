@@ -84,7 +84,3 @@ cd "$BASEDIR/user-admin-api"
 vendor/bin/sail artisan user:create user@example.com user password
 echo "Log user in with: user@example.com password"
 cd "$BASEDIR"
-
-echo "Initialisation is finished, listening for incoming applications:"
-cd "$BASEDIR/application-backend"
-vendor/bin/sail artisan rabbitmq:consume
