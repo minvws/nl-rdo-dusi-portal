@@ -2,17 +2,6 @@
     "if": {
         "properties": {
             "isWiaDecisionPostponed": {
-                "const": "Nee"
-            }
-        }
-    },
-    "then": {
-        "required": ["wiaDecisionDocument"]
-    }
-}, {
-    "if": {
-        "properties": {
-            "isWiaDecisionPostponed": {
                 "const": "Ja"
             }
         }
@@ -56,7 +45,7 @@
 }, {
     "if": {
         "properties": {
-            "hasPostCovidComplaints": {
+            "hasPostCovidDiagnose": {
                 "const": "Nee"
             }
         }

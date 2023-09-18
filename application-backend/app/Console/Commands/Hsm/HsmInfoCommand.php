@@ -28,7 +28,7 @@ class HsmInfoCommand extends Command
         protected HsmService $service,
         protected string $hsmApiModule,
         protected string $hsmApiSlot,
-        protected string $hsmApiEncryptionKeyLabel,
+        protected string $hsmEncryptionKeyLabel,
     ) {
         parent::__construct();
     }
@@ -49,7 +49,7 @@ class HsmInfoCommand extends Command
 
         if (!$this->encryptionKeyLabelInConfig()) {
             $this->error('Encryption key label must be set in the environment config. Please set
-            HSM_API_ENCRYPTION_KEY_LABEL.');
+            HSM_ENCRYPTION_KEY_LABEL.');
             return;
         }
 
@@ -85,7 +85,7 @@ class HsmInfoCommand extends Command
         $this->info('Configured slot `' . ($slotResponse['slot'] ?? '') . '` exists.');
         if (count($slotResponse['objects']) === 0) {
             $this->error('No objects in slot.');
-            $this->error('Create a public and private key with label `' . $this->hsmApiEncryptionKeyLabel .
+            $this->error('Create a public and private key with label `' . $this->hsmEncryptionKeyLabel .
                 '` in slot `' . $this->hsmApiSlot . '`.');
             $this->info('For local development you can run the following artisan command `hsm:local-init`.');
             return;
@@ -99,7 +99,7 @@ class HsmInfoCommand extends Command
         foreach ($slotResponse['objects'] as $objectType => $objects) {
             foreach ($objects as $object) {
                 $tableData[] = [$objectType, $object['LABEL'] ?? ''];
-                if (($object['LABEL'] ?? '') !== $this->hsmApiEncryptionKeyLabel) {
+                if (($object['LABEL'] ?? '') !== $this->hsmEncryptionKeyLabel) {
                     continue;
                 }
 
@@ -134,7 +134,7 @@ class HsmInfoCommand extends Command
             return;
         }
 
-        $this->info('Public and private key with label `' . $this->hsmApiEncryptionKeyLabel .
+        $this->info('Public and private key with label `' . $this->hsmEncryptionKeyLabel .
             '` exists in slot `' . $this->hsmApiSlot . '`.');
 
         $this->newLine();
@@ -148,6 +148,6 @@ class HsmInfoCommand extends Command
 
     protected function encryptionKeyLabelInConfig(): bool
     {
-        return !empty($this->hsmApiEncryptionKeyLabel);
+        return !empty($this->hsmEncryptionKeyLabel);
     }
 }

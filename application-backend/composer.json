@@ -14,11 +14,9 @@
         "laravel/framework": "^10.17",
         "laravel/tinker": "^2.8",
         "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
-        "minvws/dusi-application-model": "@dev",
-        "minvws/dusi-serialisation-model": "@dev",
-        "minvws/dusi-subsidy-model": "@dev",
+        "minvws/dusi-shared": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -84,15 +82,7 @@
         },
         {
             "type": "path",
-            "url": "../application-model"
-        },
-        {
-            "type": "path",
-            "url": "../subsidy-model"
-        },
-        {
-            "type": "path",
-            "url": "../serialisation-model"
+            "url": "../shared"
         },
         {
             "type": "path",

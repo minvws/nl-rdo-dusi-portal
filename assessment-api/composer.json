@@ -14,9 +14,7 @@
         "laravel/sanctum": "^3.3",
         "latte/latte": "^3.0",
         "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
-        "minvws/dusi-application-model": "@dev",
-        "minvws/dusi-serialisation-model": "@dev",
-        "minvws/dusi-subsidy-model": "@dev",
+        "minvws/dusi-shared": "@dev",
         "predis/predis": "^2.2"
     },
     "require-dev": {
@@ -87,15 +85,7 @@
         },
         {
             "type": "path",
-            "url": "../application-model"
-        },
-        {
-            "type": "path",
-            "url": "../subsidy-model"
-        },
-        {
-            "type": "path",
-            "url": "../serialisation-model"
+            "url": "../shared"
         }
     ]
 }

@@ -5,73 +5,73 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
 use Exception;
+use Illuminate\Http\Request;
 use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
-use MinVWS\DUSi\Application\API\Http\Requests\ApplicationSubmitRequest;
-use MinVWS\DUSi\Application\API\Http\Requests\ApplicationUploadFileRequest;
-use MinVWS\DUSi\Application\API\Models\Application;
-use MinVWS\DUSi\Application\API\Models\DraftApplication;
-use MinVWS\DUSi\Application\API\Models\SubmittedApplication;
-use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
 use MinVWS\DUSi\Application\API\Services\ApplicationService;
-use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\ResponseFactory;
 use MinVWS\DUSi\Application\API\Services\StateService;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use Throwable;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ApplicationController extends Controller
 {
-    public function createDraft(
-        SubsidyStageData $subsidyStageData,
+    public function create(
+        string $subsidyCode,
+        StateService $stateService,
+        ClientPublicKeyHelper $publicKeyHelper,
         ApplicationService $applicationService
-    ): JsonResponse {
-        try {
-            $id = $applicationService->createDraft($subsidyStageData);
-            return response()->json(['id' => $id], status: 202);
-        } catch (SubsidyStageNotFoundException $e) {
-            abort(404, $e->getMessage());
-        }
+    ): Response {
+        $params = new ApplicationFindOrCreateParams(
+            $stateService->getEncryptedIdentity(),
+            $publicKeyHelper->getClientPublicKey(),
+            $subsidyCode
+        );
+        $response = $applicationService->findOrCreateApplication($params);
+        return $this->encryptedResponse($response);
     }
 
-    /**
-     * @throws Throwable
-     */
     public function uploadFile(
-        Application $application,
-        ApplicationUploadFileRequest $request,
+        string $applicationReference,
+        string $fieldCode,
+        Request $request,
+        StateService $stateService,
+        ClientPublicKeyHelper $publicKeyHelper,
         ApplicationService $applicationService
-    ): JsonResponse {
-        $fieldCode = $request->safe()['fieldCode'];
-        assert(is_string($fieldCode));
-        $file = $request->safe()['file'];
-        assert($file instanceof UploadedFile);
-        $id = $applicationService->uploadFile($application, $fieldCode, $file);
-        return response()->json(['id' => $id], status: 202);
+    ): Response {
+        $params = new EncryptedApplicationFileUploadParams(
+            $stateService->getEncryptedIdentity(),
+            $publicKeyHelper->getClientPublicKey(),
+            $applicationReference,
+            $fieldCode,
+            new BinaryData($request->getContent())
+        );
+        $response = $applicationService->uploadApplicationFile($params);
+        return $this->encryptedResponse($response);
     }
 
-    public function submit(
-        DraftApplication $application,
-        ApplicationSubmitRequest $request,
+    public function save(
+        string $reference,
+        Request $request,
+        StateService $stateService,
+        ClientPublicKeyHelper $publicKeyHelper,
         ApplicationService $applicationService
-    ): Response|ResponseFactory {
-        $encryptedData = $request->validated('data');
-        $status = $request->validated('status');
-        assert(is_string($encryptedData));
-
-        if ($status === ApplicationStatus::Submitted) {
-            $application = SubmittedApplication::fromDraft($application);
-        }
-
-        $applicationService->submit($application, $encryptedData);
-        return response(status: 202);
+    ): Response {
+        $params = new EncryptedApplicationSaveParams(
+            $stateService->getEncryptedIdentity(),
+            $publicKeyHelper->getClientPublicKey(),
+            $reference,
+            new BinaryData($request->getContent())
+        );
+        $response = $applicationService->saveApplication($params);
+        return $this->encryptedResponse($response);
     }
 
     /**
@@ -103,7 +103,6 @@ class ApplicationController extends Controller
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $reference,
-            true,
             true
         );
         $response = $applicationService->getApplication($params);

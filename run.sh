@@ -61,7 +61,7 @@ fi
 SCRIPT=$(readlink -f $0)
 BASEDIR=`dirname $SCRIPT`
 
-packages=( bridge serialisation-model subsidy-model application-model user-admin-api application-backend subsidy-admin-api application-api assessment-api )
+packages=( bridge shared user-admin-api application-backend subsidy-admin-api application-api assessment-api )
 for package in "${packages[@]}"
 do
   printf "\033[1;94mExecuting run.sh for ${package}\033[0m\n"
@@ -84,7 +84,3 @@ cd "$BASEDIR/user-admin-api"
 vendor/bin/sail artisan user:create user@example.com user password
 echo "Log user in with: user@example.com password"
 cd "$BASEDIR"
-
-echo "Initialisation is finished, listening for incoming applications:"
-cd "$BASEDIR/application-backend"
-vendor/bin/sail artisan rabbitmq:consume

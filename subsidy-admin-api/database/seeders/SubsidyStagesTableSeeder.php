@@ -10,8 +10,8 @@ class SubsidyStagesTableSeeder extends Seeder
     public const BTV_STAGE_1_UUID = '721c1c28-e674-415f-b1c3-872a631ed045';
     public const BTV_STAGE_2_UUID = '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c';
 
-    public const PCZM_STAGE_1_UUID = '7E5D64E9-35F0-4FEE-B8D2-DCA967B43183';
-    public const PCZM_STAGE_2_UUID = '8027C102-93EF-4735-AB66-97AA63B836EB';
+    public const PCZM_STAGE_1_UUID = '7e5d64e9-35f0-4fee-b8d2-dca967b43183';
+    public const PCZM_STAGE_2_UUID = '8027c102-93ef-4735-ab66-97aa63b836eb';
 
     /**
      * Run the database seeds.

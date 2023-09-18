@@ -112,7 +112,8 @@
                             "label": "Land",
                             "options": {
                                 "format": "select",
-                                "placeholder": "Selecteer een land"
+                                "placeholder": "Selecteer een land",
+                                "default": "Nederland"
                             }
                         }
                     ]

@@ -25,6 +25,8 @@ return [
 
     'defaultConnection' => 'default',
 
+    'declare_exchange_and_queue' => env('BRIDGE_DECLARE_EXCHANGE_AND_QUEUE', true),
+
     'servers' => [
         'default' => [
             'connection' => 'default',

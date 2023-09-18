@@ -9,24 +9,6 @@
             "options": {
                 "html": "file:intro.html"
             }
-        },
-        {
-            "type": "FormGroupControl",
-            "label": "Toestemming",
-            "options": {
-                "section": true,
-                "group": true
-            },
-            "elements": [
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/permissionToProcessPersonalData",
-                    "label": "Verwerking",
-                    "options": {
-                        "description": "Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze aanvraag."
-                    }
-                }
-            ]
         }
     ]
 }

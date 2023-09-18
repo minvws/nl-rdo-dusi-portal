@@ -25,28 +25,27 @@ Route::get('forms/{form}', [SubsidyStageController::class, 'show'])->name('form-
 
 Route::middleware('auth')->group(
     function () {
-        Route::post('forms/{form}/applications', [ApplicationController::class, 'createDraft'])
-            ->name('application-create-draft');
-        Route::put('applications/{application}', [ApplicationController::class, 'submit'])
-            ->name('application-submit');
-        Route::post('applications/{application}/files', [ApplicationController::class, 'uploadFile'])
-            ->name('application-upload-file');
-
-        Route::get('applications', [ApplicationController::class, 'index']);
-
         Route::get('messages', [MessageController::class, 'index']);
 
         // TODO: move more routes to this once the frontend is ready
         Route::middleware(RequireClientPublicKey::class)->group(function () {
+            Route::post('subsidies/{subsidyCode}/applications', [ApplicationController::class, 'create'])
+                ->name('application-create');
+
+            Route::get('applications', [ApplicationController::class, 'index'])
+                ->name('application-index');
+            Route::put('applications/{reference}', [ApplicationController::class, 'save'])
+                ->name('application-save');
+            Route::post(
+                'applications/{applicationReference}/fields/{fieldCode}/files',
+                [ApplicationController::class, 'uploadFile']
+            )->name('application-upload-file');
+
             Route::get('applications/{reference}', [ApplicationController::class, 'show']);
 
             Route::get(
                 'applications/{applicationReference}/fields/{fieldCode}/files/{id}',
                 [ApplicationFileController::class, 'show']
-            );
-            Route::delete(
-                'applications/{applicationReference}/fields/{fieldCode}/files/{id}',
-                [ApplicationFileController::class, 'delete']
             );
 
             Route::get('messages/{id}', [MessageController::class, 'view'])

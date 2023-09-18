@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Assessment\API\Models\Enums\UIType;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use MinVWS\DUSi\Assessment\API\Services\EncryptionService;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
+use MinVWS\DUSi\Assessment\API\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Assessment\API\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
@@ -24,23 +25,25 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  */
 class ApplicationSubsidyVersionResource extends JsonResource
 {
-    private string|null $publicKey;
-
     /**
      * Create a new resource instance.
      *
      * @param Application $application
      * @param SubsidyVersion $subsidyVersion
      * @param string|null $publicKey
+     * @param ApplicationEncryptionService $encryptionService
+     * @param ResponseEncryptionService $responseEncryptionService
+     * @param JSONDecoder $jsonDecoder
      */
     public function __construct(
-        Application $application,
-        SubsidyVersion $subsidyVersion,
-        string|null $publicKey = null,
-        private EncryptionService $encryptionService,
+        readonly Application $application,
+        readonly SubsidyVersion $subsidyVersion,
+        private readonly ?string $publicKey = null, // @phpstan-ignore-line
+        private readonly ApplicationEncryptionService $encryptionService,
+        private readonly ResponseEncryptionService $responseEncryptionService,  // @phpstan-ignore-line
+        private readonly JSONDecoder $jsonDecoder,
     ) {
         parent::__construct(['application' => $application, 'subsidyVersion' => $subsidyVersion]);
-        $this->publicKey = $publicKey;
     }
 
     /**
@@ -75,7 +78,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
                     "subjectOrganisation" => $subsidyStage->subject_organisation,
                 ],
                 'dataschema' => $this->createDataSchema($subsidyStage),
-                'values' => $this->createValues($applicationStage, $subsidyStage->fields),
+                'values' => $this->createValues($applicationStage),
                 'uischema' => $ui,
             ];
         });
@@ -86,63 +89,32 @@ class ApplicationSubsidyVersionResource extends JsonResource
     }
 
     /**
-     * @param string $value
-     * @return string
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @throws \Exception
+     * @param ApplicationStage|null $applicationStage
      */
-    private function encrypt(string $value): string
+    private function createValues(?ApplicationStage $applicationStage): ?array
     {
-        try {
-            if (isset($this->publicKey)) {
-                return $this->encryptionService->sodiumEncrypt($value, $this->publicKey);
-            } else {
-                return $value; // TODO: remove when frontend can decrypt the sodium
-            }
-        } catch (\SodiumException $e) {
-            throw new \SodiumException('Encryption failed', 0, $e);
-        }
-    }
-
-    /**
-     * @param string $value
-     * @return string
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @throws \Exception
-     */
-    private function decrypt(string $value): string
-    {
-        return $this->encryptionService->decryptData($value);
-    }
-
-    /**
-     * @param Collection<string, Field> $fields
-     */
-    private function createValues(?ApplicationStage $applicationStage, Collection $fields): ?array
-    {
-        $fieldsById = $fields->mapToDictionary(function ($field) {
-            return [ $field->id => $field->code ];
-        })
-            ->map(function ($item) {
-                return $item[0];
-            });
-
-        /** @var array<Answer>|null $answers */
-        $answers = $applicationStage?->answers->all();
-        if ($answers === null || count($answers) === 0) {
+        if ($applicationStage === null) {
             return null;
         }
 
-        return array_map(
-            function ($answer) use ($fieldsById) {
-                return [
-                    $fieldsById[$answer->field_id] => $this->encrypt(
-                        $this->decrypt($answer->encrypted_answer)
-                    )
-                ];
-            },
-            $answers
-        );
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+
+        $data = [];
+        foreach ($applicationStage->answers()->with('field')->get() as $answer) {
+            $value = $encrypter->decrypt($answer->encrypted_answer);
+            if ($value === null) {
+                continue;
+            }
+
+            $value = match ($answer->field->type) {
+                FieldType::Upload => $this->jsonDecoder->decode($value)->decodeObject(FileList::class),
+                default => $value,
+            };
+
+            $data[$answer->field->code] = $value;
+        }
+
+        return $data;
     }
 
     private function createMetadata(): array

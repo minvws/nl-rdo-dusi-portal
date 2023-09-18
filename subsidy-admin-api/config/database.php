@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\DBAL\TimestampType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 use Illuminate\Support\Str;
 
@@ -140,5 +141,10 @@ return [
 
     ],
 
+    'dbal' => [
+        'types' => [
+            'timestamp' => TimestampType::class,
+        ],
+    ],
 
 ];

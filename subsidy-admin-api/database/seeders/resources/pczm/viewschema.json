@@ -1,0 +1,173 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "FormGroupControl",
+            "label": "Metagegevens",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Dossiernummer": "{assessmentId}",
+                            "Aangevraagd op": "{validFrom}",
+                            "Uiterste behandeldatum": "{validTo}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Persoonlijke informatie",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Voornaam": "{firstName}",
+                            "Tussenvoegsel": "{infix}",
+                            "Achternaam": "{lastName}",
+                            "Geboortedatum": "{dateOfBirth}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Adres",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Land": "{country}",
+                            "Straatnaam": "{street}",
+                            "Huisnummer": "{houseNumber}",
+                            "Huisnummer toevoeging": "{houseNumberSuffix}",
+                            "Postcode": "{postalCode}",
+                            "Plaatsnaam": "{city}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Contact",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Telefoonnummer": "{phoneNumber}",
+                            "E-mailadres": "{email}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Bank",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "IBAN": "{bankAccountNumber}",
+                            "Naam rekeninghouder": "{bankAccountHolder}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Wia",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "WIA-Beslissing": "{wiaDecisionDocument}",
+                            "WIA-Beslissing uitgesteld": "{isWiaDecisionPostponed}",
+                            "Toekenningsbrief (indien uitgesteld)": "{Toekenningsbrief}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Werkgever",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Bewijs van dienstverband": "{employmentContract}",
+                            "Functie": "{employmentFunction}",
+                            "Werkgever": "{employerKind}",
+                            "Verklaring zorgaanbieder (indien anders)": "{otherEmployerDeclarationFile}",
+                            "Heeft gewerkt in justitiële inrichting": "{hasBeenWorkingAtJudicialInstitution}",
+                            "BIG-nummer justitiële inrichting": "{BIGNumberJudicialInstitution}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Medisch",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Medisch onderzoeksverslag (medische rapportage)": "{socialMedicalAssessment}",
+                            "Bevat uw medisch onderzoeksverslag de diagnose langdurige post-COVID?": "{hasPostCovidDiagnose}",
+                            "Verklaring arts (indien geen diagnose)": "{doctorsCertificate}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

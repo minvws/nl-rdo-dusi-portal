@@ -11,6 +11,7 @@ namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Dompdf\Canvas;
 use Dompdf\FontMetrics;
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageAnswer;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageData;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStages;
@@ -25,13 +26,14 @@ use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-
 readonly class LetterService
 {
     public function __construct(
@@ -39,7 +41,8 @@ readonly class LetterService
         private ApplicationMessageRepository $messageRepository,
         private FilesystemManager $filesystemManager,
         private RenderEngine $engine,
-        private EncryptionService $encryptionService,
+        private ApplicationEncryptionService $encryptionService,
+        private JSONDecoder $jsonDecoder,
     ) {
     }
 
@@ -50,16 +53,23 @@ readonly class LetterService
             $stageKey = 'stage' . $applicationStageAnswers->stage->subsidyStage->stage;
             $stageData = new ApplicationStageData($stageKey);
 
+            $encrypter = $this->encryptionService->getEncrypter($applicationStageAnswers->stage);
+
             foreach ($applicationStageAnswers->answers as $answer) {
                 assert($answer->field !== null);
                 $answerKey = $answer->field->code;
-                $answerData = null;
 
-                if ($answer->encrypted_answer !== null) {
-                    $answerData = json_decode($this->encryptionService->decryptData($answer->encrypted_answer), true);
+                $value = $encrypter->decrypt($answer->encrypted_answer);
+                if ($value === null) {
+                    continue;
                 }
 
-                $answer = new ApplicationStageAnswer($answerKey, $answerData);
+                $value = match ($answer->field->type) {
+                    FieldType::Upload => $this->jsonDecoder->decode($value)->decodeObject(FileList::class),
+                    default => $value,
+                };
+
+                $answer = new ApplicationStageAnswer($answerKey, $value);
                 $stageData->$answerKey = $answer;
             }
 
@@ -158,6 +168,7 @@ readonly class LetterService
 
         $cssPath = $this->getCssPath();
         $logoPath = public_path('img/vws_dusi_logo.svg');
+        $signaturePath = public_path('img/vws_dusi_signature.jpg');
 
         assert($stage->assessor_decision !== null);
 
@@ -167,10 +178,13 @@ readonly class LetterService
             stages: $data,
             createdAt: $stage->application->created_at,
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
-            reference: substr($stage->application->id, 0, 8),
+            reference: $stage->application->reference,
+            motivation: 'TODO: Motivation from decision', // TODO: replace with motivation
+            appointedSubsidy: number_format(100099 / 100, 2, ',', '.'), // TODO: replace with appointed subsidy
             applicationCode: null,
             cssPath: $cssPath,
             logoPath: $logoPath,
+            signaturePath: $signaturePath,
         );
     }
 
@@ -243,7 +257,7 @@ readonly class LetterService
         // TODO: encrypt
         $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($htmlPath, $html);
 
-        $this->messageRepository->createMessage($stage, $pdfPath, $htmlPath);
+        $this->messageRepository->createMessage($stage, $htmlPath, $pdfPath);
 
         $this->triggerMailNotification($stage, $data);
     }

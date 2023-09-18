@@ -19,6 +19,6 @@ abstract class TestCase extends BaseTestCase
 
     protected function loadCustomMigrations(): void
     {
-        Artisan::call('migrate:fresh', ['--path' => 'vendor/minvws/dusi-subsidy-model/database/migrations']);
+        Artisan::call('migrate:fresh', ['--path' => 'vendor/minvws/dusi-shared/database/migrations']);
     }
 }

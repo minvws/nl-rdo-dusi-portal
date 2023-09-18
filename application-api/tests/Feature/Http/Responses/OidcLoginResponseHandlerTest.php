@@ -43,7 +43,8 @@ class OidcLoginResponseHandlerTest extends TestCase
         } else {
             $this->assertEquals(
                 expected: $redirectResponse->getTargetUrl(),
-                actual: 'https://example.com/login-callback?error=minimum_loa',
+                actual: 'https://example.com/login-callback?error=minimum_loa&minimum_loa='
+                . $minimumLoa->code() . '&current_loa=' . $userLoa->code(),
             );
         }
     }

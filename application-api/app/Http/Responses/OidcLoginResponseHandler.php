@@ -37,7 +37,11 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
         }
 
         if (!OidcUserLoa::isEqualOrHigher($this->minimumLoa, $user->loaAuthn)) {
-            return new RedirectResponse($this->frontendBaseUrl . '/login-callback?error=minimum_loa');
+            return new RedirectResponse($this->frontendBaseUrl . '/login-callback?' . http_build_query([
+                'error' => 'minimum_loa',
+                'minimum_loa' => $this->minimumLoa->code(),
+                'current_loa' => $user->loaAuthn->code(),
+            ]));
         }
 
         // TODO: Log login to Calvin?

@@ -51,7 +51,7 @@ updates:
 
   # Maintain dependencies for npm
   - package-ecosystem: "npm"
-    directory: "/application-model"
+    directory: "/shared"
     schedule:
       interval: "weekly"
     registries:
@@ -60,7 +60,7 @@ updates:
 
   # Maintain dependencies for Composer
   - package-ecosystem: "composer"
-    directory: "/application-model"
+    directory: "/shared"
     registries:
       - github-minvws
     schedule:
@@ -95,23 +95,6 @@ updates:
   # Maintain dependencies for Composer
   - package-ecosystem: "composer"
     directory: "/subsidy-admin-api"
-    registries:
-      - github-minvws
-    schedule:
-      interval: "weekly"
-
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/subsidy-model"
-    schedule:
-      interval: "weekly"
-    registries:
-      - github-minvws
-    open-pull-requests-limit: 5
-
-  # Maintain dependencies for Composer
-  - package-ecosystem: "composer"
-    directory: "/subsidy-model"
     registries:
       - github-minvws
     schedule:

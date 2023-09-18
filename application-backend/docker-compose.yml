@@ -20,9 +20,7 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
-            - '../application-model:/var/www/html/vendor/minvws/dusi-application-model'
-            - '../subsidy-model:/var/www/html/vendor/minvws/dusi-subsidy-model'
-            - '../serialisation-model:/var/www/html/vendor/minvws/dusi-serialisation-model'
+            - '../shared:/var/www/html/vendor/minvws/dusi-shared'
             - '../bridge:/var/www/html/vendor/minvws/php-rmq-rpc-bridge'
         networks:
             portal-backend:
@@ -77,10 +75,8 @@ services:
             LOG_CHANNEL: 'stderr'
         volumes:
             - '.:/var/www/html'
-            - '../application-model:/var/www/application-model'
-            - '../subsidy-model:/var/www/subsidy-model'
-            - '../serialisation-model:/var/www/serialisation-model'
-            - '../bridge:/var/www/bridge'
+            - '../shared:/var/www/html/vendor/minvws/dusi-shared'
+            - '../bridge:/var/www/html/vendor/minvws/php-rmq-rpc-bridge'
         networks:
             portal-backend:
         depends_on:

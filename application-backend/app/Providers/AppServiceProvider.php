@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Providers;
 
-use Illuminate\Filesystem\FilesystemManager;
-use Illuminate\Foundation\Application;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use MinVWS\DUSi\Application\Backend\Handlers\FileUploadHandler;
-use MinVWS\DUSi\Application\Backend\Handlers\FormSubmitHandler;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
-use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\FileKeyReader;
+use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
+use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
-use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
-use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
+use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmInfoCommand;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmLocalClearCommand;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmLocalInitCommand;
@@ -37,28 +36,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(KeyReader::class, FileKeyReader::class);
+        $this->app->when(FileKeyReader::class)
+            ->needs('$publicKeyPath')
+            ->giveConfig('hsm_encryption.public_key_path');
 
-        $this->app->bind(
-            FileUploadHandlerInterface::class,
-            function (Application $app) {
-                return new FileUploadHandler($app->get(ApplicationService::class));
-            }
-        );
-        $this->app->bind(
-            FormSubmitHandlerInterface::class,
-            function (Application $app) {
-                return new FormSubmitHandler($app->get(ApplicationService::class));
-            }
-        );
-        $this->app->bind(
-            ApplicationFileRepository::class,
-            function (Application $app) {
-                return new ApplicationFileRepository(
-                    filesystem: $app->get(FilesystemManager::class)->disk(Disk::APPLICATION_FILES),
-                );
-            }
-        );
+        $this->app->singleton(KeyReader::class, FileKeyReader::class);
     }
 
     /**
@@ -106,6 +88,10 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->when(HsmEncryptionService::class)
+            ->needs('$hsmEncryptionKeyLabel')
+            ->giveConfig('hsm_encryption.key_label');
+
         $this->app->singleton(HsmInfoCommand::class, function (Application $app) {
             $config = $app->make('config');
 
@@ -113,7 +99,7 @@ class AppServiceProvider extends ServiceProvider
                 service: $app->make(HsmService::class),
                 hsmApiModule: $config->get('hsm_api.module') ?? '',
                 hsmApiSlot: $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
+                hsmEncryptionKeyLabel: $config->get('hsm_encryption.key_label') ?? '',
             );
         });
 
@@ -126,7 +112,7 @@ class AppServiceProvider extends ServiceProvider
                 service: $app->make(HsmService::class),
                 hsmApiModule: $config->get('hsm_api.module') ?? '',
                 hsmApiSlot: $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
+                hsmApiEncryptionKeyLabel: $config->get('hsm_encryption.key_label') ?? '',
             );
         });
 
@@ -137,7 +123,7 @@ class AppServiceProvider extends ServiceProvider
                 service: $app->make(HsmService::class),
                 hsmApiModule: $config->get('hsm_api.module') ?? '',
                 hsmApiSlot: $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
+                hsmApiEncryptionKeyLabel: $config->get('hsm_encryption.key_label') ?? '',
             );
         });
 

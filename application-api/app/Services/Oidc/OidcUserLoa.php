@@ -30,4 +30,14 @@ enum OidcUserLoa: string
                 $loa === self::HIGH
         };
     }
+
+    public function code(): string
+    {
+        return match ($this) {
+            self::BASIC => 'basic',
+            self::LOW => 'low',
+            self::SUBSTANTIAL => 'substantial',
+            self::HIGH => 'high',
+        };
+    }
 }

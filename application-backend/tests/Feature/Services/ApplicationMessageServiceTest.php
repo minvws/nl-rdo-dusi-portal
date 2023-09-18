@@ -9,14 +9,16 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
+use MinVWS\Codable\Coding\Codable;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
-use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
+use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
@@ -40,7 +42,7 @@ class ApplicationMessageServiceTest extends TestCase
     use WithFaker;
 
     private ApplicationMessageService $applicationMessageService;
-    private EncryptionService $encryptionService;
+    private ResponseEncryptionService $responseEncryptionService;
 
     private Filesystem $filesystem;
 
@@ -59,7 +61,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->filesystem = Storage::fake(Disk::APPLICATION_FILES);
 
         $this->applicationMessageService = App::make(ApplicationMessageService::class);
-        $this->encryptionService = App::make(EncryptionService::class);
+        $this->responseEncryptionService = App::make(ResponseEncryptionService::class);
 
         $this->keyPair = sodium_crypto_box_keypair();
         $publicKey = sodium_crypto_box_publickey($this->keyPair);
@@ -69,12 +71,12 @@ class ApplicationMessageServiceTest extends TestCase
 
         $this->encryptedIdentity = new EncryptedIdentity(
             type: IdentityType::CitizenServiceNumber,
-            encryptedIdentifier: $this->identity->hashed_identifier,
+            encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, ''),
         );
 
         $this->invalidEncryptedIdentity = new EncryptedIdentity(
             type: IdentityType::CitizenServiceNumber,
-            encryptedIdentifier: $this->faker->uuid,
+            encryptedIdentifier: new HsmEncryptedData($this->faker->uuid, ''),
         );
     }
 
@@ -255,11 +257,16 @@ class ApplicationMessageServiceTest extends TestCase
 
     private function getDecryptedResponse(EncryptedResponse $encryptedResponse): mixed
     {
-        return $this->encryptionService->decryptResponse($encryptedResponse, $this->keyPair);
+        return $this->responseEncryptionService->decrypt($encryptedResponse, $this->keyPair);
     }
 
+    /**
+     * @param EncryptedResponse $encryptedResponse
+     * @param class-string<Codable> $class
+     * @return mixed
+     */
     private function getDecryptedCodableResponse(EncryptedResponse $encryptedResponse, string $class): mixed
     {
-        return $this->encryptionService->decryptCodableResponse($encryptedResponse, $class, $this->keyPair);
+        return $this->responseEncryptionService->decryptCodable($encryptedResponse, $class, $this->keyPair);
     }
 }

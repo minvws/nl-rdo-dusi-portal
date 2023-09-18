@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        directory: ["bridge", "serialisation-model", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
+        directory: ["bridge", "shared", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
 
     defaults:
         run:

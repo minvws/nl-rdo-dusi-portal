@@ -28,7 +28,8 @@ class SubsidyStageResource extends JsonResource
         return [
             'metadata' => $this->createMetadata(),
             'dataschema' => $this->createDataSchema(),
-            'uischema' => $this->publishedUI?->input_ui
+            'uischema' => $this->publishedUI?->input_ui,
+            'viewschema' => $this->publishedUI?->view_ui
         ];
     }
 
@@ -119,6 +120,15 @@ class SubsidyStageResource extends JsonResource
                 // Currently nothing extra
                 break;
             case FieldType::Upload:
+                $result['items'] = [
+                    'type' => 'object',
+                    'properties' => [
+                        'id' => ['type' => 'string'],
+                        'name' => ['type' => 'string'],
+                        'mimeType' => ['type' => 'string'],
+                    ],
+                    'required' => ['id']
+                ];
                 $result['file'] = true;
                 break;
         }
@@ -129,6 +139,7 @@ class SubsidyStageResource extends JsonResource
         $type = match ($field->type) {
             FieldType::TextNumeric => 'integer',
             FieldType::Checkbox => 'boolean',
+            FieldType::Upload => 'array',
             default => 'string'
         };
 
