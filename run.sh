@@ -61,7 +61,7 @@ fi
 SCRIPT=$(readlink -f $0)
 BASEDIR=`dirname $SCRIPT`
 
-packages=( bridge serialisation-model subsidy-model application-model user-admin-api application-backend subsidy-admin-api application-api assessment-api )
+packages=( bridge shared user-admin-api application-backend subsidy-admin-api application-api assessment-api )
 for package in "${packages[@]}"
 do
   printf "\033[1;94mExecuting run.sh for ${package}\033[0m\n"

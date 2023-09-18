@@ -22,7 +22,7 @@ jobs:
   php-tests:
     strategy:
       matrix:
-        directory: ["serialisation-model", "subsidy-model", "application-model", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
+        directory: ["shared", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
 
     defaults:
       run:

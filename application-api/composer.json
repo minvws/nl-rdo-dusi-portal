@@ -11,8 +11,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
-        "minvws/dusi-serialisation-model": "@dev",
-        "minvws/dusi-subsidy-model": "@dev",
+        "minvws/dusi-shared": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "minvws/php-rmq-rpc-bridge": "@dev",
         "predis/predis": "^2.2",
@@ -88,11 +87,7 @@
         },
         {
             "type": "path",
-            "url": "../subsidy-model"
-        },
-        {
-            "type": "path",
-            "url": "../serialisation-model"
+            "url": "../shared"
         },
         {
             "type": "path",
