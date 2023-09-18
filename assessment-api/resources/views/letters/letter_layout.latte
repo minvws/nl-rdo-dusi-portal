@@ -10,7 +10,7 @@
 <body>
 
 <header>
-    <img src="{$content->logoPath}" />
+    <img src="{$content->logoPath}"/>
 </header>
 
 <aside id="right">
@@ -45,12 +45,108 @@
 </aside>
 
 <article>
-    <p class="small">&gt; Retouradres Postbus 16006  2500 BA  Den Haag</p>
+    <p class="small">&gt; Retouradres Postbus 16006 2500 BA Den Haag</p>
+
+    <p>
+        {$content->stage1->firstName} {$content->stage1->infix} {$content->stage1->lastName}<br />
+        {$content->stage1->street} {$content->stage1->houseNumber}{$content->stage1->houseNumberSuffix}<br />
+        {$content->stage1->postalCode} {$content->stage1->city}
+    </p>
+    <p>&nbsp;</p>
+
+    <p>
+        Datum: {$content->createdAt|date:"d-m-Y"}<br />
+        {if $content->decision === 'approved'}
+            Betreft: Verlening aanvraag {$content->subsidyTitle}
+        {elseif $content->decision === 'rejected'}
+            Betreft: Afwijzing aanvraag {$content->subsidyTitle}
+        {elseif $content->decision === 'requestForChanges'}
+            Betreft: Vragen over aanvraag {$content->subsidyTitle}
+        {elseif $content->decision === 'question'}
+            Betreft: Vragen over aanvraag {$content->subsidyTitle}
+        {elseif $content->decision === 'discontinued'}
+            Buiten behandeling stellen aanvraag {$content->subsidyTitle}
+        {/if}
+    </p>
+    <p>&nbsp;</p>
+
     {block content}{/block}
+
+    {block signature}
+        <h2>Heeft u vragen?</h2>
+        <p>Mail dan naar <a href="mailto:{$content->contactEmailAddress}">{$content->contactEmailAddress}</a> of bel met
+            <a href="tel:+31703405566">070-340 55 66</a>. Vermeld bij al uw correspondentie het
+            referentienummer {$content->reference}.</p>
+        <p>&nbsp;</p>
+
+        <p>
+            Met vriendelijke groet,<br/>
+            <br/>
+            de Minister van Volksgezondheid, Welzijn en Sport,<br/>
+            namens deze,<br/>
+            het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
+            <br/>
+            <img class="signature" src="{$content->signaturePath}"/>
+            <br/>
+            L. van der Weij
+        </p>
+    {/block}
 </article>
 
+{block objectionFooter}
+    <footer>
+        <h2>Bezwaar</h2>
+
+        <p>
+            Heeft u vragen over deze beslissing of bent u het er niet mee eens?<br/>
+            Kijk op <a href="https://www.rijksoverheid.nl/ministeries/vws/bezwaarschriften-vws" target="_blank">www.rijksoverheid.nl/ministeries/vws/bezwaarschriften-vws</a>.
+            Daar wordt uitgelegd wat u kunt doen als u het niet eens bent met de beslissing en misschien bezwaar wilt
+            maken. Er staan voorbeelden waarmee u de kans op een succesvol bezwaar kan inschatten.
+        </p>
+
+        <p>
+            Wilt u toch een bezwaarschrift sturen, dan moet dit binnen zes weken na de datum die bovenaan deze brief
+            staat. Let op: doe dit op tijd, anders kan uw bezwaar niet behandeld worden.
+        </p>
+
+        <p>
+            Het bezwaarschrift e-mailt u naar:
+            <a href="mailto:WJZ.bezwaarenberoep@minvws.nl">WJZ.bezwaarenberoep@minvws.nl</a>, bij voorkeur met een
+            ingescande handtekening. Stuurt u het bezwaarschrift per e-mail zonder ondertekening? Dan moet u misschien
+            op een later moment aantonen dat u bevoegd bent om het bezwaar in te dienen.
+        </p>
+
+        <p>
+            U kunt uw bezwaarschrift ook versturen per post naar:<br/>
+            Ministerie van Volksgezondheid, Welzijn en Sport<br/>
+            t.a.v. Directie Wetgeving en Juridische Zaken<br/>
+            Postbus 20350<br/>
+            2500 EJ Den Haag
+        </p>
+
+        <p>
+            Noem in het bezwaarschrift:
+
+        <ul>
+            <li>uw naam en adres;</li>
+            <li>de datum;</li>
+            <li>het kenmerk van deze brief (dit vindt u in de rechterkantlijn);</li>
+            <li>de reden waarom u het niet eens bent met de beslissing.</li>
+        </ul>
+        </p>
+
+        <p>
+            Vergeet niet om uw bezwaarschrift te ondertekenen en van een datum te voorzien. Wilt u zo vriendelijk zijn
+            om een kopie van deze brief mee te sturen met het bezwaarschrift?
+        </p>
+
+        <p>
+            Vermeld bij al uw correspondentie het referentienummer {$content->reference}. Het indienen van bezwaar
+            schort de werking van deze beschikking niet op.
+        </p>
+    </footer>
+{/block}
 
 </body>
 
 </html>
-

@@ -9,16 +9,22 @@ use DateTime;
 
 readonly class LetterData
 {
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function __construct(
         public string $subsidyTitle,
         public string $decision,
         public ApplicationStages $stages,
         public DateTime $createdAt,
         public string $contactEmailAddress,
-        public ?string $reference,
+        public string $reference,
+        public ?string $motivation,
+        public ?string $appointedSubsidy = null,
         public ?string $applicationCode = null,
         public ?string $cssPath = null,
         public ?string $logoPath = null,
+        public ?string $signaturePath = null,
     ) {
     }
 

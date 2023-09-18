@@ -169,6 +169,12 @@ article {
     padding: 0.1mm 1mm;
   }
 
+  img.signature {
+    display: block;
+    margin: 0;
+    width: 5cm;
+  }
+
   .small {
     font-size: 6.5pt;
   }
@@ -188,9 +194,7 @@ article {
   .center {
     text-align: center;
   }
-
 }
-
 
 aside#right {
   position: absolute;
@@ -207,4 +211,9 @@ aside#right {
   h3, h4 {
     font-size: 8pt;
   }
+}
+
+footer {
+  page-break-before: always;
+  width: 16cm;
 }
