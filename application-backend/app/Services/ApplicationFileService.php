@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Application File Service
  */
 
 declare(strict_types=1);
@@ -40,7 +40,8 @@ readonly class ApplicationFileService
     use LoadApplication;
 
     public function __construct(
-        private EncryptionService $encryptionService,
+        private ApplicationEncryptionService $encryptionService,
+        private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
         private ApplicationFileRepository $applicationFileRepository,
@@ -99,10 +100,12 @@ readonly class ApplicationFileService
         $id = Uuid::uuid4()->toString();
 
         $decryptedContent = $params->data->data; // TODO: $this->decryptionService->decrypt($params->data);
-        $encryptedContent = $this->encryptionService->encryptData($decryptedContent);
+
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+        $encryptedContent = $encrypter->encrypt($decryptedContent);
         $this->applicationFileRepository->writeFile($applicationStage, $field, $id, $encryptedContent);
 
-        return $this->encryptionService->encryptCodableResponse(
+        return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::CREATED,
             new FileUploadResult($id),
             $params->publicKey
@@ -115,7 +118,7 @@ readonly class ApplicationFileService
             try {
                 return $this->doSaveApplicationFile($params);
             } catch (EncryptedResponseException $e) {
-                return $this->encryptionService->encryptCodableResponse(
+                return $this->responseEncryptionService->encryptCodable(
                     $e->getStatus(),
                     $e->getError(),
                     $params->publicKey
@@ -144,12 +147,14 @@ readonly class ApplicationFileService
 
             $encryptedContent = $this->applicationFileRepository->readFile($applicationStage, $field, $params->id);
             assert($encryptedContent !== null);
-            $content = $this->encryptionService->decryptData($encryptedContent);
+
+            $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+            $content = $encrypter->decrypt($encryptedContent);
 
             $fileInfo = new finfo(FILEINFO_MIME_TYPE);
             $contentType = $fileInfo->buffer($content) ?: 'application/octet-stream';
 
-            return $this->encryptionService->encryptResponse(
+            return $this->responseEncryptionService->encrypt(
                 EncryptedResponseStatus::OK,
                 $content,
                 $contentType,

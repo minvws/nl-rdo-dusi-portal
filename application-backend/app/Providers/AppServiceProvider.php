@@ -15,6 +15,7 @@ use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\FileKeyReader;
 use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
+use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmInfoCommand;
@@ -35,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->when(FileKeyReader::class)
+            ->needs('$publicKeyPath')
+            ->giveConfig('hsm_encryption.public_key_path');
+
         $this->app->singleton(KeyReader::class, FileKeyReader::class);
     }
 
@@ -83,6 +88,10 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->when(HsmEncryptionService::class)
+            ->needs('$hsmEncryptionKeyLabel')
+            ->giveConfig('hsm_encryption.key_label');
+
         $this->app->singleton(HsmInfoCommand::class, function (Application $app) {
             $config = $app->make('config');
 
@@ -90,7 +99,7 @@ class AppServiceProvider extends ServiceProvider
                 service: $app->make(HsmService::class),
                 hsmApiModule: $config->get('hsm_api.module') ?? '',
                 hsmApiSlot: $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
+                hsmEncryptionKeyLabel: $config->get('hsm_encryption.key_label') ?? '',
             );
         });
 
@@ -103,7 +112,7 @@ class AppServiceProvider extends ServiceProvider
                 service: $app->make(HsmService::class),
                 hsmApiModule: $config->get('hsm_api.module') ?? '',
                 hsmApiSlot: $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
+                hsmApiEncryptionKeyLabel: $config->get('hsm_encryption.key_label') ?? '',
             );
         });
 
@@ -114,7 +123,7 @@ class AppServiceProvider extends ServiceProvider
                 service: $app->make(HsmService::class),
                 hsmApiModule: $config->get('hsm_api.module') ?? '',
                 hsmApiSlot: $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
+                hsmApiEncryptionKeyLabel: $config->get('hsm_encryption.key_label') ?? '',
             );
         });
 

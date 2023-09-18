@@ -8,16 +8,17 @@ use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationReferenceGenerator;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationReferenceService;
-use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationReferenceException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
@@ -212,14 +213,17 @@ class ApplicationReferenceServiceTest extends TestCase
         $identity = Identity::factory()->create();
 
         $params = new ApplicationFindOrCreateParams(
-            new EncryptedIdentity(IdentityType::CitizenServiceNumber, $identity->hashed_identifier),
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($identity->hashed_identifier, '')
+            ),
             $publicKey,
             $this->subsidyVersion->subsidy->code
         );
 
         $encryptedResponse = $mutationService->findOrCreateApplication($params);
         $this->assertEquals(EncryptedResponseStatus::CREATED, $encryptedResponse->status);
-        $encryptionService = $this->app->get(EncryptionService::class);
-        return $encryptionService->decryptCodableResponse($encryptedResponse, ApplicationDTO::class, $keyPair);
+        $encryptionService = $this->app->make(ResponseEncryptionService::class);
+        return $encryptionService->decryptCodable($encryptedResponse, ApplicationDTO::class, $keyPair);
     }
 }

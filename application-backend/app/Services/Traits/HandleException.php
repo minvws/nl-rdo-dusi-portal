@@ -29,7 +29,7 @@ trait HandleException
             ['trace' => $exception->getTraceAsString()]
         );
 
-        return $this->encryptionService->encryptCodableResponse(
+        return $this->responseEncryptionService->encryptCodable(
             $wrappedException->getStatus(),
             $wrappedException->getError(),
             $publicKey

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1196de65cba515f0b96692c1db4486fe",
+    "content-hash": "b38e19fe1d8b7b2c67fe2b86a6f3d29f",
     "packages": [
         {
             "name": "brick/math",
@@ -1900,11 +1900,11 @@
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-main",
+            "version": "dev-feature/shared-package",
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "630e8ae0c1c698d6e7e4da57f3f9a8ffdee0de36"
+                "reference": "116e4eb45f3863b917c362e375c9e915c0d39326"
             },
             "require": {
                 "laravel/framework": "^10.17",
@@ -1926,8 +1926,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "MinVWS\\DUSi\\Shared\\Application\\ApplicationServiceProvider",
-                        "MinVWS\\DUSi\\Shared\\Subsidy\\SubsidyServiceProvider"
+                        "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider"
                     ]
                 }
             },
@@ -1938,8 +1937,7 @@
             },
             "autoload-dev": {
                 "psr-4": {
-                    "MinVWS\\DUSi\\Shared\\Application\\Tests\\": "tests/Application/",
-                    "MinVWS\\DUSi\\Shared\\Subsidy\\Tests\\": "tests/Subsidy/"
+                    "MinVWS\\DUSi\\Shared\\Tests\\": "tests/"
                 }
             },
             "scripts": {
@@ -2045,7 +2043,7 @@
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
-            "version": "dev-main",
+            "version": "dev-feature/shared-package",
             "dist": {
                 "type": "path",
                 "url": "../bridge",
@@ -9771,16 +9769,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.24.0",
+            "version": "1.24.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "3510b0a6274cc42f7219367cb3abfc123ffa09d6"
+                "reference": "9f854d275c2dbf84915a5c0ec9a2d17d2cd86b01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/3510b0a6274cc42f7219367cb3abfc123ffa09d6",
-                "reference": "3510b0a6274cc42f7219367cb3abfc123ffa09d6",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/9f854d275c2dbf84915a5c0ec9a2d17d2cd86b01",
+                "reference": "9f854d275c2dbf84915a5c0ec9a2d17d2cd86b01",
                 "shasum": ""
             },
             "require": {
@@ -9812,9 +9810,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.24.0"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.24.1"
             },
-            "time": "2023-09-07T20:46:32+00:00"
+            "time": "2023-09-18T12:18:02+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -11962,16 +11960,16 @@
         },
         {
             "name": "spatie/ray",
-            "version": "1.38.0",
+            "version": "1.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/ray.git",
-                "reference": "b77656d7475875375fcbccf28441eedf1596acd5"
+                "reference": "7ab6bd01dc6a8ecdd836b3182d40a04308ae0c75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/ray/zipball/b77656d7475875375fcbccf28441eedf1596acd5",
-                "reference": "b77656d7475875375fcbccf28441eedf1596acd5",
+                "url": "https://api.github.com/repos/spatie/ray/zipball/7ab6bd01dc6a8ecdd836b3182d40a04308ae0c75",
+                "reference": "7ab6bd01dc6a8ecdd836b3182d40a04308ae0c75",
                 "shasum": ""
             },
             "require": {
@@ -12022,7 +12020,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/ray/issues",
-                "source": "https://github.com/spatie/ray/tree/1.38.0"
+                "source": "https://github.com/spatie/ray/tree/1.39.0"
             },
             "funding": [
                 {
@@ -12034,7 +12032,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-09-12T10:41:10+00:00"
+            "time": "2023-09-18T10:36:07+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -12987,7 +12985,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "ext-openssl": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

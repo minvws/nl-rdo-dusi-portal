@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStageDecision;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 /**
@@ -23,6 +24,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
  * @property boolean $is_current
  * @property string|null $assessor_user_id
  * @property ApplicationStageDecision|null $assessor_decision
+ * @property HsmEncryptedData $encrypted_key
  * @property DateTime $created_at
  * @property DateTime $updated_at
  * @property-read Application $application
@@ -38,6 +40,7 @@ class ApplicationStage extends Model
 
     protected $casts = [
         'assessor_decision' => ApplicationStageDecision::class,
+        'encrypted_key' => HsmEncryptedData::class,
     ];
 
     public function application(): BelongsTo

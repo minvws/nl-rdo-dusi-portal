@@ -7,9 +7,8 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
  * @extends Factory<ApplicationStage>
@@ -31,6 +30,7 @@ class ApplicationStageFactory extends Factory
             'subsidy_stage_id' => fn () => SubsidyStage::factory(),
             'sequence_number' => 1,
             'is_current' => true,
+            'encrypted_key' => new HsmEncryptedData('', ''),
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
             'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now')
         ];

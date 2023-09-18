@@ -14,7 +14,7 @@ class StateService
 {
     public function __construct(
         private AuthManager $authManager,
-        private EncryptionService $encryptionService
+        private HsmEncryptionService $encryptionService,
     ) {
     }
 
@@ -27,8 +27,8 @@ class StateService
 
         if ($user instanceof PortalUser) {
             return new EncryptedIdentity(
-                IdentityType::CitizenServiceNumber,
-                base64_decode($this->encryptionService->encryptData($user->bsn))
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: $this->encryptionService->encrypt($user->bsn)
             );
         }
 

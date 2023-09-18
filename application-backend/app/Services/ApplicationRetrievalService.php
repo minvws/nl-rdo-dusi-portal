@@ -1,13 +1,14 @@
 <?php
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Application Retrieval Service
  */
 
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Exception;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
@@ -32,7 +33,7 @@ readonly class ApplicationRetrievalService
 
     public function __construct(
         private ApplicationDataService $applicationDataService,
-        private EncryptionService $encryptionService,
+        private ResponseEncryptionService $responseEncryptionService,
         private ApplicationRepository $applicationRepository,
         private IdentityService $identityService,
         private ApplicationMapper $applicationMapper,
@@ -40,12 +41,15 @@ readonly class ApplicationRetrievalService
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function listApplications(ApplicationListParams $params): EncryptedResponse
     {
         $identity = $this->identityService->findIdentity($params->identity);
-        if (empty($identity)) {
+        if ($identity === null) {
             // no identity found, so no applications (yet)
-            return $this->encryptionService->encryptCodableResponse(
+            return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::OK,
                 new ApplicationList([]),
                 $params->publicKey
@@ -55,7 +59,7 @@ readonly class ApplicationRetrievalService
         $apps = $this->applicationRepository->getMyApplications($identity);
         $list = $this->applicationMapper->mapApplicationArrayToApplicationListDTO($apps);
 
-        return $this->encryptionService->encryptCodableResponse(
+        return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,
             $list,
             $params->publicKey
@@ -75,7 +79,7 @@ readonly class ApplicationRetrievalService
 
             $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data);
 
-            return $this->encryptionService->encryptCodableResponse(
+            return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::OK,
                 $dto,
                 $params->publicKey

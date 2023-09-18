@@ -4,32 +4,34 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Config;
 use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
-use MinVWS\DUSi\Application\Backend\Services\Exceptions\EncryptionException;
+use RuntimeException;
 
 class FileKeyReader implements KeyReader
 {
+    public function __construct(private readonly string $publicKeyPath)
+    {
+    }
+
     protected string $cert;
 
     /**
      * Lazy loads the key from the file if not already loaded.
      *
-     * @throws EncryptionException
+     * @throws RuntimeException
      */
     protected function lazyLoadKey(): void
     {
-        $cert = file_get_contents(Config::get('encryption.public_key'));
-
+        $cert = file_get_contents($this->publicKeyPath);
         if (empty($cert)) {
-            throw new EncryptionException("Could not read public key");
+            throw new RuntimeException("Could not read public key");
         }
 
         $this->cert = $cert;
     }
 
     /**
-     * @throws EncryptionException
+     * @throws RuntimeException
      */
     public function getKey(): string
     {

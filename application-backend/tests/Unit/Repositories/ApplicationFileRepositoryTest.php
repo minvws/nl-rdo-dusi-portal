@@ -64,7 +64,7 @@ class ApplicationFileRepositoryTest extends TestCase
             ->willReturn(true);
 
         $repository = new ApplicationFileRepository($fileSystem);
-        $result = $repository->fileExists($applicationStage, $field, $id, 'contents');
+        $result = $repository->fileExists($applicationStage, $field, $id);
 
         $this->assertTrue($result);
     }

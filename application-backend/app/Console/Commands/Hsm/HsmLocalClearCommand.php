@@ -59,7 +59,7 @@ class HsmLocalClearCommand extends Command
 
         if (!$this->encryptionKeyLabelInConfig()) {
             $this->error('Encryption key label must be set in the environment config. Please set
-            HSM_API_ENCRYPTION_KEY_LABEL.');
+            HSM_ENCRYPTION_KEY_LABEL.');
             return;
         }
 

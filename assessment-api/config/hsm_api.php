@@ -13,6 +13,4 @@ return [
     'module' => env('HSM_API_MODULE'),
 
     'slot' => env('HSM_API_SLOT'),
-
-    'encryption_key_label' => env('HSM_API_ENCRYPTION_KEY_LABEL'),
 ];

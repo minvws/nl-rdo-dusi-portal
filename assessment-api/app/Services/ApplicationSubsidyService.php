@@ -1,23 +1,28 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
+
 
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Services;
 
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
-class ApplicationSubsidyService
+readonly class ApplicationSubsidyService
 {
     public function __construct(
         private SubsidyRepository $subsidyRepository,
-        private EncryptionService $encryptionService
+        private ApplicationEncryptionService $encryptionService,
+        private ResponseEncryptionService $responseEncryptionService,
+        private JSONDecoder $jsonDecoder,
     ) {
     }
 
     /**
      * @param Application $application
+     * @param string|null $publicKey
      * @return ApplicationSubsidyVersionResource
      * @throws \Exception
      */
@@ -33,7 +38,9 @@ class ApplicationSubsidyService
             $application,
             $subsidyVersion,
             $publicKey,
-            $this->encryptionService
+            $this->encryptionService,
+            $this->responseEncryptionService,
+            $this->jsonDecoder,
         );
     }
 }
