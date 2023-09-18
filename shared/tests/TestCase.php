@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Tests;
 
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Database\DBAL\TimestampType;
 use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -46,6 +47,7 @@ class TestCase extends BaseTestCase
                 'search_path' => 'public',
                 'sslmode' => 'prefer',
             ]);
+            $config->set('database.dbal', ['types' => ['timestamp' => TimestampType::class]]);
         });
     }
 }
