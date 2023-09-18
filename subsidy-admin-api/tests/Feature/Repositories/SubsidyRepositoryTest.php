@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Subsidy\Admin\API\Tests\Feature\Repositories;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -24,7 +24,7 @@ use function PHPUnit\Framework\assertNotNull;
  */
 class SubsidyRepositoryTest extends TestCase
 {
-    use DatabaseMigrations;
+    use DatabaseTransactions;
     use WithFaker;
 
     protected array $connectionsToTransact = [Connection::APPLICATION];
@@ -47,20 +47,19 @@ class SubsidyRepositoryTest extends TestCase
         );
         assertNotNull($subsidyStage->id);
 
-        $field = Field::factory()->create(
+        $field = Field::factory()->for($subsidyStage)->create(
             attributes: [
                 'type' => FieldType::Text,
                 'source' => FieldSource::User,
                 'params' => '{}',
                 'code' => 'field_code',
                 'description' => 'field_description',
-                'is_required' => true,
-                'subsidy_stage_id' => $subsidyStage->id,
+                'is_required' => true
             ]
         );
 
         $expectedId = $field->id;
-        $actualId = SubsidyStage::find($subsidyStage->id)->first()->fields()->first()->id;
+        $actualId = SubsidyStage::find($subsidyStage->id)->fields()->first()->id;
         $this->assertSame($expectedId, $actualId);
     }
 }

@@ -27,8 +27,6 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStageDecision;
-use Illuminate\Support\Collection;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

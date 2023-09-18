@@ -9,7 +9,7 @@
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17.4",
         "laravel/framework": "^10.15.0",
-        "minvws/dusi-subsidy-model": "@dev",
+        "minvws/dusi-shared": "@dev",
         "predis/predis": "^2.2"
     },
     "require-dev": {
@@ -71,12 +71,16 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "repositories": [
         {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-php-codable.git"
+        },
+        {
             "type": "path",
-            "url": "../subsidy-model"
+            "url": "../shared"
         }
     ]
 }
