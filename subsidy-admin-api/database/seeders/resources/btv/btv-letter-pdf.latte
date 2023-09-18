@@ -1,46 +1,64 @@
 {layout 'letter_layout.latte'}
 {block content}
-    <p>
-        {$content->stage1->firstName} {$content->stage1->infix} {$content->stage1->lastName}<br />
-        {$content->stage1->street} {$content->stage1->houseNumber}{$content->stage1->houseNumberSuffix}<br />
-        {$content->stage1->postalCode} {$content->stage1->city}
-    </p>
-    <p>&nbsp;</p>
     <p>Beste lezer,</p>
-    <p>Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor {$content->subsidyTitle}. Uw aanvraag is geregistreerd
-        met referentienummer {$content->reference}.</p>
-
-    <p>&nbsp;</p>
-    <h2>Besluit</h2>
-    {if $content->decision === 'pending'}
-        <p>We hebben uw aanvraag in behandeling genomen, maar er is nog geen beslissing.</p>
-    {/if}
-    {if $content->decision === 'accepted'}
-        <p>U heeft *AANGEVRAAGDE SUBSIDIE* subsidie aangevraagd. Ik stel de subsidie vast op *VASTGESTELDE SUBSIDIE*. </p>
-    {/if}
-
-    {if $content->decision === 'rejected'}
-        <p>U aanvraag is afgewezen.</p>
-    {/if}
-
-    {if $content->decision === 'request_for_changes'}
-        <p>We vragen u nog aanvullende informatie te verstrekken.</p>
-    {/if}
-
-    <h2>Motivering bij het besluit</h2>
-    <p>*MAATWERKTESKT REGELINGSPECIFIEK*</p>
-    <p>&nbsp;</p>
-
-    <h2>Heeft u vragen?</h2>
-    <p>Mail dan naar *MAILBOX REGELING* of bel met 070-340 55 66. Vermeld bij al uw correspondentie
-        het referentienummer *REFERENTIE*.</p>
-    <p>&nbsp;</p>
     <p>
-        *ONDERTEKENING*<br />
-        *HANDTEKENING*<br />
+        Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
+
+        {if $content->decision === 'approved'}
+            Met deze brief beslis ik op uw aanvraag.
+        {elseif $content->decision === 'rejected'}
+            Met deze brief beslis ik op uw aanvraag.
+        {elseif $content->decision === 'discontinued'}
+            Op (*DatumIncompleetbrief* of *DatumVraagbrief*) heb ik u geïnformeerd dat ik uw aanvraag niet in behandeling kan nemen.
+        {/if}
     </p>
 
+    {if $content->decision === 'requestForChanges'}
+        <p>Uw aanvraag bevat helaas nog onvoldoende gegevens om een beslissing te kunnen nemen over afhandeling.</p>
+    {elseif $content->decision === 'question'}
+        <p>Om de aanvraag goed te kunnen beoordelen ontvang ik graag van u de volgende aanvullende informatie:</p>
+        <p>*Motivatie*</p>
+    {elseif $content->decision === 'discontinued'}
+        <p>Ik heb u daarom verzocht uw aanvraag vóór (*DatumIncompleetbrief+14* dagen of *DatumVraagbrief+14*) dagen aan te vullen.</p>
+    {/if}
     <p>&nbsp;</p>
+
+    {if $content->decision === 'approved' || $content->decision === 'rejected' || $content->decision === 'discontinued'}
+        <h2>Besluit</h2>
+        {if $content->decision === 'approved'}
+            <p>Hierbij verleen ik u de financiële tegemoetkoming/subsidie van &euro;{$content->appointedSubsidy}.</p>
+        {elseif $content->decision === 'rejected'}
+            <p>Uw aanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
+        {elseif $content->decision === 'discontinued'}
+            <p>Aangezien ik de ontbrekende gegevens niet op tijd van u heb ontvangen, laat ik uw aanvraag buiten behandeling.</p>
+        {/if}
+        <p>&nbsp;</p>
+    {/if}
+
+    {if ($content->decision === 'approved' || $content->decision === 'rejected') && $content->motivation}
+        <h2>Motivering bij het besluit</h2>
+        {if $content->decision === 'approved'}
+            <p>Uw aanvraag wordt verleend vanwege de volgende reden(en):</p>
+        {/if}
+        {if $content->decision === 'rejected'}
+            <p>Uw aanvraag wordt afgewezen vanwege de volgende reden(en):</p>
+        {/if}
+        <p>{$content->motivation}</p>
+        <p>&nbsp;</p>
+    {/if}
+
+    {if $content->decision === 'requestForChanges' && $content->motivation}
+        <h2>Wat moet u aanvullen?</h2>
+        <p>{$content->motivation}</p>
+        <p>&nbsp;</p>
+    {/if}
+
+    {if $content->decision === 'requestForChanges' || $content->decision === 'question'}
+        <h2>Termijn</h2>
+        <p>Ik ontvang de informatie graag binnen 2 weken na dagtekening van deze brief, dus uiterlijk *DocumentDatum+14dagen*. U kunt deze toevoegen aan uw aanvraag door het door u ingevulde aanvraagformulier te heropenen in Mijn DUS-I.</p>
+        <p>Als de gevraagde gegevens niet binnen de gestelde termijn van 2 weken door mij zijn ontvangne, of onvoldoende zijn voor de beoordeling, kan ik niet op tijd een besluit nemen op uw aanvraag.</p>
+        <p>&nbsp;</p>
+    {/if}
 {/block}
 
 {block sidebar}

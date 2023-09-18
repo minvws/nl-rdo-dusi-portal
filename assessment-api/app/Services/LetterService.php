@@ -31,7 +31,6 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-
 readonly class LetterService
 {
     public function __construct(
@@ -158,6 +157,7 @@ readonly class LetterService
 
         $cssPath = $this->getCssPath();
         $logoPath = public_path('img/vws_dusi_logo.svg');
+        $signaturePath = public_path('img/vws_dusi_signature.jpg');
 
         assert($stage->assessor_decision !== null);
 
@@ -167,10 +167,13 @@ readonly class LetterService
             stages: $data,
             createdAt: $stage->application->created_at,
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
-            reference: substr($stage->application->id, 0, 8),
+            reference: $stage->application->reference,
+            motivation: 'TODO: Motivation from decision', // TODO: replace with motivation
+            appointedSubsidy: number_format(100099 / 100, 2, ',', '.'), // TODO: replace with appointed subsidy
             applicationCode: null,
             cssPath: $cssPath,
             logoPath: $logoPath,
+            signaturePath: $signaturePath,
         );
     }
 
