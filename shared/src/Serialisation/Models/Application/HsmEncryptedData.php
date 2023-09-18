@@ -1,7 +1,7 @@
 <?php // phpcs:disable PSR1.Files.SideEffects
 
 /**
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * Hsm Encrypted Data
  */
 
 declare(strict_types=1);
