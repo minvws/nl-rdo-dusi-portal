@@ -90,7 +90,6 @@ class PCZMUIFormTableSeeder extends Seeder
                     1,
                     'Start',
                     [
-                    'permissionToProcessPersonalData'
                 ]),
                 $this->buildPage(2,
                     'Persoonsgegevens toevoegen',
