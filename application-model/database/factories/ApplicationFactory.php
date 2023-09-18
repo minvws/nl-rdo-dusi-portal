@@ -33,7 +33,7 @@ class ApplicationFactory extends Factory
             'application_title' => $this->faker->words(3, true),
             'final_review_deadline' => $this->faker->dateTimeBetween('now', '+1 year'),
             'locked_from' => null,
-            'status' => ApplicationStatus::Draft
+            'status' => ApplicationStatus::Draft,
         ];
     }
 

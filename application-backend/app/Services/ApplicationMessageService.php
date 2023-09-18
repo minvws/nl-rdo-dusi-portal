@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Application Message Service
+ */
+
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
@@ -24,25 +28,24 @@ use Throwable;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ApplicationMessageService
+readonly class ApplicationMessageService
 {
     use HandleException;
 
     public function __construct(
-        private readonly EncryptionService $encryptionService,
-        private readonly ApplicationMessageRepository $messageRepository,
-        private readonly IdentityService $identityService,
-        private readonly LetterRepository $letterRepository,
-        private readonly ApplicationMapper $applicationMapper,
-        private readonly LoggerInterface $logger
+        private ResponseEncryptionService $responseEncryptionService,
+        private ApplicationMessageRepository $messageRepository,
+        private IdentityService $identityService,
+        private LetterRepository $letterRepository,
+        private ApplicationMapper $applicationMapper,
+        private LoggerInterface $logger
     ) {
     }
 
     public function listMessages(MessageListParams $params): MessageList
     {
         $identity = $this->identityService->findIdentity($params->identity);
-
-        if (empty($identity)) {
+        if ($identity === null) {
             return new MessageList([]);
         }
 
@@ -72,7 +75,7 @@ class ApplicationMessageService
         $identity = $this->identityService->findIdentity($params->identity);
 
         if ($identity === null) {
-            return $this->encryptionService->encryptCodableResponse(
+            return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::NOT_FOUND,
                 new Error('identity_not_found', 'Identity not registered yet.'),
                 $params->publicKey
@@ -82,7 +85,7 @@ class ApplicationMessageService
         $message = $this->messageRepository->getMyMessage($identity, $params->id);
 
         if ($message === null) {
-            return $this->encryptionService->encryptCodableResponse(
+            return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::NOT_FOUND,
                 new Error('message_not_found', 'Message not found.'),
                 $params->publicKey
@@ -93,7 +96,7 @@ class ApplicationMessageService
         // TODO: should be encrypted $body = $this->encryptionService->decryptData($body);
 
         if ($body === null) {
-            return $this->encryptionService->encryptCodableResponse(
+            return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::NOT_FOUND,
                 new Error('message_body_not_found', 'Message body not found.'),
                 $params->publicKey
@@ -102,7 +105,7 @@ class ApplicationMessageService
 
         $dto = $this->applicationMapper->mapApplicationMessageToMessageDTO($message, $body);
 
-        return $this->encryptionService->encryptCodableResponse(
+        return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,
             $dto,
             $params->publicKey
@@ -114,7 +117,7 @@ class ApplicationMessageService
         $identity = $this->identityService->findIdentity($params->identity);
 
         if ($identity === null) {
-            return $this->encryptionService->encryptCodableResponse(
+            return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::NOT_FOUND,
                 new Error('identity_not_found', 'Identity not registered yet.'),
                 $params->publicKey
@@ -124,7 +127,7 @@ class ApplicationMessageService
         $message = $this->messageRepository->getMyMessage($identity, $params->id);
 
         if ($message === null) {
-            return $this->encryptionService->encryptCodableResponse(
+            return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::NOT_FOUND,
                 new Error('message_not_found', 'Message not found.'),
                 $params->publicKey
@@ -142,14 +145,14 @@ class ApplicationMessageService
         };
 
         if ($content === null) {
-            return $this->encryptionService->encryptCodableResponse(
+            return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::NOT_FOUND,
                 new Error('message_download_not_found', 'Message download not found.'),
                 $params->publicKey
             );
         }
 
-        return $this->encryptionService->encryptResponse(
+        return $this->responseEncryptionService->encrypt(
             EncryptedResponseStatus::OK,
             $content,
             $contentType,

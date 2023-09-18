@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Services;
+namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
-use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
+use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -21,6 +21,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
@@ -54,6 +55,7 @@ class ApplicationFileServiceTest extends TestCase
     private string $keyPair;
     private ClientPublicKey $publicKey;
     private Filesystem $fileSystem;
+    private ResponseEncryptionService $responseEncryptionService;
 
     protected function setUp(): void
     {
@@ -82,12 +84,17 @@ class ApplicationFileServiceTest extends TestCase
         $this->publicKey = new ClientPublicKey($publicKey);
 
         Storage::fake(Disk::APPLICATION_FILES);
+
+        $this->responseEncryptionService = $this->app->make(ResponseEncryptionService::class);
     }
 
     public function testApplicationFileUpload(?BinaryData $data = null): string
     {
         $params = new EncryptedApplicationFileUploadParams(
-            new EncryptedIdentity(IdentityType::CitizenServiceNumber, $this->identity->hashed_identifier),
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
             $this->publicKey,
             $this->application->reference,
             $this->field->code,
@@ -98,8 +105,7 @@ class ApplicationFileServiceTest extends TestCase
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::CREATED, $encryptedResponse->status);
 
-        $encryptionService = $this->app->get(EncryptionService::class);
-        $result = $encryptionService->decryptCodableResponse(
+        $result = $this->responseEncryptionService->decryptCodable(
             $encryptedResponse,
             FileUploadResult::class,
             $this->keyPair
@@ -123,7 +129,10 @@ class ApplicationFileServiceTest extends TestCase
         $fileId = $this->testApplicationFileUpload($data);
 
         $params = new ApplicationFileParams(
-            new EncryptedIdentity(IdentityType::CitizenServiceNumber, $this->identity->hashed_identifier),
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
             $this->publicKey,
             $this->application->reference,
             $this->field->code,
@@ -135,9 +144,7 @@ class ApplicationFileServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
         $this->assertEquals('text/plain', $encryptedResponse->contentType);
 
-        $encryptionService = $this->app->get(EncryptionService::class);
-        assert($encryptionService instanceof EncryptionService);
-        $decryptedResponse = $encryptionService->decryptResponse(
+        $decryptedResponse = $this->responseEncryptionService->decrypt(
             $encryptedResponse,
             $this->keyPair
         );

@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
+use http\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
@@ -97,10 +99,7 @@ class ApplicationRepository
 
     public function getAnswer(ApplicationStage $appStage, Field $field): ?Answer
     {
-        $answer = Answer::query()
-            ->where('application_stage_id', $appStage->id)
-            ->where('field_id', $field->id)
-            ->first();
+        $answer = $this->getAnswerQuery($appStage, $field)->first();
         if ($answer instanceof Answer) {
             return $answer;
         }
@@ -238,5 +237,36 @@ class ApplicationRepository
     public function isReferenceUnique(string $applicationReference): bool
     {
         return Application::where('reference', $applicationReference)->count() === 0;
+    }
+
+    public function deleteAnswerByStageAndField(ApplicationStage $applicationStage, Field $field): void
+    {
+        $this->getAnswerQuery($applicationStage, $field)->delete();
+    }
+
+    public function deleteAnswersByStage(ApplicationStage $applicationStage): void
+    {
+        $this->getAnswerQuery($applicationStage)->delete();
+    }
+
+    /**
+     * @param ApplicationStage $applicationStage
+     * @param Field|null $field
+     * @return \Illuminate\Database\Eloquent\Builder<Answer>
+     */
+    protected function getAnswerQuery(
+        ApplicationStage $applicationStage,
+        ?Field $field = null,
+    ): \Illuminate\Database\Eloquent\Builder {
+        return Answer::query()
+            ->where('application_stage_id', $applicationStage->id)
+            ->when(
+                $field !== null,
+                function (\Illuminate\Database\Eloquent\Builder $query) use ($field) {
+                    // Assertion is above in the value parameter
+                    assert($field instanceof Field);
+                    $query->where('field_id', $field->id);
+                }
+            );
     }
 }

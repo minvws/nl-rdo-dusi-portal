@@ -24,7 +24,7 @@ class HsmService
     ) {
     }
 
-    public function decryptHsm(
+    public function decrypt(
         ?string $module = null,
         ?string $slot = null,
         ?string $label = null,

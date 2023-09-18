@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ * Application Mutation Service
  */
 
 declare(strict_types=1);
@@ -12,6 +11,7 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 use Carbon\Carbon;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
@@ -45,7 +45,8 @@ readonly class ApplicationMutationService
 
     public function __construct(
         private ApplicationDataService $applicationDataService,
-        private EncryptionService $encryptionService,
+        private ApplicationEncryptionService $applicationEncryptionService,
+        private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
         private SubsidyRepository $subsidyRepository,
@@ -66,7 +67,7 @@ readonly class ApplicationMutationService
             $this->applicationDataService->getApplicationData($application)
         );
 
-        return $this->encryptionService->encryptCodableResponse($status, $dto, $publicKey);
+        return $this->responseEncryptionService->encryptCodable($status, $dto, $publicKey);
     }
 
     private function doFindOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
@@ -121,7 +122,10 @@ readonly class ApplicationMutationService
         );
         $this->applicationRepository->saveApplication($application);
 
+        [$encryptedKey] = $this->applicationEncryptionService->generateEncryptionKey();
+
         $appStage = $this->applicationRepository->makeApplicationStage($application, $subsidyStage);
+        $appStage->encrypted_key = $encryptedKey;
         $appStage->sequence_number = 1;
         $appStage->is_current = true;
         $this->applicationRepository->saveApplicationStage($appStage);
@@ -141,6 +145,11 @@ readonly class ApplicationMutationService
         }
     }
 
+    /**
+     * @throws Throwable
+     * @throws FrontendDecryptionFailedException
+     * @throws EncryptedResponseException
+     */
     private function doSaveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse
     {
         $identity = $this->loadIdentity($params->identity);

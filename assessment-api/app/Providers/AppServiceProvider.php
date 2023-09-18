@@ -9,9 +9,12 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Providers;
 
 use GuzzleHttp\Client;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
-use Config;
+use Illuminate\Support\Facades\Config;
 use Laravel\Fortify\Fortify;
+use MinVWS\DUSi\Assessment\API\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Assessment\API\Services\LatteLetterLoaderService;
 use MinVWS\DUSi\Assessment\API\DTO\LetterData;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStages;
@@ -19,11 +22,9 @@ use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageData;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageAnswer;
 use Latte\Engine;
 use Latte\Sandbox\SecurityPolicy;
-use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
 use Illuminate\Support\ServiceProvider;
-use MinVWS\DUSi\Assessment\API\Services\EncryptionService;
 use MinVWS\DUSi\Assessment\API\Services\Hsm\HsmService;
-use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use MinVWS\DUSi\Shared\Application\Models\Disk;
 use RuntimeException;
 
 /**
@@ -38,15 +39,8 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->app->singleton(ApplicationSubsidyService::class, function ($app) {
-            return new ApplicationSubsidyService(
-                $app->make(SubsidyRepository::class),
-                $app->make(EncryptionService::class)
-            );
-        });
-
         $this->app->singleton(Engine::class, function ($app) {
             $latte = new Engine();
             $latte->setSandboxMode();
@@ -73,7 +67,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->app->singleton(HsmService::class, function (Application $app) {
             $config = $app->make('config');
@@ -111,6 +105,13 @@ class AppServiceProvider extends ServiceProvider
                 slot: $config->get('hsm_api.slot'),
             );
         });
+
+        $this->app->when(ApplicationFileRepository::class)
+            ->needs(Filesystem::class)
+            ->give(function (Application $app) {
+                return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
+            });
+
         if (Config::get('fortify.disable_2fa')) {
             Fortify::ignoreRoutes();
             $features = config('fortify.features');

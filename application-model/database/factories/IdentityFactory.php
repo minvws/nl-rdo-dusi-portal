@@ -4,6 +4,7 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 
 /**
@@ -26,7 +27,7 @@ class IdentityFactory extends Factory
         return [
             'id' => $this->faker->uuid,
             'type' => IdentityType::CitizenServiceNumber,
-            'encrypted_identifier' => base64_encode($identifier), // can't encrypt in the factory
+            'encrypted_identifier' => new HsmEncryptedData($identifier, ''), // can't encrypt in the factory
             'hashed_identifier' => base64_encode(hash('sha256', $identifier, true)),
             'created_at' => $createdAt,
             'updated_at' => $createdAt

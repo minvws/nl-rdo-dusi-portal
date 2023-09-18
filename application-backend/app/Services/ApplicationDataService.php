@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Application Data Service
  */
 
 declare(strict_types=1);
@@ -9,8 +9,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Exception;
-use MinVWS\Codable\Decoding\Decoder;
-use MinVWS\Codable\Decoding\DecodingContainer;
+use Illuminate\Contracts\Encryption\Encrypter;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
@@ -21,9 +20,6 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\File;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
-use MinVWS\DUSi\Shared\Subsidy\Models\Field;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use stdClass;
 use Throwable;
 
@@ -32,19 +28,14 @@ use Throwable;
  */
 readonly class ApplicationDataService
 {
-    private JSONEncoder $jsonEncoder;
-    private JSONDecoder $jsonDecoder;
-    private Decoder $decoder;
-
     public function __construct(
-        private EncryptionService $encryptionService,
+        private FormDecodingService $decodingService,
+        private ApplicationEncryptionService $encryptionService,
         private ApplicationRepository $applicationRepository,
         private ApplicationFileRepository $applicationFileRepository,
-        private SubsidyRepository $subsidyRepository
+        private JSONEncoder $jsonEncoder,
+        private JSONDecoder $jsonDecoder,
     ) {
-        $this->jsonEncoder = new JSONEncoder();
-        $this->jsonDecoder = new JSONDecoder();
-        $this->decoder = new Decoder();
     }
 
     private function cleanUpUnusedFiles(ApplicationStage $applicationStage, FieldValue $value): void
@@ -72,56 +63,50 @@ readonly class ApplicationDataService
         $this->applicationFileRepository->unlinkUnusedFiles($applicationStage, $value->field, $usedIds);
     }
 
-    private function saveFieldValue(ApplicationStage $applicationStage, FieldValue $fieldValue): void
-    {
-        $answer = $this->applicationRepository->makeAnswer($applicationStage, $fieldValue->field);
+    private function saveFieldValue(
+        Encrypter $encrypter,
+        ApplicationStage $applicationStage,
+        FieldValue $fieldValue
+    ): void {
         $this->cleanUpUnusedFiles($applicationStage, $fieldValue);
-        $json = $this->jsonEncoder->encode($fieldValue->value);
-        $answer->encrypted_answer = $this->encryptionService->encryptData($json);
+        if ($fieldValue->value === null) {
+            // Do not create an answer if the value is null
+            // We should not encrypt null values
+            return;
+        }
+
+        $answer = $this->applicationRepository->makeAnswer($applicationStage, $fieldValue->field);
+
+        $value = match ($fieldValue->field->type) {
+            FieldType::Upload => $this->jsonEncoder->encode($fieldValue->value),
+            default => $fieldValue->value,
+        };
+        $answer->encrypted_answer = $encrypter->encrypt($value);
+
         $this->applicationRepository->saveAnswer($answer);
     }
 
     /**
      * @throws Throwable
      */
-    private function decodeFieldValue(Field $field, DecodingContainer $container): FieldValue
-    {
-        $type = match ($field->type) {
-            FieldType::TextNumeric => 'int',
-            FieldType::Checkbox => 'bool',
-            FieldType::Upload => FileList::class,
-            default => 'string'
-        };
+    public function saveApplicationData(
+        ApplicationStage $applicationStage,
+        object $data
+    ): void {
+        // Remove all answers for this stage because we received new data
+        $this->applicationRepository->deleteAnswersByStage($applicationStage);
 
-        $value = $container->decodeIfPresent($type);
-        return new FieldValue($field, $value);
-    }
+        // New encryption key for each save, so we do not reuse the same key
+        [$encryptedKey, $encrypter] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage->encrypted_key = $encryptedKey;
 
-    /**
-     * @return array<int|string, FieldValue>
-     * @throws Throwable
-     */
-    public function decodeFieldValues(SubsidyStage $subsidyStage, object $data): array
-    {
-        $container = $this->decoder->decode($data);
-
-        $values = [];
-        $fields = $this->subsidyRepository->getFields($subsidyStage);
-        foreach ($fields as $field) {
-            $fieldContainer = $container->nestedContainer($field->code);
-            $values[$field->code] = $this->decodeFieldValue($field, $fieldContainer);
-        }
-        return $values;
-    }
-
-    public function saveApplicationData(ApplicationStage $applicationStage, object $data): void
-    {
-        $fieldValues = $this->decodeFieldValues($applicationStage->subsidyStage, $data);
+        // Decode received form data
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
 
         // TODO: RickL Validation will be in other PR
 
         foreach ($fieldValues as $fieldValue) {
-            $this->saveFieldValue($applicationStage, $fieldValue);
+            $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);
         }
     }
 
@@ -130,15 +115,26 @@ readonly class ApplicationDataService
      */
     public function getApplicationData(Application $application): object
     {
-        $answers = $this->applicationRepository->getApplicationStageAnswersByStageNumber($application, 1);
+        $applicationStage = $this->applicationRepository->getApplicationStageByStageNumber($application, 1, true);
+        if ($applicationStage === null) {
+            return new stdClass();
+        }
+
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
 
         $data = new stdClass();
-        foreach ($answers as $answer) {
-            $json = $this->encryptionService->decryptBase64EncodedData($answer->encrypted_answer);
-            $value = $this->jsonDecoder->decode($json)->decodeIfPresent();
-            if ($value !== null) {
-                $data->{$answer->field->code} = $value;
+        foreach ($applicationStage->answers as $answer) {
+            $value = $encrypter->decrypt($answer->encrypted_answer);
+            if ($value === null) {
+                continue;
             }
+
+            $value = match ($answer->field->type) {
+                FieldType::Upload => $this->jsonDecoder->decode($value)->decodeObject(FileList::class),
+                default => $value,
+            };
+
+            $data->{$answer->field->code} = $value;
         }
 
         return $data;

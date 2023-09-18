@@ -16,7 +16,8 @@
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "minvws/php-rmq-rpc-bridge": "@dev",
         "predis/predis": "^2.2",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3",
+        "ext-openssl": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",
