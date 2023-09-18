@@ -2596,9 +2596,10 @@
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "116e4eb45f3863b917c362e375c9e915c0d39326"
+                "reference": "03bfbb6b6df3960f31b0c5498f99dfdbe4461fa9"
             },
             "require": {
+                "doctrine/dbal": "^3.6",
                 "laravel/framework": "^10.17",
                 "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
                 "php": "^8.2"

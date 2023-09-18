@@ -8,7 +8,8 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^10.17",
-        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev"
+        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
+        "doctrine/dbal": "^3.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
