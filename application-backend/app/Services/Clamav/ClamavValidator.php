@@ -9,7 +9,7 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 
 class ClamavValidator extends \Sunspikes\ClamavValidator\ClamavValidator
 {
-    public function validateClamav(string $attribute, $value, array $parameters): bool
+    public function validateClamav(string $attribute, mixed $value, array $parameters): bool
     {
         if (!($value instanceof FileList)) {
             return parent::validateClamav($attribute, $value, $parameters);
