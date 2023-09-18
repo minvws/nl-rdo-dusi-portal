@@ -10,6 +10,7 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Support\Arr;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
@@ -33,6 +34,7 @@ readonly class ApplicationDataService
         private ApplicationEncryptionService $encryptionService,
         private ApplicationRepository $applicationRepository,
         private ApplicationFileRepository $applicationFileRepository,
+        private ValidationService $validationService,
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
     ) {
@@ -92,7 +94,7 @@ readonly class ApplicationDataService
     public function saveApplicationData(
         ApplicationStage $applicationStage,
         object $data
-    ): void {
+    ): bool {
         // Remove all answers for this stage because we received new data
         $this->applicationRepository->deleteAnswersByStage($applicationStage);
 
@@ -103,11 +105,25 @@ readonly class ApplicationDataService
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
 
-        // TODO: RickL Validation will be in other PR
+        $validator = $this->validationService->getValidator($applicationStage, $fieldValues);
+        $validatorFails = $validator->fails();
+        if ($validatorFails) {
+            // Get the values that failed validation and process them
+            /** @var array<string, FieldValue> $errorValues */
+            $errorValues = Arr::only($fieldValues, $validator->errors()->keys());
+
+            // TODO: We do not need to process invalid fields at this time ?
+//            $this->processInvalidFieldValues($applicationStage, $errorValues);
+
+            // Removed errored fields from values
+            $fieldValues = array_diff_key($fieldValues, $errorValues);
+        }
 
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);
         }
+
+        return $validatorFails;
     }
 
     /**

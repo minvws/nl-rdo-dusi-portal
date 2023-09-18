@@ -173,13 +173,12 @@ readonly class ApplicationMutationService
             );
         }
 
-        $this->applicationDataService->saveApplicationData($applicationStage, $body->data);
+        $validationFailed = $this->applicationDataService->saveApplicationData($applicationStage, $body->data);
 
-        if ($body->submit) {
+        if ($body->submit && !$validationFailed) {
             $application->status = ApplicationStatus::Submitted;
             $application->final_review_deadline =
                 Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);
-            $this->applicationRepository->saveApplication($application);
 
             $applicationStage->is_current = false;
 
@@ -187,7 +186,12 @@ readonly class ApplicationMutationService
             // $this->appRepo->makeApplicationStage($applicationStage->application, $nextSubsidyStage);
         }
 
+        if ($validationFailed) {
+            $application->status = ApplicationStatus::Invalid;
+        }
+
         $this->applicationRepository->saveApplicationStage($applicationStage);
+        $this->applicationRepository->saveApplication($application);
         return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
     }
 
