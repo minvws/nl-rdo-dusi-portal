@@ -18,6 +18,19 @@ use RuntimeException;
  */
 class HsmApiServiceProvider extends ServiceProvider
 {
+    public function boot(): void
+    {
+        $this->publishes([
+            __DIR__ . '/../../../config/bridge.php' => config_path('bridge.php'),
+        ]);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([HsmInfoCommand::class]);
+            $this->commands([HsmLocalClearCommand::class]);
+            $this->commands([HsmLocalInitCommand::class]);
+        }
+    }
+
     /**
      * Register any application services.
      *
