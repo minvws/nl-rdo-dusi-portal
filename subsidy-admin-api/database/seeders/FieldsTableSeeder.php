@@ -49,13 +49,13 @@ class FieldsTableSeeder extends Seeder
 
         $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'bankAccountHolder', title: 'Naam rekeninghouder', maxLength: 50,);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'bankStatement', title: 'Kopie bankafschrift',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'bankStatement', title: 'Kopie bankafschrift', accept: 'image/*,application/pdf', maxFileSize: 5242880);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'extractPersonalRecordsDatabase', title: 'Uittreksel bevolkingsregister niet ouder dan 3 maanden',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'extractPersonalRecordsDatabase', title: 'Uittreksel bevolkingsregister niet ouder dan 3 maanden', accept: 'image/*,application/pdf', maxFileSize: 5242880);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'proofOfMedicalTreatment', title: 'Verklaring behandeltraject',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'proofOfMedicalTreatment', title: 'Verklaring behandeltraject', accept: 'image/*,application/pdf', maxFileSize: 5242880);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'proofOfTypeOfMedicalTreatment', title: 'Verklaring type behandeling',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'proofOfTypeOfMedicalTreatment', title: 'Verklaring type behandeling', accept: 'image/*,application/pdf', maxFileSize: 5242880);
 
         $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID, code: 'permissionToProcessPersonalData', title: 'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',);
 
@@ -122,9 +122,9 @@ class FieldsTableSeeder extends Seeder
 
         $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'bankAccountHolder', title: 'Naam rekeninghouder', maxLength: 50,);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'certifiedEmploymentDocument', title: 'Gewaarmerkt verzekeringsbericht',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'certifiedEmploymentDocument', title: 'Gewaarmerkt verzekeringsbericht', accept: 'image/*,application/pdf', maxFileSize: 20971520);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionDocument', title: 'WIA-Beslissing',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionDocument', title: 'WIA-Beslissing', accept: 'image/*,application/pdf', maxFileSize: 20971520);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'isWiaDecisionPostponed', title: 'Is WIA beslissing uitgesteld?', options: [
             "Ja",
@@ -132,10 +132,10 @@ class FieldsTableSeeder extends Seeder
         ]);
 
         //If isWiaDecisionPostponed === yes
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionPostponedLetter', title: 'Toekenningsbrief',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionPostponedLetter', title: 'Toekenningsbrief', accept: 'image/*,application/pdf', maxFileSize: 20971520);
 
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Bewijs dienstverband',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Bewijs dienstverband', accept: 'image/*,application/pdf', maxFileSize: 20971520);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentFunction', title: 'Functie', options: [
                 "Ambulancechauffeur",
@@ -160,7 +160,7 @@ class FieldsTableSeeder extends Seeder
             "Andere organisatie",
         ]);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerDeclarationFile', title: 'Zorgaanbiedersverklaring',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerDeclarationFile', title: 'Zorgaanbiedersverklaring', accept: 'image/*,application/pdf', maxFileSize: 20971520);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'hasBeenWorkingAtJudicialInstitution', title: 'Bent u werkzaamh geweest bij een justitiële inrichting?', options: [
             "Ja",
@@ -169,14 +169,14 @@ class FieldsTableSeeder extends Seeder
 
         $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'BIGNumberJudicialInstitution', title: 'BIG-nummer', maxLength: 11,);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Sociaal-medische beoordeling',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Sociaal-medische beoordeling', accept: 'image/*,application/pdf', maxFileSize: 20971520);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'hasPostCovidDiagnose', title: 'Heeft langdurige post-COVID klachten', options: [
             "Ja",
             "Nee",
         ]);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'doctorsCertificate', title: 'Verklaring arts',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'doctorsCertificate', title: 'Verklaring arts', accept: 'image/*,application/pdf', maxFileSize: 20971520);
 
         $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'permissionToProcessPersonalData', title: 'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',);
 
