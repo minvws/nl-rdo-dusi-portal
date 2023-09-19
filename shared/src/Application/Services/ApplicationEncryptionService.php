@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\Services;
+namespace MinVWS\DUSi\Shared\Application\Services;
 
+use Exception;
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Encryption\Encrypter;
-use MinVWS\DUSi\Assessment\API\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 
 class ApplicationEncryptionService
 {
@@ -15,7 +17,6 @@ class ApplicationEncryptionService
 
     public function __construct(protected HsmEncryptionService $hsmEncryptionService)
     {
-        // TODO: Move to Shared package
     }
 
     public function getEncrypter(ApplicationStage $applicationStage): EncrypterContract
@@ -23,6 +24,20 @@ class ApplicationEncryptionService
         $aesKey = $this->hsmEncryptionService->decrypt($applicationStage->encrypted_key);
 
         return $this->getAesEncrypter($aesKey);
+    }
+
+    /**
+     * @return array{HsmEncryptedData, EncrypterContract} aes key encrypted with HSM public key
+     * @throws Exception
+     */
+    public function generateEncryptionKey(): array
+    {
+        $key = Encrypter::generateKey(self::AES_CIPHER);
+
+        $encrypter = $this->getAesEncrypter($key);
+        $encryptedKey = $this->hsmEncryptionService->encrypt($key);
+
+        return [$encryptedKey, $encrypter];
     }
 
     protected function getAesEncrypter(string $aesKey): EncrypterContract

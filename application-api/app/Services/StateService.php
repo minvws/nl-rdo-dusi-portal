@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Application\API\Services;
 use MinVWS\DUSi\Application\API\Models\PortalUser;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthManager;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Interfaces;
+namespace MinVWS\DUSi\Shared\Application\Interfaces;
 
 interface KeyReader
 {

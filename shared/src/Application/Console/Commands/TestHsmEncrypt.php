@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Console\Commands;
+namespace MinVWS\DUSi\Shared\Application\Console\Commands;
 
 use Illuminate\Console\Command;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 
 class TestHsmEncrypt extends Command
 {

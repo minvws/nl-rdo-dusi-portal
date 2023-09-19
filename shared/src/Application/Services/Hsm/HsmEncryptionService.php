@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services\Hsm;
+namespace MinVWS\DUSi\Shared\Application\Services\Hsm;
 
 use Exception;
-use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
+use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
 use MinVWS\DUSi\Shared\Serialisation\Hsm\HsmDecryptableData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use OpenSSLAsymmetricKey;

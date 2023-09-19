@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use MinVWS\DUSi\Application\Backend\Repositories\IdentityRepository;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
