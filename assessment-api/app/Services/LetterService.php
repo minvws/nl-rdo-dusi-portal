@@ -30,6 +30,7 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -228,16 +229,11 @@ readonly class LetterService
     /**
      * @throws Exception
      */
-    public function generateLetters(ApplicationStage $stage): void
+    public function generateLetters(SubsidyStageTransitionMessage $message, ApplicationStage $stage): void
     {
-        $letter = $stage->subsidyStage->subsidyVersion->publishedSubsidyLetter;
-        if ($letter === null) {
-            throw new Exception('No published subsidy letter template found!');
-        }
-
         $data = $this->collectGenericDataForTemplate($stage);
 
-        $pdf = $this->generatePDFLetter($letter->content_pdf, $data);
+        $pdf = $this->generatePDFLetter($message->content_pdf, $data);
         $pdfPath = sprintf(
             'applications/%s/letters/%d/%s.pdf',
             $stage->application->id,
@@ -247,7 +243,7 @@ readonly class LetterService
         // TODO: encrypt
         $pdf->save($pdfPath, Disk::APPLICATION_FILES);
 
-        $html = $this->generateHTMLLetter($letter->content_view, $data);
+        $html = $this->generateHTMLLetter($message->content_html, $data);
         $htmlPath = sprintf(
             'applications/%s/letters/%d/%s.html',
             $stage->application->id,
@@ -257,7 +253,7 @@ readonly class LetterService
         // TODO: encrypt
         $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($htmlPath, $html);
 
-        $this->messageRepository->createMessage($stage, $htmlPath, $pdfPath);
+        $this->messageRepository->createMessage($stage, $message->subject, $htmlPath, $pdfPath);
 
         $this->triggerMailNotification($stage, $data);
     }

@@ -10,7 +10,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyLetter;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
@@ -19,6 +20,10 @@ use MinVWS\DUSi\Shared\Tests\TestCase;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertNull;
 
+/**
+ * @group subsidy
+ * @group subsidy-repository
+ */
 class SubsidyRepositoryTest extends TestCase
 {
     public function testGetSubsidy(): void
@@ -176,32 +181,6 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($subsidyVersion->created_at, $actualSubsidyVersion->created_at);
     }
 
-    public function testGetSubsidyLetter(): void
-    {
-        $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->create([
-            'subsidy_id' => $subsidy->id,
-            'subsidy_page_url' => 'random_url',
-            'status' => 'published',
-            'version' => 1,
-            'created_at' => '2021-01-01 00:00:00',
-        ]);
-
-        $subsidyLetter = SubsidyLetter::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
-            'status' => 'published',
-        ]);
-
-        $repository = $this->app->make(SubsidyRepository::class);
-        $actualSubsidyLetter = $repository->getSubsidyLetter($subsidyLetter->id);
-        $this->assertEquals($subsidyLetter->id, $actualSubsidyLetter->id);
-        $this->assertEquals($subsidyLetter->status, $actualSubsidyLetter->status);
-        $this->assertEquals($subsidyLetter->version, $actualSubsidyLetter->version);
-        $this->assertEquals($subsidyLetter->created_at, $actualSubsidyLetter->created_at);
-        $this->assertEquals($subsidyLetter->content_pdf, $actualSubsidyLetter->content_pdf);
-        $this->assertEquals($subsidyLetter->content_view, $actualSubsidyLetter->content_view);
-    }
-
     public function testGetPublishedSubsidyLetter(): void
     {
         $subsidy = Subsidy::factory()->create();
@@ -213,26 +192,27 @@ class SubsidyRepositoryTest extends TestCase
             'created_at' => '2021-01-01 00:00:00',
         ]);
 
-        $subsidyLetterChangesRequested = SubsidyLetter::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
+        $stage1 = SubsidyStage::factory()->for($subsidyVersion)->create(['stage' => 1]);
+        $stage2 = SubsidyStage::factory()->for($subsidyVersion)->create(['stage' => 2]);
+
+        $transition =
+            SubsidyStageTransition::factory()
+                ->for($stage1, 'currentSubsidyStage')
+                ->for($stage2, 'targetSubsidyStage')
+                ->create();
+
+        SubsidyStageTransitionMessage::factory()->for($transition)->create([
             'status' => VersionStatus::Archived,
             'version' => 1
         ]);
-        $subsidyLetterAccepted = SubsidyLetter::factory()->create([
-            'subsidy_version_id' => $subsidyVersion->id,
-            'status' => VersionStatus::Published,
-            'version' => 2,
-        ]);
 
-        $repository = $this->app->make(SubsidyRepository::class);
-        $actualSubsidyVersion = $repository->getSubsidyVersion($subsidyVersion->id);
-        $latestSubsidyLetter = $actualSubsidyVersion?->publishedSubsidyLetter;
+        $publishedMessage =
+            SubsidyStageTransitionMessage::factory()->for($transition)->create([
+                'status' => VersionStatus::Published,
+                'version' => 2
+            ]);
 
-        $this->assertEquals($latestSubsidyLetter->id, $subsidyLetterAccepted->id);
-        $this->assertEquals($latestSubsidyLetter->status, $subsidyLetterAccepted->status);
-        $this->assertEquals($latestSubsidyLetter->version, $subsidyLetterAccepted->version);
-        $this->assertEquals($latestSubsidyLetter->content_pdf, $subsidyLetterAccepted->content_pdf);
-        $this->assertEquals($latestSubsidyLetter->content_view, $subsidyLetterAccepted->content_view);
+        $this->assertEquals($publishedMessage->id, $transition->publishedStageTransitionMessage->id);
     }
 
     public function testGetActiveSubsidyCodes(): void

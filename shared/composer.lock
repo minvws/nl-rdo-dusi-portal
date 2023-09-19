@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0568896efde042d14a7bedfd78f0717",
+    "content-hash": "64fbd7b014bb6e7eabc933de30ee195c",
     "packages": [
         {
             "name": "brick/math",
@@ -1693,11 +1693,11 @@
         },
         {
             "name": "minvws/codable",
-            "version": "dev-feature/codes-trait",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-php-codable.git",
-                "reference": "7e21dbbd4ccf79a32a65644620a2b6824b91905b"
+                "reference": "431ac03c536209aec65f323a97424c6b9803acaf"
             },
             "require": {
                 "php": "^8.2"
@@ -1708,6 +1708,7 @@
                 "phpunit/phpunit": "^10.2.2",
                 "squizlabs/php_codesniffer": "^3.7.2"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1738,7 +1739,7 @@
                 }
             ],
             "description": "Encode/decode objects to/from various formats",
-            "time": "2023-09-04T09:27:26+00:00"
+            "time": "2023-09-19T11:41:49+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2011,16 +2012,16 @@
         },
         {
             "name": "nette/utils",
-            "version": "v4.0.1",
+            "version": "v4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "9124157137da01b1f5a5a22d6486cb975f26db7e"
+                "reference": "c67c9f33ab9b3026709c7e606d93f7044678f8df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/9124157137da01b1f5a5a22d6486cb975f26db7e",
-                "reference": "9124157137da01b1f5a5a22d6486cb975f26db7e",
+                "url": "https://api.github.com/repos/nette/utils/zipball/c67c9f33ab9b3026709c7e606d93f7044678f8df",
+                "reference": "c67c9f33ab9b3026709c7e606d93f7044678f8df",
                 "shasum": ""
             },
             "require": {
@@ -2042,8 +2043,7 @@
                 "ext-intl": "to use Strings::webalize(), toAscii(), normalize() and compare()",
                 "ext-json": "to use Nette\\Utils\\Json",
                 "ext-mbstring": "to use Strings::lower() etc...",
-                "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()",
-                "ext-xml": "to use Strings::length() etc. when mbstring is not available"
+                "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()"
             },
             "type": "library",
             "extra": {
@@ -2092,9 +2092,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v4.0.1"
+                "source": "https://github.com/nette/utils/tree/v4.0.2"
             },
-            "time": "2023-07-30T15:42:21+00:00"
+            "time": "2023-09-19T10:10:47+00:00"
         },
         {
             "name": "nunomaduro/termwind",
@@ -6575,32 +6575,32 @@
         },
         {
             "name": "orchestra/canvas",
-            "version": "v8.8.0",
+            "version": "v8.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/canvas.git",
-                "reference": "63f8c0964d52f32f0790e024b60a83ef3adaf345"
+                "reference": "00a41451aa288d92741f8b314fa056abbe79c237"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/canvas/zipball/63f8c0964d52f32f0790e024b60a83ef3adaf345",
-                "reference": "63f8c0964d52f32f0790e024b60a83ef3adaf345",
+                "url": "https://api.github.com/repos/orchestral/canvas/zipball/00a41451aa288d92741f8b314fa056abbe79c237",
+                "reference": "00a41451aa288d92741f8b314fa056abbe79c237",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.2",
                 "composer/semver": "^3.0",
-                "illuminate/database": "^10.17",
-                "illuminate/support": "^10.17",
-                "orchestra/canvas-core": "^8.7",
+                "illuminate/database": "^10.23",
+                "illuminate/support": "^10.23",
+                "orchestra/canvas-core": "^8.8",
+                "orchestra/testbench-core": "^8.11",
                 "php": "^8.1",
                 "symfony/yaml": "^6.2"
             },
             "require-dev": {
-                "laravel/framework": "^10.17",
+                "laravel/framework": "^10.23",
                 "laravel/pint": "^1.6",
                 "mockery/mockery": "^1.5.1",
-                "orchestra/testbench-core": "^8.9.1",
                 "phpstan/phpstan": "^1.10.5",
                 "phpunit/phpunit": "^10.1",
                 "spatie/laravel-ray": "^1.32.4"
@@ -6641,22 +6641,22 @@
             "description": "Code Generators for Laravel Applications and Packages",
             "support": {
                 "issues": "https://github.com/orchestral/canvas/issues",
-                "source": "https://github.com/orchestral/canvas/tree/v8.8.0"
+                "source": "https://github.com/orchestral/canvas/tree/v8.9.0"
             },
-            "time": "2023-09-13T06:04:41+00:00"
+            "time": "2023-09-19T04:58:28+00:00"
         },
         {
             "name": "orchestra/canvas-core",
-            "version": "v8.7.0",
+            "version": "v8.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/canvas-core.git",
-                "reference": "54e75ae77bc2462945399a6e3269ba4f7695e5e0"
+                "reference": "d44ffd6895685a6535949c7cce2650a67dd7d364"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/canvas-core/zipball/54e75ae77bc2462945399a6e3269ba4f7695e5e0",
-                "reference": "54e75ae77bc2462945399a6e3269ba4f7695e5e0",
+                "url": "https://api.github.com/repos/orchestral/canvas-core/zipball/d44ffd6895685a6535949c7cce2650a67dd7d364",
+                "reference": "d44ffd6895685a6535949c7cce2650a67dd7d364",
                 "shasum": ""
             },
             "require": {
@@ -6667,14 +6667,19 @@
                 "php": "^8.1"
             },
             "conflict": {
-                "orchestra/canvas": "<8.8.0",
+                "orchestra/canvas": "<8.9.0",
                 "orchestra/testbench-core": "<8.2.0"
             },
             "require-dev": {
+                "fakerphp/faker": "^1.21",
+                "laravel/framework": "^10.17",
                 "laravel/pint": "^1.6",
-                "orchestra/testbench": "^8.9",
+                "mockery/mockery": "^1.5.1",
+                "orchestra/testbench-core": "^8.11",
+                "orchestra/workbench": "^0.3",
                 "phpstan/phpstan": "^1.10.6",
-                "phpunit/phpunit": "^10.1"
+                "phpunit/phpunit": "^10.1",
+                "symfony/yaml": "^6.2"
             },
             "type": "library",
             "extra": {
@@ -6709,31 +6714,31 @@
             "description": "Code Generators Builder for Laravel Applications and Packages",
             "support": {
                 "issues": "https://github.com/orchestral/canvas/issues",
-                "source": "https://github.com/orchestral/canvas-core/tree/v8.7.0"
+                "source": "https://github.com/orchestral/canvas-core/tree/v8.8.0"
             },
-            "time": "2023-09-13T05:54:41+00:00"
+            "time": "2023-09-19T04:26:25+00:00"
         },
         {
             "name": "orchestra/testbench",
-            "version": "v8.10.2",
+            "version": "v8.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench.git",
-                "reference": "55dd97d7a8f7154c5660e71b9222e28485917719"
+                "reference": "4e895271327a58e911f7db3a3b505eadc18a75ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench/zipball/55dd97d7a8f7154c5660e71b9222e28485917719",
-                "reference": "55dd97d7a8f7154c5660e71b9222e28485917719",
+                "url": "https://api.github.com/repos/orchestral/testbench/zipball/4e895271327a58e911f7db3a3b505eadc18a75ee",
+                "reference": "4e895271327a58e911f7db3a3b505eadc18a75ee",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.2",
                 "fakerphp/faker": "^1.21",
-                "laravel/framework": ">=10.17.0 <10.24.0",
+                "laravel/framework": ">=10.23.1 <10.24.0",
                 "mockery/mockery": "^1.5.1",
-                "orchestra/testbench-core": ">=8.10.0 <8.11.0",
-                "orchestra/workbench": "^0.2.6",
+                "orchestra/testbench-core": ">=8.11.0 <8.12.0",
+                "orchestra/workbench": "^0.3.0",
                 "php": "^8.1",
                 "phpunit/phpunit": "^9.6 || ^10.1",
                 "spatie/laravel-ray": "^1.32.4",
@@ -6765,22 +6770,22 @@
             ],
             "support": {
                 "issues": "https://github.com/orchestral/testbench/issues",
-                "source": "https://github.com/orchestral/testbench/tree/v8.10.2"
+                "source": "https://github.com/orchestral/testbench/tree/v8.11.0"
             },
-            "time": "2023-09-12T15:19:41+00:00"
+            "time": "2023-09-19T05:51:52+00:00"
         },
         {
             "name": "orchestra/testbench-core",
-            "version": "v8.10.2",
+            "version": "v8.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "54071af200899a22e849aa4abe8019e8a1d8e826"
+                "reference": "1f382c9d55100c2c641d4cba50bbde764aa93054"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/54071af200899a22e849aa4abe8019e8a1d8e826",
-                "reference": "54071af200899a22e849aa4abe8019e8a1d8e826",
+                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/1f382c9d55100c2c641d4cba50bbde764aa93054",
+                "reference": "1f382c9d55100c2c641d4cba50bbde764aa93054",
                 "shasum": ""
             },
             "require": {
@@ -6789,7 +6794,7 @@
             },
             "require-dev": {
                 "fakerphp/faker": "^1.21",
-                "laravel/framework": "^10.17",
+                "laravel/framework": "^10.23",
                 "laravel/pint": "^1.6",
                 "mockery/mockery": "^1.5.1",
                 "phpstan/phpstan": "^1.10.7",
@@ -6802,7 +6807,7 @@
             "suggest": {
                 "brianium/paratest": "Allow using parallel tresting (^6.4 || ^7.1.4).",
                 "fakerphp/faker": "Allow using Faker for testing (^1.21).",
-                "laravel/framework": "Required for testing (^10.17).",
+                "laravel/framework": "Required for testing (^10.23).",
                 "mockery/mockery": "Allow using Mockery for testing (^1.5.1).",
                 "nunomaduro/collision": "Allow using Laravel style tests output and parallel testing (^6.4 || ^7.4).",
                 "orchestra/testbench-browser-kit": "Allow using legacy Laravel BrowserKit for testing (^8.0).",
@@ -6848,41 +6853,45 @@
                 "issues": "https://github.com/orchestral/testbench/issues",
                 "source": "https://github.com/orchestral/testbench-core"
             },
-            "time": "2023-09-14T02:44:47+00:00"
+            "time": "2023-09-19T10:57:14+00:00"
         },
         {
             "name": "orchestra/workbench",
-            "version": "v0.2.6",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/workbench.git",
-                "reference": "9cb449695fde6f7150c58dd4b112ff6d162fb66f"
+                "reference": "39fe2113d1a1f95b0bf3192a71eb1ded83c3a3d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/workbench/zipball/9cb449695fde6f7150c58dd4b112ff6d162fb66f",
-                "reference": "9cb449695fde6f7150c58dd4b112ff6d162fb66f",
+                "url": "https://api.github.com/repos/orchestral/workbench/zipball/39fe2113d1a1f95b0bf3192a71eb1ded83c3a3d7",
+                "reference": "39fe2113d1a1f95b0bf3192a71eb1ded83c3a3d7",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.2",
-                "illuminate/console": "^9.52.15 || ^10.17.0",
-                "illuminate/support": "^9.52.15 || ^10.17.0",
+                "illuminate/console": "^9.52.15 || ^10.23.0",
+                "illuminate/support": "^9.52.15 || ^10.23.0",
                 "laravel/tinker": "^2.8.2",
-                "orchestra/canvas": "^7.8 || ^8.7",
-                "orchestra/testbench-core": "^7.30.0 || ^8.10.0",
+                "orchestra/canvas": "^7.10.0 || ^8.9.0",
+                "orchestra/testbench-core": "^7.31.0 || ^8.11.0",
                 "php": "^8.0"
             },
             "require-dev": {
+                "fakerphp/faker": "^1.21",
+                "laravel/framework": "^9.52.15 || ^10.23.0",
                 "laravel/pint": "^1.4",
-                "orchestra/testbench": "^7.30.0 || ^8.10.0",
+                "mockery/mockery": "^1.5.1",
                 "phpstan/phpstan": "^1.10.7",
-                "phpunit/phpunit": "^9.6"
+                "phpunit/phpunit": "^9.6",
+                "spatie/laravel-ray": "^1.32.4",
+                "symfony/yaml": "^6.0.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.2.x-dev"
+                    "dev-master": "0.3.x-dev"
                 }
             },
             "autoload": {
@@ -6909,9 +6918,9 @@
             ],
             "support": {
                 "issues": "https://github.com/orchestral/workbench/issues",
-                "source": "https://github.com/orchestral/workbench/tree/v0.2.6"
+                "source": "https://github.com/orchestral/workbench/tree/v0.3.0"
             },
-            "time": "2023-09-05T00:41:58+00:00"
+            "time": "2023-09-19T05:26:40+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -7536,16 +7545,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "10.1.5",
+            "version": "10.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "1df504e42a88044c27a90136910f0b3fe9e91939"
+                "reference": "56f33548fe522c8d82da7ff3824b42829d324364"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/1df504e42a88044c27a90136910f0b3fe9e91939",
-                "reference": "1df504e42a88044c27a90136910f0b3fe9e91939",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/56f33548fe522c8d82da7ff3824b42829d324364",
+                "reference": "56f33548fe522c8d82da7ff3824b42829d324364",
                 "shasum": ""
             },
             "require": {
@@ -7602,7 +7611,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/10.1.5"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/10.1.6"
             },
             "funding": [
                 {
@@ -7610,7 +7619,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-12T14:37:22+00:00"
+            "time": "2023-09-19T04:59:03+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -7857,16 +7866,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.3.4",
+            "version": "10.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b8d59476f19115c9774b3b447f78131781c6c32b"
+                "reference": "747c3b2038f1139e3dcd9886a3f5a948648b7503"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b8d59476f19115c9774b3b447f78131781c6c32b",
-                "reference": "b8d59476f19115c9774b3b447f78131781c6c32b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/747c3b2038f1139e3dcd9886a3f5a948648b7503",
+                "reference": "747c3b2038f1139e3dcd9886a3f5a948648b7503",
                 "shasum": ""
             },
             "require": {
@@ -7890,7 +7899,7 @@
                 "sebastian/comparator": "^5.0",
                 "sebastian/diff": "^5.0",
                 "sebastian/environment": "^6.0",
-                "sebastian/exporter": "^5.0",
+                "sebastian/exporter": "^5.1",
                 "sebastian/global-state": "^6.0.1",
                 "sebastian/object-enumerator": "^5.0",
                 "sebastian/recursion-context": "^5.0",
@@ -7938,7 +7947,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.4"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.5"
             },
             "funding": [
                 {
@@ -7954,7 +7963,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-12T14:42:28+00:00"
+            "time": "2023-09-19T05:42:37+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -10494,7 +10503,7 @@
     "aliases": [
         {
             "package": "minvws/codable",
-            "version": "dev-feature/codes-trait",
+            "version": "dev-main",
             "alias": "1.0.x-dev",
             "alias_normalized": "1.0.9999999.9999999-dev"
         }

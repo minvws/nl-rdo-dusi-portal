@@ -27,6 +27,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
  * @property HsmEncryptedData $encrypted_key
  * @property DateTime $created_at
  * @property DateTime $updated_at
+ * @property bool $is_submitted
+ * @property DateTime $submitted_at
  * @property-read Application $application
  * @property-read SubsidyStage $subsidyStage
  * @property-read Collection<array-key, Answer> $answers
@@ -36,11 +38,16 @@ class ApplicationStage extends Model
     use HasFactory;
     use HasUuids;
 
+    /**
+     * @var mixed|true
+     */
     protected $connection = Connection::APPLICATION;
 
     protected $casts = [
         'assessor_decision' => ApplicationStageDecision::class,
         'encrypted_key' => HsmEncryptedData::class,
+        'is_submitted' => 'bool',
+        'submitted_at' => 'datetime'
     ];
 
     public function application(): BelongsTo
