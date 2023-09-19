@@ -36,8 +36,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider",
-                "MinVWS\\DUSi\\Shared\\Providers\\ApplicationEncryptionServiceProvider"
+                "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider"
             ]
         }
     },

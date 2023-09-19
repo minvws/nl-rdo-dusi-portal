@@ -2592,11 +2592,11 @@
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-main",
+            "version": "dev-feature/share-hsm-encryption",
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "5acdb8caee584a95069ef06b6dd1b77672fc9cdf"
+                "reference": "d8e9642750738b7d5dd9dee18c0f25115d81678f"
             },
             "require": {
                 "doctrine/dbal": "^3.6",
@@ -2620,8 +2620,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider",
-                        "MinVWS\\DUSi\\Shared\\Providers\\ApplicationEncryptionServiceProvider"
+                        "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider"
                     ]
                 }
             },
@@ -9615,16 +9614,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.34",
+            "version": "1.10.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "7f806b6f1403e6914c778140e2ba07c293cb4901"
+                "reference": "e730e5facb75ffe09dfb229795e8c01a459f26c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7f806b6f1403e6914c778140e2ba07c293cb4901",
-                "reference": "7f806b6f1403e6914c778140e2ba07c293cb4901",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e730e5facb75ffe09dfb229795e8c01a459f26c3",
+                "reference": "e730e5facb75ffe09dfb229795e8c01a459f26c3",
                 "shasum": ""
             },
             "require": {
@@ -9673,7 +9672,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-13T09:49:47+00:00"
+            "time": "2023-09-19T15:27:56+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -11480,16 +11479,16 @@
         },
         {
             "name": "spatie/ignition",
-            "version": "1.11.0",
+            "version": "1.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/ignition.git",
-                "reference": "664e7aa146361989604ba40ed91600256345fc3e"
+                "reference": "48b23411ca4bfbc75c75dfc638b6b36159c375aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/ignition/zipball/664e7aa146361989604ba40ed91600256345fc3e",
-                "reference": "664e7aa146361989604ba40ed91600256345fc3e",
+                "url": "https://api.github.com/repos/spatie/ignition/zipball/48b23411ca4bfbc75c75dfc638b6b36159c375aa",
+                "reference": "48b23411ca4bfbc75c75dfc638b6b36159c375aa",
                 "shasum": ""
             },
             "require": {
@@ -11559,7 +11558,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-19T15:04:36+00:00"
+            "time": "2023-09-19T15:29:52+00:00"
         },
         {
             "name": "spatie/laravel-ignition",

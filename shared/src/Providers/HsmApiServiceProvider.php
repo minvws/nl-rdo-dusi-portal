@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Providers;
 
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
-use MinVWS\DUSi\Shared\Application\Services\FileKeyReader;
-use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Console\Commands\Hsm\HsmInfoCommand;
 use MinVWS\DUSi\Shared\Application\Console\Commands\Hsm\HsmLocalClearCommand;
 use MinVWS\DUSi\Shared\Application\Console\Commands\Hsm\HsmLocalInitCommand;
@@ -20,7 +16,7 @@ use RuntimeException;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ApplicationEncryptionServiceProvider extends ServiceProvider
+class HsmApiServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -34,21 +30,6 @@ class ApplicationEncryptionServiceProvider extends ServiceProvider
             'hsm_api'
         );
 
-        $this->app->when(FileKeyReader::class)
-            ->needs('$publicKeyPath')
-            ->giveConfig('hsm_encryption.public_key_path');
-
-        $this->app->singleton(KeyReader::class, FileKeyReader::class);
-    }
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    public function boot(): void
-    {
         $this->app->singleton(HsmService::class, function (Application $app) {
             $config = $app->make('config');
 
@@ -85,10 +66,6 @@ class ApplicationEncryptionServiceProvider extends ServiceProvider
                 slot: $config->get('hsm_api.slot'),
             );
         });
-
-        $this->app->when(HsmEncryptionService::class)
-            ->needs('$hsmEncryptionKeyLabel')
-            ->giveConfig('hsm_encryption.key_label');
 
         $this->app->singleton(HsmInfoCommand::class, function (Application $app) {
             $config = $app->make('config');
