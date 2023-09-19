@@ -9,11 +9,13 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
+use MinVWS\DUSi\Application\Backend\Services\Validation\FileValidator;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
@@ -22,6 +24,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUploadResult;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -46,7 +49,8 @@ readonly class ApplicationFileService
         private ApplicationRepository $applicationRepository,
         private ApplicationFileRepository $applicationFileRepository,
         private SubsidyRepository $subsidyRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private FileValidator $fileValidator,
     ) {
     }
 
@@ -100,6 +104,34 @@ readonly class ApplicationFileService
         $id = Uuid::uuid4()->toString();
 
         $decryptedContent = $params->data->data; // TODO: $this->decryptionService->decrypt($params->data);
+
+        // TODO: Other way to store temporary file for virus scan
+        $tempFile = tmpfile();
+        $path = stream_get_meta_data($tempFile)['uri'];
+
+        fwrite($tempFile, $decryptedContent);
+        fseek($tempFile, 0);
+
+        $uploadedFile = new UploadedFile(
+            $path,
+            '', // client original name
+            '', // client mime type
+            null,
+            true
+        );
+
+        $validator = $this->fileValidator->getValidator($field, $uploadedFile);
+        if ($validator->fails()) {
+            fclose($tempFile);
+
+            return $this->responseEncryptionService->encryptCodable(
+                EncryptedResponseStatus::BAD_REQUEST,
+                new Error('file_validation_failed', 'File validation failed.'),
+                $params->publicKey,
+            );
+        }
+
+        fclose($tempFile);
 
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
         $encryptedContent = $encrypter->encrypt($decryptedContent);
