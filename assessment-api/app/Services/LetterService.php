@@ -11,6 +11,7 @@ namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Dompdf\Canvas;
 use Dompdf\FontMetrics;
+use Illuminate\Support\Facades\Log;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageAnswer;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageData;
@@ -51,7 +52,7 @@ readonly class LetterService
         $result = new ApplicationStages();
         foreach ($answers->stages as $applicationStageAnswers) {
             $stageKey = 'stage' . $applicationStageAnswers->stage->subsidyStage->stage;
-            $stageData = new ApplicationStageData($stageKey);
+            $stageData = new ApplicationStageData();
 
             $encrypter = $this->encryptionService->getEncrypter($applicationStageAnswers->stage);
 
@@ -70,10 +71,10 @@ readonly class LetterService
                 };
 
                 $answer = new ApplicationStageAnswer($answerKey, $value);
-                $stageData->$answerKey = $answer;
+                $stageData->put($answerKey, $answer);
             }
 
-            $result->$stageKey = $stageData;
+            $result->put($stageKey, $stageData);
         }
 
         return $result;
@@ -148,14 +149,14 @@ readonly class LetterService
 
     private function getCssPath(): string
     {
-        $manifestPath = file_get_contents(__DIR__ . '/../../public/build/manifest.json');
+        $manifestPath = file_get_contents(public_path('build/manifest.json'));
 
         if (!$manifestPath) {
             return '';
         }
 
-        $manifest = json_decode($manifestPath);
-        $cssFile = $manifest->{'resources/scss/pdf.scss'}->file;
+        $manifest = json_decode($manifestPath, true);
+        $cssFile = $manifest['resources/scss/pdf.scss']['file'];
 
         return public_path('build/' . $cssFile);
     }
@@ -201,7 +202,7 @@ readonly class LetterService
         // when several fields are combined like "firstName;lastName", they are returned as "firstName lastName"
         $values = [];
         foreach (explode(';', $fieldCode) as $answerKey) {
-            $values[] = $data->getStage($stageKey)?->getAnswerData($answerKey);
+            $values[] = $data->getStage($stageKey)?->get($answerKey);
         }
 
         $valueString = implode(' ', $values);
@@ -219,8 +220,18 @@ readonly class LetterService
         assert($mailToAddressIdentifier !== null && $mailToAddressIdentifier !== '');
         assert($mailToNameIdentifier !== null && $mailToNameIdentifier !== '');
 
+        if (!$mailToNameIdentifier || !$mailToAddressIdentifier) {
+            Log::info('No mailToNameIdentifier or mailToAddressIdentifier found');
+            return;
+        }
+
         $mailToAddress = $this->extractDataFromAnswers($mailToAddressIdentifier, $data);
         $mailToName = $this->extractDataFromAnswers($mailToNameIdentifier, $data);
+
+        if (!$mailToAddress || !$mailToName) {
+            Log::info('No mailToName or mailToAddress found');
+            return;
+        }
 
         LetterGeneratedEvent::dispatch(new DispositionMailData($mailToName, $mailToAddress));
     }

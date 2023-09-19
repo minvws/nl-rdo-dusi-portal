@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
             $latte = new Engine();
             $latte->setSandboxMode();
             $latte->setTempDirectory($app->config->get('view.compiled'));
-            $latte->setLoader(new LatteLetterLoaderService(resource_path('views') . '/letters/'));
+            $latte->setLoader(new LatteLetterLoaderService(resource_path('views/letters')));
 
             $policy = new SecurityPolicy();
             $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include']);

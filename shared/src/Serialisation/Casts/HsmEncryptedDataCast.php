@@ -22,6 +22,8 @@ class HsmEncryptedDataCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
+        $value = json_decode($value, true);
+
         return new HsmEncryptedData(
             data: $value['data'],
             keyLabel: $value['key_label'],
