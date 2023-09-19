@@ -12,4 +12,9 @@ readonly class ApplicationStageAnswer
         public mixed $answerData,
     ) {
     }
+
+    public function __toString(): string
+    {
+        return (string) $this->answerData;
+    }
 }

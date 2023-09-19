@@ -30,7 +30,7 @@ readonly class LetterData
 
     public function getStage(string $key): ?ApplicationStageData
     {
-        return $this->stages->$key;
+        return $this->stages->get($key);
     }
 
     public function __get(string $key): ?ApplicationStageData
