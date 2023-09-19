@@ -15,7 +15,7 @@ enum ApplicationStatus: string
 
     public function isEditableForApplicant(): bool
     {
-        return in_array($this, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges], true);
+        return in_array($this, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges, ApplicationStatus::Invalid], true);
     }
 
     public function isNewApplicationAllowed(): bool
