@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Encryption\Encrypter;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 
@@ -15,13 +16,15 @@ class ApplicationEncryptionService
 {
     protected const AES_CIPHER = 'aes-256-gcm';
 
-    public function __construct(protected HsmEncryptionService $hsmEncryptionService)
-    {
+    public function __construct(
+        private readonly HsmEncryptionService $hsmEncryptionService,
+        private readonly HsmDecryptionService $hsmDecryptionService
+    ) {
     }
 
     public function getEncrypter(ApplicationStage $applicationStage): EncrypterContract
     {
-        $aesKey = $this->hsmEncryptionService->decrypt($applicationStage->encrypted_key);
+        $aesKey = $this->hsmDecryptionService->decrypt($applicationStage->encrypted_key);
 
         return $this->getAesEncrypter($aesKey);
     }

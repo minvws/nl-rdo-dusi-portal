@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Console\Commands;
 
 use Illuminate\Console\Command;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 
 class TestHsmEncrypt extends Command
@@ -26,7 +27,7 @@ class TestHsmEncrypt extends Command
     /**
      * Execute the console command.
      */
-    public function handle(HsmEncryptionService $encryptionService): void
+    public function handle(HsmEncryptionService $encryptionService, HsmDecryptionService $decryptionService): void
     {
         $message = $this->ask("Enter message to encrypt with HSM public key");
 
@@ -36,7 +37,7 @@ class TestHsmEncrypt extends Command
         $this->info(json_encode($encryptedMessage) ?: '');
         $this->newLine();
 
-        $decryptedMessage = $encryptionService->decrypt($encryptedMessage);
+        $decryptedMessage = $decryptionService->decrypt($encryptedMessage);
         $this->info("Decrypted with HSM:");
         $this->info($decryptedMessage);
         $this->newLine();
