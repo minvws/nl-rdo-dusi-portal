@@ -20,10 +20,10 @@ Route::get(
     [ApplicationController::class, 'getApplicationMessageFilterResource']
 );
 Route::get(
-    '/ui/applications/requests-filter',
+    '/ui/applications/cases-filter',
     [ApplicationController::class, 'getApplicationRequestFilterForUserResource']
 );
 Route::get(
-    '/ui/applications/all-requests-filter',
+    '/ui/applications/all-cases-filter',
     [ApplicationController::class, 'getApplicationRequestFilterResource']
 );
