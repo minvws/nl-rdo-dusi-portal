@@ -1,10 +1,11 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
 
-namespace MinVWS\DUSi\Shared\Subsidy\Models\DTO;
 
-use Illuminate\Contracts\Encryption\Encrypter;
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Shared\Subsidy\Models\Condition;
+
 use MinVWS\Codable\Reflection\Attributes\CodableArray;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
 
 readonly class AndCondition extends Condition
 {
@@ -13,13 +14,10 @@ readonly class AndCondition extends Condition
     ) {
     }
 
-    /**
-     * @param array<Answer> $answers
-     */
-    public function evaluate(array $answers, Encrypter $encrypter): bool
+    public function evaluate(object $data): bool
     {
         foreach ($this->conditions as $condition) {
-            if (!$condition->evaluate($answers, $encrypter)) {
+            if (!$condition->evaluate($data)) {
                 return false;
             }
         }

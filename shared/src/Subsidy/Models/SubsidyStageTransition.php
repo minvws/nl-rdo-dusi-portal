@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageTransitionFactory;
-use MinVWS\DUSi\Shared\Subsidy\Models\DTO\Condition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 
 /**
  * @property string $id

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Subsidy\Models\DTO;
+namespace MinVWS\DUSi\Shared\Subsidy\Models\Condition;
 
 enum Operator: string
 {

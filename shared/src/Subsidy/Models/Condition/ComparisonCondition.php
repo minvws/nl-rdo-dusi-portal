@@ -1,9 +1,9 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
 
-namespace MinVWS\DUSi\Shared\Subsidy\Models\DTO;
 
-use Illuminate\Contracts\Encryption\Encrypter;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Shared\Subsidy\Models\Condition;
 
 readonly class ComparisonCondition extends Condition
 {
@@ -14,12 +14,9 @@ readonly class ComparisonCondition extends Condition
     ) {
     }
 
-    /**
-     * @param array<Answer> $answers
-     */
-    public function evaluate(array $answers, Encrypter $encrypter): bool
+    public function evaluate(object $data): bool
     {
-        $fieldValue = $this->getFieldValue($this->fieldCode, $answers, $encrypter);
+        $fieldValue = $data->{$this->fieldCode} ?? null;
 
         return match ($this->operator) {
             Operator::Equal => $fieldValue == $this->value,

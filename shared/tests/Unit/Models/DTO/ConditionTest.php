@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Shared\Tests\Unit\Models\DTO;
 
-use MinVWS\DUSi\Shared\Subsidy\Models\DTO\AndCondition;
-use MinVWS\DUSi\Shared\Subsidy\Models\DTO\ComparisonCondition;
-use MinVWS\DUSi\Shared\Subsidy\Models\DTO\Condition;
-use MinVWS\DUSi\Shared\Subsidy\Models\DTO\Operator;
-use MinVWS\DUSi\Shared\Subsidy\Models\DTO\OrCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use PHPUnit\Framework\TestCase;
 

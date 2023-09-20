@@ -212,7 +212,7 @@ class SubsidyRepositoryTest extends TestCase
                 'version' => 2
             ]);
 
-        $this->assertEquals($publishedMessage->id, $transition->publishedStageTransitionMessage->id);
+        $this->assertEquals($publishedMessage->id, $transition->publishedSubsidyStageTransitionMessage->id);
     }
 
     public function testGetActiveSubsidyCodes(): void

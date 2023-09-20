@@ -1,22 +1,18 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
+
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Subsidy\Models\DTO;
+namespace MinVWS\DUSi\Shared\Subsidy\Models\Condition;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Database\Eloquent\Model;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
 use MinVWS\Codable\Decoding\Decodable;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\Encoding\EncodingContainer;
 use MinVWS\Codable\Exceptions\CodableException;
-use MinVWS\Codable\JSON\JSONDecoder;
-use MinVWS\Codable\JSON\JSONEncoder;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
+use MinVWS\DUSi\Shared\Serialisation\Casts\CodableCast;
 
 abstract readonly class Condition implements Codable, Castable
 {
@@ -75,38 +71,16 @@ abstract readonly class Condition implements Codable, Castable
         return $class::decode($container, $object);
     }
 
-    public static function castUsing(array $arguments): CastsAttributes
-    {
-        return new class implements CastsAttributes
-        {
-            private readonly JSONDecoder $decoder;
-            private readonly JSONEncoder $encoder;
-
-            public function __construct()
-            {
-                $this->decoder = new JSONDecoder();
-                $this->encoder = new JSONEncoder();
-            }
-
-            public function get(Model $model, string $key, mixed $value, array $attributes): ?Condition
-            {
-                return $value === null ? null : $this->decoder->decode($value)->decodeObject(Condition::class);
-            }
-
-            public function set(Model $model, string $key, mixed $value, array $attributes): array
-            {
-                return [$key => $this->encoder->encode($value)];
-            }
-        };
-    }
-
-    protected function getFieldValue(string $fieldCode, array $answers, Encrypter $encrypter): mixed
-    {
-        return null;
-    }
-
     /**
-     * @param array<Answer> $answers
+     * @param array $arguments
+     * @return CodableCast<Condition>
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    abstract public function evaluate(array $answers, Encrypter $encrypter): bool;
+    public static function castUsing(array $arguments): CodableCast
+    {
+        return new CodableCast(self::class);
+    }
+
+
+    abstract public function evaluate(object $data): bool;
 }

@@ -75,8 +75,11 @@ class ApplicationFlowService
             return true;
         }
 
+        // TODO: get the data from the ApplicationDataService
         $answers = $stage->answers->all();
-        return $transition->condition->evaluate($answers, null);
+        $data = new \stdClass();
+        $data->x = count($answers);
+        return $transition->condition->evaluate($data);
     }
 
     private function performTransitionForApplicationStage(

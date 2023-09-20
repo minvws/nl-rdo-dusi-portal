@@ -1,6 +1,9 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
 
-namespace MinVWS\DUSi\Shared\Subsidy\Models\DTO;
+
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Shared\Subsidy\Models\Condition;
 
 use Illuminate\Contracts\Encryption\Encrypter;
 use MinVWS\Codable\Reflection\Attributes\CodableArray;
@@ -13,17 +16,14 @@ readonly class OrCondition extends Condition
     ) {
     }
 
-    /**
-     * @param array<Answer> $answers
-     */
-    public function evaluate(array $answers, Encrypter $encrypter): bool
+    public function evaluate(object $data): bool
     {
         if (count($this->conditions) === 0) {
             return true;
         }
 
         foreach ($this->conditions as $condition) {
-            if ($condition->evaluate($answers, $encrypter)) {
+            if ($condition->evaluate($data)) {
                 return true;
             }
         }

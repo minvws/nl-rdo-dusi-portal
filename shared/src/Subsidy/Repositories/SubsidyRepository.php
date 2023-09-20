@@ -179,18 +179,6 @@ class SubsidyRepository
     }
 
     /*
-     * @param Subsidy $subsidy
-     * @return SubsidyVersion
-     */
-    public function makeSubsidyLetter(SubsidyVersion $subsidyVersion): SubsidyStageTransitionMessage
-    {
-        $subsidyLetter = new SubsidyStageTransitionMessage();
-        $subsidyLetter->subsidyVersion()->associate($subsidyVersion);
-
-        return $subsidyLetter;
-    }
-
-    /*
      * @param SubsidyLetter $subsidyLetter
      * @return Collection<string>
      */
