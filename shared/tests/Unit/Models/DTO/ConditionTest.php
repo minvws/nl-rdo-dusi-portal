@@ -21,10 +21,10 @@ class ConditionTest extends TestCase
     {
         $inputCondition =
             new AndCondition([
-                new ComparisonCondition('decision', Operator::Equal, 'reject'),
+                new ComparisonCondition(2, 'decision', Operator::Equal, 'reject'),
                 new OrCondition([
-                    new ComparisonCondition('number', Operator::GreaterThan, 5),
-                    new ComparisonCondition('otherValue', Operator::NotEqual, 'value')
+                    new ComparisonCondition(1, 'number', Operator::GreaterThan, 5),
+                    new ComparisonCondition(1, 'otherValue', Operator::NotEqual, 'value')
                 ])
             ]);
 
@@ -33,6 +33,7 @@ class ConditionTest extends TestCase
             "conditions" => [
                 [
                     "type" => "comparison",
+                    "stage" => 2,
                     "fieldCode" => "decision",
                     "operator" => "==",
                     "value" => "reject"
@@ -42,12 +43,14 @@ class ConditionTest extends TestCase
                     "conditions" => [
                         [
                             "type" => "comparison",
+                            "stage" => 1,
                             "fieldCode" => "number",
                             "operator" => ">",
                             "value" => 5
                         ],
                         [
                             "type" => "comparison",
+                            "stage" => 1,
                             "fieldCode" => "otherValue",
                             "operator" => "!=",
                             "value" => "value"
@@ -69,6 +72,7 @@ class ConditionTest extends TestCase
             "conditions" => [
                 [
                     "type" => "comparison",
+                    "stage" => 2,
                     "fieldCode" => "decision",
                     "operator" => "==",
                     "value" => "reject"
@@ -78,12 +82,14 @@ class ConditionTest extends TestCase
                     "conditions" => [
                         [
                             "type" => "comparison",
+                            "stage" => 1,
                             "fieldCode" => "number",
                             "operator" => ">",
                             "value" => 5
                         ],
                         [
                             "type" => "comparison",
+                            "stage" => 1,
                             "fieldCode" => "otherValue",
                             "operator" => "!=",
                             "value" => "value"
@@ -95,10 +101,10 @@ class ConditionTest extends TestCase
 
         $expectedCondition =
             new AndCondition([
-                new ComparisonCondition('decision', Operator::Equal, 'reject'),
+                new ComparisonCondition(2, 'decision', Operator::Equal, 'reject'),
                 new OrCondition([
-                    new ComparisonCondition('number', Operator::GreaterThan, 5),
-                    new ComparisonCondition('otherValue', Operator::NotEqual, 'value')
+                    new ComparisonCondition(1, 'number', Operator::GreaterThan, 5),
+                    new ComparisonCondition(1, 'otherValue', Operator::NotEqual, 'value')
                 ])
             ]);
 

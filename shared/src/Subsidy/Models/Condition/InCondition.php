@@ -12,6 +12,7 @@ readonly class InCondition extends Condition
      * @param array<string|bool|int|float|null> $values
      */
     public function __construct(
+        public int $stage,
         public string $fieldCode,
         public array $values
     ) {

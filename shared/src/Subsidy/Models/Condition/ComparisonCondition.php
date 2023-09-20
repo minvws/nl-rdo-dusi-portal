@@ -8,6 +8,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Models\Condition;
 readonly class ComparisonCondition extends Condition
 {
     public function __construct(
+        public int $stage,
         public string $fieldCode,
         public Operator $operator,
         public mixed $value
