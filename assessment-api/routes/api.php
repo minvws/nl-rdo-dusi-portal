@@ -11,8 +11,14 @@ use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/applications/{application}', [ApplicationController::class, 'show']);
-Route::get('/applications', [ApplicationController::class, 'filterApplications']);
+Route::prefix('applications')
+    ->controller(ApplicationController::class)
+    ->group(function () {
+        Route::get('/', 'filterApplications');
+        Route::get('{application}', 'show');
+        Route::get('{application}/history', 'getApplicationHistory');
+        Route::get('{application}/reviewer', 'getApplicationReviewer');
+    });
 
 Route::get('/ui/applications/count', [ApplicationController::class, 'getApplicationsCount']);
 Route::get(
