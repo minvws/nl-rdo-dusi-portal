@@ -29,22 +29,13 @@ class ApplicationMessageRepository
         return $result;
     }
 
-    public function createMessage(ApplicationStage $stage, string $htmlPath, string $pdfPath): void
+    public function createMessage(ApplicationStage $stage, string $subject, string $htmlPath, string $pdfPath): void
     {
         $stage->application->applicationMessages()->create([
+            'subject' => $subject,
             'html_path' => $htmlPath,
-            'is_new' => true,
             'pdf_path' => $pdfPath,
-            'subject' => $this->getSubject($stage),
-        ]);
-    }
-
-    private function getSubject(ApplicationStage $stage): string
-    {
-        // TODO: verbosity on subject
-
-        return vsprintf('%s', [
-            $stage->subsidyStage->subsidyVersion->subsidy->title,
+            'is_new' => true,
         ]);
     }
 }

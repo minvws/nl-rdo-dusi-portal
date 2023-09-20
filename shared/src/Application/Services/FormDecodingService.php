@@ -1,17 +1,18 @@
-<?php
+<?php  // phpcs:disable PSR1.Files.SideEffects
+
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services;
+namespace MinVWS\DUSi\Shared\Application\Services;
 
 use MinVWS\Codable\Decoding\Decoder;
-use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\Codable\Decoding\DecodingContainer;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
-use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Throwable;
 
 readonly class FormDecodingService

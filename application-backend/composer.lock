@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a44f1deac00773c3c55320d4d4fe858",
+    "content-hash": "91493138605ffb16bf6018496d78b19e",
     "packages": [
         {
             "name": "brick/math",
@@ -2150,11 +2150,11 @@
         },
         {
             "name": "minvws/codable",
-            "version": "dev-feature/codes-trait",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-php-codable.git",
-                "reference": "7e21dbbd4ccf79a32a65644620a2b6824b91905b"
+                "reference": "431ac03c536209aec65f323a97424c6b9803acaf"
             },
             "require": {
                 "php": "^8.2"
@@ -2165,6 +2165,7 @@
                 "phpunit/phpunit": "^10.2.2",
                 "squizlabs/php_codesniffer": "^3.7.2"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2195,21 +2196,21 @@
                 }
             ],
             "description": "Encode/decode objects to/from various formats",
-            "time": "2023-09-04T09:27:26+00:00"
+            "time": "2023-09-19T11:41:49+00:00"
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-feature/share-hsm-encryption",
+            "version": "dev-feature/application-flow",
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "d8e9642750738b7d5dd9dee18c0f25115d81678f"
+                "reference": "0f8e5254d531fd6f4ce30ee0df09b181be2f2562"
             },
             "require": {
                 "doctrine/dbal": "^3.6",
                 "guzzlehttp/guzzle": "^7.8",
                 "laravel/framework": "^10.17",
-                "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
+                "minvws/codable": "dev-main as 1.0.x-dev",
                 "php": "^8.2"
             },
             "require-dev": {
@@ -2268,17 +2269,17 @@
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
-            "version": "dev-feature/share-hsm-encryption",
+            "version": "dev-feature/application-flow",
             "dist": {
                 "type": "path",
                 "url": "../bridge",
-                "reference": "4d306bf208e14c0b78c8a066c91e09a1b9aa27c1"
+                "reference": "313699e14e08ec610f1c0cf9f836ba16c467c2d8"
             },
             "require": {
                 "ext-openssl": "*",
                 "ext-pcntl": "*",
                 "ext-posix": "*",
-                "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
+                "minvws/codable": "dev-main as 1.0.x-dev",
                 "php": "^8.2",
                 "php-amqplib/php-amqplib": "^3.5"
             },
@@ -12246,7 +12247,7 @@
     "aliases": [
         {
             "package": "minvws/codable",
-            "version": "dev-feature/codes-trait",
+            "version": "dev-main",
             "alias": "1.0.x-dev",
             "alias_normalized": "1.0.9999999.9999999-dev"
         }

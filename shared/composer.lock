@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c659acf5a884b1abce6e3627922dd99",
+    "content-hash": "c4018c2eccb38e7d6b11d002b7afd322",
     "packages": [
         {
             "name": "brick/math",
@@ -2018,11 +2018,11 @@
         },
         {
             "name": "minvws/codable",
-            "version": "dev-feature/codes-trait",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-php-codable.git",
-                "reference": "7e21dbbd4ccf79a32a65644620a2b6824b91905b"
+                "reference": "431ac03c536209aec65f323a97424c6b9803acaf"
             },
             "require": {
                 "php": "^8.2"
@@ -2033,6 +2033,7 @@
                 "phpunit/phpunit": "^10.2.2",
                 "squizlabs/php_codesniffer": "^3.7.2"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2063,7 +2064,7 @@
                 }
             ],
             "description": "Encode/decode objects to/from various formats",
-            "time": "2023-09-04T09:27:26+00:00"
+            "time": "2023-09-19T11:41:49+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10763,7 +10764,7 @@
     "aliases": [
         {
             "package": "minvws/codable",
-            "version": "dev-feature/codes-trait",
+            "version": "dev-main",
             "alias": "1.0.x-dev",
             "alias_normalized": "1.0.9999999.9999999-dev"
         }

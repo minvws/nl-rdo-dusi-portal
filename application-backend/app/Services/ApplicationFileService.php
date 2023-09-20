@@ -10,12 +10,12 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
 use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
@@ -134,7 +134,7 @@ readonly class ApplicationFileService
             $identity = $this->loadIdentity($params->identity);
             $application = $this->loadApplication($identity, $params->applicationReference);
 
-            $applicationStage = $this->applicationRepository->getApplicationStageByStageNumber($application, 1);
+            $applicationStage = $this->applicationRepository->getApplicantApplicationStage($application, true);
             assert($applicationStage !== null);
 
             $field = $this->loadField($applicationStage, $params->fieldCode);

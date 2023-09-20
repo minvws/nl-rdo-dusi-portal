@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Repositories;
+namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;

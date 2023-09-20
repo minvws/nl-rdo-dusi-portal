@@ -6,15 +6,14 @@ namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use Ramsey\Uuid\Uuid;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 
 /**
- * @extends Factory<SubsidyStage>
+ * @extends Factory<SubsidyStageTransition>
  */
-class SubsidyStageFactory extends Factory
+class SubsidyStageTransitionFactory extends Factory
 {
-    protected $model = SubsidyStage::class;
+    protected $model = SubsidyStageTransition::class;
 
     /**
      * Define the model's default state.
@@ -25,10 +24,10 @@ class SubsidyStageFactory extends Factory
     {
         return [
             'id' => $this->faker->uuid(),
-            'subsidy_version_id' => SubsidyVersion::factory(),
-            'title' => $this->faker->sentence,
-            'subject_role' => 'applicant',
-            'stage' => 1
+            'current_subsidy_stage_id' => SubsidyStage::factory(),
+            'target_subsidy_stage_id' => SubsidyStage::factory(),
+            'target_application_status' => null,
+            'condition' => null
         ];
     }
 }
