@@ -76,6 +76,7 @@ if "$DOWN" ; then
 fi
 
 cp "$BASEDIR/application-backend/secrets/public.key" "$BASEDIR/application-api/secrets/public.key"
+cp "$BASEDIR/application-backend/secrets/public.key" "$BASEDIR/assessment-api/secrets/public.key"
 cp "$BASEDIR/application-backend/secrets/pki/issued/softhsm^SoftHSMLabel^*=create,destroy,use,import.crt" "$BASEDIR/assessment-api/secrets/softhsm.crt"
 cp "$BASEDIR/application-backend/secrets/pki/private/softhsm^SoftHSMLabel^*=create,destroy,use,import.key" "$BASEDIR/assessment-api/secrets/softhsm.key"
 

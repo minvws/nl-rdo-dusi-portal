@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services\Hsm;
+namespace MinVWS\DUSi\Shared\Application\Services\Hsm;
 
 use Exception;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\Exceptions\HsmServiceException;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\Exceptions\HsmServiceException;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)

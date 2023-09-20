@@ -3,59 +3,8 @@ $ro-font-path: '../fonts';
 $ro-img-path: '~@minvws/nl-rdo-rijksoverheid-ui-theme/img';
 
 /* RO Fonts */
-@font-face {
-  font-family: "RO Sans Web";
-  font-weight: normal;
-  font-style: normal;
-  src: url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Regular.woff2") format("woff2"),
-  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Regular.woff") format("woff"),
-  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Regular.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "RO Sans Web";
-  font-weight: normal;
-  font-style: italic;
-  src: url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Italic.woff2") format("woff2"),
-  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Italic.woff") format("woff"),
-  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Italic.ttf") format("truetype");
-}
-
-/* Bold */
-@font-face {
-  font-family: "RO Sans Web";
-  font-weight: bold;
-  font-style: normal;
-  src: url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Bold.woff2") format("woff2"),
-  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Bold.woff") format("woff"),
-  url("#{$ro-font-path}/ro-sans-web/RO-SansWebText-Bold.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "RO Serif Web";
-  font-weight: normal;
-  font-style: normal;
-  src: url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Regular.woff2") format("woff2"),
-  url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Regular.woff") format("woff");
-}
-
-@font-face {
-  font-family: "RO Serif Web";
-  font-weight: normal;
-  font-style: italic;
-  src: url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Italic.woff2") format("woff2"),
-  url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Italic.woff") format("woff");
-}
-
-/* Bold */
-@font-face {
-  font-family: "RO Serif Web";
-  font-weight: bold;
-  font-style: normal;
-  src: url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Bold.woff2") format("woff2"),
-  url("#{$ro-font-path}/ro-serif-web/RO-SerifWeb-Bold.woff") format("woff");
-}
-
+@import "@minvws/nl-rdo-rijksoverheid-ui-theme/scss/fonts/ro-sans-web/ro-sans-web";
+@import "@minvws/nl-rdo-rijksoverheid-ui-theme/scss/fonts/ro-serif-web/ro-serif-web";
 
 /* Basic styling */
 

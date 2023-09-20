@@ -12,15 +12,15 @@ class LatteLetterLoaderService implements Loader
 {
     use Strict;
 
-    protected ?string $baseDir = null;
+    protected string $baseDir;
 
-    /** @var string[]|null  [name => content] */
-    private ?array $templates = null;
+    /** @var string[]  [name => content] */
+    protected ?array $templates;
 
 
-    public function __construct(?string $baseDir = null, ?array $templates = [])
+    public function __construct(string $baseDir = null, ?array $templates = [])
     {
-        $this->baseDir = $baseDir ? $this->normalizePath("$baseDir/") : null;
+        $this->baseDir = self::normalizePath("$baseDir/");
         $this->templates = $templates;
     }
 
@@ -34,17 +34,13 @@ class LatteLetterLoaderService implements Loader
      */
     public function getContent(string $name): string
     {
-        $file = $this->baseDir . $name;
-        if ($this->templates === null) {
-            return $name;
-        }
-
         if (isset($this->templates[$name])) {
             return $this->templates[$name];
         }
 
-        if ($this->baseDir && !str_starts_with($this->normalizePath($file), $this->baseDir)) {
-            throw new RuntimeException("Template '$file' is not within the allowed path '{$this->baseDir}'.");
+        $file = $this->baseDir . $name;
+        if ($this->baseDir && !str_starts_with(self::normalizePath($file), $this->baseDir)) {
+            throw new RuntimeException("Template '$file' is not within the allowed path '$this->baseDir'.");
         }
 
         if (!is_file($file)) {
@@ -79,7 +75,7 @@ class LatteLetterLoaderService implements Loader
     public function getReferredName(string $name, string $referringName): string
     {
         if ($this->baseDir || !preg_match('#/|\\\\|[a-z][a-z0-9+.-]*:#iA', $name)) {
-            $name = $this->normalizePath($referringName . '/../' . $name);
+            $name = self::normalizePath($referringName . '/../' . $name);
         }
 
         return $name;

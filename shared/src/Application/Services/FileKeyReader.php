@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services;
+namespace MinVWS\DUSi\Shared\Application\Services;
 
-use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
+use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
 use RuntimeException;
 
 class FileKeyReader implements KeyReader

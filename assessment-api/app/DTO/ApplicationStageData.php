@@ -5,44 +5,15 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\DTO;
 
-class ApplicationStageData
+use Illuminate\Support\Collection;
+
+/**
+ * @extends Collection<array-key, ApplicationStageAnswer>
+ */
+class ApplicationStageData extends Collection
 {
-    /**
-     * @var array<ApplicationStageAnswer>
-     */
-    protected array $stageAnswers = [];
-
-    public function __construct(
-        public readonly string $stageKey
-    ) {
-    }
-
-    public function addStageAnswer(ApplicationStageAnswer $answer): void
+    public function __get($key): mixed
     {
-        $this->stageAnswers[$answer->answerKey] = $answer;
-    }
-
-    public function getStageAnswer(string $key): ?ApplicationStageAnswer
-    {
-        return $this->stageAnswers[$key] ?? null;
-    }
-
-    public function getAnswerData(string $key): mixed
-    {
-        return $this->stageAnswers[$key]->answerData ?? null;
-    }
-
-    public function __get(string $key): mixed
-    {
-        if (!array_key_exists($key, $this->stageAnswers)) {
-            return null;
-        }
-
-        return $this->stageAnswers[$key]->answerData;
-    }
-
-    public function __set(string $key, ApplicationStageAnswer $answer): void
-    {
-        $this->stageAnswers[$key] = $answer;
+        return $this->get($key)?->answerData;
     }
 }

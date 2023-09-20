@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Console\Commands\Hsm;
+namespace MinVWS\DUSi\Shared\Application\Console\Commands\Hsm;
 
 use Illuminate\Console\Command;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\Exceptions\HsmServiceException;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\Exceptions\HsmServiceException;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmService;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)

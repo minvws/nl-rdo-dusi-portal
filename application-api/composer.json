@@ -10,7 +10,7 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
+        "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "minvws/php-rmq-rpc-bridge": "@dev",
