@@ -46,11 +46,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
     {
         $stages = $this['subsidyVersion']->subsidyStages->map(function ($subsidyStage) {
             $applicationStage = $this->resource['application']->applicationStages()
+                ->where('subsidy_stage_id', '=', $subsidyStage->id)
                 ->orderBy('sequence_number', 'desc')
-                ->get()
-                ->filter(function ($applicationStage) use ($subsidyStage) {
-                    return $applicationStage->subsidy_stage_id === $subsidyStage->id;
-                })->first();
+                ->first();
 
             if (!isset($applicationStage) || $applicationStage->is_current) {
                 $uiType = UIType::Input;
