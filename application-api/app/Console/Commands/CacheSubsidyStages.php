@@ -53,7 +53,7 @@ class CacheSubsidyStages extends Command
 
                 $this->info("Cached forms:");
                 foreach ($subsidyStages as $subsidyStage) {
-                    $this->info("v" . $subsidyStage->version . ': ' . $subsidyStage->id);
+                    $this->info("v" . $subsidyStage->subsidyVersion->version . ': ' . $subsidyStage->id);
                 }
             }
 

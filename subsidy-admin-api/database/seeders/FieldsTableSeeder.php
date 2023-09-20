@@ -182,13 +182,40 @@ class FieldsTableSeeder extends Seeder
 
         $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'truthfullyCompleted', title: '');
 
-        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_2_UUID, code: 'amount', title: 'Bedrag', options: [
+        // Eerste beoordeling
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'checklist', title: 'Controlevragen', options: [
+            "Vraag 1",
+            "Vraag 2",
+            "Vraag 3",
+            "Vraag 4"
+        ]);
+
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'amount', title: 'Bedrag', options: [
             "€ 15.000"
         ]);
 
-        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'review', title: 'Beoordeling', options: [
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'firstAssessment', title: 'Beoordeling', options: [
                 "Onbeoordeeld",
                 "Aanvulling nodig",
+                "Afgekeurd",
+                "Goedgekeurd"
+            ]);
+
+        //Tweede beoordeling
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID, code: 'secondAssessment', title: 'Beoordeling', options: [
+                "Oneens met de eerste beoordeling",
+                "Eens met de eerste beoordeling",
+            ]);
+
+        //Interne controle
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID, code: 'internalAssessment', title: 'Beoordeling', options: [
+                "Onbeoordeeld",
+                "Afgekeurd",
+                "Goedgekeurd"
+            ]);
+
+        //Uitvoeringscoördinator controle
+        $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID, code: 'implementationCoordinatorAssessment', title: 'Beoordeling', options: [
                 "Afgekeurd",
                 "Goedgekeurd"
             ]);
