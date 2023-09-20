@@ -16,6 +16,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 class ApplicationFlowService
 {
     public function __construct(
+        private readonly ApplicationDataService $applicationDataService,
         private readonly ApplicationRepository $applicationRepository
     ) {
     }
@@ -75,10 +76,7 @@ class ApplicationFlowService
             return true;
         }
 
-        // TODO: get the data from the ApplicationDataService
-        $answers = $stage->answers->all();
-        $data = new \stdClass();
-        $data->x = count($answers);
+        $data = $this->applicationDataService->getApplicationStageData($stage);
         return $transition->condition->evaluate($data);
     }
 

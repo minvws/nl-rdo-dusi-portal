@@ -17,6 +17,7 @@ use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
@@ -180,15 +181,13 @@ class ApplicationRepository
         return new AnswersByApplicationStage(stages: $stages);
     }
 
-    public function getApplicationStageByStageNumber(
-        Application $application,
-        int $stage,
-        bool $includeAnswers = false
-    ): ?ApplicationStage {
+    public function getApplicantApplicationStage(Application $application, bool $includeAnswers): ?ApplicationStage
+    {
         $query =
             $application
                 ->applicationStages()
-                ->whereRelation('subsidyStage', 'stage', '=', $stage)
+                ->whereRelation('subsidyStage', 'stage', '=', 1)
+                ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
                 ->orderBy('sequence_number', 'desc');
 
         if ($includeAnswers) {
@@ -196,18 +195,6 @@ class ApplicationRepository
         }
 
         return $query->first();
-    }
-
-    /**
-     * @return array<Answer>
-     */
-    public function getApplicationStageAnswersByStageNumber(Application $application, int $stage): array
-    {
-        return $this->getApplicationStageByStageNumber(
-            $application,
-            $stage,
-            true
-        )?->answers?->all() ?? [];
     }
 
     public function findMyApplicationForSubsidy(Identity $identity, Subsidy $subsidy): ?Application

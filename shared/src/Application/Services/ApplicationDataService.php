@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
+
 
 /**
  * Application Data Service
@@ -6,20 +7,18 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services;
+namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
-use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\File;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use stdClass;
 use Throwable;
@@ -90,7 +89,7 @@ readonly class ApplicationDataService
     /**
      * @throws Throwable
      */
-    public function saveApplicationData(
+    public function saveApplicationStageData(
         ApplicationStage $applicationStage,
         object $data
     ): void {
@@ -114,13 +113,8 @@ readonly class ApplicationDataService
     /**
      * @throws Exception
      */
-    public function getApplicationData(Application $application): object
+    public function getApplicationStageData(ApplicationStage $applicationStage): object
     {
-        $applicationStage = $this->applicationRepository->getApplicationStageByStageNumber($application, 1, true);
-        if ($applicationStage === null) {
-            return new stdClass();
-        }
-
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
 
         $data = new stdClass();
