@@ -25,7 +25,6 @@ class SubsidyVersionsTableSeeder extends Seeder
             'contact_mail_address' => 'dienstpostbus@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
-            'message_overview_subject' => 'Onderwerp voor overzicht',
             'review_period' => 7 * 13 // 13 weeks
         ]);
         DB::table('subsidy_versions')->insert([
@@ -38,7 +37,6 @@ class SubsidyVersionsTableSeeder extends Seeder
             'contact_mail_address' => 'dienstpostbus@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
-            'message_overview_subject' => 'Onderwerp voor overzicht',
             'review_period' => 7 * 13 // 13 weeks
         ]);
     }
