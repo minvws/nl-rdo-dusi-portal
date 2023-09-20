@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
+use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\File;
@@ -115,10 +116,36 @@ readonly class ApplicationDataService
      */
     public function getApplicationStageData(ApplicationStage $applicationStage): object
     {
-        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+        return $this->mapAnswersToData($applicationStage, $applicationStage->answers->all());
+    }
+
+    /**
+     * @param ApplicationStage $applicationStage
+     *
+     * @return array<int, object>
+     */
+    public function getApplicationStageDataUpToIncluding(ApplicationStage $applicationStage): array
+    {
+        $answersByStage = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($applicationStage);
+
+        $result = [];
+        foreach ($answersByStage->stages as $stageAnswers) {
+            $result[$stageAnswers->stage->subsidyStage->stage] =
+                $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array<Answer> $answers
+     */
+    private function mapAnswersToData(ApplicationStage $stage, array $answers): object
+    {
+        $encrypter = $this->encryptionService->getEncrypter($stage);
 
         $data = new stdClass();
-        foreach ($applicationStage->answers as $answer) {
+        foreach ($answers as $answer) {
             $value = $encrypter->decrypt($answer->encrypted_answer);
             if ($value === null) {
                 continue;

@@ -76,7 +76,7 @@ class ApplicationFlowService
             return true;
         }
 
-        $data = $this->applicationDataService->getApplicationStageData($stage);
+        $data = $this->applicationDataService->getApplicationStageDataUpToIncluding($stage);
         return $transition->condition->evaluate($data);
     }
 
