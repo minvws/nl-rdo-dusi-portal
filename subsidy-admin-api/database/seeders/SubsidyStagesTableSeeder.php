@@ -27,8 +27,6 @@ class SubsidyStagesTableSeeder extends Seeder
             'title' => 'Aanvraag',
             'subject_role' => 'applicant',
             'stage' => 1,
-            'final_review_deadline' => '2033-12-31 23:59:59',
-            'final_review_time_in_s_after_submission' => 604800, // 7 days
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::BTV_STAGE_2_UUID,
@@ -36,8 +34,6 @@ class SubsidyStagesTableSeeder extends Seeder
             'title' => 'Beoordeling',
             'subject_role' => 'assessor',
             'stage' => 2,
-            'final_review_deadline' => '2033-12-31 23:59:59',
-            'final_review_time_in_s_after_submission' => 604800, // 7 days
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_1_UUID,
@@ -45,8 +41,6 @@ class SubsidyStagesTableSeeder extends Seeder
             'title' => 'Aanvraag',
             'subject_role' => 'applicant',
             'stage' => 1,
-            'final_review_deadline' => '2033-12-31 23:59:59',
-            'final_review_time_in_s_after_submission' => 604800, // 7 days
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_2_UUID,
@@ -54,8 +48,6 @@ class SubsidyStagesTableSeeder extends Seeder
             'title' => 'Eerste beoordeling',
             'subject_role' => 'assessor',
             'stage' => 2,
-            'final_review_deadline' => '2033-12-31 23:59:59',
-            'final_review_time_in_s_after_submission' => 604800, // 7 days
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_3_UUID,
@@ -63,8 +55,6 @@ class SubsidyStagesTableSeeder extends Seeder
             'title' => 'Tweede beoordeling',
             'subject_role' => 'assessor',
             'stage' => 3,
-            'final_review_deadline' => '2033-12-31 23:59:59',
-            'final_review_time_in_s_after_submission' => 604800, // 7 days
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_4_UUID,
@@ -72,8 +62,6 @@ class SubsidyStagesTableSeeder extends Seeder
             'title' => 'Interne controle',
             'subject_role' => 'assessor',
             'stage' => 4,
-            'final_review_deadline' => '2033-12-31 23:59:59',
-            'final_review_time_in_s_after_submission' => 604800, // 7 days
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_5_UUID,
@@ -81,8 +69,6 @@ class SubsidyStagesTableSeeder extends Seeder
             'title' => 'Uitvoeringscoördinator controle',
             'subject_role' => 'assessor',
             'stage' => 5,
-            'final_review_deadline' => '2033-12-31 23:59:59',
-            'final_review_time_in_s_after_submission' => 604800, // 7 days
         ]);
     }
 }
