@@ -13,6 +13,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 
 /**
  * @property string $id
+ * @property string $reference
  * @property string $subsidy_version_id
  * @property string $application_title
  * @property DateTime $updated_at
@@ -37,6 +38,7 @@ class ApplicationFilterResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'reference' => $this->reference,
             'external_subsidy_id' => "ToDo",
             'application_title' => $this->application_title,
             'subsidy' => $subsidyTitle,
