@@ -198,6 +198,7 @@ return [
         MinVWS\DUSi\Application\API\Providers\RouteServiceProvider::class,
         MinVWS\DUSi\Application\API\Providers\OidcServiceProvider::class,
         MinVWS\DUSi\Application\API\Providers\PortalUserGuardProvider::class,
+        \MinVWS\DUSi\Shared\Providers\HsmEncryptionServiceProvider::class
     ],
 
     /*

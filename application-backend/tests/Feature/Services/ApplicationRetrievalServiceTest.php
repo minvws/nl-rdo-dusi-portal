@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;

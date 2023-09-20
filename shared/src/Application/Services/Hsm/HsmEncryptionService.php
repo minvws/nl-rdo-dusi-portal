@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services\Hsm;
+namespace MinVWS\DUSi\Shared\Application\Services\Hsm;
 
 use Exception;
-use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
-use MinVWS\DUSi\Shared\Serialisation\Hsm\HsmDecryptableData;
+use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use OpenSSLAsymmetricKey;
 
@@ -15,7 +14,6 @@ class HsmEncryptionService
     private ?OpenSSLAsymmetricKey $publicKey = null;
 
     public function __construct(
-        protected HsmService $hsmService,
         protected KeyReader $publicKeyReader,
         protected string $hsmEncryptionKeyLabel,
     ) {
@@ -66,14 +64,6 @@ class HsmEncryptionService
         return new HsmEncryptedData(
             data: base64_encode($encrypted),
             keyLabel: $this->getEncryptionKeyLabel(),
-        );
-    }
-
-    public function decrypt(HsmDecryptableData $encryptedData): string
-    {
-        return $this->hsmService->decrypt(
-            label: $encryptedData->getKeyLabel(),
-            data: $encryptedData->getData(),
         );
     }
 }

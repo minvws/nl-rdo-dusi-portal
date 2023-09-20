@@ -8,6 +8,7 @@ namespace MinVWS\DUSi\Assessment\API\Services;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 readonly class ApplicationSubsidyService
