@@ -39,7 +39,7 @@ class ApplicationRequestsFilterResource extends JsonResource
     {
         return [
             "uischema" => $this->toUIschema(),
-            "schema" => $this->toSchema()
+            "dataschema" => $this->toSchema()
         ];
     }
 
