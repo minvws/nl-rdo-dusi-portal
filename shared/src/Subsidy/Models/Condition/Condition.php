@@ -82,5 +82,8 @@ abstract readonly class Condition implements Codable, Castable
     }
 
 
-    abstract public function evaluate(object $data): bool;
+    /**
+     * @param array<int, object> $data Data by stage.
+     */
+    abstract public function evaluate(array $data): bool;
 }

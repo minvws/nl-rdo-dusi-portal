@@ -7,10 +7,6 @@ namespace MinVWS\DUSi\Shared\Subsidy\Models\Condition;
 
 readonly class InCondition extends Condition
 {
-    /**
-     * @param string $fieldCode
-     * @param array<string|bool|int|float|null> $values
-     */
     public function __construct(
         public int $stage,
         public string $fieldCode,
@@ -18,9 +14,12 @@ readonly class InCondition extends Condition
     ) {
     }
 
-    public function evaluate(object $data): bool
+    /**
+     * @inheritDoc
+     */
+    public function evaluate(array $data): bool
     {
-        $fieldValue = $data->{$this->fieldCode} ?? null;
+        $fieldValue = $data[$this->stage]?->{$this->fieldCode} ?? null;
         return in_array($fieldValue, $this->values);
     }
 }

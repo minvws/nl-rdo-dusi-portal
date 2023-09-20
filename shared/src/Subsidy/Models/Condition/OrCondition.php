@@ -16,7 +16,10 @@ readonly class OrCondition extends Condition
     ) {
     }
 
-    public function evaluate(object $data): bool
+    /**
+     * @inheritDoc
+     */
+    public function evaluate(array $data): bool
     {
         if (count($this->conditions) === 0) {
             return true;

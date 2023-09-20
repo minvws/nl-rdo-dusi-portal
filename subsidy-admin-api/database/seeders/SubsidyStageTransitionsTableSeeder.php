@@ -203,7 +203,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
                         'Goedgekeurd'
                     ),
                     new ComparisonCondition(
-                        3,
+                        4,
                         'internalAssessment',
                         Operator::Identical,
                         'Goedgekeurd'

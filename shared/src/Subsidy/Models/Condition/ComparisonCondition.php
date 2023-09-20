@@ -15,9 +15,12 @@ readonly class ComparisonCondition extends Condition
     ) {
     }
 
-    public function evaluate(object $data): bool
+    /**
+     * @inheritDoc
+     */
+    public function evaluate(array $data): bool
     {
-        $fieldValue = $data->{$this->fieldCode} ?? null;
+        $fieldValue = $data[$this->stage]?->{$this->fieldCode} ?? null;
 
         return match ($this->operator) {
             Operator::Equal => $fieldValue == $this->value,

@@ -14,7 +14,10 @@ readonly class AndCondition extends Condition
     ) {
     }
 
-    public function evaluate(object $data): bool
+    /**
+     * @inheritDoc
+     */
+    public function evaluate(array $data): bool
     {
         foreach ($this->conditions as $condition) {
             if (!$condition->evaluate($data)) {
