@@ -28,7 +28,7 @@ class CacheService
         return $result ? $key : false;
     }
 
-    public function getCachedSubsidyStage(string $subsidyStageId): ?SubsidyStageData
+    public function getCachedSubsidyStageData(string $subsidyStageId): ?SubsidyStageData
     {
         $json = $this->cacheRepository->get($this->cacheKeyHelper->keyForSubsidyStageId($subsidyStageId));
         return $json === null ? null : new SubsidyStageData($subsidyStageId, $json);

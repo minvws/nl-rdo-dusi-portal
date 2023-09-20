@@ -12,6 +12,9 @@ class SubsidyStagesTableSeeder extends Seeder
 
     public const PCZM_STAGE_1_UUID = '7e5d64e9-35f0-4fee-b8d2-dca967b43183';
     public const PCZM_STAGE_2_UUID = '8027c102-93ef-4735-ab66-97aa63b836eb';
+    public const PCZM_STAGE_3_UUID = '61436439-E337-4986-BC18-57138E2FAB65';
+    public const PCZM_STAGE_4_UUID = '7CEB3C91-5C3B-4627-B9EF-A46D5FE2ED68';
+    public const PCZM_STAGE_5_UUID = '85ED726E-CDBE-444E-8D12-C56F9BED2621';
 
     /**
      * Run the database seeds.
@@ -48,9 +51,36 @@ class SubsidyStagesTableSeeder extends Seeder
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_2_UUID,
             'subsidy_version_id' => SubsidyVersionsTableSeeder::PCZM_VERSION_UUID,
-            'title' => 'Beoordeling',
+            'title' => 'Eerste beoordeling',
             'subject_role' => 'assessor',
             'stage' => 2,
+            'final_review_deadline' => '2033-12-31 23:59:59',
+            'final_review_time_in_s_after_submission' => 604800, // 7 days
+        ]);
+        DB::table('subsidy_stages')->insert([
+            'id' => self::PCZM_STAGE_3_UUID,
+            'subsidy_version_id' => SubsidyVersionsTableSeeder::PCZM_VERSION_UUID,
+            'title' => 'Tweede beoordeling',
+            'subject_role' => 'assessor',
+            'stage' => 3,
+            'final_review_deadline' => '2033-12-31 23:59:59',
+            'final_review_time_in_s_after_submission' => 604800, // 7 days
+        ]);
+        DB::table('subsidy_stages')->insert([
+            'id' => self::PCZM_STAGE_4_UUID,
+            'subsidy_version_id' => SubsidyVersionsTableSeeder::PCZM_VERSION_UUID,
+            'title' => 'Interne controle',
+            'subject_role' => 'assessor',
+            'stage' => 4,
+            'final_review_deadline' => '2033-12-31 23:59:59',
+            'final_review_time_in_s_after_submission' => 604800, // 7 days
+        ]);
+        DB::table('subsidy_stages')->insert([
+            'id' => self::PCZM_STAGE_5_UUID,
+            'subsidy_version_id' => SubsidyVersionsTableSeeder::PCZM_VERSION_UUID,
+            'title' => 'Uitvoeringscoördinator controle',
+            'subject_role' => 'assessor',
+            'stage' => 5,
             'final_review_deadline' => '2033-12-31 23:59:59',
             'final_review_time_in_s_after_submission' => 604800, // 7 days
         ]);
