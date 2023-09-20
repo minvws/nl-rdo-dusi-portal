@@ -113,7 +113,7 @@ readonly class ApplicationDataService
     /**
      * @throws Exception
      */
-    public function getApplicationStageData(ApplicationStage $applicationStage): object
+    public function getApplicationStageData(ApplicationStage $applicationStage): stdClass
     {
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
 
