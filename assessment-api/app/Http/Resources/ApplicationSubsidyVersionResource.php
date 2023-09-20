@@ -15,7 +15,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use stdClass;
 
 //TODO: Move logic to service
 
@@ -78,7 +77,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
     /**
      * @param ApplicationStage|null $applicationStage
      */
-    private function createValues(?ApplicationStage $applicationStage): ?stdClass
+    private function createValues(?ApplicationStage $applicationStage): ?object
     {
         if ($applicationStage === null) {
             return null;

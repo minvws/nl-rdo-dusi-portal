@@ -20,7 +20,6 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
-use stdClass;
 use Throwable;
 
 /**
@@ -113,7 +112,7 @@ readonly class ApplicationDataService
     /**
      * @throws Exception
      */
-    public function getApplicationStageData(ApplicationStage $applicationStage): stdClass
+    public function getApplicationStageData(ApplicationStage $applicationStage): object
     {
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
 
