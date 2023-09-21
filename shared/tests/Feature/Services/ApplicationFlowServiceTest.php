@@ -16,7 +16,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;

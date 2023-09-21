@@ -17,9 +17,9 @@ use MinVWS\DUSi\Application\Backend\Services\Validation\FileValidator;
 use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
@@ -44,15 +44,16 @@ readonly class ApplicationFileService
     use LoadApplication;
 
     public function __construct(
-        private ApplicationEncryptionService $encryptionService,
-        private ResponseEncryptionService $responseEncryptionService,
-        private IdentityService $identityService,
-        private ApplicationRepository $applicationRepository,
-        private ApplicationFileRepository $applicationFileRepository,
-        private SubsidyRepository $subsidyRepository,
-        private LoggerInterface $logger,
-        private FileValidator $fileValidator,
-    ) {
+        private ApplicationEncryptionService     $encryptionService,
+        private ResponseEncryptionService        $responseEncryptionService,
+        private IdentityService                  $identityService,
+        private ApplicationRepository            $applicationRepository,
+        private ApplicationFileRepositoryService $applicationFileRepository,
+        private SubsidyRepository                $subsidyRepository,
+        private LoggerInterface                  $logger,
+        private FileValidator                    $fileValidator,
+    )
+    {
     }
 
     private function loadApplicationStage(Application $application): ApplicationStage
@@ -123,9 +124,7 @@ readonly class ApplicationFileService
 
         $tempFile->close();
 
-        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
-        $encryptedContent = $encrypter->encrypt($decryptedContent);
-        $this->applicationFileRepository->writeFile($applicationStage, $field, $id, $encryptedContent);
+        $this->applicationFileRepository->writeFile($applicationStage, $field, $id, $decryptedContent);
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::CREATED,
@@ -167,11 +166,7 @@ readonly class ApplicationFileService
                 );
             }
 
-            $encryptedContent = $this->applicationFileRepository->readFile($applicationStage, $field, $params->id);
-            assert($encryptedContent !== null);
-
-            $encrypter = $this->encryptionService->getEncrypter($applicationStage);
-            $content = $encrypter->decrypt($encryptedContent);
+            $content = $this->applicationFileRepository->readFile($applicationStage, $field, $params->id);
 
             $fileInfo = new finfo(FILEINFO_MIME_TYPE);
             $contentType = $fileInfo->buffer($content) ?: 'application/octet-stream';

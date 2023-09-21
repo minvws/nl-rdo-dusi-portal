@@ -15,83 +15,57 @@ class ApplicationFileRepository
     ) {
     }
 
-    public function readFile(ApplicationStage $applicationStage, Field $field, string $id): ?string
+    public function readFile(string $filePath): ?string
     {
-        return $this->filesystem->get($this->getFilePath($applicationStage, $field, $id));
+        return $this->filesystem->get($filePath);
     }
 
-    public function writeFile(ApplicationStage $applicationStage, Field $field, string $id, string $contents): bool
+    public function writeFile(string $filePath, string $contents): bool
     {
-        return $this->filesystem->put($this->getFilePath($applicationStage, $field, $id), $contents);
+        return $this->filesystem->put($filePath, $contents);
     }
 
-    public function unlinkFile(ApplicationStage $applicationStage, Field $field, string $id): bool
+    public function deleteFile(string $filePath): bool
     {
-        return $this->filesystem->delete($this->getFilePath($applicationStage, $field, $id));
+        return $this->filesystem->delete($filePath);
     }
 
-    public function unlinkUnusedFiles(ApplicationStage $applicationStage, Field $field, array $usedIds): void
+    public function getFiles(string $directory, bool $recursive = false): array
     {
-        $files = array_map(
-            'basename',
-            $this->filesystem->files($this->getFieldPath($applicationStage, $field))
-        );
-
-        $unusedIds = array_diff($files, $usedIds);
-
-        foreach ($unusedIds as $unusedId) {
-            $this->unlinkFile($applicationStage, $field, $unusedId);
-        }
+        return $this->filesystem->files($directory, $recursive);
     }
 
-    public function fileExists(ApplicationStage $applicationStage, Field $field, string $id): bool
+    public function fileExists(string $filePath): bool
     {
-        return $this->filesystem->exists($this->getFilePath($applicationStage, $field, $id));
+        return $this->filesystem->exists($filePath);
     }
 
-    protected function getStagePath(ApplicationStage $applicationStage): string
+    public function makeDirectory(string $filePath): bool
     {
-        return $applicationStage->id;
+        return $this->filesystem->makeDirectory($filePath);
     }
 
-    protected function getFieldPath(ApplicationStage $applicationStage, Field $field): string
+    public function copyFiles(string $sourceDirectory, string $targetDirectory): bool
     {
-        return sprintf('%s/%s', $this->getStagePath($applicationStage), $field->code);
-    }
-
-    protected function getFilePath(ApplicationStage $applicationStage, Field $field, string $id): string
-    {
-        return sprintf('%s/%s', $this->getFieldPath($applicationStage, $field), $id);
-    }
-
-    protected function targetPath(
-        string $sourcePath,
-        ApplicationStage $sourceStage,
-        ApplicationStage $targetStage
-    ): string {
-        return $targetStage->id . substr($sourcePath, strlen($sourceStage->id));
-    }
-
-    public function cloneFiles(ApplicationStage $sourceStage, ApplicationStage $targetStage): bool
-    {
-        $sourcePath = $this->getStagePath($sourceStage);
-        if (!$this->filesystem->exists($sourcePath)) {
+        if (!$this->filesystem->directoryExists($sourceDirectory)) {
             return true; // nothing to clone
         }
 
-        foreach ($this->filesystem->directories($sourcePath, true) as $path) {
-            if (!$this->filesystem->makeDirectory($path)) {
-                return false;
-            }
-        }
-
-        foreach ($this->filesystem->files($sourcePath, true) as $sourcePath) {
-            $targetPath = $this->targetPath($sourcePath, $sourceStage, $targetStage);
-            if (!$this->filesystem->copy($sourcePath, $targetPath)) {
+        foreach ($this->getFiles($sourceDirectory, true) as $filePath) {
+            $targetPath = $this->targetPath($filePath, $sourceDirectory, $targetDirectory);
+            if (!$this->filesystem->copy($filePath, $targetPath)) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    protected function targetPath(
+        string $path,
+        string $sourcePath,
+        string $targetPath,
+    ): string {
+        return $targetPath . substr($path, strlen($sourcePath));
     }
 }

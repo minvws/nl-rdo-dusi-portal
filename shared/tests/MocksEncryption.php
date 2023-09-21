@@ -6,11 +6,11 @@ namespace MinVWS\DUSi\Shared\Tests;
 
 use Illuminate\Encryption\Encrypter;
 use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmService;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Serialisation\Hsm\HsmDecryptableData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use Mockery;
