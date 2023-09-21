@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -85,7 +86,11 @@ class ApplicationFlowService
             return true;
         }
 
-        $data = $this->applicationDataService->getApplicationStageDataUpToIncluding($stage);
+        $data = array_map(
+            fn (ApplicationStageData $stageData) => $stageData->data,
+            $this->applicationDataService->getApplicationStageDataUpToIncluding($stage)
+        );
+
         return $transition->condition->evaluate($data);
     }
 

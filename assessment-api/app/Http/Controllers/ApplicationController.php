@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
@@ -41,22 +40,9 @@ class ApplicationController extends Controller
      * Display the specified resource.
      * @throws \Exception
      */
-    public function show(Request $request, Application $application): ApplicationSubsidyVersionResource
+    public function show(Application $application): ApplicationSubsidyVersionResource
     {
-        try {
-            $publicKey = $request->hasHeader('publicKey') ? $request->header('publicKey')
-                : throw new \Exception('No public key provided');
-            $publicKey = $publicKey ?? throw new \Exception('No public key provided');
-            return $this->applicationSubsidyService->getApplicationSubsidyResource(
-                $application,
-                $publicKey
-            );
-        } catch (\Exception $e) {
-            if (!\Config::get('encryption.backend_encrypt')) { // TODO: remove when frontend supports decryption
-                return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
-            }
-            throw $e;
-        }
+        return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
     }
 
     /**

@@ -7,16 +7,10 @@ namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 use MinVWS\DUSi\Assessment\API\Models\Enums\UIType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use MinVWS\DUSi\Assessment\API\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
-use MinVWS\DUSi\Shared\Subsidy\Models\Field;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-
-//TODO: Move logic to service
+use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
 
 /**
  *  @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -24,149 +18,136 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 class ApplicationSubsidyVersionResource extends JsonResource
 {
     public function __construct(
-        readonly Application $application,
-        readonly SubsidyVersion $subsidyVersion,
-        private readonly ?string $publicKey = null, // @phpstan-ignore-line
-        private readonly ResponseEncryptionService $responseEncryptionService,  // @phpstan-ignore-line
+        private readonly Application $application,
         private readonly ApplicationDataService $applicationDataService,
+        private readonly SubsidyStageDataSchemaBuilder $dataSchemaBuilder
     ) {
-        parent::__construct(['application' => $application, 'subsidyVersion' => $subsidyVersion]);
+        parent::__construct($application);
     }
 
     /**
-     * Transform the resource into an array.
-     *
-     * @param Request $request
-     * @return array
-     * @throws \Exception
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array
     {
-        $stages = $this['subsidyVersion']->subsidyStages->map(function ($subsidyStage) {
-            $applicationStage = $this->resource['application']->applicationStages()
-                ->where('subsidy_stage_id', '=', $subsidyStage->id)
-                ->orderBy('sequence_number', 'desc')
-                ->first();
-
-            if (!isset($applicationStage) || $applicationStage->is_current) {
-                $uiType = UIType::Input;
-                $ui = $subsidyStage->publishedUI?->input_ui;
-            } else {
-                $uiType = UIType::View;
-                $ui = $subsidyStage->publishedUI?->view_ui;
-            }
-            return [
-                'metadata' => [
-                    "title" => $subsidyStage->title,
-                    "uiType" => $uiType,
-                    "subjectRole" => $subsidyStage->subject_role,
-                    "subjectOrganisation" => $subsidyStage->subject_organisation,
-                ],
-                'dataschema' => $this->createDataSchema($subsidyStage),
-                'values' => $this->createValues($applicationStage),
-                'uischema' => $ui,
-            ];
-        });
         return [
-            'metadata' => $this->createMetadata(),
-            'stages' => $stages,
+            'application' => $this->buildApplication(),
+            'applicationStages' => $this->buildApplicationStages()
         ];
     }
 
-    /**
-     * @param ApplicationStage|null $applicationStage
-     */
-    private function createValues(?ApplicationStage $applicationStage): ?object
-    {
-        if ($applicationStage === null) {
-            return null;
-        }
-
-        return $this->applicationDataService->getApplicationStageData($applicationStage);
-    }
-
-    private function createMetadata(): array
+    private function buildApplication(): array
     {
         return [
-            'subsidyVersionId' => $this->resource['subsidyVersion']->id,
-            'applicationId' => $this->resource['application']->id,
-            'subsidy' => [
-                'id' => $this->resource['subsidyVersion']->subsidy->id,
-                'title' => $this->resource['subsidyVersion']->subsidy->title,
-                'description' => $this->resource['subsidyVersion']->subsidy->description,
-                'validFrom' => $this->resource['subsidyVersion']->subsidy->valid_from->format('Y-m-d'),
-                'validTo' => $this->resource['subsidyVersion']->subsidy->valid_to?->format('Y-m-d')
+            'metadata' => [
+                'application' => [
+                    'id' => $this->application->id,
+                    'reference' => $this->application->reference,
+                    'finalReviewDeadline' => $this->application->final_review_deadline,
+                    'status' => $this->application->status->value
+                ],
+                'subsidyVersion' => [
+                    'id' => $this->subsidyVersion->id,
+                    'version' => $this->subsidyVersion->version
+                ],
+                'subsidy' => [
+                    'id' => $this->resource['subsidyVersion']->subsidy->id,
+                    'title' => $this->resource['subsidyVersion']->subsidy->title,
+                    'description' => $this->resource['subsidyVersion']->subsidy->description,
+                    'validFrom' => $this->resource['subsidyVersion']->subsidy->valid_from->format('Y-m-d'),
+                    'validTo' => $this->resource['subsidyVersion']->subsidy->valid_to?->format('Y-m-d')
+                ]
+            ],
+            'dataschema' => [
+                'type' => 'object',
+                'properties' => [
+                    'reference' => ['type' => 'string'],
+                    'status' => ['type' => 'string'],
+                    'submittedAt' => [
+                        'type' => 'string',
+                        'format' => 'date'
+                    ],
+                    'finalReviewDeadline' => [
+                        'type' => 'string',
+                        'format' => 'date'
+                    ]
+                ]
+            ],
+            'uiType' => UIType::View,
+            'uischema' => [
+                'type' => 'FormGroupControl',
+                'label' => 'Metagegevens',
+                'options' => [
+                    'section' => true,
+                    'headingLevel' => '2'
+                ],
+                'elements' => [
+                    [
+                        'type' => 'FormResultsTable',
+                        'options' => [
+                            'fields' => [
+                                'Dossiernummer' => '{reference}',
+                                'Aangevraagd op' => '{submittedAt}',
+                                'Uiterste behandeldatum' => '{finalReviewDeadline}'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'data' => [
+                'reference' => $this->application->reference,
+                'status' => $this->application->status->name,
+                'submittedAt' => $this->application->submitted_at?->format('Y-m-d'),
+                'finalReviewDeadline' => $this->application->final_review_deadline?->format('Y-m-d')
             ]
         ];
     }
 
-    private function createDataSchema(SubsidyStage $subsidyStage): array
+    private function buildApplicationStages(): array
     {
-        $result = [];
-        $result['type'] = 'object';
-        $result['properties'] = [];
-
-        $required = [];
-        foreach ($subsidyStage->fields as $field) {
-            $result['properties'][$field->code] = $this->createFieldDataSchema($field);
-            if ($field->is_required) {
-                $required[] = $field->code;
-            }
-        }
-
-        if (count($required) > 0) {
-            $result['required'] = $required;
-        }
-
-        return $result;
+        return array_map(
+            fn (ApplicationStageData $applicationStageData) =>
+            $this->buildApplicationStage($applicationStageData),
+            $this->applicationDataService->getApplicationStageDataUpToIncluding(
+                $this->application->currentApplicationStage
+            )
+        );
     }
 
-    /**
-     * @param Field $field
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
-    private function createFieldDataSchema(Field $field): array
+    private function buildApplicationStage(ApplicationStageData $applicationStageData): array
     {
+        $applicationStage = $applicationStageData->applicationStage;
+        $subsidyStage = $applicationStage->subsidyStage;
+        $data = $applicationStageData->data;
 
-        $type = match ($field->type) {
-            FieldType::TextNumeric => 'integer',
-            FieldType::Checkbox => 'boolean',
-            FieldType::Multiselect => 'array',
-            default => 'string'
-        };
+        if ($applicationStage->is_current) {
+            $uiType = UIType::Input;
+            $ui = $subsidyStage->publishedUI?->input_ui;
+        } else {
+            $uiType = UIType::View;
+            $ui = $subsidyStage->publishedUI?->view_ui;
+        }
 
-        $result = [
-            'type' => $type,
-            'title' => $field->title,
+        return [
+            'metadata' => [
+                'subsidyStage' => [
+                    'id' => $subsidyStage->id,
+                    'stage' => $subsidyStage->stage,
+                    'title' => $subsidyStage->title,
+                    'subjectRole' => $subsidyStage->subject_role
+                ],
+                'applicationStage' => [
+                    'id' => $applicationStage->id,
+                    'sequenceNumber' => $applicationStage->sequence_number,
+                    'isCurrent' => $applicationStage->is_current,
+                    'isSubmitted' => $applicationStage->is_submitted,
+                    'submittedAt' => $applicationStage->submitted_at
+                ]
+            ],
+            'dataschema' => $this->dataSchemaBuilder->buildDataSchema($subsidyStage),
+            'uiType' => $uiType,
+            'uischema' => $ui,
+            'data' => $data
         ];
-
-        if ($type === 'integer') {
-            $result['minimum'] = 0;
-        }
-
-        if (!empty($field->description)) {
-            $result['description'] = $field->description;
-        }
-
-        if ($field->type === FieldType::Select) {
-            $result['enum'] = $field->params['options'];
-        } elseif ($field->type === FieldType::Multiselect) {
-            $result['items'] = ["enum" => $field->params['options'], "type" => "string"];
-        } elseif ($field->type === FieldType::Upload) {
-            $result['file'] = true;
-        } elseif ($field->type === FieldType::CustomBankAccount) {
-            $result['iban'] = true;
-        } elseif ($field->type === FieldType::TextTel) {
-            $result['tel'] = true;
-        } elseif ($field->type === FieldType::Checkbox) {
-            $result['const'] = true;
-        } elseif ($field->type === FieldType::TextEmail) {
-            $result['format'] = 'email';
-        }
-
-        return $result;
     }
 }
