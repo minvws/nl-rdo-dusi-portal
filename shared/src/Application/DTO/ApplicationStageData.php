@@ -10,7 +10,7 @@ class ApplicationStageData
 {
     public function __construct(
         public readonly ApplicationStage $applicationStage,
-        public readonly ?object $data
+        public readonly object $data
     ) {
     }
 }

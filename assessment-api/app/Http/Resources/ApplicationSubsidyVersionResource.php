@@ -47,15 +47,16 @@ class ApplicationSubsidyVersionResource extends JsonResource
                     'status' => $this->application->status->value
                 ],
                 'subsidyVersion' => [
-                    'id' => $this->subsidyVersion->id,
-                    'version' => $this->subsidyVersion->version
+                    'id' => $this->application->subsidyVersion->id,
+                    'version' => $this->application->subsidyVersion->version
                 ],
                 'subsidy' => [
-                    'id' => $this->resource['subsidyVersion']->subsidy->id,
-                    'title' => $this->resource['subsidyVersion']->subsidy->title,
-                    'description' => $this->resource['subsidyVersion']->subsidy->description,
-                    'validFrom' => $this->resource['subsidyVersion']->subsidy->valid_from->format('Y-m-d'),
-                    'validTo' => $this->resource['subsidyVersion']->subsidy->valid_to?->format('Y-m-d')
+                    'id' => $this->application->subsidyVersion->subsidy->id,
+                    'code' => $this->application->subsidyVersion->subsidy->code,
+                    'title' => $this->application->subsidyVersion->subsidy->title,
+                    'description' => $this->application->subsidyVersion->subsidy->description,
+                    'validFrom' => $this->application->subsidyVersion->subsidy->valid_from->format('Y-m-d'),
+                    'validTo' => $this->application->subsidyVersion->subsidy->valid_to->format('Y-m-d')
                 ]
             ],
             'dataschema' => [
@@ -97,7 +98,8 @@ class ApplicationSubsidyVersionResource extends JsonResource
             'data' => [
                 'reference' => $this->application->reference,
                 'status' => $this->application->status->name,
-                'submittedAt' => $this->application->submitted_at?->format('Y-m-d'),
+                // TODO: submitted_at at the application level!
+                'submittedAt' => $this->application->created_at->format('Y-m-d'),
                 'finalReviewDeadline' => $this->application->final_review_deadline?->format('Y-m-d')
             ]
         ];
@@ -122,10 +124,10 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
         if ($applicationStage->is_current) {
             $uiType = UIType::Input;
-            $ui = $subsidyStage->publishedUI?->input_ui;
+            $uiSchema = $subsidyStage->publishedUI?->input_ui;
         } else {
             $uiType = UIType::View;
-            $ui = $subsidyStage->publishedUI?->view_ui;
+            $uiSchema = $subsidyStage->publishedUI?->view_ui;
         }
 
         return [
@@ -146,7 +148,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
             ],
             'dataschema' => $this->dataSchemaBuilder->buildDataSchema($subsidyStage),
             'uiType' => $uiType,
-            'uischema' => $ui,
+            'uischema' => $uiSchema,
             'data' => $data
         ];
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Shared\Subsidy\Helpers;
 
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
