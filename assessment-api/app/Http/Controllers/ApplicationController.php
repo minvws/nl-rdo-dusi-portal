@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
@@ -89,5 +90,16 @@ class ApplicationController extends Controller
     public function getApplicationRequestFilterResource(): ApplicationRequestsFilterResource
     {
         return $this->applicationService->getApplicationRequestFilterResource(null);
+    }
+
+    public function getApplicationHistory(): JsonResource
+    {
+        //TODO: implement this
+        return JsonResource::make([]);
+    }
+    public function getApplicationReviewer(): JsonResource
+    {
+        //TODO: implement this
+        return JsonResource::make([]);
     }
 }
