@@ -104,6 +104,6 @@ fi
 
 # TODO: Run migration to default database
 if $MIGRATE ; then
-    vendor/bin/sail artisan migrate:fresh
+    vendor/bin/sail artisan migrate:fresh --path="database/migrations"
     vendor/bin/sail artisan db:seed --class="MinVWS\\DUSi\\User\\Admin\\API\\Database\\Seeders\\DatabaseSeeder"
 fi
