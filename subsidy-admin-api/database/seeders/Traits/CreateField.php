@@ -394,7 +394,9 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?array $mimeTypes = null,
+        ?int $maxFileSize = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -403,6 +405,10 @@ trait CreateField
             description: $description,
             type: 'upload',
             isRequired: $isRequired,
+            params: array_filter([
+                'mimeTypes' => $mimeTypes,
+                'maxFileSize' => $maxFileSize,
+            ]),
         );
     }
 }

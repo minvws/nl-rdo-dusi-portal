@@ -98,7 +98,7 @@ class ApplicationFileServiceTest extends TestCase
             $this->publicKey,
             $this->application->reference,
             $this->field->code,
-            $data ?? new BinaryData(random_bytes(50))
+            $data ?? new BinaryData(file_get_contents(__DIR__ . '/../../fixtures/test.pdf'))
         );
 
         $encryptedResponse = $this->app->get(ApplicationFileService::class)->saveApplicationFile($params);

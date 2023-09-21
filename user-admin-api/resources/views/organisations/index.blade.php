@@ -24,7 +24,7 @@
                 <p class="hidden" id="name_status_text"></p>
                 <div class="horizontal-scroll">
                     <table id="user-overview-table">
-                        <caption>@lang("Account overview:")</caption>
+                        <caption>@lang("Organisations overview:")</caption>
                         <thead>
                         <tr>
                             <th scope="col"> @sortablelink('name', __('Name')) </th>

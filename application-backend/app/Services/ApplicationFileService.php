@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
+use MinVWS\DUSi\Application\Backend\Services\Validation\FileValidator;
+use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
@@ -23,6 +25,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUploadResult;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -47,7 +50,8 @@ readonly class ApplicationFileService
         private ApplicationRepository $applicationRepository,
         private ApplicationFileRepository $applicationFileRepository,
         private SubsidyRepository $subsidyRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private FileValidator $fileValidator,
     ) {
     }
 
@@ -101,6 +105,22 @@ readonly class ApplicationFileService
         $id = Uuid::uuid4()->toString();
 
         $decryptedContent = $params->data->data; // TODO: $this->decryptionService->decrypt($params->data);
+
+        $tempFile = new TemporaryFile($decryptedContent);
+
+        $validator = $this->fileValidator->getValidator($field, $tempFile->getUploadedFile());
+        if ($validator->fails()) {
+            // After calling fails, the validator has run and the file can be closed
+            $tempFile->close();
+
+            return $this->responseEncryptionService->encryptCodable(
+                EncryptedResponseStatus::BAD_REQUEST,
+                new Error('file_validation_failed', 'File validation failed.'),
+                $params->publicKey,
+            );
+        }
+
+        $tempFile->close();
 
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
         $encryptedContent = $encrypter->encrypt($decryptedContent);

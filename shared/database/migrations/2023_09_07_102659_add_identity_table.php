@@ -3,10 +3,14 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 
 return new class extends Migration
 {
+
+    protected $connection = Connection::APPLICATION;
+
     /**
      * Run the migrations.
      */
@@ -16,7 +20,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->enum(
                 'type',
-                array_map(fn ($d) => $d->value, IdentityType::cases())
+                ['citizenServiceNumber']
             );
             $table->text('encrypted_identifier');
             $table->string('hashed_identifier', 64)->unique();

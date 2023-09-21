@@ -81,6 +81,12 @@ return [
             'lock_connection' => 'default',
         ],
 
+        'redis:session' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'prefix' => 'session',
+        ],
+
         'dynamodb' => [
             'driver' => 'dynamodb',
             'key' => env('AWS_ACCESS_KEY_ID'),

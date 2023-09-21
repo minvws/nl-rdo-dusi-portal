@@ -17,7 +17,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->enum('identity_type', [IdentityType::CitizenServiceNumber->value]);
+            $table->enum('identity_type', ['citizenServiceNumber']);
             $table->string('identity_identifier', 200);
             $table->enum('status', ['draft', 'submitted']);
             $table->timestamp('updated_at')->useCurrent();

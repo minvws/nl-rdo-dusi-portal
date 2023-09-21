@@ -6,8 +6,9 @@ namespace MinVWS\DUSi\User\Admin\API\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
-class UserOrganisationAttachRequest extends FormRequest
+class UserRoleAttachRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +26,8 @@ class UserOrganisationAttachRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'organisation_id' => ['required', 'string', 'exists:organisations,id'],
             'role' => ['required', 'string', 'exists:roles,name'],
+            'subsidy_id' => ['nullable', 'string', 'exists:' . Connection::APPLICATION . '.subsidies,id'],
         ];
     }
 }

@@ -3,10 +3,14 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStageDecision;
 
 return new class extends Migration
 {
+
+    protected $connection = Connection::APPLICATION;
+
     /**
      * Run the migrations.
      */
@@ -28,7 +32,7 @@ return new class extends Migration
             $table->uuid('assessor_user_id')->nullable();
             $table->enum(
                 'assessor_decision',
-                array_map(fn ($d) => $d->value, ApplicationStageDecision::cases())
+                ['approved', 'rejected', 'requestForChanges']
             )->nullable();
             $table->timestamps();
             $table->unique(['application_id', 'sequence_number']);
