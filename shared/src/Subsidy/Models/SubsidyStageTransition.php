@@ -24,6 +24,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
  * @property ApplicationStatus|null $target_application_status
  * @property Condition|null $condition
  * @property bool $send_message
+ * @property bool $clone_data
  * @property-read Collection<int, SubsidyStageTransitionMessage> $subsidyStageTransitionMessages
  * @property-read SubsidyStageTransitionMessage|null $publishedSubsidyStageTransitionMessage
  */
