@@ -63,6 +63,7 @@ class PortalUserGuard implements Guard
     public function setUser(Authenticatable $user): static
     {
         $this->session->put(self::SESSION_KEY, $user);
+        $this->session->migrate(true);
         return $this;
     }
 
@@ -74,5 +75,6 @@ class PortalUserGuard implements Guard
     public function logout(): void
     {
         $this->session->remove(self::SESSION_KEY);
+        $this->session->migrate(true);
     }
 }
