@@ -3,8 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
 
 return new class extends Migration
@@ -17,9 +16,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('application_stages', function (Blueprint $table) {
-            $table->json('encrypted_key');
-        });
+        DB::raw('ALTER TABLE fields ALTER params TYPE JSON USING params::JSON');
     }
 
     /**
@@ -27,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('application_stages', function (Blueprint $table) {
-            $table->dropColumn('encrypted_key');
-        });
+        DB::raw('ALTER TABLE fields ALTER params TYPE MEDIUMTEXT');
     }
 };

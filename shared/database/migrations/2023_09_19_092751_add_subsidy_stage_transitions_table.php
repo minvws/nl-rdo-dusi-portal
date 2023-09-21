@@ -3,10 +3,14 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 
 return new class extends Migration
 {
+
+    protected $connection = Connection::APPLICATION;
+
     /**
      * Run the migrations.
      */
@@ -23,7 +27,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->enum(
                 'target_application_status',
-                array_map(fn ($d) => $d->value, ApplicationStatus::cases())
+                ['draft', 'submitted', 'approved', 'rejected', 'requestForChanges']
             )->nullable();
             $table->json('condition')->nullable();
             $table->boolean('send_message')->default(false);

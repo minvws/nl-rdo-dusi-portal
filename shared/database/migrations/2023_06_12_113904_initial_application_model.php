@@ -32,7 +32,7 @@ return new class extends Migration
             $table->foreignUuid('form_id')->constrained('forms')->restrictOnDelete();
             $table->string('label', 500);
             $table->mediumText('description')->nullable();
-            $table->enum('type', ['text', 'text:numeric', 'text:email', 'text:tel', 'text:url', 'checkbox', 'select', 'textarea', 'upload', 'custom:postalcode', 'custom:country', 'custom:bankaccount']);
+            $table->enum('type', ['text', 'text:numeric', 'text:email', 'text:tel', 'text:url', 'checkbox', 'multiselect', 'select', 'textarea', 'upload', 'custom:postalcode', 'custom:country', 'custom:bankaccount']);
             $table->mediumText('params')->nullable();
             $table->boolean('is_required');
             $table->unsignedInteger('sort');

@@ -10,6 +10,7 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
+use MinVWS\DUSi\Application\Backend\Services\Clamav\ClamAvService;
 use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
@@ -53,5 +54,29 @@ class AppServiceProvider extends ServiceProvider
         $this->app->when(FrontendDecryptionService::class)
             ->needs('$privateKey')
             ->giveConfig('frontend.form_encryption.private_key');
+
+        $this->registerClamAv();
+    }
+
+    private function registerClamAv(): void
+    {
+        $this->app->when(ClamAvService::class)
+            ->needs('$preferredSocket')
+            ->giveConfig('clamav.preferred_socket');
+        $this->app->when(ClamAvService::class)
+            ->needs('$unixSocket')
+            ->giveConfig('clamav.unix_socket');
+        $this->app->when(ClamAvService::class)
+            ->needs('$tcpSocket')
+            ->giveConfig('clamav.tcp_socket');
+        $this->app->when(ClamAvService::class)
+            ->needs('$socketConnectTimeout')
+            ->giveConfig('clamav.socket_connect_timeout');
+        $this->app->when(ClamAvService::class)
+            ->needs('$socketReadTimeout')
+            ->giveConfig('clamav.socket_read_timeout');
+        $this->app->when(ClamAvService::class)
+            ->needs('$skipValidation')
+            ->giveConfig('clamav.skip_validation');
     }
 }
