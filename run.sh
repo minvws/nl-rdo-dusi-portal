@@ -61,7 +61,7 @@ fi
 SCRIPT=$(readlink -f $0)
 BASEDIR=`dirname $SCRIPT`
 
-packages=( bridge shared user-admin-api application-backend subsidy-admin-api application-api assessment-api )
+packages=( bridge shared application-backend user-admin-api subsidy-admin-api application-api assessment-api )
 for package in "${packages[@]}"
 do
   printf "\033[1;94mExecuting run.sh for ${package}\033[0m\n"
@@ -82,6 +82,9 @@ cp "$BASEDIR/application-backend/secrets/pki/private/softhsm^SoftHSMLabel^*=crea
 
 echo "Creating user:"
 cd "$BASEDIR/user-admin-api"
-vendor/bin/sail artisan user:create user@example.com user password
+
+vendor/bin/sail artisan organisation:create "DUS-I"
+vendor/bin/sail artisan admin:create user@example.com user password
+
 echo "Log user in with: user@example.com password"
 cd "$BASEDIR"

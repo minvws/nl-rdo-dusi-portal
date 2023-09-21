@@ -22,6 +22,7 @@ services:
             - '.:/var/www/html'
         networks:
             - user-admin-web
+            - portal-backend
         depends_on:
             - pgsql
     pgsql:
@@ -29,10 +30,10 @@ services:
         ports:
             - '${FORWARD_DB_PORT:-9401}:5432'
         environment:
-            PGPASSWORD: '${DB_PASSWORD:-secret}'
-            POSTGRES_DB: '${DB_DATABASE}'
-            POSTGRES_USER: '${DB_USERNAME}'
-            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+            PGPASSWORD: '${DB_USER_PASSWORD:-secret}'
+            POSTGRES_DB: '${DB_USER_DATABASE}'
+            POSTGRES_USER: '${DB_USER_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_USER_PASSWORD:-secret}'
         volumes:
             - 'sail-pgsql:/var/lib/postgresql/data'
             - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
@@ -46,14 +47,17 @@ services:
                 - pg_isready
                 - '-q'
                 - '-d'
-                - '${DB_DATABASE}'
+                - '${DB_USER_DATABASE}'
                 - '-U'
-                - '${DB_USERNAME}'
+                - '${DB_USER_USERNAME}'
             retries: 3
             timeout: 5s
 networks:
     user-admin-web:
         name: user-admin-web
+    portal-backend:
+        name: portal-backend
+        external: true
 volumes:
     sail-pgsql:
         driver: local

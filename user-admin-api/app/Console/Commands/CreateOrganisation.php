@@ -36,7 +36,7 @@ class CreateOrganisation extends Command
             return 1;
         }
 
-        $organisation = Organisation::create([
+        $organisation = Organisation::firstOrCreate([
             "name" => $organisationName,
         ]);
 

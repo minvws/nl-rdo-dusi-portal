@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Console\Commands;
 
+use Illuminate\Contracts\Console\PromptsForMissingInput;
+use MinVWS\DUSi\User\Admin\API\Models\Organisation;
 use MinVWS\DUSi\User\Admin\API\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 
-class CreateAdmin extends Command
+class CreateAdmin extends Command implements PromptsForMissingInput
 {
     /**
      * The name and signature of the console command.
@@ -42,16 +44,13 @@ class CreateAdmin extends Command
      */
     public function handle()
     {
-        $passwd = $this->argument('password');
-        if (!is_string($passwd)) {
-            $this->error("Incorrect password");
-            return 1;
-        }
-
-        $user = User::create([
+        /** @var User $user */
+        $user = User::updateOrCreate([
             "email" => $this->argument('email'),
+        ], [
             "name" => $this->argument('name'),
-            "password" => Hash::make($passwd),
+            "password" => Hash::make($this->argument('password')),
+            "organisation_id" => Organisation::query()->first()?->id,
         ]);
 
         $user->forceFill([
@@ -59,6 +58,8 @@ class CreateAdmin extends Command
             'two_factor_recovery_codes' => null,
         ]);
         $user->save();
+
+        $user->attachRole('admin');
 
         $this->info(
             "Admin user created. Please add the following to your authenticator app: \n" .

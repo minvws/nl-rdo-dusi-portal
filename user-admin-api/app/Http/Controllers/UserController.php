@@ -30,7 +30,7 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        $users = User::query()->paginate();
+        $users = User::query()->with('organisation')->paginate();
 
         return view('users.index', [
             'users' => $users,

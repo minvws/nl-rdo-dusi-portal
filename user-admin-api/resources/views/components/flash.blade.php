@@ -1,6 +1,6 @@
 @props(['element' => 'div', 'only' => null])
 
-@if ($flash = Session::get('flash'))
+@if ($flash = Session::get('flash_notification'))
     <{{ $element }}
         class="{{ $flash->getType() }}"
         data-message-type="{{ $flash->getType() }}"

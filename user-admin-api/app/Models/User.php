@@ -30,6 +30,7 @@ class User extends Authenticatable
         'email',
         'password',
         'active_until',
+        'organisation_id',
     ];
 
     /**
@@ -50,6 +51,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'active_until' => 'datetime',
+        'password_updated_at' => 'timestamp',
     ];
 
     /**
@@ -61,17 +63,49 @@ class User extends Authenticatable
         return $this->belongsTo(__CLASS__, 'created_by');
     }
 
-    public function organisations(): BelongsToMany
+    public function organisation(): BelongsTo
     {
-        return $this->belongsToMany(Organisation::class, 'organisation_role')
-            ->using(OrganisationRole::class)
-            ->withPivot('role_name');
+        return $this->belongsTo(Organisation::class);
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class)
+            ->withPivot('subsidy_id');
+    }
+
+    public function attachRole(string $role, string $subsidyId = null): void
+    {
+        if (
+            $this->roles()
+            ->where('name', $role)
+            ->wherePivot('subsidy_id', $subsidyId)
+            ->exists()
+        ) {
+            return;
+        }
+
+        $this->roles()->attach($role, ['subsidy_id' => $subsidyId]);
+    }
+
+    public function detachRole(string $role, string $subsidyId = null): void
+    {
+        $this->roles()
+            ->where('name', $role)
+            ->wherePivot('subsidy_id', $subsidyId)
+            ->detach();
     }
 
     public function isAdministrator(): bool
     {
-        return $this->organisations()
-            ->wherePivot('role_name', 'admin')
+        return $this->hasRole('admin');
+    }
+
+    public function hasRole(string $roleName, ?string $subsidyId = null): bool
+    {
+        return $this->roles()
+            ->where('role_name', $roleName)
+            ->wherePivot('subsidy_id', $subsidyId)
             ->exists();
     }
 

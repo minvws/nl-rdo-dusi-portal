@@ -10,7 +10,7 @@
             <h1>@lang("Edit user") {{ $user->email }}</h1>
 
             <div class="actions">
-                <a class="button" href="{{ route('users.organisations.index', $user->id) }}">@lang("Manage organisations")</a>
+                <a class="button" href="{{ route('users.roles.index', $user->id) }}">@lang("Manage roles")</a>
             </div>
 
             @if ($errors->any())
