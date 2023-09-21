@@ -455,4 +455,20 @@ class ApplicationFlowServiceTest extends TestCase
                 ->totalDays
         );
     }
+
+    public function testStaticFinalReviewDeadline(): void
+    {
+        $this->subsidyVersion->review_deadline = $this->now->addDays(14)->endOfDay()->floorSecond();
+        $this->subsidyVersion->review_period = null;
+        $this->subsidyVersion->save();
+
+        $this->application->refresh();
+        $this->applicationStage1->refresh();
+
+        $this->flowService->submitApplicationStage($this->applicationStage1);
+
+        $this->application->refresh();
+
+        $this->assertEquals($this->subsidyVersion->review_deadline, $this->application->final_review_deadline);
+    }
 }

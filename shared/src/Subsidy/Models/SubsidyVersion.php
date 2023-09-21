@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
+use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,7 +32,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $contact_mail_address
  * @property string $mail_to_name_field_identifier
  * @property string $mail_to_address_field_identifier
- * @property int $review_period
+ * @property int|null $review_period
+ * @param DateTimeInterface|null $review_deadline
  * @property-read Subsidy $subsidy
  * @property-read Collection<int, SubsidyStage> $subsidyStages
  * @property-read Collection<int, SubsidyStageTransitionMessage> $subsidyLetters
@@ -63,7 +65,8 @@ class SubsidyVersion extends Model
 
     protected $casts = [
         'id' => 'string',
-        'status' => VersionStatus::class
+        'status' => VersionStatus::class,
+        'review_deadline' => 'datetime'
     ];
 
     public function subsidy(): BelongsTo
