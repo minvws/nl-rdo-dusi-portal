@@ -3,9 +3,12 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 
 return new class extends Migration
 {
+    protected $connection = Connection::APPLICATION;
+
     /**
      * Run the migrations.
      */
