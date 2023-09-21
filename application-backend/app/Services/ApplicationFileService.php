@@ -18,7 +18,6 @@ use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
@@ -44,16 +43,14 @@ readonly class ApplicationFileService
     use LoadApplication;
 
     public function __construct(
-        private ApplicationEncryptionService     $encryptionService,
-        private ResponseEncryptionService        $responseEncryptionService,
-        private IdentityService                  $identityService,
-        private ApplicationRepository            $applicationRepository,
+        private ResponseEncryptionService $responseEncryptionService,
+        private IdentityService $identityService,
+        private ApplicationRepository $applicationRepository,
         private ApplicationFileRepositoryService $applicationFileRepository,
-        private SubsidyRepository                $subsidyRepository,
-        private LoggerInterface                  $logger,
-        private FileValidator                    $fileValidator,
-    )
-    {
+        private SubsidyRepository $subsidyRepository,
+        private LoggerInterface $logger,
+        private FileValidator $fileValidator,
+    ) {
     }
 
     private function loadApplicationStage(Application $application): ApplicationStage
