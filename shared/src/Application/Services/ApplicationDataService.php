@@ -100,6 +100,7 @@ readonly class ApplicationDataService
         // New encryption key for each save, so we do not reuse the same key
         [$encryptedKey, $encrypter] = $this->encryptionService->generateEncryptionKey();
         $applicationStage->encrypted_key = $encryptedKey;
+        $applicationStage->save();
 
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
@@ -146,7 +147,7 @@ readonly class ApplicationDataService
 
         $data = new stdClass();
         foreach ($answers as $answer) {
-            $value = $encrypter->decrypt($answer->encrypted_answer);
+            $value = $answer->encrypted_answer !== null ? $encrypter->decrypt($answer->encrypted_answer) : null;
             if ($value === null) {
                 continue;
             }
