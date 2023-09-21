@@ -58,6 +58,18 @@
                             <x-input-error for="email" id="email_error"/>
                         </div>
                     </div>
+                    <div>
+                        <label for="organisation_id">@lang("Organisation")</label>
+                        <div>
+                            <select id="organisation_id" name="organisation_id" aria-describedby="organisation_error">
+                                <option value="">@lang("Select an organisation")</option>
+                                @foreach ($organisations as $organisationId => $organisationName)
+                                    <option value="{{ $organisationId }}" {{ old('organisation_id', $user->organisation_id) === $organisationId ? 'selected' : '' }}>{{ $organisationName }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error for="organisation_id" id="organisation_error" />
+                        </div>
+                    </div>
                 </fieldset>
 
                 <button type="submit">@lang("Update account data")</button>

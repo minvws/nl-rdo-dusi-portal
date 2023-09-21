@@ -33,6 +33,7 @@ class UserCreateRequest extends FormRequest
                 'max:255',
                 'unique:users,email',
             ],
+            'organisation_id' => ['required', 'string', 'exists:organisations,id'],
         ];
     }
 }
