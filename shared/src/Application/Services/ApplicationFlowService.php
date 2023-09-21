@@ -128,6 +128,14 @@ class ApplicationFlowService
             return false;
         }
 
+        if (isset($application->subsidyVersion->review_deadline)) {
+            $application->final_review_deadline = $application->subsidyVersion->review_deadline;
+            return true;
+        }
+
+        // either review deadline or review period is set
+        assert($application->subsidyVersion->review_period !== null);
+
         // Calculate final review deadline:
         // 1. Take the first submit date from the applicant.
         // 2. Add the review period.
