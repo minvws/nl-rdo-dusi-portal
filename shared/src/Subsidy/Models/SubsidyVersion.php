@@ -66,7 +66,7 @@ class SubsidyVersion extends Model
     protected $casts = [
         'id' => 'string',
         'status' => VersionStatus::class,
-        'review_deadline' => 'date'
+        'review_deadline' => 'datetime'
     ];
 
     public function subsidy(): BelongsTo
