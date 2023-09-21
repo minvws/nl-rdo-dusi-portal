@@ -118,7 +118,7 @@ readonly class ApplicationDataService
      */
     public function getApplicationStageData(ApplicationStage $applicationStage): object
     {
-        return $this->mapAnswersToData($applicationStage, $applicationStage->answers->all());
+        return $this->mapAnswersToData($applicationStage, $applicationStage->answers->all())->data;
     }
 
     /**
