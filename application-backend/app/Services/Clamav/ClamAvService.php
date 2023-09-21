@@ -12,12 +12,12 @@ use Xenolope\Quahog\Client;
 class ClamAvService
 {
     public function __construct(
+        protected bool $enabled = false,
         protected string $preferredSocket = 'unix_socket',
         protected string $unixSocket = 'unix:///var/run/clamav/clamd.ctl',
         protected string $tcpSocket = 'tcp://127.0.0.1:3310',
         protected ?int $socketConnectTimeout = null,
         protected int $socketReadTimeout = 30,
-        protected bool $skipValidation = false,
     ) {
     }
 
@@ -45,8 +45,8 @@ class ClamAvService
         return new Client($socket, $this->socketReadTimeout, PHP_NORMAL_READ);
     }
 
-    public function skipValidation(): bool
+    public function enabled(): bool
     {
-        return $this->skipValidation;
+        return $this->enabled;
     }
 }

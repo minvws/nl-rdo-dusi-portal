@@ -31,7 +31,7 @@ readonly class ClamAv implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if ($this->clamAvService->skipValidation()) {
+        if (!$this->clamAvService->enabled()) {
             $this->logger?->debug('Skipping ClamAV scan because skipValidation is set to true');
             return;
         }

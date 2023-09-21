@@ -18,11 +18,11 @@ class ClamAvRuleTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testSkipValidation(): void
+    public function testEnabled(): void
     {
         $clamAvService = Mockery::mock(ClamAvService::class);
-        $clamAvService->expects('skipValidation')
-            ->andReturn(true);
+        $clamAvService->expects('enabled')
+            ->andReturn(false);
 
         $logger = Mockery::mock(LoggerInterface::class);
         $logger->expects('debug')
@@ -39,8 +39,8 @@ class ClamAvRuleTest extends TestCase
         $logger = Mockery::mock(LoggerInterface::class);
 
         $clamAvService = Mockery::mock(ClamAvService::class);
-        $clamAvService->expects('skipValidation')
-            ->andReturn(false);
+        $clamAvService->expects('enabled')
+            ->andReturn(true);
 
         $rule = new ClamAv($clamAvService, $logger);
         $rule->validate('test', null, function ($message) {
@@ -67,8 +67,8 @@ class ClamAvRuleTest extends TestCase
             ->andReturn($resultMock);
 
         $clamAvService = Mockery::mock(ClamAvService::class);
-        $clamAvService->expects('skipValidation')
-            ->andReturn(false);
+        $clamAvService->expects('enabled')
+            ->andReturn(true);
         $clamAvService->expects('getClamAvClient')
             ->andReturn($clientMock);
 
@@ -112,8 +112,8 @@ class ClamAvRuleTest extends TestCase
             ->andReturn($resultMock);
 
         $clamAvService = Mockery::mock(ClamAvService::class);
-        $clamAvService->expects('skipValidation')
-            ->andReturn(false);
+        $clamAvService->expects('enabled')
+            ->andReturn(true);
         $clamAvService->expects('getClamAvClient')
             ->andReturn($clientMock);
 

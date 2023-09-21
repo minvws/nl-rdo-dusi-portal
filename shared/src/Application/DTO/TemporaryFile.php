@@ -39,6 +39,15 @@ class TemporaryFile
         return $this->path;
     }
 
+    public function makeGroupReadable(): void
+    {
+        if (!is_resource($this->fileResource)) {
+            throw new \RuntimeException('File resource is not available');
+        }
+
+        chmod($this->path, 0444);
+    }
+
     public function getUploadedFile(): UploadedFile
     {
         return new UploadedFile(

@@ -61,6 +61,9 @@ class AppServiceProvider extends ServiceProvider
     private function registerClamAv(): void
     {
         $this->app->when(ClamAvService::class)
+            ->needs('$enabled')
+            ->giveConfig('clamav.enabled');
+        $this->app->when(ClamAvService::class)
             ->needs('$preferredSocket')
             ->giveConfig('clamav.preferred_socket');
         $this->app->when(ClamAvService::class)
@@ -75,8 +78,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->when(ClamAvService::class)
             ->needs('$socketReadTimeout')
             ->giveConfig('clamav.socket_read_timeout');
-        $this->app->when(ClamAvService::class)
-            ->needs('$skipValidation')
-            ->giveConfig('clamav.skip_validation');
     }
 }

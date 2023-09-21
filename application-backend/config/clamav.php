@@ -3,6 +3,17 @@
 declare(strict_types=1);
 
 return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enabled
+    |--------------------------------------------------------------------------
+    | This enables / disables clam av file virus scanning.
+    |
+    | Please note when false it won't connect to ClamAV and will skip the virus validation.
+    */
+    'enabled' => env('CLAMAV_ENABLED', true),
+
     /*
     |--------------------------------------------------------------------------
     | Preferred socket
@@ -45,14 +56,4 @@ return [
     | This option defines the maximum time to wait in seconds for a read.
     */
     'socket_read_timeout' => env('CLAMAV_SOCKET_READ_TIMEOUT', 30),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Skip validation
-    |--------------------------------------------------------------------------
-    | This skips the virus validation for current environment.
-    |
-    | Please note when true it won't connect to ClamAV and will skip the virus validation.
-    */
-    'skip_validation' => env('CLAMAV_SKIP_VALIDATION', false),
 ];
