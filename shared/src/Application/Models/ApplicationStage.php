@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Models;
 
 use DateTime;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationStageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -58,6 +59,11 @@ class ApplicationStage extends Model
     public function answers(): HasMany
     {
         return $this->hasMany(Answer::class, 'application_stage_id', 'id');
+    }
+
+    public function scopeOrdered(Builder $query): Builder
+    {
+        return $query->orderBy('sequence_number');
     }
 
     protected static function newFactory(): ApplicationStageFactory

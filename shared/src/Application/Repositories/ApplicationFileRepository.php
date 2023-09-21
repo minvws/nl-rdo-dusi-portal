@@ -49,13 +49,49 @@ class ApplicationFileRepository
         return $this->filesystem->exists($this->getFilePath($applicationStage, $field, $id));
     }
 
+    protected function getStagePath(ApplicationStage $applicationStage): string
+    {
+        return $applicationStage->id;
+    }
+
     protected function getFieldPath(ApplicationStage $applicationStage, Field $field): string
     {
-        return sprintf('%s/%s', $applicationStage->id, $field->code);
+        return sprintf('%s/%s', $this->getStagePath($applicationStage), $field->code);
     }
 
     protected function getFilePath(ApplicationStage $applicationStage, Field $field, string $id): string
     {
         return sprintf('%s/%s', $this->getFieldPath($applicationStage, $field), $id);
+    }
+
+    protected function targetPath(
+        string $sourcePath,
+        ApplicationStage $sourceStage,
+        ApplicationStage $targetStage
+    ): string {
+        return $targetStage->id . substr($sourcePath, strlen($sourceStage->id));
+    }
+
+    public function cloneFiles(ApplicationStage $sourceStage, ApplicationStage $targetStage): bool
+    {
+        $sourcePath = $this->getStagePath($sourceStage);
+        if (!$this->filesystem->exists($sourcePath)) {
+            return true; // nothing to clone
+        }
+
+        foreach ($this->filesystem->directories($sourcePath, true) as $path) {
+            if (!$this->filesystem->makeDirectory($path)) {
+                return false;
+            }
+        }
+
+        foreach ($this->filesystem->files($sourcePath, true) as $sourcePath) {
+            $targetPath = $this->targetPath($sourcePath, $sourceStage, $targetStage);
+            if (!$this->filesystem->copy($sourcePath, $targetPath)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

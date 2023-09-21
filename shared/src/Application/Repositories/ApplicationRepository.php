@@ -197,6 +197,43 @@ class ApplicationRepository
         return $query->first();
     }
 
+    /**
+     * @return array<ApplicationStage>
+     */
+    public function getOrderedApplicationStagesForSubsidyStage(
+        Application $application,
+        SubsidyStage $subsidyStage
+    ): array {
+        return
+            $application
+                ->applicationStages()
+                ->where('subsidy_stage_id', '=', $subsidyStage->id)
+                ->orderBy('sequence_number')
+                ->get()
+                ->all();
+    }
+
+    public function getLatestApplicationStageForSubsidyStage(
+        Application $application,
+        SubsidyStage $subsidyStage
+    ): ?ApplicationStage {
+        return
+            $application
+                ->applicationStages()
+                ->where('subsidy_stage_id', '=', $subsidyStage->id)
+                ->orderBy('sequence_number', 'desc')
+                ->first();
+    }
+
+    public function cloneApplicationStageAnswers(ApplicationStage $source, ApplicationStage $target): void
+    {
+        foreach ($source->answers as $answer) {
+            $newAnswer = $answer->replicate(['application_stage_id']);
+            $newAnswer->applicationStage()->associate($target);
+            $newAnswer->save();
+        }
+    }
+
     public function findMyApplicationForSubsidy(Identity $identity, Subsidy $subsidy): ?Application
     {
         return

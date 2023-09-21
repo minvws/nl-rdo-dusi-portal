@@ -28,7 +28,7 @@ class SubsidyStageTransitionMessageFactory extends Factory
             'id' => Uuid::uuid4(),
             'subsidy_stage_transition_id' => SubsidyStageTransition::factory(),
             'version' => $this->faker->randomDigitNotZero(),
-            'status' => VersionStatus::Draft,
+            'status' => VersionStatus::Published,
             'subject' => $this->faker->words(3, true),
             'content_pdf' => '<p>Beste, {{ firstName }} {{ lastName }}</p>',
             'content_html' => '<p>Beste, {{ firstName }} {{ lastName }}</p>',

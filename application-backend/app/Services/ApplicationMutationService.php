@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
@@ -20,6 +19,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -48,6 +48,7 @@ readonly class ApplicationMutationService
     public function __construct(
         private ApplicationDataService $applicationDataService,
         private ApplicationEncryptionService $applicationEncryptionService,
+        private ApplicationFlowService $applicationFlowService,
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
@@ -181,19 +182,14 @@ readonly class ApplicationMutationService
         $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data);
 
         if ($body->submit) {
-            $application->status = ApplicationStatus::Submitted;
-            $application->final_review_deadline =
-                Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);
-            $this->applicationRepository->saveApplication($application);
-
-            $applicationStage->is_current = false;
-
-            // TODO: insert next application stage
-            // $this->appRepo->makeApplicationStage($applicationStage->application, $nextSubsidyStage);
+            $this->applicationFlowService->submitApplicationStage($applicationStage);
         }
 
-        $this->applicationRepository->saveApplicationStage($applicationStage);
-        return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
+        return $this->applicationResponse(
+            EncryptedResponseStatus::OK,
+            $applicationStage->application,
+            $params->publicKey
+        );
     }
 
     public function saveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse

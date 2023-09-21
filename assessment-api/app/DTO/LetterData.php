@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\DTO;
 
-use DateTime;
+use DateTimeInterface;
 
 readonly class LetterData
 {
@@ -16,7 +16,7 @@ readonly class LetterData
         public string $subsidyTitle,
         public string $decision,
         public ApplicationStages $stages,
-        public DateTime $createdAt,
+        public DateTimeInterface $createdAt,
         public string $contactEmailAddress,
         public string $reference,
         public ?string $motivation,

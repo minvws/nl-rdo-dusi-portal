@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Models;
 
 use DateTime;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,8 +26,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property string $identity_id
  * @property Identity $identity
  * @property DateTime $locked_from
- * @property DateTime $final_review_deadline
- * @property DateTime $created_at
+ * @property DateTimeInterface|null $final_review_deadline
+ * @property DateTimeInterface $created_at
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read HasMany<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage $currentApplicationStage
