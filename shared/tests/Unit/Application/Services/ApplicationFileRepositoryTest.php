@@ -67,7 +67,10 @@ class ApplicationFileRepositoryTest extends TestCase
             ->with("1/2/3.keyinfo", '{}')
             ->andReturn(true);
 
-        $repository = new ApplicationFileRepositoryService($this->applicationFileEncryptionService, new ApplicationFileRepository($fileSystem));
+        $repository = new ApplicationFileRepositoryService(
+            $this->applicationFileEncryptionService,
+            new ApplicationFileRepository($fileSystem)
+        );
         $result = $repository->writeFile($applicationStage, $field, $id, 'contents');
 
         $this->assertTrue($result);
@@ -91,7 +94,10 @@ class ApplicationFileRepositoryTest extends TestCase
             ->with("2/3/4.keyinfo")
             ->andReturn(true);
 
-        $repository = new ApplicationFileRepositoryService($this->applicationFileEncryptionService, new ApplicationFileRepository($fileSystem));
+        $repository = new ApplicationFileRepositoryService(
+            $this->applicationFileEncryptionService,
+            new ApplicationFileRepository($fileSystem)
+        );
         $result = $repository->fileExists($applicationStage, $field, $id);
 
         $this->assertTrue($result);

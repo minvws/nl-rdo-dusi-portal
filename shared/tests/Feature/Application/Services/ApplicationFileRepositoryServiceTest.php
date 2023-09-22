@@ -48,7 +48,10 @@ class ApplicationFileRepositoryServiceTest extends TestCase
     public function testUnlinkUnusedFiles(): void
     {
         $fileSystem = Storage::fake('files');
-        $repository = new ApplicationFileRepositoryService($this->applicationFileEncryptionService, new ApplicationFileRepository($fileSystem));
+        $repository = new ApplicationFileRepositoryService(
+            $this->applicationFileEncryptionService,
+            new ApplicationFileRepository($fileSystem)
+        );
 
         $applicationStage = new ApplicationStage();
         $applicationStage->id = $this->faker->uuid();
