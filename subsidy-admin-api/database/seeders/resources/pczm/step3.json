@@ -94,7 +94,8 @@
                             "scope": "#/properties/employmentFunction",
                             "label": "Functie",
                             "options": {
-                                "format": "select"
+                                "format": "select",
+                                "placeholder": "-- selecteer een functie --"
                             }
                         }
                     ]
