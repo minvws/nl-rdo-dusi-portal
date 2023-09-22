@@ -110,6 +110,9 @@ class SubsidyStageDataSchemaBuilder
             'type' => $type,
             'title' => $field->title,
         ];
+        if (isset($field->params['default'])) {
+            $result['default'] = $field->params['default'];
+        }
 
         if (!empty($field->description)) {
             $result['description'] = $field->description;
