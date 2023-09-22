@@ -183,7 +183,7 @@ class FieldsTableSeeder extends Seeder
             "Andere organisatie",
         ]);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerDeclarationFile', title: 'Zorgaanbiedersverklaring', mimeTypes: [
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerDeclarationFile', title: 'Verklaring zorgaanbieder', mimeTypes: [
             'image/*',
             'application/pdf'
         ], maxFileSize: 20971520,
@@ -196,7 +196,7 @@ class FieldsTableSeeder extends Seeder
 
         $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'BIGNumberJudicialInstitution', title: 'BIG-nummer', maxLength: 11, isRequired: false,);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Sociaal-medische beoordeling', mimeTypes: [
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Medisch onderzoeksverslag', mimeTypes: [
             'image/*',
             'application/pdf'
         ], maxFileSize: 20971520);
