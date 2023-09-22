@@ -31,7 +31,7 @@ readonly class FileValidator
 
         $maxFileSize = $field->params['maxFileSize'] ?? null;
         if ($maxFileSize !== null) {
-            $rules[] = 'size:' . $maxFileSize;
+            $rules[] = 'max:' . $maxFileSize;
         }
 
         $mimeTypes = $field->params['mimeTypes'] ?? [];

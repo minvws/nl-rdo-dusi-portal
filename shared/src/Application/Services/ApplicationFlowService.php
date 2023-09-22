@@ -6,14 +6,13 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
@@ -25,9 +24,9 @@ class ApplicationFlowService
 {
     public function __construct(
         private readonly ApplicationDataService $applicationDataService,
-        private readonly ApplicationEncryptionService $encryptionService,
+        private readonly ApplicationStageEncryptionService $encryptionService,
         private readonly ApplicationRepository $applicationRepository,
-        private readonly ApplicationFileRepository $applicationFileRepository
+        private readonly ApplicationFileManager $applicationFileManager
     ) {
     }
 
@@ -221,7 +220,7 @@ class ApplicationFlowService
 
         if (isset($previousInstanceOfTargetStage)) {
             $this->applicationRepository->cloneApplicationStageAnswers($previousInstanceOfTargetStage, $stage);
-            $this->applicationFileRepository->cloneFiles($previousInstanceOfTargetStage, $stage);
+            $this->applicationFileManager->copyFiles($previousInstanceOfTargetStage, $stage);
         }
 
         return $stage;

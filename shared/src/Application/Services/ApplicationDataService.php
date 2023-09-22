@@ -17,10 +17,10 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Application\Models\Submission\File;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use stdClass;
 use Throwable;
@@ -32,37 +32,12 @@ readonly class ApplicationDataService
 {
     public function __construct(
         private FormDecodingService $decodingService,
-        private ApplicationEncryptionService $encryptionService,
+        private ApplicationStageEncryptionService $encryptionService,
         private ApplicationRepository $applicationRepository,
-        private ApplicationFileRepository $applicationFileRepository,
+        private ApplicationFileManager $applicationFileManager,
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
     ) {
-    }
-
-    private function cleanUpUnusedFiles(ApplicationStage $applicationStage, FieldValue $value): void
-    {
-        if ($value->field->type !== FieldType::Upload) {
-            return;
-        }
-
-        $usedIds = [];
-        if ($value->value instanceof FileList) {
-            $usedIds = array_map(fn (File $file) => $file->id, $value->value->items);
-        }
-
-        // TODO:
-        // At this time the values should have been validated and that also means that the file really
-        // needs to exist for a certain ID. But as the validation isn't finished yet, we validate here
-        // for now.
-        foreach ($usedIds as $id) {
-            if (!$this->applicationFileRepository->fileExists($applicationStage, $value->field, $id)) {
-                throw new Exception('File not found!');
-            }
-        }
-
-        // TODO: what if the transaction fails and we already deleted the files? maybe only do after submit?!
-        $this->applicationFileRepository->unlinkUnusedFiles($applicationStage, $value->field, $usedIds);
     }
 
     private function saveFieldValue(
@@ -70,7 +45,7 @@ readonly class ApplicationDataService
         ApplicationStage $applicationStage,
         FieldValue $fieldValue
     ): void {
-        $this->cleanUpUnusedFiles($applicationStage, $fieldValue);
+        $this->applicationFileManager->cleanUpUnusedFiles($applicationStage, $fieldValue);
         if ($fieldValue->value === null) {
             // Do not create an answer if the value is null
             // We should not encrypt null values

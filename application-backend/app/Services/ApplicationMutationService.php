@@ -17,8 +17,8 @@ use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
@@ -47,7 +47,7 @@ readonly class ApplicationMutationService
 
     public function __construct(
         private ApplicationDataService $applicationDataService,
-        private ApplicationEncryptionService $applicationEncryptionService,
+        private ApplicationStageEncryptionService $applicationEncryptionService,
         private ApplicationFlowService $applicationFlowService,
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,

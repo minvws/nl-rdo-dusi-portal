@@ -36,4 +36,9 @@ class FileList implements Codable
 
         return new self($container->decodeArray(File::class));
     }
+
+    public function getFileIds(): array
+    {
+        return array_map(fn(File $file) => $file->id, $this->items);
+    }
 }
