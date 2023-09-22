@@ -8,7 +8,6 @@ use MinVWS\DUSi\Application\API\Http\Resources\MessageFiltersResource;
 use MinVWS\DUSi\Shared\Bridge\Client\Client;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
@@ -22,9 +21,9 @@ class MessageService
     ) {
     }
 
-    public function listMessages(MessageListParams $params): MessageList
+    public function listMessages(MessageListParams $params): EncryptedResponse
     {
-        return $this->bridgeClient->call(RPCMethods::LIST_MESSAGES, $params, MessageList::class);
+        return $this->bridgeClient->call(RPCMethods::LIST_MESSAGES, $params, EncryptedResponse::class);
     }
 
     public function getFilters(): MessageFiltersResource

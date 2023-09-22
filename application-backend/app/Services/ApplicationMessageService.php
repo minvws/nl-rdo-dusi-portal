@@ -42,11 +42,15 @@ readonly class ApplicationMessageService
     ) {
     }
 
-    public function listMessages(MessageListParams $params): MessageList
+    public function listMessages(MessageListParams $params): EncryptedResponse
     {
         $identity = $this->identityService->findIdentity($params->identity);
         if ($identity === null) {
-            return new MessageList([]);
+            return $this->responseEncryptionService->encryptCodable(
+                EncryptedResponseStatus::OK,
+                new MessageList([]),
+                $params->publicKey
+            );
         }
 
         $applicationMessages = $this->messageRepository->getMyMessages($identity);
@@ -58,7 +62,11 @@ readonly class ApplicationMessageService
             $message->is_new,
         ), $applicationMessages);
 
-        return new MessageList($messageListMessages);
+        return $this->responseEncryptionService->encryptCodable(
+            EncryptedResponseStatus::OK,
+            new MessageList($messageListMessages),
+            $params->publicKey
+        );
     }
 
     public function getMessage(MessageParams $params): EncryptedResponse

@@ -27,7 +27,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message as MessageDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 
@@ -83,17 +82,25 @@ class ApplicationMessageServiceTest extends TestCase
     public function testListMessages(): void
     {
         ApplicationMessage::factory()->count(10)->forIdentity($this->identity)->create();
-        $response = $this->getMessageListResponse($this->encryptedIdentity);
+        $encryptedResponse = $this->getMessageListResponse($this->encryptedIdentity);
 
-        $this->assertCount(10, $response->items);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+
+        $messageList = $this->getDecryptedCodableResponse($encryptedResponse, MessageDTO::class);
+        $this->assertCount(10, $messageList->items);
     }
 
     public function testListMessagesWithInvalidIdentity(): void
     {
         ApplicationMessage::factory()->count(10)->forIdentity($this->identity)->create();
-        $response = $this->getMessageListResponse($this->invalidEncryptedIdentity);
+        $encryptedResponse = $this->getMessageListResponse($this->invalidEncryptedIdentity);
 
-        $this->assertCount(0, $response->items);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+
+        $messageList = $this->getDecryptedCodableResponse($encryptedResponse, MessageDTO::class);
+        $this->assertCount(0, $messageList->items);
     }
 
     public function testGetMessage(): void
@@ -248,9 +255,9 @@ class ApplicationMessageServiceTest extends TestCase
         return $this->getMessageDownloadResponse($encryptedIdentity, $messageId, MessageDownloadFormat::PDF);
     }
 
-    private function getMessageListResponse(EncryptedIdentity $encryptedIdentity): MessageList
+    private function getMessageListResponse(EncryptedIdentity $encryptedIdentity): EncryptedResponse
     {
-        $params = new MessageListParams($encryptedIdentity, null, null, [], []);
+        $params = new MessageListParams($encryptedIdentity, $this->clientPublicKey, null, null, [], []);
 
         return $this->applicationMessageService->listMessages($params);
     }
