@@ -177,7 +177,7 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/hasBeenWorkingAtJudicialInstitution",
-                            "label": "Heeft u gewerkt in justitiële inrichting",
+                            "label": "Heeft u gewerkt in een justitiële inrichting?",
                             "options": {
                                "format": "radio"
                             }
