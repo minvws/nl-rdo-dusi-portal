@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
@@ -117,13 +118,13 @@ readonly class ApplicationDataService
      */
     public function getApplicationStageData(ApplicationStage $applicationStage): object
     {
-        return $this->mapAnswersToData($applicationStage, $applicationStage->answers->all());
+        return $this->mapAnswersToData($applicationStage, $applicationStage->answers->all())->data;
     }
 
     /**
      * @param ApplicationStage $applicationStage
      *
-     * @return array<int, object>
+     * @return array<int, ApplicationStageData>
      */
     public function getApplicationStageDataUpToIncluding(ApplicationStage $applicationStage): array
     {
@@ -141,7 +142,7 @@ readonly class ApplicationDataService
     /**
      * @param array<Answer> $answers
      */
-    private function mapAnswersToData(ApplicationStage $stage, array $answers): object
+    private function mapAnswersToData(ApplicationStage $stage, array $answers): ApplicationStageData
     {
         $encrypter = $this->encryptionService->getEncrypter($stage);
 
@@ -160,6 +161,6 @@ readonly class ApplicationDataService
             $data->{$answer->field->code} = $value;
         }
 
-        return $data;
+        return new ApplicationStageData($stage, $data);
     }
 }
