@@ -12,6 +12,7 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
@@ -66,11 +67,12 @@ readonly class ApplicationDataService
 
     /**
      * @throws Throwable
+     * @throws ValidationException
      */
     public function saveApplicationStageData(
         ApplicationStage $applicationStage,
         object $data
-    ): bool {
+    ): void {
         // Remove all answers for this stage because we received new data
         $this->applicationRepository->deleteAnswersByStage($applicationStage);
 
@@ -82,25 +84,13 @@ readonly class ApplicationDataService
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
 
+        // Validate, throws a ValidationException on error
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues);
-        $validatorFails = $validator->fails();
-        if ($validatorFails) {
-            // Get the values that failed validation and process them
-            /** @var array<string, FieldValue> $errorValues */
-            $errorValues = Arr::only($fieldValues, $validator->errors()->keys());
-
-            // TODO: We do not need to process invalid fields at this time ?
-//            $this->processInvalidFieldValues($applicationStage, $errorValues);
-
-            // Removed errored fields from values
-            $fieldValues = array_diff_key($fieldValues, $errorValues);
-        }
+        $validator->validate();
 
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);
         }
-
-        return $validatorFails;
     }
 
     /**
