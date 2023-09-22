@@ -11,11 +11,28 @@
     }
 }, {
     "if": {
-        "properties": {
-            "employerKind": {
-                "const": "Andere organisatie"
+        "anyOf": [
+            {
+                "required": [
+                    "employmentFunction"
+                ],
+                "properties": {
+                    "employmentFunction": {
+                        "const": "Anders"
+                    }
+                }
+            },
+            {
+                "required": [
+                    "employerKind"
+                ],
+                "properties": {
+                    "employerKind": {
+                        "const": "Andere organisatie"
+                    }
+                }
             }
-        }
+        ]
     },
     "then": {
         "required": ["otherEmployerDeclarationFile"]
