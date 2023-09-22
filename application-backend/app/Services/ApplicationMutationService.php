@@ -178,7 +178,9 @@ readonly class ApplicationMutationService
                 'Application is read-only'
             );
         }
-
+        // TODO: Call validator in shared package
+        // Throw exception if validation fails
+        // Catch exception here and return error response
         $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data);
 
         if ($body->submit) {
