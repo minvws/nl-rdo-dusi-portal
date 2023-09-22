@@ -26,7 +26,7 @@ class ApplicationFlowService
         private readonly ApplicationDataService $applicationDataService,
         private readonly ApplicationStageEncryptionService $encryptionService,
         private readonly ApplicationRepository $applicationRepository,
-        private readonly ApplicationFileRepositoryService $applicationFileRepository
+        private readonly ApplicationFileManager $applicationFileManager
     ) {
     }
 
@@ -220,7 +220,7 @@ class ApplicationFlowService
 
         if (isset($previousInstanceOfTargetStage)) {
             $this->applicationRepository->cloneApplicationStageAnswers($previousInstanceOfTargetStage, $stage);
-            $this->applicationFileRepository->copyFiles($previousInstanceOfTargetStage, $stage);
+            $this->applicationFileManager->copyFiles($previousInstanceOfTargetStage, $stage);
         }
 
         return $stage;

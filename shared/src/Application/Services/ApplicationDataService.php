@@ -34,7 +34,7 @@ readonly class ApplicationDataService
         private FormDecodingService $decodingService,
         private ApplicationStageEncryptionService $encryptionService,
         private ApplicationRepository $applicationRepository,
-        private ApplicationFileRepositoryService $applicationFileRepository,
+        private ApplicationFileManager $applicationFileManager,
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
     ) {
@@ -45,7 +45,7 @@ readonly class ApplicationDataService
         ApplicationStage $applicationStage,
         FieldValue $fieldValue
     ): void {
-        $this->applicationFileRepository->cleanUpUnusedFiles($applicationStage, $fieldValue);
+        $this->applicationFileManager->cleanUpUnusedFiles($applicationStage, $fieldValue);
         if ($fieldValue->value === null) {
             // Do not create an answer if the value is null
             // We should not encrypt null values

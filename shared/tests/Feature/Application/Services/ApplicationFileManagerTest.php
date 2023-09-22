@@ -14,7 +14,7 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\File;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationFileEncryptionService;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Tests\TestCase;
@@ -25,7 +25,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
  * @group application
  * @group application-file-repository
  */
-class ApplicationFileRepositoryServiceTest extends TestCase
+class ApplicationFileManagerTest extends TestCase
 {
     use WithFaker;
     use MockeryPHPUnitIntegration;
@@ -48,7 +48,7 @@ class ApplicationFileRepositoryServiceTest extends TestCase
     public function testUnlinkUnusedFiles(): void
     {
         $fileSystem = Storage::fake('files');
-        $repository = new ApplicationFileRepositoryService(
+        $repository = new ApplicationFileManager(
             $this->applicationFileEncryptionService,
             new ApplicationFileRepository($fileSystem)
         );

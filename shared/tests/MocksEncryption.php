@@ -10,7 +10,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationFileEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmService;

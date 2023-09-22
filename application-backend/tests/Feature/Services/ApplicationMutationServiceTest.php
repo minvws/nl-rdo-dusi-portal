@@ -18,7 +18,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -327,7 +327,7 @@ class ApplicationMutationServiceTest extends TestCase
 
         $fileId = Uuid::uuid4()->toString();
 
-        $fileRepository = $this->app->get(ApplicationFileRepositoryService::class);
+        $fileRepository = $this->app->get(ApplicationFileManager::class);
         $fileRepository->writeFile($applicationStage, $this->uploadField, $fileId, random_bytes(100));
 
         $body = new ApplicationSaveBody(

@@ -18,7 +18,7 @@ use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
@@ -69,7 +69,7 @@ class ApplicationFlowServiceTest extends TestCase
 
     private ApplicationStageEncryptionService $encryptionService;
     private ApplicationFlowService $flowService;
-    private ApplicationFileRepositoryService $fileRepository;
+    private ApplicationFileManager $fileRepository;
 
     private CarbonImmutable $now;
 
@@ -82,7 +82,7 @@ class ApplicationFlowServiceTest extends TestCase
 
         $this->encryptionService = $this->app->get(ApplicationStageEncryptionService::class);
         $this->flowService = $this->app->get(ApplicationFlowService::class);
-        $this->fileRepository = $this->app->get(ApplicationFileRepositoryService::class);
+        $this->fileRepository = $this->app->get(ApplicationFileManager::class);
 
         $subsidy = Subsidy::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create([

@@ -16,7 +16,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
@@ -113,7 +113,7 @@ class ApplicationFileServiceTest extends TestCase
         $this->assertNotNull($result);
         $this->assertTrue(Uuid::isValid($result->id));
 
-        $fileRepository = $this->app->get(ApplicationFileRepositoryService::class);
+        $fileRepository = $this->app->get(ApplicationFileManager::class);
         $this->assertTrue($fileRepository->fileExists($this->applicationStage, $this->field, $result->id));
         $this->assertEquals(
             $params->data->data,

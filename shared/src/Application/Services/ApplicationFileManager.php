@@ -21,7 +21,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ApplicationFileRepositoryService
+class ApplicationFileManager
 {
     private const KEYINFO_FILE_EXTENSION = '.keyinfo';
 

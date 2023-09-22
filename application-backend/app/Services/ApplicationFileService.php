@@ -18,7 +18,7 @@ use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
@@ -46,7 +46,7 @@ readonly class ApplicationFileService
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
-        private ApplicationFileRepositoryService $applicationFileRepository,
+        private ApplicationFileManager $applicationFileManager,
         private SubsidyRepository $subsidyRepository,
         private LoggerInterface $logger,
         private FileValidator $fileValidator,
@@ -121,7 +121,7 @@ readonly class ApplicationFileService
 
         $tempFile->close();
 
-        $this->applicationFileRepository->writeFile($applicationStage, $field, $id, $decryptedContent);
+        $this->applicationFileManager->writeFile($applicationStage, $field, $id, $decryptedContent);
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::CREATED,
@@ -155,7 +155,7 @@ readonly class ApplicationFileService
             assert($applicationStage !== null);
 
             $field = $this->loadField($applicationStage, $params->fieldCode);
-            if (!$this->applicationFileRepository->fileExists($applicationStage, $field, $params->id)) {
+            if (!$this->applicationFileManager->fileExists($applicationStage, $field, $params->id)) {
                 throw new EncryptedResponseException(
                     EncryptedResponseStatus::NOT_FOUND,
                     'file_not_found',
@@ -163,7 +163,7 @@ readonly class ApplicationFileService
                 );
             }
 
-            $content = $this->applicationFileRepository->readFile($applicationStage, $field, $params->id);
+            $content = $this->applicationFileManager->readFile($applicationStage, $field, $params->id);
 
             $fileInfo = new finfo(FILEINFO_MIME_TYPE);
             $contentType = $fileInfo->buffer($content) ?: 'application/octet-stream';

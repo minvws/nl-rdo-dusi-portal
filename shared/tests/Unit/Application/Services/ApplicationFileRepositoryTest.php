@@ -9,7 +9,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationFileEncryptionService;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -67,7 +67,7 @@ class ApplicationFileRepositoryTest extends TestCase
             ->with("1/2/3.keyinfo", '{}')
             ->andReturn(true);
 
-        $repository = new ApplicationFileRepositoryService(
+        $repository = new ApplicationFileManager(
             $this->applicationFileEncryptionService,
             new ApplicationFileRepository($fileSystem)
         );
@@ -94,7 +94,7 @@ class ApplicationFileRepositoryTest extends TestCase
             ->with("2/3/4.keyinfo")
             ->andReturn(true);
 
-        $repository = new ApplicationFileRepositoryService(
+        $repository = new ApplicationFileManager(
             $this->applicationFileEncryptionService,
             new ApplicationFileRepository($fileSystem)
         );
