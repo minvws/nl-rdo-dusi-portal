@@ -25,13 +25,10 @@ class RequiredConditionRule implements DataAwareRule, ValidationRule
         return $this;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $data = [$this->stage => (object)$this->data];
-        if (!$this->condition->evaluate($data)) {
+        if ($this->condition->evaluate($data) && empty($value)) {
             $fail('The attribute ' . $attribute . ' is required.');
         }
     }

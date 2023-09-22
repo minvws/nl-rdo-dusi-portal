@@ -51,7 +51,7 @@ class ValidationService
             $rules[] = 'nullable';
         }
 
-        if ($field->required_condition) {
+        if (isset($field->required_condition)) {
             $rules[] = new RequiredConditionRule($stage, $field->required_condition);
         }
 
