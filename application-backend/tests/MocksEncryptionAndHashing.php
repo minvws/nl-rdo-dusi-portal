@@ -10,7 +10,8 @@ use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Repositories\IdentityRepository;
 use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationFileEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmService;
@@ -100,8 +101,16 @@ trait MocksEncryptionAndHashing
             ->andReturnUsing(function ($value) {
                 return $value;
             });
+        $encrypterMock->shouldReceive('encryptString')
+            ->andReturnUsing(function ($value) {
+                return $value;
+            });
+        $encrypterMock->shouldReceive('decryptString')
+            ->andReturnUsing(function ($value) {
+                return $value;
+            });
 
-        $applicationEncryptorMock = Mockery::mock(ApplicationEncryptionService::class);
+        $applicationEncryptorMock = Mockery::mock(ApplicationStageEncryptionService::class);
         $applicationEncryptorMock
             ->shouldReceive('getEncrypter')
             ->andReturn($encrypterMock);
@@ -116,8 +125,25 @@ trait MocksEncryptionAndHashing
                 return $encrypterMock;
             });
 
-        $this->app->instance(ApplicationEncryptionService::class, $applicationEncryptorMock);
+        $this->app->instance(ApplicationStageEncryptionService::class, $applicationEncryptorMock);
 
+
+        $applicationFileEncryptorMock = Mockery::mock(ApplicationFileEncryptionService::class);
+        $applicationFileEncryptorMock
+            ->shouldReceive('getEncrypter')
+            ->andReturn($encrypterMock);
+
+        $applicationFileEncryptorMock
+            ->shouldReceive('generateKeyInfo')
+            ->andReturn(['{}', $encrypterMock]);
+
+        $applicationFileEncryptorMock
+            ->shouldReceive('getEncrypter')
+            ->andReturnUsing(function (string $keyInfo) use ($encrypterMock) {
+                return $encrypterMock;
+            });
+
+        $this->app->instance(ApplicationFileEncryptionService::class, $applicationFileEncryptorMock);
 
         $identityServiceMock = $this->getMockBuilder(IdentityService::class)
             ->setConstructorArgs([$this->app->get(IdentityRepository::class), $hsmDecryptionService, ''])

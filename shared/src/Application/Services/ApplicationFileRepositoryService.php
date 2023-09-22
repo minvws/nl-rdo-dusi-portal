@@ -21,13 +21,13 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-readonly class ApplicationFileRepositoryService
+class ApplicationFileRepositoryService
 {
     private const KEYINFO_FILE_EXTENSION = '.keyinfo';
 
     public function __construct(
-        private ApplicationFileEncryptionService $encryptionService,
-        private ApplicationFileRepository $fileRepository,
+        private readonly ApplicationFileEncryptionService $encryptionService,
+        private readonly ApplicationFileRepository $fileRepository,
     ) {
     }
 
@@ -62,7 +62,7 @@ readonly class ApplicationFileRepositoryService
     /**
      * @throws Exception
      */
-    public function writeFile(ApplicationStage $applicationStage, Field $field, string $fileId, string $content): void
+    public function writeFile(ApplicationStage $applicationStage, Field $field, string $fileId, string $content): bool
     {
         if (empty($content)) {
             throw new Exception('File content cannot be empty!');
@@ -72,8 +72,10 @@ readonly class ApplicationFileRepositoryService
 
         [$keyInfo, $encrypter] = $this->encryptionService->generateKeyInfo();
 
-        $this->fileRepository->writeFile($file, $encrypter->encryptString($content));
-        $this->fileRepository->writeFile($file . self::KEYINFO_FILE_EXTENSION, $keyInfo);
+        $fileWritten = $this->fileRepository->writeFile($file, $encrypter->encryptString($content));
+        $fileKeyInfoWritten = $this->fileRepository->writeFile($file . self::KEYINFO_FILE_EXTENSION, $keyInfo);
+
+        return $fileWritten && $fileKeyInfoWritten;
     }
 
     public function deleteFile(ApplicationStage $applicationStage, Field $field, string $fileId): void

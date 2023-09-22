@@ -12,11 +12,11 @@ use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 
-readonly class ApplicationStageEncryptionService extends AesEncryptionService
+class ApplicationStageEncryptionService extends AesEncryptionService
 {
     public function __construct(
-        HsmEncryptionService $hsmEncryptionService,
-        private HsmDecryptionService $hsmDecryptionService
+        readonly HsmEncryptionService $hsmEncryptionService,
+        private readonly HsmDecryptionService $hsmDecryptionService
     ) {
         parent::__construct($hsmEncryptionService);
     }

@@ -8,6 +8,9 @@ use Illuminate\Encryption\Encrypter;
 use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationFileEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileRepositoryService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmService;
@@ -75,8 +78,16 @@ trait MocksEncryption
             ->andReturnUsing(function ($value) {
                 return $value;
             });
+        $encrypterMock->shouldReceive('encryptString')
+            ->andReturnUsing(function ($value) {
+                return $value;
+            });
+        $encrypterMock->shouldReceive('decryptString')
+            ->andReturnUsing(function ($value) {
+                return $value;
+            });
 
-        $applicationEncryptorMock = Mockery::mock(ApplicationEncryptionService::class);
+        $applicationEncryptorMock = Mockery::mock(ApplicationStageEncryptionService::class);
         $applicationEncryptorMock
             ->shouldReceive('getEncrypter')
             ->andReturn($encrypterMock);
@@ -91,6 +102,17 @@ trait MocksEncryption
                 return $encrypterMock;
             });
 
-        $this->app->instance(ApplicationEncryptionService::class, $applicationEncryptorMock);
+        $this->app->instance(ApplicationStageEncryptionService::class, $applicationEncryptorMock);
+
+        $applicationFileEncryptionService = Mockery::mock(ApplicationFileEncryptionService::class);
+        $applicationFileEncryptionService
+            ->shouldReceive('getEncrypter')
+            ->andReturn($encrypterMock);
+
+        $applicationFileEncryptionService
+            ->shouldReceive('generateKeyInfo')
+            ->andReturn([json_encode(new HsmEncryptedData('', '')), $encrypterMock]);
+
+        $this->app->instance(ApplicationFileEncryptionService::class, $applicationFileEncryptionService);
     }
 }

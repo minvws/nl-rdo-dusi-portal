@@ -10,12 +10,12 @@ use Illuminate\Encryption\Encrypter;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 
-readonly class AesEncryptionService
+class AesEncryptionService
 {
     protected const AES_CIPHER = 'aes-256-gcm';
 
     public function __construct(
-        private HsmEncryptionService $hsmEncryptionService,
+        private readonly HsmEncryptionService $hsmEncryptionService,
     ) {
     }
 

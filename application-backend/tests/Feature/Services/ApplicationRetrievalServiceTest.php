@@ -7,7 +7,6 @@ namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
@@ -15,6 +14,7 @@ use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
@@ -63,7 +63,7 @@ class ApplicationRetrievalServiceTest extends TestCase
 
         $applicationStage = ApplicationStage::factory()->for($this->application)->for($subsidyStage)->create();
 
-        $encrypter = $this->app->make(ApplicationEncryptionService::class)->getEncrypter($applicationStage);
+        $encrypter = $this->app->make(ApplicationStageEncryptionService::class)->getEncrypter($applicationStage);
 
         $this->answer = Answer::factory()
             ->for($applicationStage)
@@ -123,7 +123,7 @@ class ApplicationRetrievalServiceTest extends TestCase
             ->decryptCodable($encryptedResponse, ApplicationDTO::class, $this->keyPair);
         $this->assertNotNull($app);
 
-        $encryptionService = $this->app->make(ApplicationEncryptionService::class);
+        $encryptionService = $this->app->make(ApplicationStageEncryptionService::class);
         $encrypter = $encryptionService->getEncrypter($this->application->currentApplicationStage);
 
         $this->assertEquals($this->application->reference, $app->reference);

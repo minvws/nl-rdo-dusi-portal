@@ -13,13 +13,13 @@ use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 
-readonly class ApplicationFileEncryptionService extends AesEncryptionService
+class ApplicationFileEncryptionService extends AesEncryptionService
 {
     public function __construct(
-        HsmEncryptionService $hsmEncryptionService,
-        private HsmDecryptionService $hsmDecryptionService,
-        private JSONDecoder $jsonDecoder,
-        private JSONEncoder $jsonEncoder,
+        readonly HsmEncryptionService $hsmEncryptionService,
+        private readonly HsmDecryptionService $hsmDecryptionService,
+        private readonly JSONDecoder $jsonDecoder,
+        private readonly JSONEncoder $jsonEncoder,
     ) {
         parent::__construct($hsmEncryptionService);
     }
