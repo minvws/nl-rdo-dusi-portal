@@ -27,6 +27,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message as MessageDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 
@@ -87,7 +88,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 
-        $messageList = $this->getDecryptedCodableResponse($encryptedResponse, MessageDTO::class);
+        $messageList = $this->getDecryptedCodableResponse($encryptedResponse, MessageList::class);
         $this->assertCount(10, $messageList->items);
     }
 
@@ -99,7 +100,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 
-        $messageList = $this->getDecryptedCodableResponse($encryptedResponse, MessageDTO::class);
+        $messageList = $this->getDecryptedCodableResponse($encryptedResponse, MessageList::class);
         $this->assertCount(0, $messageList->items);
     }
 
