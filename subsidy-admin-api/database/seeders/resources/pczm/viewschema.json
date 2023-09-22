@@ -88,7 +88,25 @@
         },
         {
             "type": "FormGroupControl",
-            "label": "Wia",
+            "label": "UWV",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Gewaarmerkt verzekeringsbericht": "{certifiedEmploymentDocument}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "WIA",
             "options": {
                 "section": true,
                 "headingLevel": "2"
