@@ -10,7 +10,8 @@
         "laravel/framework": "^10.17",
         "minvws/codable": "dev-main as 1.0.x-dev",
         "doctrine/dbal": "^3.6",
-        "guzzlehttp/guzzle": "^7.8"
+        "guzzlehttp/guzzle": "^7.8",
+        "xenolope/quahog": "^3.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

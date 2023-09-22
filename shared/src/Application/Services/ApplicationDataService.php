@@ -11,6 +11,8 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
@@ -19,7 +21,6 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use stdClass;
@@ -34,6 +35,7 @@ readonly class ApplicationDataService
         private FormDecodingService $decodingService,
         private ApplicationStageEncryptionService $encryptionService,
         private ApplicationRepository $applicationRepository,
+        private ValidationService $validationService,
         private ApplicationFileManager $applicationFileManager,
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
@@ -65,6 +67,7 @@ readonly class ApplicationDataService
 
     /**
      * @throws Throwable
+     * @throws ValidationException
      */
     public function saveApplicationStageData(
         ApplicationStage $applicationStage,
@@ -81,7 +84,9 @@ readonly class ApplicationDataService
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
 
-        // TODO: RickL Validation will be in other PR
+        // Validate, throws a ValidationException on error
+        $validator = $this->validationService->getValidator($applicationStage, $fieldValues);
+        $validator->validate();
 
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);

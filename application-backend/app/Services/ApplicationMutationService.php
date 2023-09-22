@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
@@ -179,7 +180,16 @@ readonly class ApplicationMutationService
             );
         }
 
-        $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data);
+        try {
+            $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data);
+        } catch (ValidationException $e) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::BAD_REQUEST,
+                'invalid_data',
+                'Data contains invalid values',
+                previous: $e
+            );
+        }
 
         if ($body->submit) {
             $this->applicationFlowService->submitApplicationStage($applicationStage);

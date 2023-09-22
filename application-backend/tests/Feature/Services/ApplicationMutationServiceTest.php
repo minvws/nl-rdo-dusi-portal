@@ -412,7 +412,9 @@ class ApplicationMutationServiceTest extends TestCase
 
         $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
-        // TODO: should be a validation error e.g. EncryptedResponseStatus::BAD_REQUEST
-        $this->assertEquals(EncryptedResponseStatus::INTERNAL_SERVER_ERROR, $encryptedResponse->status);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+
+        $application->refresh();
+        $this->assertEquals(ApplicationStatus::Invalid, $application->status);
     }
 }

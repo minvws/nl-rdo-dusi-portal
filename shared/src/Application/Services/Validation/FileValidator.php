@@ -1,17 +1,18 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
+
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services\Validation;
+namespace MinVWS\DUSi\Shared\Application\Services\Validation;
 
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Translation\ArrayLoader;
 use Illuminate\Translation\Translator;
-use MinVWS\DUSi\Application\Backend\Rules\ClamAv;
-use MinVWS\DUSi\Application\Backend\Services\Clamav\ClamAvService;
-use MinVWS\DUSi\Shared\Subsidy\Models\Field;
-use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Validation\Validator as LaravelValidator;
+use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ClamAv;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Psr\Log\LoggerInterface;
 
 readonly class FileValidator
