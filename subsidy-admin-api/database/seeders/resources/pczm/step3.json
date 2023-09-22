@@ -141,8 +141,31 @@
                             "rule": {
                                 "effect": "SHOW",
                                 "condition": {
-                                    "scope": "#/properties/employerKind",
-                                    "schema": { "const": "Andere organisatie" }
+                                    "scope": "#",
+                                    "schema": {
+                                        "anyOf": [
+                                            {
+                                                "required": [
+                                                    "employmentFunction"
+                                                ],
+                                                "properties": {
+                                                    "employmentFunction": {
+                                                        "const": "Anders"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "required": [
+                                                    "employerKind"
+                                                ],
+                                                "properties": {
+                                                    "employerKind": {
+                                                        "const": "Andere organisatie"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
                                 }
                             }
                         }
