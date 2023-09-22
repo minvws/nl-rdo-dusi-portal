@@ -95,7 +95,7 @@
                             "label": "Functie",
                             "options": {
                                 "format": "select",
-                                "placeholder": "-- selecteer een functie --"
+                                "placeholder": "-- Selecteer een functie --"
                             }
                         }
                     ]
