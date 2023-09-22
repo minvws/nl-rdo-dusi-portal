@@ -212,8 +212,6 @@ class FieldsTableSeeder extends Seeder
         ], maxFileSize: 20971520,
             isRequired: false);
 
-        $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'permissionToProcessPersonalData', title: 'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',);
-
         $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'truthfullyCompleted', title: '');
     }
 
