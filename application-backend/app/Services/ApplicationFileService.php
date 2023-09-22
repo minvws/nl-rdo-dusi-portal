@@ -10,6 +10,7 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
@@ -43,6 +44,7 @@ readonly class ApplicationFileService
     use LoadApplication;
 
     public function __construct(
+        private FrontendDecryption $frontendDecryptionService,
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
@@ -102,7 +104,7 @@ readonly class ApplicationFileService
 
         $id = Uuid::uuid4()->toString();
 
-        $decryptedContent = $params->data->data; // TODO: $this->decryptionService->decrypt($params->data);
+        $decryptedContent = $this->frontendDecryptionService->decrypt($params->data);
 
         $tempFile = new TemporaryFile($decryptedContent);
         $tempFile->makeGroupReadable();
