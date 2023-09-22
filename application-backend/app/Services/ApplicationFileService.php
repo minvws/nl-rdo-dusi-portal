@@ -109,6 +109,14 @@ readonly class ApplicationFileService
 
         $validator = $this->fileValidator->getValidator($field, $tempFile->getUploadedFile());
         if ($validator->fails()) {
+            $this->logger->debug('File validation failed', [
+                'errors' => $validator->errors()->toArray(),
+                'file' => [
+                    'size' => $tempFile->getUploadedFile()->getSize(),
+                    'mimeType' => $tempFile->getUploadedFile()->getMimeType()
+                ]
+            ]);
+
             // After calling fails, the validator has run and the file can be closed
             $tempFile->close();
 
