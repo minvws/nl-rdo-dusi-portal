@@ -67,6 +67,7 @@ class ValidationServiceTest extends TestCase
             fieldValues: [
                 $fieldValue,
             ],
+            submit: true
         );
 
         $this->assertEquals($passes, $validator->passes());

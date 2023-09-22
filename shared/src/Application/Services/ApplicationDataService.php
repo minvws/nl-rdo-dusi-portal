@@ -71,7 +71,8 @@ readonly class ApplicationDataService
      */
     public function saveApplicationStageData(
         ApplicationStage $applicationStage,
-        object $data
+        object $data,
+        bool $submit
     ): void {
         // Remove all answers for this stage because we received new data
         $this->applicationRepository->deleteAnswersByStage($applicationStage);
@@ -85,7 +86,7 @@ readonly class ApplicationDataService
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
 
         // Validate, throws a ValidationException on error
-        $validator = $this->validationService->getValidator($applicationStage, $fieldValues);
+        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
         $validator->validate();
 
         foreach ($fieldValues as $fieldValue) {

@@ -181,7 +181,7 @@ readonly class ApplicationMutationService
         }
 
         try {
-            $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data);
+            $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data, $body->submit);
         } catch (ValidationException $e) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::BAD_REQUEST,

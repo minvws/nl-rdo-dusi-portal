@@ -22,36 +22,33 @@ class ValidationService
     }
 
     /**
-     * @param ApplicationStage $applicationStage
      * @param array<int|string, FieldValue> $fieldValues
-     * @return Validator
      */
-    public function getValidator(ApplicationStage $applicationStage, array $fieldValues): Validator
+    public function getValidator(ApplicationStage $applicationStage, array $fieldValues, bool $submit): Validator
     {
         return $this->validatorFactory->getValidator(
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
             data: $this->getFieldValuesData($fieldValues),
-            rules: $this->getFieldValuesRules($fieldValues),
+            rules: $this->getFieldValuesRules($fieldValues, $submit),
         );
     }
 
     /**
-     * @param Field $field
      * @return array<string|ValidationRule>
      */
-    protected function getFieldValidationRules(Field $field): array
+    protected function getFieldValidationRules(Field $field, bool $submit): array
     {
         $rules = [];
 
-        if ($field->is_required) {
+        if ($submit && $field->is_required) {
             $rules[] = 'required';
         } else {
             $rules[] = 'nullable';
         }
 
         return [...$rules , ...match ($field->type) {
-            FieldType::Checkbox => [...$this->getBooleanFieldRules($field)],
+            FieldType::Checkbox => [...$this->getBooleanFieldRules($field, $submit)],
             FieldType::CustomBankAccount => [],
             FieldType::CustomCountry => [],
             FieldType::CustomPostalCode => [],
@@ -84,12 +81,12 @@ class ValidationService
     /**
      * @param FieldValue[] $fieldValues
      */
-    protected function getFieldValuesRules(array $fieldValues): array
+    protected function getFieldValuesRules(array $fieldValues, bool $submit): array
     {
         $rules = [];
 
         foreach ($fieldValues as $fieldValue) {
-            $rules[$fieldValue->field->code] = $this->getFieldValidationRules($fieldValue->field);
+            $rules[$fieldValue->field->code] = $this->getFieldValidationRules($fieldValue->field, $submit);
         }
 
         return $rules;
@@ -163,7 +160,7 @@ class ValidationService
         return $rules;
     }
 
-    protected function getBooleanFieldRules(Field $field): array
+    protected function getBooleanFieldRules(Field $field, bool $submit): array
     {
         if ($field->type !== FieldType::Checkbox) {
             return [];
@@ -173,7 +170,7 @@ class ValidationService
             'boolean',
         ];
 
-        if ($field->is_required) {
+        if ($submit && $field->is_required) {
             $rules[] = 'accepted';
         }
 
