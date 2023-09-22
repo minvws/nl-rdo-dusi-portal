@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use MinVWS\DUSi\Assessment\API\Services\LetterService;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 
 class GenerateLetterJob implements ShouldQueue
 {
@@ -20,12 +21,13 @@ class GenerateLetterJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
+        public readonly SubsidyStageTransitionMessage $message,
         public readonly ApplicationStage $applicationStage
     ) {
     }
 
     public function handle(LetterService $letterService): void
     {
-        $letterService->generateLetters($this->applicationStage);
+        $letterService->generateLetters($this->message, $this->applicationStage);
     }
 }

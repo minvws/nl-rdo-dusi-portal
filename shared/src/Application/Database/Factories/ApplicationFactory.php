@@ -36,7 +36,7 @@ class ApplicationFactory extends Factory
             'created_at' => $this->faker->dateTimeBetween('-1 year'),
             'identity_id' => Identity::factory(),
             'application_title' => $this->faker->words(3, true),
-            'final_review_deadline' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'final_review_deadline' => null,
             'locked_from' => null,
             'status' => ApplicationStatus::Draft,
         ];

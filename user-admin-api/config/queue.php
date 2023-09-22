@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use MinVWS\DUSi\User\Admin\API\Models\Connection;
+
 return [
 
     /*
@@ -87,7 +89,7 @@ return [
     */
 
     'batching' => [
-        'database' => env('DB_CONNECTION', 'mysql'),
+        'database' => Connection::USER,
         'table' => 'job_batches',
     ],
 
@@ -104,7 +106,7 @@ return [
 
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
-        'database' => env('DB_CONNECTION', 'mysql'),
+        'database' => Connection::USER,
         'table' => 'failed_jobs',
     ],
 

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageFactory;
@@ -25,6 +25,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property int $stage
  * @property SubjectRole $subject_role
  * @property-read SubsidyVersion $subsidyVersion
+ * @property-read Collection<int, SubsidyStageTransition> $subsidyStageTransitions
  */
 class SubsidyStage extends Model
 {
@@ -39,15 +40,12 @@ class SubsidyStage extends Model
         'title',
         'subject_role',
         'subject_organisation',
-        'stage',
-        'final_review_deadline',
-        'final_review_time_in_s_after_submission',
+        'stage'
     ];
 
     protected $casts = [
         'id' => 'string',
         'subject_role' => SubjectRole::class,
-        'final_review_deadline' => 'timestamp',
     ];
 
     public function subsidyVersion(): BelongsTo
@@ -68,6 +66,11 @@ class SubsidyStage extends Model
     public function publishedUI(): HasOne
     {
         return $this->hasOne(SubsidyStageUI::class)->where('status', '=', 'published');
+    }
+
+    public function subsidyStageTransitions(): HasMany
+    {
+        return $this->hasMany(SubsidyStageTransition::class, 'current_subsidy_stage_id', 'id');
     }
 
     public function scopeOrdered(Builder $query): Builder

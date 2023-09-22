@@ -5,18 +5,17 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Services;
 
-use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 readonly class ApplicationSubsidyService
 {
     public function __construct(
         private SubsidyRepository $subsidyRepository,
-        private ApplicationEncryptionService $encryptionService,
         private ResponseEncryptionService $responseEncryptionService,
-        private JSONDecoder $jsonDecoder,
+        private ApplicationDataService $applicationDataService,
     ) {
     }
 
@@ -38,9 +37,8 @@ readonly class ApplicationSubsidyService
             $application,
             $subsidyVersion,
             $publicKey,
-            $this->encryptionService,
             $this->responseEncryptionService,
-            $this->jsonDecoder,
+            $this->applicationDataService,
         );
     }
 }

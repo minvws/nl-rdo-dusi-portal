@@ -13,7 +13,7 @@
         "laravel/framework": "^10.17",
         "laravel/sanctum": "^3.3",
         "latte/latte": "^3.0",
-        "minvws/codable": "dev-feature/codes-trait as 1.0.x-dev",
+        "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
         "predis/predis": "^2.2"
     },

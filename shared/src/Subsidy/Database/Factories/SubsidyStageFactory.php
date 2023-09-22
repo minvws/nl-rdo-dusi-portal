@@ -28,9 +28,7 @@ class SubsidyStageFactory extends Factory
             'subsidy_version_id' => SubsidyVersion::factory(),
             'title' => $this->faker->sentence,
             'subject_role' => 'applicant',
-            'stage' => 1,
-            'final_review_deadline' => $this->faker->dateTimeBetween('now', '+1 year'),
-            'final_review_time_in_s_after_submission' => 60 * 60 * 24 * 7,
+            'stage' => 1
         ];
     }
 }

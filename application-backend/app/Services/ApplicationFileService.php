@@ -9,16 +9,17 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Application\Backend\Services\Validation\FileValidator;
+use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
@@ -105,24 +106,13 @@ readonly class ApplicationFileService
 
         $decryptedContent = $params->data->data; // TODO: $this->decryptionService->decrypt($params->data);
 
-        // TODO: Other way to store temporary file for virus scan
-        $tempFile = tmpfile();
-        $path = stream_get_meta_data($tempFile)['uri'];
+        $tempFile = new TemporaryFile($decryptedContent);
+        $tempFile->makeGroupReadable();
 
-        fwrite($tempFile, $decryptedContent);
-        fseek($tempFile, 0);
-
-        $uploadedFile = new UploadedFile(
-            $path,
-            '', // client original name
-            '', // client mime type
-            null,
-            true
-        );
-
-        $validator = $this->fileValidator->getValidator($field, $uploadedFile);
+        $validator = $this->fileValidator->getValidator($field, $tempFile->getUploadedFile());
         if ($validator->fails()) {
-            fclose($tempFile);
+            // After calling fails, the validator has run and the file can be closed
+            $tempFile->close();
 
             return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::BAD_REQUEST,
@@ -131,7 +121,7 @@ readonly class ApplicationFileService
             );
         }
 
-        fclose($tempFile);
+        $tempFile->close();
 
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
         $encryptedContent = $encrypter->encrypt($decryptedContent);
@@ -165,7 +155,7 @@ readonly class ApplicationFileService
             $identity = $this->loadIdentity($params->identity);
             $application = $this->loadApplication($identity, $params->applicationReference);
 
-            $applicationStage = $this->applicationRepository->getApplicationStageByStageNumber($application, 1);
+            $applicationStage = $this->applicationRepository->getApplicantApplicationStage($application, true);
             assert($applicationStage !== null);
 
             $field = $this->loadField($applicationStage, $params->fieldCode);

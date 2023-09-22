@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Console\Commands;
 
+use MinVWS\DUSi\User\Admin\API\Models\Organisation;
 use MinVWS\DUSi\User\Admin\API\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -48,10 +49,18 @@ class CreateUser extends Command
             return 1;
         }
 
-        $user = User::create([
+        $organisation = Organisation::query()->first();
+        if ($organisation === null) {
+            $this->error("No organisation found, please create one first");
+            return 1;
+        }
+
+        $user = User::updateOrCreate([
             "email" => $this->argument('email'),
+            ], [
             "name" => $this->argument('name'),
-            "password" => Hash::make($passwd)
+            "password" => Hash::make($passwd),
+            "organisation_id" => Organisation::query()->first()?->id,
         ]);
 
         $user->forceFill([

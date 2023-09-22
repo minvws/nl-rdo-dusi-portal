@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\JSON\JSONEncoder;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
@@ -19,24 +18,27 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Ramsey\Uuid\Uuid;
 
@@ -52,7 +54,8 @@ class ApplicationMutationServiceTest extends TestCase
 
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
-    private SubsidyStage $subsidyStage;
+    private SubsidyStage $subsidyStage1;
+    private SubsidyStage $subsidyStage2;
     private Identity $identity;
     private Field $textField;
     private Field $uploadField;
@@ -71,15 +74,23 @@ class ApplicationMutationServiceTest extends TestCase
             SubsidyVersion::factory()
                 ->for($this->subsidy)
                 ->create(['status' => VersionStatus::Published]);
-        $this->subsidyStage = SubsidyStage::factory()->for($this->subsidyVersion)->create();
+        $this->subsidyStage1 = SubsidyStage::factory()->for($this->subsidyVersion)->create();
         $this->textField =
             Field::factory()
-                ->for($this->subsidyStage)
+                ->for($this->subsidyStage1)
                 ->create(['code' => 'text']);
         $this->uploadField =
             Field::factory()
-                ->for($this->subsidyStage)
+                ->for($this->subsidyStage1)
                 ->create(['code' => 'file', 'type' => FieldType::Upload, 'is_required' => false]);
+        $this->subsidyStage2 =
+            SubsidyStage::factory()
+                ->for($this->subsidyVersion)
+                ->create(['stage' => 2, 'subject_role' => SubjectRole::Assessor]);
+        SubsidyStageTransition::factory()
+            ->for($this->subsidyStage1, 'currentSubsidyStage')
+            ->for($this->subsidyStage2, 'targetSubsidyStage')
+            ->create(['target_application_status' => ApplicationStatus::Submitted]);
 
         $this->identity = Identity::factory()->create();
 
@@ -119,7 +130,7 @@ class ApplicationMutationServiceTest extends TestCase
     public function testFindOrCreateApplicationReturnsExistingDraftApplication(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
-        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage);
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         $answer = Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $params = new ApplicationFindOrCreateParams(
@@ -155,7 +166,7 @@ class ApplicationMutationServiceTest extends TestCase
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create([
             'status' => ApplicationStatus::Rejected
         ]);
-        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage);
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $params = new ApplicationFindOrCreateParams(
@@ -187,7 +198,7 @@ class ApplicationMutationServiceTest extends TestCase
                 ->for($this->identity)
                 ->for($this->subsidyVersion)
                 ->create(['status' => ApplicationStatus::Submitted]);
-        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage);
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $params = new ApplicationFindOrCreateParams(
@@ -218,11 +229,12 @@ class ApplicationMutationServiceTest extends TestCase
 
     /**
      * @dataProvider saveApplicationDataProvider
+     * @group xyz
      */
     public function testSaveApplication(bool $submit, ApplicationStatus $expectedStatus): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
-        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage);
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $body = new ApplicationSaveBody(
@@ -278,7 +290,7 @@ class ApplicationMutationServiceTest extends TestCase
                 ->for($this->identity)
                 ->for($this->subsidyVersion)
                 ->create(['status' => $status]);
-        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage);
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $body = new ApplicationSaveBody(
@@ -310,7 +322,7 @@ class ApplicationMutationServiceTest extends TestCase
     public function testSaveApplicationWithFile(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
-        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $fileId = Uuid::uuid4()->toString();
@@ -366,7 +378,7 @@ class ApplicationMutationServiceTest extends TestCase
     public function testSaveApplicationWithMissingFile(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
-        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
         $fileId = Uuid::uuid4()->toString();

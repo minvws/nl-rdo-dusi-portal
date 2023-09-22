@@ -5,21 +5,24 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services\Validation;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Translation\ArrayLoader;
 use Illuminate\Translation\Translator;
+use MinVWS\DUSi\Application\Backend\Rules\ClamAv;
+use MinVWS\DUSi\Application\Backend\Services\Clamav\ClamAvService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
+use Illuminate\Validation\Validator as LaravelValidator;
+use Psr\Log\LoggerInterface;
 
-class FileValidator
+readonly class FileValidator
 {
-
     public function __construct(
-        protected ValidatorFactory $fd,
-    )
-    {
+        private ClamAvService $clamAvService,
+        private LoggerInterface $logger,
+    ) {
     }
 
-    public function getValidator(Field $field, UploadedFile $file): \Illuminate\Contracts\Validation\Validator
+    public function getValidator(Field $field, UploadedFile $file): ValidatorContract
     {
         $rules = [
             'required',
@@ -31,17 +34,15 @@ class FileValidator
             $rules[] = 'size:' . $maxSize;
         }
 
-        $mimeType = $field->params['accept'] ?? null;
-        if ($mimeType !== null) {
-            $rules[] = 'mimetypes:' . $mimeType;
+        $mimeTypes = $field->params['mimeTypes'] ?? [];
+        if (is_array($mimeTypes) && count($mimeTypes) > 0) {
+            $rules[] = 'mimetypes:' . implode(',', $mimeTypes);
         }
 
         // Add as last so size and mime type are checked first
-        $rules[] = 'clamav';
+        $rules[] = new ClamAv($this->clamAvService, $this->logger);
 
-        Log::info('upload field params: ' . json_encode($field->params));
-
-        return new \Illuminate\Validation\Validator(
+        return new LaravelValidator(
             translator: new Translator(new ArrayLoader(), 'nl'),
             data: [
                 'file' => $file,
@@ -51,5 +52,4 @@ class FileValidator
             ],
         );
     }
-
 }

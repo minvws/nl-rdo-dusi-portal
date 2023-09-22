@@ -30,6 +30,8 @@ class ApplicationStageFactory extends Factory
             'subsidy_stage_id' => fn () => SubsidyStage::factory(),
             'sequence_number' => 1,
             'is_current' => true,
+            'is_submitted' => false,
+            'submitted_at' => null,
             'encrypted_key' => new HsmEncryptedData('', ''),
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
             'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now')

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use PHPUnit\Framework\TestCase;
 

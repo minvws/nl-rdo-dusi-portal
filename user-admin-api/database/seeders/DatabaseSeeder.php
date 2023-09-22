@@ -17,6 +17,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            RoleSeeder::class,
+        ]);
+
+        $organisation = Organisation::firstOrCreate([
+            'name' => 'DUS-I',
+        ]);
+
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
@@ -24,22 +32,27 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-//        $role = Role::create([
+//        $role = Role::firstOrCreate([
 //            'name' => 'admin',
 //        ]);
 //
-//        $organisation = Organisation::create([
+//        $organisation = Organisation::firstOrCreate([
 //            'name' => 'Test Organisation',
 //        ]);
 //
-//        $user = User::create([
-//            'name' => 'Test User',
-//            'email' => 'test@example.nl',
-//            'password' => bcrypt('password'),
-//        ]);
+//        $user = User::firstOrCreate(
+//            ['email' => 'test@example.nl'],
+//            [
+//                'name' => 'Test User',
+//                'password' => bcrypt('password'),
+//                'organisation_id' => $organisation->id,
+//            ]
+//        );
 //
-//        $user->organisations()->attach($organisation->id, [
-//            'role_name' => $role->name,
-//        ]);
+//        if ($user->roles()->where('name', $role->name)->exists()) {
+//            return;
+//        }
+//
+//        $user->roles()->attach($role->name);
     }
 }

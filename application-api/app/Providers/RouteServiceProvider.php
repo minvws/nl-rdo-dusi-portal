@@ -47,7 +47,7 @@ class RouteServiceProvider extends ServiceProvider
             'form',
             function (string $id) {
                 try {
-                    return app()->get(SubsidyStageService::class)->getSubsidyStage($id);
+                    return app()->get(SubsidyStageService::class)->getSubsidyStageData($id);
                 } catch (SubsidyStageNotFoundException $e) {
                     abort(404, $e->getMessage());
                 }

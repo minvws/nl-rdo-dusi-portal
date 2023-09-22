@@ -14,6 +14,7 @@ use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
@@ -74,7 +75,8 @@ readonly class ApplicationRetrievalService
 
             $data = null;
             if ($params->includeData) {
-                $data = $this->applicationDataService->getApplicationData($app);
+                $appStage = $this->applicationRepository->getApplicantApplicationStage($app, true);
+                $data = $appStage !== null ? $this->applicationDataService->getApplicationStageData($appStage) : null;
             }
 
             $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data);

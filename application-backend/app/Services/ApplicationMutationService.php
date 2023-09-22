@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
@@ -16,17 +16,19 @@ use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Throwable;
@@ -46,6 +48,7 @@ readonly class ApplicationMutationService
     public function __construct(
         private ApplicationDataService $applicationDataService,
         private ApplicationEncryptionService $applicationEncryptionService,
+        private ApplicationFlowService $applicationFlowService,
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
@@ -62,9 +65,12 @@ readonly class ApplicationMutationService
         Application $application,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
+        $stage = $this->applicationRepository->getApplicantApplicationStage($application, true);
+        $data = $stage !== null ? $this->applicationDataService->getApplicationStageData($stage) : null;
+
         $dto = $this->applicationMapper->mapApplicationToApplicationDTO(
             $application,
-            $this->applicationDataService->getApplicationData($application)
+            $data
         );
 
         return $this->responseEncryptionService->encryptCodable($status, $dto, $publicKey);
@@ -173,26 +179,17 @@ readonly class ApplicationMutationService
             );
         }
 
-        $validationFailed = $this->applicationDataService->saveApplicationData($applicationStage, $body->data);
+        $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data);
 
-        if ($body->submit && !$validationFailed) {
-            $application->status = ApplicationStatus::Submitted;
-            $application->final_review_deadline =
-                Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);
-
-            $applicationStage->is_current = false;
-
-            // TODO: insert next application stage
-            // $this->appRepo->makeApplicationStage($applicationStage->application, $nextSubsidyStage);
+        if ($body->submit) {
+            $this->applicationFlowService->submitApplicationStage($applicationStage);
         }
 
-        if ($validationFailed) {
-            $application->status = ApplicationStatus::Invalid;
-        }
-
-        $this->applicationRepository->saveApplicationStage($applicationStage);
-        $this->applicationRepository->saveApplication($application);
-        return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
+        return $this->applicationResponse(
+            EncryptedResponseStatus::OK,
+            $applicationStage->application,
+            $params->publicKey
+        );
     }
 
     public function saveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse

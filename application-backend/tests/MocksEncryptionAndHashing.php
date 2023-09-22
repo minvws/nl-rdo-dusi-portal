@@ -8,11 +8,12 @@ use Illuminate\Encryption\Encrypter;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
-use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
 use MinVWS\DUSi\Application\Backend\Repositories\IdentityRepository;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationEncryptionService;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmEncryptionService;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
+use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
 use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -64,8 +65,8 @@ trait MocksEncryptionAndHashing
             });
 
         $hsmEncryptionService = $this->getMockBuilder(HsmEncryptionService::class)
-            ->setConstructorArgs([$hsmService, $keyReader, ''])
-            ->onlyMethods(['decrypt', 'getPublicKey'])
+            ->setConstructorArgs([$keyReader, ''])
+            ->onlyMethods(['getPublicKey'])
             ->getMock();
 
         $hsmEncryptionService->expects($this->any())
@@ -74,14 +75,21 @@ trait MocksEncryptionAndHashing
                 return openssl_pkey_get_public($publicKeyPem);
             });
 
+        $this->app->instance(HsmEncryptionService::class, $hsmEncryptionService);
+
+        $hsmDecryptionService = $this->getMockBuilder(HsmDecryptionService::class)
+            ->setConstructorArgs([$hsmService])
+            ->onlyMethods(['decrypt'])
+            ->getMock();
+
         // Configure the decryptData method to return the same value as the input parameter
-        $hsmEncryptionService->expects($this->any())
+        $hsmDecryptionService->expects($this->any())
             ->method('decrypt')
             ->willReturnCallback(function (HsmDecryptableData $input) {
                 return $input->getData();
             });
 
-        $this->app->instance(HsmEncryptionService::class, $hsmEncryptionService);
+        $this->app->instance(HsmDecryptionService::class, $hsmDecryptionService);
 
         $encrypterMock = Mockery::mock(Encrypter::class);
         $encrypterMock->shouldReceive('encrypt')
@@ -112,7 +120,7 @@ trait MocksEncryptionAndHashing
 
 
         $identityServiceMock = $this->getMockBuilder(IdentityService::class)
-            ->setConstructorArgs([$this->app->get(IdentityRepository::class), $hsmEncryptionService, ''])
+            ->setConstructorArgs([$this->app->get(IdentityRepository::class), $hsmDecryptionService, ''])
             ->onlyMethods(['hashIdentifier'])
             ->getMock();
 

@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
-use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Assessment\API\Models\Enums\UIType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use MinVWS\DUSi\Assessment\API\Services\ApplicationEncryptionService;
 use MinVWS\DUSi\Assessment\API\Services\ResponseEncryptionService;
-use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
@@ -25,23 +23,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  */
 class ApplicationSubsidyVersionResource extends JsonResource
 {
-    /**
-     * Create a new resource instance.
-     *
-     * @param Application $application
-     * @param SubsidyVersion $subsidyVersion
-     * @param string|null $publicKey
-     * @param ApplicationEncryptionService $encryptionService
-     * @param ResponseEncryptionService $responseEncryptionService
-     * @param JSONDecoder $jsonDecoder
-     */
     public function __construct(
         readonly Application $application,
         readonly SubsidyVersion $subsidyVersion,
         private readonly ?string $publicKey = null, // @phpstan-ignore-line
-        private readonly ApplicationEncryptionService $encryptionService,
         private readonly ResponseEncryptionService $responseEncryptionService,  // @phpstan-ignore-line
-        private readonly JSONDecoder $jsonDecoder,
+        private readonly ApplicationDataService $applicationDataService,
     ) {
         parent::__construct(['application' => $application, 'subsidyVersion' => $subsidyVersion]);
     }
@@ -58,10 +45,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
     {
         $stages = $this['subsidyVersion']->subsidyStages->map(function ($subsidyStage) {
             $applicationStage = $this->resource['application']->applicationStages()
+                ->where('subsidy_stage_id', '=', $subsidyStage->id)
                 ->orderBy('sequence_number', 'desc')
-                ->filter(function ($applicationStage) use ($subsidyStage) {
-                    return $applicationStage->subsidy_stage_id === $subsidyStage->id;
-                })->first();
+                ->first();
 
             if (!isset($applicationStage) || $applicationStage->is_current) {
                 $uiType = UIType::Input;
@@ -91,30 +77,13 @@ class ApplicationSubsidyVersionResource extends JsonResource
     /**
      * @param ApplicationStage|null $applicationStage
      */
-    private function createValues(?ApplicationStage $applicationStage): ?array
+    private function createValues(?ApplicationStage $applicationStage): ?object
     {
         if ($applicationStage === null) {
             return null;
         }
 
-        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
-
-        $data = [];
-        foreach ($applicationStage->answers()->with('field')->get() as $answer) {
-            $value = $encrypter->decrypt($answer->encrypted_answer);
-            if ($value === null) {
-                continue;
-            }
-
-            $value = match ($answer->field->type) {
-                FieldType::Upload => $this->jsonDecoder->decode($value)->decodeObject(FileList::class),
-                default => $value,
-            };
-
-            $data[$answer->field->code] = $value;
-        }
-
-        return $data;
+        return $this->applicationDataService->getApplicationStageData($applicationStage);
     }
 
     private function createMetadata(): array

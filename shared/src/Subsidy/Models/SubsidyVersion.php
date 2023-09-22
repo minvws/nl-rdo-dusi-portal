@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
+use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,12 +32,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $contact_mail_address
  * @property string $mail_to_name_field_identifier
  * @property string $mail_to_address_field_identifier
- * @property string $message_overview_subject
- * @property int $review_period
+ * @property int|null $review_period
+ * @param DateTimeInterface|null $review_deadline
  * @property-read Subsidy $subsidy
  * @property-read Collection<int, SubsidyStage> $subsidyStages
- * @property-read Collection<int, SubsidyLetter> $subsidyLetters
- * @property-read ?SubsidyLetter $publishedSubsidyLetter
+ * @property-read Collection<int, SubsidyStageTransitionMessage> $subsidyLetters
+ * @property-read ?SubsidyStageTransitionMessage $publishedSubsidyLetter
  */
 
 class SubsidyVersion extends Model
@@ -60,12 +61,12 @@ class SubsidyVersion extends Model
         'contact_mail_address',
         'mail_to_name_field_identifier',
         'mail_to_address_field_identifier',
-        'message_overview_subject',
     ];
 
     protected $casts = [
         'id' => 'string',
-        'status' => VersionStatus::class
+        'status' => VersionStatus::class,
+        'review_deadline' => 'datetime'
     ];
 
     public function subsidy(): BelongsTo
@@ -97,16 +98,6 @@ class SubsidyVersion extends Model
     {
         /** @phpstan-ignore-next-line */
         return $query->whereRelation('subsidyStages', fn (Builder $subQuery) => $subQuery->subjectRole($role));
-    }
-
-    public function subsidyLetters(): HasMany
-    {
-        return $this->hasMany(SubsidyLetter::class, 'subsidy_version_id', 'id');
-    }
-
-    public function publishedSubsidyLetter(): HasOne
-    {
-        return $this->hasOne(SubsidyLetter::class)->published();
     }
 
     protected static function newFactory(): SubsidyVersionFactory

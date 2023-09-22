@@ -33,6 +33,7 @@ class UserUpdateRequest extends FormRequest
                 'max:255',
                 'unique:users,email,' . $this->getRouteParamUser()->id,
             ],
+            'organisation_id' => ['required', 'string', 'exists:organisations,id'],
         ];
     }
 

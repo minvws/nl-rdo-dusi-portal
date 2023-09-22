@@ -7,8 +7,8 @@ namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Repositories;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 /**

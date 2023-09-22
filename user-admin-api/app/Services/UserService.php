@@ -32,11 +32,13 @@ class UserService
         string $name = '',
         string $email = '',
         string $password = '',
+        string $organisationId = '',
     ): User {
         $user = User::create([
             'name' => $name,
             'email' => $email,
             'password' => $this->passwordHasher->make($password),
+            'organisation_id' => $organisationId,
         ]);
         $user->forceFill($this->getNewTwoFactorSecrets());
         $user->save();
