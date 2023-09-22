@@ -140,7 +140,7 @@
                             "Functie": "{employmentFunction}",
                             "Werkgever": "{employerKind}",
                             "Verklaring zorgaanbieder (indien anders)": "{otherEmployerDeclarationFile}",
-                            "Heeft gewerkt in justitiële inrichting": "{hasBeenWorkingAtJudicialInstitution}",
+                            "Heeft u gewerkt in een justitiële inrichting?": "{hasBeenWorkingAtJudicialInstitution}",
                             "BIG-nummer justitiële inrichting": "{BIGNumberJudicialInstitution}"
                         }
                     }

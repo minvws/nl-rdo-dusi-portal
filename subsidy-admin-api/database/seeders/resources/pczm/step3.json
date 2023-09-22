@@ -43,7 +43,7 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/isWiaDecisionPostponed",
-                            "label": "Is uw WIA-beslissing uitgesteld vanwege een (vrijwillege of verplichte) loondoorbetaling?",
+                            "label": "Is uw WIA-beslissing uitgesteld vanwege een (vrijwillige of verplichte) loondoorbetaling?",
                             "options": {
                                 "format": "radio"
                             }
@@ -94,7 +94,8 @@
                             "scope": "#/properties/employmentFunction",
                             "label": "Functie",
                             "options": {
-                                "format": "select"
+                                "format": "select",
+                                "placeholder": "-- Selecteer een functie --"
                             }
                         }
                     ]
@@ -177,7 +178,7 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/hasBeenWorkingAtJudicialInstitution",
-                            "label": "Heeft gewerkt in justitiële inrichting",
+                            "label": "Heeft u gewerkt in een justitiële inrichting?",
                             "options": {
                                "format": "radio"
                             }

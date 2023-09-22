@@ -30,7 +30,7 @@
                 {
                     "type": "CustomControl",
                     "scope": "#/properties/truthfullyCompleted",
-                    "label": "Inhoud",
+                    "label": "Waarheidsverklaring",
                     "options": {
                         "description": "Ik verklaar het formulier naar waarheid te hebben ingevuld."
                     }
