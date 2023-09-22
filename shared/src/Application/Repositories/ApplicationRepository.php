@@ -148,11 +148,6 @@ class ApplicationRepository
         $answer->save();
     }
 
-    public function deleteAnswer(Answer $answer): void
-    {
-        $answer->delete();
-    }
-
     public function getAnswersForApplicationStagesUpToIncluding(
         ApplicationStage $stage
     ): AnswersByApplicationStage {
@@ -265,11 +260,6 @@ class ApplicationRepository
     public function isReferenceUnique(string $applicationReference): bool
     {
         return Application::where('reference', $applicationReference)->count() === 0;
-    }
-
-    public function deleteAnswerByStageAndField(ApplicationStage $applicationStage, Field $field): void
-    {
-        $this->getAnswerQuery($applicationStage, $field)->delete();
     }
 
     public function deleteAnswersByStage(ApplicationStage $applicationStage): void
