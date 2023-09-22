@@ -10,13 +10,15 @@ use MinVWS\DUSi\Application\API\Http\Resources\SubsidyResource;
 use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
 use MinVWS\DUSi\Application\API\Repositories\CacheRepository;
 use Illuminate\Support\Collection;
+use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 class CacheService
 {
     public function __construct(
-        private CacheRepository $cacheRepository,
-        private CacheKeyHelper $cacheKeyHelper
+        private readonly CacheRepository $cacheRepository,
+        private readonly CacheKeyHelper $cacheKeyHelper,
+        private readonly SubsidyStageDataSchemaBuilder $dataSchemaBuilder
     ) {
     }
 
@@ -37,7 +39,7 @@ class CacheService
     public function cacheSubsidyStage(SubsidyStage $subsidyStage): string|false
     {
         $key = $this->cacheKeyHelper->keyForSubsidyStage($subsidyStage);
-        $resource = new SubsidyStageResource($subsidyStage);
+        $resource = new SubsidyStageResource($subsidyStage, $this->dataSchemaBuilder);
         $json = $resource->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         $result = $this->cacheRepository->store($key, $json);
         return $result ? $key : false;
