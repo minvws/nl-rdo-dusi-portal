@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\FileUploadRule;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\RequiredConditionRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Validator;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -32,7 +33,7 @@ class ValidationService
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
             data: $this->getFieldValuesData($fieldValues),
-            rules: $this->getFieldValuesRules($fieldValues),
+            rules: $this->getFieldValuesRules($applicationStage->subsidyStage->stage, $fieldValues),
         );
     }
 
@@ -40,7 +41,7 @@ class ValidationService
      * @param Field $field
      * @return array<string|ValidationRule>
      */
-    protected function getFieldValidationRules(Field $field): array
+    protected function getFieldValidationRules(int $stage, Field $field): array
     {
         $rules = [];
 
@@ -48,6 +49,10 @@ class ValidationService
             $rules[] = 'required';
         } else {
             $rules[] = 'nullable';
+        }
+
+        if ($field->required_condition) {
+            $rules[] = new RequiredConditionRule($stage, $field->required_condition);
         }
 
         return [...$rules , ...match ($field->type) {
@@ -84,12 +89,12 @@ class ValidationService
     /**
      * @param FieldValue[] $fieldValues
      */
-    protected function getFieldValuesRules(array $fieldValues): array
+    protected function getFieldValuesRules(int $stage, array $fieldValues): array
     {
         $rules = [];
 
         foreach ($fieldValues as $fieldValue) {
-            $rules[$fieldValue->field->code] = $this->getFieldValidationRules($fieldValue->field);
+            $rules[$fieldValue->field->code] = $this->getFieldValidationRules($stage, $fieldValue->field);
         }
 
         return $rules;

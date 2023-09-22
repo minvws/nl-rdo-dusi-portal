@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\FieldFactory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 
@@ -22,6 +23,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
  * @property FieldType $type
  * @property array $params
  * @property bool $is_required
+ * @property Condition|null $required_condition
  * @property string $source
  * @property SubsidyStage $subsidyStage
  */
@@ -43,6 +45,7 @@ class Field extends Model
         'source' => FieldSource::class,
         'params' => 'array',
         'is_required' => 'boolean',
+        'required_condition' => Condition::class
     ];
 
     protected $fillable = [
