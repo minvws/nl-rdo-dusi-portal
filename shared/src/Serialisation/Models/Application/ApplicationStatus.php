@@ -11,11 +11,10 @@ enum ApplicationStatus: string
     case Approved = 'approved';
     case Rejected = 'rejected';
     case RequestForChanges = 'requestForChanges';
-    case Invalid = 'invalid';
 
     public function isEditableForApplicant(): bool
     {
-        return in_array($this, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges, ApplicationStatus::Invalid], true);
+        return in_array($this, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges], true);
     }
 
     public function isNewApplicationAllowed(): bool

@@ -28,6 +28,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTime $locked_from
  * @property DateTimeInterface|null $final_review_deadline
  * @property DateTimeInterface $created_at
+ * @property DateTimeInterface $submitted_at
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read HasMany<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage $currentApplicationStage

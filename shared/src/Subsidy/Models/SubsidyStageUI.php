@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageUIFactory;
 
+/**
+ * @property array $input_ui
+ * @property array $view_ui
+ */
 class SubsidyStageUI extends Model
 {
     use HasUuids;

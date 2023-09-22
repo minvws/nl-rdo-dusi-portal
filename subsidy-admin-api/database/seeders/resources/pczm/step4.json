@@ -14,7 +14,7 @@
                     "options": {
                         "fields": {
                             "Naam": "{firstName} {infix} {lastName}",
-                            "Adres": "{streetName} {houseNumber}{houseNumberSuffix} {postalCode} {city}",
+                            "Adres": "{street} {houseNumber}{houseNumberSuffix} {postalCode} {city}",
                             "Telefoon": "{phoneNumber}",
                             "E-mailadres": "{email}",
                             "Geboortedatum": "{dateOfBirth}"

@@ -16,7 +16,9 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
@@ -65,9 +67,9 @@ class ApplicationFlowServiceTest extends TestCase
     private ApplicationStage $applicationStage1;
     private string $applicationStage1UploadId;
 
-    private ApplicationEncryptionService $encryptionService;
+    private ApplicationStageEncryptionService $encryptionService;
     private ApplicationFlowService $flowService;
-    private ApplicationFileRepository $fileRepository;
+    private ApplicationFileManager $fileRepository;
 
     private CarbonImmutable $now;
 
@@ -78,9 +80,9 @@ class ApplicationFlowServiceTest extends TestCase
         Storage::fake(Disk::APPLICATION_FILES);
         Event::fake();
 
-        $this->encryptionService = $this->app->get(ApplicationEncryptionService::class);
+        $this->encryptionService = $this->app->get(ApplicationStageEncryptionService::class);
         $this->flowService = $this->app->get(ApplicationFlowService::class);
-        $this->fileRepository = $this->app->get(ApplicationFileRepository::class);
+        $this->fileRepository = $this->app->get(ApplicationFileManager::class);
 
         $subsidy = Subsidy::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create([
@@ -215,7 +217,7 @@ class ApplicationFlowServiceTest extends TestCase
             $this->applicationStage1,
             $this->subsidyStage1Upload,
             $this->applicationStage1UploadId,
-            ''
+            $this->faker->paragraph(5)
         );
         $fileJson = json_encode([['id' => $this->applicationStage1UploadId]]);
         $this->assertIsString($fileJson);
