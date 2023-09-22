@@ -43,6 +43,7 @@ readonly class ApplicationFileService
     use LoadApplication;
 
     public function __construct(
+        private FrontendDecryptionService $frontendDecryptionService,
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
@@ -102,7 +103,7 @@ readonly class ApplicationFileService
 
         $id = Uuid::uuid4()->toString();
 
-        $decryptedContent = $params->data->data; // TODO: $this->decryptionService->decrypt($params->data);
+        $decryptedContent = $this->frontendDecryptionService->decrypt($params->data);
 
         $tempFile = new TemporaryFile($decryptedContent);
         $tempFile->makeGroupReadable();
