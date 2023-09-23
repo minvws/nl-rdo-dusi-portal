@@ -24,6 +24,9 @@ class RequiredConditionRule implements DataAwareRule, ImplicitValidationRule
         return $this;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (!empty($value)) {
