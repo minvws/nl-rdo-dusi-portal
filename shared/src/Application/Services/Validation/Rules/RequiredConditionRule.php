@@ -6,10 +6,9 @@ namespace MinVWS\DUSi\Shared\Application\Services\Validation\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
-use Illuminate\Contracts\Validation\ValidationRule;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 
-class RequiredConditionRule implements DataAwareRule, ValidationRule
+class RequiredConditionRule implements DataAwareRule, ImplicitValidationRule
 {
     public function __construct(
         private readonly int $stage,
@@ -27,9 +26,13 @@ class RequiredConditionRule implements DataAwareRule, ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        if (!empty($value)) {
+            return;
+        }
+
         $data = [$this->stage => (object)$this->data];
-        if ($this->condition->evaluate($data) && empty($value)) {
-            $fail('The attribute ' . $attribute . ' is required.');
+        if ($this->condition->evaluate($data)) {
+            $fail('validation.required')->translate();
         }
     }
 }

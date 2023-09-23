@@ -151,7 +151,8 @@ class FieldsTableSeeder extends Seeder
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionPostponedLetter', title: 'Toekenningsbrief', mimeTypes: [
             'image/*',
             'application/pdf'
-        ], maxFileSize: 20971520);
+        ], maxFileSize: 20971520,
+            isRequired: false);
 
 
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Bewijs dienstverband', mimeTypes: [
@@ -175,7 +176,7 @@ class FieldsTableSeeder extends Seeder
             "Anders",
         ]);
 
-        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmploymentFunction', title: 'Andere functie', maxLength: 300,);
+        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmploymentFunction', title: 'Andere functie', maxLength: 300, isRequired: false);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employerKind', title: 'Werkgever', options: [
             "Zorgaanbieder",
@@ -185,14 +186,15 @@ class FieldsTableSeeder extends Seeder
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerDeclarationFile', title: 'Zorgaanbiedersverklaring', mimeTypes: [
             'image/*',
             'application/pdf'
-        ], maxFileSize: 20971520);
+        ], maxFileSize: 20971520,
+            isRequired: false);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'hasBeenWorkingAtJudicialInstitution', title: 'Bent u werkzaamh geweest bij een justitiële inrichting?', options: [
             "Ja",
             "Nee",
         ]);
 
-        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'BIGNumberJudicialInstitution', title: 'BIG-nummer', maxLength: 11,);
+        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'BIGNumberJudicialInstitution', title: 'BIG-nummer', maxLength: 11, isRequired: false,);
 
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Sociaal-medische beoordeling', mimeTypes: [
             'image/*',
@@ -207,9 +209,8 @@ class FieldsTableSeeder extends Seeder
         $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'doctorsCertificate', title: 'Verklaring arts', mimeTypes: [
             'image/*',
             'application/pdf'
-        ], maxFileSize: 20971520);
-
-        $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'permissionToProcessPersonalData', title: 'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',);
+        ], maxFileSize: 20971520,
+            isRequired: false);
 
         $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'truthfullyCompleted', title: '');
     }

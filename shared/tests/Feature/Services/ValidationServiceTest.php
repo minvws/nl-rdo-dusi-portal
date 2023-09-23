@@ -72,6 +72,7 @@ class ValidationServiceTest extends TestCase
             fieldValues: [
                 $fieldValue,
             ],
+            submit: true
         );
 
         $this->assertEquals($passes, $validator->passes());
@@ -351,6 +352,7 @@ class ValidationServiceTest extends TestCase
                 $fieldValue1,
                 $fieldValue2
             ],
+            submit: true
         );
 
         $this->assertEquals($passes, $validator->passes());
@@ -359,12 +361,12 @@ class ValidationServiceTest extends TestCase
     public static function requiredConditionRuleProvider(): array
     {
         return [
-            //'condition is matched and value is set' => ['a', 'a', 'value', true],
+            'condition is matched and value is set' => ['a', 'a', 'value', true],
             'condition is matched and value is not set' => ['a', 'a', null, false],
-//            'condition is matched and value is empty string' => ['a', 'a', '', false],
-//            'condition is not matched and value is set' => ['a', 'b', 'value', true],
-//            'condition is not matched and value is not set' => ['a', 'b', null, true],
-//            'condition is not matched and value is empty string' => ['a', 'b', '', true],
+            'condition is matched and value is empty string' => ['a', 'a', '', false],
+            'condition is not matched and value is set' => ['a', 'b', 'value', true],
+            'condition is not matched and value is not set' => ['a', 'b', null, true],
+            'condition is not matched and value is empty string' => ['a', 'b', '', true],
         ];
     }
 }
