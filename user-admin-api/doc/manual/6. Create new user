@@ -1,1 +1,35 @@
 # Nieuwe gebruiker aanmaken
+
+## Aanmaken account
+
+Om een medewerker toegang te geven tot het Gebruikersbeheerportaal of tot het Behandelportaal moeten zij een account toegewezen krijgen.  
+Dit kan via de knop 'Create new user' op het Users overzicht.  
+
+Dat opent een nieuw scherm waarin een aantal gegevens van de medewerker moeten worden vastgelegd:
+
+- Naam
+- E-mailadres
+- Organisatie
+
+Vervolgens kan het account worden aangemaakt via 'Submit'.  
+Dit opent een nieuw scherm met de zojuist ingevoerde naam en e-mailadres, aangevuld met het eerste wachtwoord en de QR-code om de 2 Factor Authenticatie in te stellen.  
+Ook is er een optie de gegevens af te drukken.
+
+![Create new user](*/images/DUSI%20create%20new%20user.PNG)
+
+## Toegang geven aan medewerker
+
+Om een medewerker daadwerkelijk toegang te geven tot diens account moeten bovenstaande gegevens fysiek aan de medewerker overhandigd worden, dus niet via e-mail.  
+Aangezien Mijn DUS-I werkt meer zeer gevoelige persoonsgegevens is het noodzakelijk dat de identiteit van de ontvanger van de accountgegevens wordt gecontroleerd aan de hand van een paspoort- of identiteitsbewijscontrole.  
+
+De Functioneel Beheerder is verantwoordelijk voor deze controle en voor het vastleggen dat de gegevens zijn overhandigd en het identiteitsbewijs is gecontroleerd.  
+Dit moet via een formulier bevestigd worden waarop de volgende gegevens staan:
+
+- Waar (stad)
+- Wanneer (datum)
+- Welke beheerder en in welke rol
+- Wie de ontvanger is
+- Ondertekening beheerder
+- Ondertekening ontvanger
+
+Dit formulier moet in tweevoud opgesteld en ondertekend worden. Een ter bewaring bij DUS-I en een voor de ontvanger als bewijs.
