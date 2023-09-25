@@ -12,6 +12,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ImplicitValidationRule;
 
 class Validator extends BaseValidator
 {
@@ -28,6 +29,19 @@ class Validator extends BaseValidator
         private readonly ApplicationRepository $applicationRepository
     ) {
         parent::__construct($translator, $data, $rules);
+    }
+
+    protected function isImplicit($rule)
+    {
+        if (parent::isImplicit($rule)) {
+            return true;
+        }
+
+        if ($rule instanceof InvokableValidationRule) {
+            $rule = $rule->invokable();
+        }
+
+        return $rule instanceof ImplicitValidationRule;
     }
 
     /**

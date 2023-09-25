@@ -14,11 +14,16 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Application\Services\ValidationService;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Tests\TestCase;
 use Mockery;
 
+/**
+ * @group validation
+ */
 class ValidationServiceTest extends TestCase
 {
     use DatabaseTransactions;
@@ -282,6 +287,86 @@ class ValidationServiceTest extends TestCase
                 ['D'],
                 false,
             ],
+        ];
+    }
+
+
+    /**
+     * @group validation-required-condition
+     * @dataProvider requiredConditionRuleProvider
+     */
+    public function testRequiredConditionRule(
+        ?string $value1,
+        ?string $comparisonValue,
+        ?string $value2,
+        bool $passes
+    ): void {
+        $application = Application::factory()->create();
+        $applicationStage = ApplicationStage::factory()->create([
+            'application_id' => $application->id,
+        ]);
+
+        $applicationFileManager = Mockery::mock(ApplicationFileManager::class);
+        $applicationRepository = Mockery::mock(ApplicationRepository::class);
+
+        $factory = new ValidatorFactory(
+            applicationFileManager: $applicationFileManager,
+            applicationRepository: $applicationRepository,
+        );
+
+        $validationService = new ValidationService(
+            validatorFactory: $factory,
+        );
+
+        $fieldValue1 = new FieldValue(
+            Field::factory()
+                ->for($applicationStage->subsidyStage)
+                ->create([
+                    'code' => 'code1',
+                    'type' => FieldType::Text,
+                    'is_required' => true,
+                    'params' => [],
+                ]),
+            value: $value1,
+        );
+
+        $condition =
+            new ComparisonCondition(1, 'code1', Operator::Identical, $comparisonValue);
+
+        $fieldValue2 = new FieldValue(
+            Field::factory()
+                ->for($applicationStage->subsidyStage)
+                ->create([
+                    'code' => 'code2',
+                    'type' => FieldType::Text,
+                    'is_required' => false,
+                    'required_condition' => $condition,
+                    'params' => [],
+                ]),
+            value: $value2,
+        );
+
+        $validator = $validationService->getValidator(
+            applicationStage: $applicationStage,
+            fieldValues: [
+                $fieldValue1,
+                $fieldValue2
+            ],
+            submit: true
+        );
+
+        $this->assertEquals($passes, $validator->passes());
+    }
+
+    public static function requiredConditionRuleProvider(): array
+    {
+        return [
+            'condition is matched and value is set' => ['a', 'a', 'value', true],
+            'condition is matched and value is not set' => ['a', 'a', null, false],
+            'condition is matched and value is empty string' => ['a', 'a', '', false],
+            'condition is not matched and value is set' => ['a', 'b', 'value', true],
+            'condition is not matched and value is not set' => ['a', 'b', null, true],
+            'condition is not matched and value is empty string' => ['a', 'b', '', true],
         ];
     }
 }
