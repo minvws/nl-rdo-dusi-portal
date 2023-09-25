@@ -14,13 +14,11 @@ readonly class LetterData
      */
     public function __construct(
         public string $subsidyTitle,
-        public string $decision,
         public ApplicationStages $stages,
         public DateTimeInterface $createdAt,
         public string $contactEmailAddress,
         public string $reference,
         public ?string $motivation,
-        public ?string $appointedSubsidy = null,
         public ?string $applicationCode = null,
         public ?string $cssPath = null,
         public ?string $logoPath = null,
