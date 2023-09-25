@@ -100,8 +100,6 @@ class ApplicationController extends Controller
     {
         //Validations ToDo:
         // - isReviewableForAssessor
-        // - Validate required fields for stage
-        // - field validations (not mvp)
 
         $submittedData = $request->json()->all();
 
