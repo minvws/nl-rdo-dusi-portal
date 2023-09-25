@@ -8,21 +8,20 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
-use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\LetterRepository;
+use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListMessage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
-use Psr\Log\LoggerInterface;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use Throwable;
 
 /**
@@ -30,7 +29,7 @@ use Throwable;
  */
 readonly class ApplicationMessageService
 {
-    use HandleException;
+    use LoadIdentity;
 
     public function __construct(
         private ResponseEncryptionService $responseEncryptionService,
@@ -38,14 +37,30 @@ readonly class ApplicationMessageService
         private IdentityService $identityService,
         private LetterRepository $letterRepository,
         private ApplicationMapper $applicationMapper,
-        private LoggerInterface $logger
+        private EncryptedResponseExceptionHelper $exceptionHelper
     ) {
     }
 
     public function listMessages(MessageListParams $params): EncryptedResponse
     {
+        try {
+            return $this->doListMessages($params);
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::LIST_MESSAGES,
+                $params->publicKey
+            );
+        }
+    }
+
+    private function doListMessages(MessageListParams $params): EncryptedResponse
+    {
         $identity = $this->identityService->findIdentity($params->identity);
         if ($identity === null) {
+            // Identity not known in system, so no applications / messages yet.
             return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::OK,
                 new MessageList([]),
@@ -54,17 +69,11 @@ readonly class ApplicationMessageService
         }
 
         $applicationMessages = $this->messageRepository->getMyMessages($identity);
-
-        $messageListMessages = array_map(fn(ApplicationMessage $message) => new MessageListMessage(
-            $message->id,
-            $message->subject,
-            $message->sent_at,
-            $message->is_new,
-        ), $applicationMessages);
+        $list = $this->applicationMapper->mapApplicationMessageArrayToMessageListDTO($applicationMessages);
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,
-            new MessageList($messageListMessages),
+            $list,
             $params->publicKey
         );
     }
@@ -74,29 +83,25 @@ readonly class ApplicationMessageService
         try {
             return $this->doGetMessage($params);
         } catch (Throwable $e) {
-            return $this->handleException(__METHOD__, $e, $params->publicKey);
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::GET_MESSAGE,
+                $params->publicKey
+            );
         }
     }
 
     private function doGetMessage(MessageParams $params): EncryptedResponse
     {
-        $identity = $this->identityService->findIdentity($params->identity);
-
-        if ($identity === null) {
-            return $this->responseEncryptionService->encryptCodable(
-                EncryptedResponseStatus::NOT_FOUND,
-                new Error('identity_not_found', 'Identity not registered yet.'),
-                $params->publicKey
-            );
-        }
+        $identity = $this->loadIdentity($params->identity);
 
         $message = $this->messageRepository->getMyMessage($identity, $params->id);
-
         if ($message === null) {
-            return $this->responseEncryptionService->encryptCodable(
+            throw new EncryptedResponseException(
                 EncryptedResponseStatus::NOT_FOUND,
-                new Error('message_not_found', 'Message not found.'),
-                $params->publicKey
+                'message_not_found'
             );
         }
 
@@ -104,10 +109,9 @@ readonly class ApplicationMessageService
         // TODO: should be encrypted $body = $this->encryptionService->decryptData($body);
 
         if ($body === null) {
-            return $this->responseEncryptionService->encryptCodable(
+            throw new EncryptedResponseException(
                 EncryptedResponseStatus::NOT_FOUND,
-                new Error('message_body_not_found', 'Message body not found.'),
-                $params->publicKey
+                'message_file_not_found'
             );
         }
 
@@ -122,23 +126,28 @@ readonly class ApplicationMessageService
 
     public function getMessageDownload(MessageDownloadParams $params): EncryptedResponse
     {
-        $identity = $this->identityService->findIdentity($params->identity);
-
-        if ($identity === null) {
-            return $this->responseEncryptionService->encryptCodable(
-                EncryptedResponseStatus::NOT_FOUND,
-                new Error('identity_not_found', 'Identity not registered yet.'),
+        try {
+            return $this->doGetMessageDownload($params);
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::GET_MESSAGE_DOWNLOAD,
                 $params->publicKey
             );
         }
+    }
+
+    private function doGetMessageDownload(MessageDownloadParams $params): EncryptedResponse
+    {
+        $identity = $this->loadIdentity($params->identity);
 
         $message = $this->messageRepository->getMyMessage($identity, $params->id);
-
         if ($message === null) {
-            return $this->responseEncryptionService->encryptCodable(
+            throw new EncryptedResponseException(
                 EncryptedResponseStatus::NOT_FOUND,
-                new Error('message_not_found', 'Message not found.'),
-                $params->publicKey
+                'message_not_found'
             );
         }
 
@@ -153,10 +162,9 @@ readonly class ApplicationMessageService
         };
 
         if ($content === null) {
-            return $this->responseEncryptionService->encryptCodable(
+            throw new EncryptedResponseException(
                 EncryptedResponseStatus::NOT_FOUND,
-                new Error('message_download_not_found', 'Message download not found.'),
-                $params->publicKey
+                'message_file_not_found'
             );
         }
 

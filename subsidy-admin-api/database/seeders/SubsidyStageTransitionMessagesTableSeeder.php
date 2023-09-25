@@ -30,8 +30,8 @@ class SubsidyStageTransitionMessagesTableSeeder extends Seeder
             'status' => VersionStatus::Published->value,
             'created_at' => Carbon::now(),
             'subject' => 'Aanvulling nodig',
-            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-pdf.latte'),
-            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-view.latte'),
+            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-question-pdf.latte'),
+            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-question-view.latte'),
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
@@ -41,8 +41,8 @@ class SubsidyStageTransitionMessagesTableSeeder extends Seeder
             'status' => VersionStatus::Published->value,
             'created_at' => Carbon::now(),
             'subject' => 'Aanvraag afgekeurd',
-            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-pdf.latte'),
-            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-view.latte'),
+            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-rejected-pdf.latte'),
+            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-rejected-view.latte'),
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
@@ -52,8 +52,8 @@ class SubsidyStageTransitionMessagesTableSeeder extends Seeder
             'status' => VersionStatus::Published->value,
             'created_at' => Carbon::now(),
             'subject' => 'Aanvraag afgekeurd',
-            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-pdf.latte'),
-            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-view.latte'),
+            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-rejected-pdf.latte'),
+            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-rejected-view.latte'),
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
@@ -63,8 +63,8 @@ class SubsidyStageTransitionMessagesTableSeeder extends Seeder
             'status' => VersionStatus::Published->value,
             'created_at' => Carbon::now(),
             'subject' => 'Aanvraag goedgekeurd',
-            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-pdf.latte'),
-            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-view.latte'),
+            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-approved-pdf.latte'),
+            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-approved-view.latte'),
         ]);
     }
 }

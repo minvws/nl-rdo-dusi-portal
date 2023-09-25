@@ -53,7 +53,7 @@ readonly class LetterService
     {
         $result = new ApplicationStages();
         foreach ($answers->stages as $applicationStageAnswers) {
-            $stageKey = 'stage' . $applicationStageAnswers->stage->subsidyStage->stage;
+            $stageKey = $applicationStageAnswers->stage->subsidyStage->stage;
             $stageData = new ApplicationStageData();
 
             $encrypter = $this->encryptionService->getEncrypter($applicationStageAnswers->stage);
@@ -173,17 +173,13 @@ readonly class LetterService
         $logoPath = public_path('img/vws_dusi_logo.svg');
         $signaturePath = public_path('img/vws_dusi_signature.jpg');
 
-        assert($stage->assessor_decision !== null);
-
         return new LetterData(
             subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
-            decision: $stage->assessor_decision->value,
             stages: $data,
             createdAt: $stage->application->created_at,
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
             reference: $stage->application->reference,
-            motivation: 'TODO: Motivation from decision', // TODO: replace with motivation
-            appointedSubsidy: number_format(100099 / 100, 2, ',', '.'), // TODO: replace with appointed subsidy
+            motivation: '', // TODO: replace with motivation
             applicationCode: null,
             cssPath: $cssPath,
             logoPath: $logoPath,

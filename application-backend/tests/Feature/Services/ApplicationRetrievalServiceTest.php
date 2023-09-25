@@ -136,7 +136,7 @@ class ApplicationRetrievalServiceTest extends TestCase
     public static function useRealIdentityProvider(): array
     {
         return [
-            [false, 'identity_not_found'],
+            [false, 'application_not_found'],
             [true, 'application_not_found']
         ];
     }

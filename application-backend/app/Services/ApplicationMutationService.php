@@ -10,10 +10,10 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
-use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -29,8 +29,8 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 
@@ -42,7 +42,6 @@ readonly class ApplicationMutationService
 {
     use LoadIdentity;
     use LoadApplication;
-    use HandleException;
 
     private const CREATE_APPLICATION_ATTEMPTS = 3;
 
@@ -57,7 +56,7 @@ readonly class ApplicationMutationService
         private ApplicationMapper $applicationMapper,
         private ApplicationReferenceService $applicationReferenceService,
         private FrontendDecryption $frontendDecryptionService,
-        private LoggerInterface $logger
+        private EncryptedResponseExceptionHelper $exceptionHelper
     ) {
     }
 
@@ -89,8 +88,7 @@ readonly class ApplicationMutationService
         if ($subsidy === null) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'subsidy_not_found',
-                'Subsidy with the given code does not exist.'
+                'subsidy_not_found'
             );
         }
 
@@ -109,8 +107,7 @@ readonly class ApplicationMutationService
         if ($application !== null) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_already_exists',
-                'There is already a submitted application for this identity.'
+                'application_already_exists'
             );
         }
 
@@ -148,7 +145,13 @@ readonly class ApplicationMutationService
                 self::CREATE_APPLICATION_ATTEMPTS
             );
         } catch (Throwable $e) {
-            return $this->handleException(__METHOD__, $e, $params->publicKey);
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::FIND_OR_CREATE_APPLICATION,
+                $params->publicKey
+            );
         }
     }
 
@@ -166,8 +169,7 @@ readonly class ApplicationMutationService
         if (!$application->status->isEditableForApplicant()) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_readonly',
-                'Application is read-only'
+                'application_readonly'
             );
         }
 
@@ -175,8 +177,7 @@ readonly class ApplicationMutationService
         if ($applicationStage->subsidyStage->stage !== 1) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_readonly',
-                'Application is read-only'
+                'application_readonly'
             );
         }
 
@@ -186,7 +187,6 @@ readonly class ApplicationMutationService
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::BAD_REQUEST,
                 'invalid_data',
-                'Data contains invalid values',
                 previous: $e
             );
         }
@@ -207,7 +207,13 @@ readonly class ApplicationMutationService
         try {
             return DB::transaction(fn () => $this->doSaveApplication($params));
         } catch (Throwable $e) {
-            return $this->handleException(__METHOD__, $e, $params->publicKey);
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::SAVE_APPLICATION,
+                $params->publicKey
+            );
         }
     }
 }

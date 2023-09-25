@@ -1,0 +1,18 @@
+{layout 'letter_layout.latte'}
+{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
+        Op (*DatumIncompleetbrief* of *DatumVraagbrief*) heb ik u geïnformeerd dat ik uw aanvraag niet in behandeling kan nemen.
+    </p>
+    <p>Ik heb u daarom verzocht uw aanvraag vóór (*DatumIncompleetbrief+14* dagen of *DatumVraagbrief+14*) dagen aan te vullen.</p>
+    <p>&nbsp;</p>
+
+    <h2>Besluit</h2>
+    <p>Aangezien ik de ontbrekende gegevens niet op tijd van u heb ontvangen, laat ik uw aanvraag buiten behandeling.</p>
+    <p>&nbsp;</p>
+{/block}
+
+{block sidebar}
+    {include parent}
+{/block}

@@ -126,7 +126,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('identity_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     public function testGetMessageWithInvalidApplicationMessage(): void
@@ -149,7 +149,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('message_body_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     public function testGetMessageDownloadHtml(): void
@@ -187,7 +187,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('identity_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     public function testGetMessageDownloadWithInvalidApplicationMessage(): void
@@ -210,7 +210,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('message_download_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     public function testGetMessageDownloadWithInvalidPdfContent(): void
@@ -222,7 +222,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('message_download_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     private function getMessageResponse(EncryptedIdentity $encryptedIdentity, string $messageId): EncryptedResponse
