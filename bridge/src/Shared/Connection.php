@@ -36,6 +36,8 @@ class Connection
         $config->setUser($user);
         $config->setPassword($password);
         $config->setIsLazy(true);
+        $config->setKeepalive(true);
+        $config->setHeartbeat(60);
         return new self(AMQPConnectionFactory::create($config), $queue);
     }
 
