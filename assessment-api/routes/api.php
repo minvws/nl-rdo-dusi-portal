@@ -16,6 +16,7 @@ Route::prefix('applications')
     ->group(function () {
         Route::get('/', 'filterApplications');
         Route::get('{application}', 'show');
+        Route::put('{application}', 'submitAssessment');
         Route::get('{application}/history', 'getApplicationHistory');
         Route::get('{application}/reviewer', 'getApplicationReviewer');
     });
