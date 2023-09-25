@@ -56,7 +56,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
                     'title' => $this->application->subsidyVersion->subsidy->title,
                     'description' => $this->application->subsidyVersion->subsidy->description,
                     'validFrom' => $this->application->subsidyVersion->subsidy->valid_from->format('Y-m-d'),
-                    'validTo' => $this->application->subsidyVersion->subsidy->valid_to->format('Y-m-d')
+                    'validTo' => $this->application->subsidyVersion->subsidy->valid_to?->format('Y-m-d')
                 ]
             ],
             'dataschema' => [
