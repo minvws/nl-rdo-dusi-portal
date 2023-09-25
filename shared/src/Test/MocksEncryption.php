@@ -18,6 +18,9 @@ use Mockery;
 
 trait MocksEncryption
 {
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setupMocksEncryption(): void
     {
         $privateKey = openssl_pkey_new();
