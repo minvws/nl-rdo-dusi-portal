@@ -24,6 +24,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Tests\MocksEncryption;
 
 /**
  * @group assessment-submit
@@ -31,6 +32,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 class ApplicationControllerSubmitTest extends TestCase
 {
     use DatabaseTransactions;
+    use MocksEncryption;
 
     private ApplicationFlowService $flowService;
     private ApplicationStageEncryptionService $encryptionService;
@@ -49,6 +51,7 @@ class ApplicationControllerSubmitTest extends TestCase
 
         //ToDo: Disabled authentication temporarily
         $this->withoutMiddleware(Authenticate::class);
+        $this->setupMocksEncryption();
 
         $this->flowService = $this->app->get(ApplicationFlowService::class);
         $this->encryptionService = $this->app->get(ApplicationStageEncryptionService::class);
