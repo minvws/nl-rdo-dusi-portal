@@ -23,7 +23,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $code
  * @property string $description
  * @property DateTimeInterface $valid_from
- * @property DateTimeInterface $valid_to
+ * @property DateTimeInterface|null $valid_to
  * @property Collection<SubsidyVersion> $subsidyVersions
  * @property SubsidyVersion $publishedVersion
  * @method static SubsidyVersion|Builder publishedVersion()
