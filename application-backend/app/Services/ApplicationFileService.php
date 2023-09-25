@@ -10,8 +10,8 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
-use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
@@ -25,8 +25,8 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FileUploadResult;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
@@ -39,7 +39,6 @@ use Throwable;
  */
 readonly class ApplicationFileService
 {
-    use HandleException;
     use LoadIdentity;
     use LoadApplication;
 
@@ -52,6 +51,7 @@ readonly class ApplicationFileService
         private SubsidyRepository $subsidyRepository,
         private LoggerInterface $logger,
         private FileValidator $fileValidator,
+        private EncryptedResponseExceptionHelper $exceptionHelper
     ) {
     }
 
@@ -60,8 +60,7 @@ readonly class ApplicationFileService
         if (!$application->status->isEditableForApplicant()) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_readonly',
-                'Application is read-only'
+                'application_readonly'
             );
         }
 
@@ -69,8 +68,7 @@ readonly class ApplicationFileService
         if ($applicationStage->subsidyStage->stage !== 1) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_readonly',
-                'Application is read-only'
+                'application_readonly'
             );
         }
 
@@ -86,9 +84,8 @@ readonly class ApplicationFileService
 
         if ($field === null || $field->type !== FieldType::Upload) {
             throw new EncryptedResponseException(
-                EncryptedResponseStatus::NOT_FOUND,
-                'field_not_found',
-                'File field with the given code does not exist for this application stage'
+                EncryptedResponseStatus::BAD_REQUEST,
+                'field_not_found'
             );
         }
 
@@ -122,10 +119,9 @@ readonly class ApplicationFileService
             // After calling fails, the validator has run and the file can be closed
             $tempFile->close();
 
-            return $this->responseEncryptionService->encryptCodable(
+            throw new EncryptedResponseException(
                 EncryptedResponseStatus::BAD_REQUEST,
-                new Error('file_validation_failed', 'File validation failed.'),
-                $params->publicKey,
+                'file_validation_failed'
             );
         }
 
@@ -142,50 +138,60 @@ readonly class ApplicationFileService
 
     public function saveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
     {
-        return DB::transaction(function () use ($params) {
-            try {
-                return $this->doSaveApplicationFile($params);
-            } catch (EncryptedResponseException $e) {
-                return $this->responseEncryptionService->encryptCodable(
-                    $e->getStatus(),
-                    $e->getError(),
-                    $params->publicKey
-                );
-            }
-        });
+        try {
+            return DB::transaction(fn () => $this->doSaveApplicationFile($params));
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::UPLOAD_APPLICATION_FILE,
+                $params->publicKey
+            );
+        }
+    }
+
+    private function doGetApplicationFile(ApplicationFileParams $params): EncryptedResponse
+    {
+        $identity = $this->loadIdentity($params->identity);
+        $application = $this->loadApplication($identity, $params->applicationReference);
+
+        $applicationStage = $this->applicationRepository->getApplicantApplicationStage($application, true);
+        assert($applicationStage !== null);
+
+        $field = $this->loadField($applicationStage, $params->fieldCode);
+        if (!$this->applicationFileManager->fileExists($applicationStage, $field, $params->id)) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::NOT_FOUND,
+                'file_not_found'
+            );
+        }
+
+        $content = $this->applicationFileManager->readFile($applicationStage, $field, $params->id);
+
+        $fileInfo = new finfo(FILEINFO_MIME_TYPE);
+        $contentType = $fileInfo->buffer($content) ?: 'application/octet-stream';
+
+        return $this->responseEncryptionService->encrypt(
+            EncryptedResponseStatus::OK,
+            $content,
+            $contentType,
+            $params->publicKey
+        );
     }
 
     public function getApplicationFile(ApplicationFileParams $params): EncryptedResponse
     {
         try {
-            $identity = $this->loadIdentity($params->identity);
-            $application = $this->loadApplication($identity, $params->applicationReference);
-
-            $applicationStage = $this->applicationRepository->getApplicantApplicationStage($application, true);
-            assert($applicationStage !== null);
-
-            $field = $this->loadField($applicationStage, $params->fieldCode);
-            if (!$this->applicationFileManager->fileExists($applicationStage, $field, $params->id)) {
-                throw new EncryptedResponseException(
-                    EncryptedResponseStatus::NOT_FOUND,
-                    'file_not_found',
-                    'File does not exist'
-                );
-            }
-
-            $content = $this->applicationFileManager->readFile($applicationStage, $field, $params->id);
-
-            $fileInfo = new finfo(FILEINFO_MIME_TYPE);
-            $contentType = $fileInfo->buffer($content) ?: 'application/octet-stream';
-
-            return $this->responseEncryptionService->encrypt(
-                EncryptedResponseStatus::OK,
-                $content,
-                $contentType,
+            return $this->doGetApplicationFile($params);
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::GET_APPLICATION_FILE,
                 $params->publicKey
             );
-        } catch (Throwable $e) {
-            return $this->handleException(__METHOD__, $e, $params->publicKey);
         }
     }
 }

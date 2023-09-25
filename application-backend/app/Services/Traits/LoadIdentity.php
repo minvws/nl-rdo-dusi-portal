@@ -23,8 +23,7 @@ trait LoadIdentity
 
         throw new EncryptedResponseException(
             EncryptedResponseStatus::NOT_FOUND,
-            'identity_not_found',
-            'Identity not registered yet.'
+            'identity_not_found'
         );
     }
 }

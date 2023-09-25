@@ -8,9 +8,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Exception;
+use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
-use MinVWS\DUSi\Application\Backend\Services\Traits\HandleException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
@@ -20,7 +19,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use Psr\Log\LoggerInterface;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use Throwable;
 
 /**
@@ -28,7 +27,6 @@ use Throwable;
  */
 readonly class ApplicationRetrievalService
 {
-    use HandleException;
     use LoadIdentity;
     use LoadApplication;
 
@@ -38,14 +36,26 @@ readonly class ApplicationRetrievalService
         private ApplicationRepository $applicationRepository,
         private IdentityService $identityService,
         private ApplicationMapper $applicationMapper,
-        private LoggerInterface $logger
+        private EncryptedResponseExceptionHelper $exceptionHelper
     ) {
     }
 
-    /**
-     * @throws Exception
-     */
     public function listApplications(ApplicationListParams $params): EncryptedResponse
+    {
+        try {
+            return $this->doListApplications($params);
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::LIST_APPLICATIONS,
+                $params->publicKey
+            );
+        }
+    }
+
+    public function doListApplications(ApplicationListParams $params): EncryptedResponse
     {
         $identity = $this->identityService->findIdentity($params->identity);
         if ($identity === null) {
@@ -70,24 +80,35 @@ readonly class ApplicationRetrievalService
     public function getApplication(ApplicationParams $params): EncryptedResponse
     {
         try {
-            $identity = $this->loadIdentity($params->identity);
-            $app = $this->loadApplication($identity, $params->reference);
-
-            $data = null;
-            if ($params->includeData) {
-                $appStage = $this->applicationRepository->getApplicantApplicationStage($app, true);
-                $data = $appStage !== null ? $this->applicationDataService->getApplicationStageData($appStage) : null;
-            }
-
-            $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data);
-
-            return $this->responseEncryptionService->encryptCodable(
-                EncryptedResponseStatus::OK,
-                $dto,
+            return $this->doGetApplication($params);
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::GET_APPLICATION,
                 $params->publicKey
             );
-        } catch (Throwable $e) {
-            return $this->handleException(__METHOD__, $e, $params->publicKey);
         }
+    }
+
+    private function doGetApplication(ApplicationParams $params): EncryptedResponse
+    {
+        $identity = $this->loadIdentity($params->identity);
+        $app = $this->loadApplication($identity, $params->reference);
+
+        $data = null;
+        if ($params->includeData) {
+            $appStage = $this->applicationRepository->getApplicantApplicationStage($app, true);
+            $data = $appStage !== null ? $this->applicationDataService->getApplicationStageData($appStage) : null;
+        }
+
+        $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data);
+
+        return $this->responseEncryptionService->encryptCodable(
+            EncryptedResponseStatus::OK,
+            $dto,
+            $params->publicKey
+        );
     }
 }

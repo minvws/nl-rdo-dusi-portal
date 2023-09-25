@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Shared\Serialisation\Exceptions;
 
 use Exception;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use Throwable;
 
 class EncryptedResponseException extends Exception
@@ -14,10 +13,9 @@ class EncryptedResponseException extends Exception
     public function __construct(
         private readonly EncryptedResponseStatus $status,
         private readonly string $errorCode,
-        private readonly string $errorMessage,
         ?Throwable $previous = null
     ) {
-        parent::__construct($errorMessage, previous: $previous);
+        parent::__construct($status->value . ': ' . $this->errorCode, previous: $previous);
     }
 
     public function getStatus(): EncryptedResponseStatus
@@ -25,9 +23,9 @@ class EncryptedResponseException extends Exception
         return $this->status;
     }
 
-    public function getError(): Error
+    public function getErrorCode(): string
     {
-        return new Error($this->errorCode, $this->errorMessage);
+        return $this->errorCode;
     }
 
     public static function forThrowable(Throwable $e): EncryptedResponseException
@@ -39,7 +37,6 @@ class EncryptedResponseException extends Exception
         return new self(
             EncryptedResponseStatus::INTERNAL_SERVER_ERROR,
             'internal_error',
-            'Internal error.',
             previous: $e
         );
     }
