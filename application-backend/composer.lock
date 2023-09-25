@@ -300,16 +300,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.6.6",
+            "version": "3.6.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "63646ffd71d1676d2f747f871be31b7e921c7864"
+                "reference": "8e0e268052b4a8974cb00215bb2892787021614f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/63646ffd71d1676d2f747f871be31b7e921c7864",
-                "reference": "63646ffd71d1676d2f747f871be31b7e921c7864",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/8e0e268052b4a8974cb00215bb2892787021614f",
+                "reference": "8e0e268052b4a8974cb00215bb2892787021614f",
                 "shasum": ""
             },
             "require": {
@@ -325,9 +325,9 @@
                 "doctrine/coding-standard": "12.0.0",
                 "fig/log-test": "^1",
                 "jetbrains/phpstorm-stubs": "2023.1",
-                "phpstan/phpstan": "1.10.29",
+                "phpstan/phpstan": "1.10.34",
                 "phpstan/phpstan-strict-rules": "^1.5",
-                "phpunit/phpunit": "9.6.9",
+                "phpunit/phpunit": "9.6.12",
                 "psalm/plugin-phpunit": "0.18.4",
                 "slevomat/coding-standard": "8.13.1",
                 "squizlabs/php_codesniffer": "3.7.2",
@@ -393,7 +393,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.6.6"
+                "source": "https://github.com/doctrine/dbal/tree/3.6.7"
             },
             "funding": [
                 {
@@ -409,7 +409,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-17T05:38:17+00:00"
+            "time": "2023-09-19T20:15:41+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -2269,18 +2269,19 @@
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-file-validation",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "0f8e5254d531fd6f4ce30ee0df09b181be2f2562"
+                "reference": "0b4959af630f6ef1c6052d62dea704e0c5d7b4c9"
             },
             "require": {
                 "doctrine/dbal": "^3.6",
                 "guzzlehttp/guzzle": "^7.8",
                 "laravel/framework": "^10.17",
                 "minvws/codable": "dev-main as 1.0.x-dev",
-                "php": "^8.2"
+                "php": "^8.2",
+                "xenolope/quahog": "^3.0"
             },
             "require-dev": {
                 "fakerphp/faker": "^1.23",
@@ -2338,7 +2339,7 @@
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
-            "version": "dev-file-validation",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../bridge",
