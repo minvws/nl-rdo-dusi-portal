@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services\Clamav;
+namespace MinVWS\DUSi\Shared\Application\Services\Clamav;
 
 use Exception;
 use Socket\Raw\Factory;

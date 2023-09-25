@@ -377,9 +377,6 @@ class ApplicationMutationServiceTest extends TestCase
      */
     public function testSaveApplicationWithMissingFile(): void
     {
-        // TODO: enable this with backend validator
-        $this->markTestSkipped();
-
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
         $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
@@ -412,7 +409,11 @@ class ApplicationMutationServiceTest extends TestCase
 
         $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
-        // TODO: should be a validation error e.g. EncryptedResponseStatus::BAD_REQUEST
-        $this->assertEquals(EncryptedResponseStatus::INTERNAL_SERVER_ERROR, $encryptedResponse->status);
+        $this->assertEquals(EncryptedResponseStatus::BAD_REQUEST, $encryptedResponse->status);
+        $error =
+            $this->responseEncryptionService
+                ->decryptCodable($encryptedResponse, Error::class, $this->keyPair);
+        $this->assertNotNull($error);
+        $this->assertEquals('invalid_data', $error->code);
     }
 }

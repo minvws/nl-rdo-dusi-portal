@@ -114,6 +114,7 @@ trait CreateField
         string $title,
         array $options,
         ?string $description = null,
+        string|null $default = null,
         bool $isRequired = true
     ): string {
         return $this->createField(
@@ -122,7 +123,7 @@ trait CreateField
             title: $title,
             description: $description,
             type: 'select',
-            params: ['options' => $options],
+            params: ['options' => $options, 'default' => $default],
             isRequired: $isRequired,
         );
     }
@@ -173,6 +174,7 @@ trait CreateField
             code: $code,
             title: $title,
             description: $description,
+            default: 'Nederland',
             options: [
                 "Afghanistan",
                 "Åland",

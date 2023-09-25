@@ -1,15 +1,16 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
+
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Rules;
+namespace MinVWS\DUSi\Shared\Application\Services\Validation\Rules;
 
 use Closure;
 use Exception;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Translation\PotentiallyTranslatedString;
-use MinVWS\DUSi\Application\Backend\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
 use Psr\Log\LoggerInterface;
 
 readonly class ClamAv implements ValidationRule

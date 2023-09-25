@@ -10,11 +10,11 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
-use MinVWS\DUSi\Application\Backend\Services\Clamav\ClamAvService;
 use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

@@ -10,7 +10,6 @@ use MinVWS\DUSi\Application\API\Http\Requests\MessageRequest;
 use MinVWS\DUSi\Application\API\Http\Resources\MessageFiltersResource;
 use MinVWS\DUSi\Application\API\Services\MessageService;
 use MinVWS\DUSi\Application\API\Services\StateService;
-use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
@@ -19,24 +18,25 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 class MessageController extends Controller
 {
     public function __construct(
+        private readonly ClientPublicKeyHelper $publicKeyHelper,
         private readonly StateService $stateService,
         private readonly MessageService $messageService
     ) {
     }
 
-    public function index(MessageRequest $request): EncodableResponse
+    public function index(MessageRequest $request): Response
     {
         $params = new MessageListParams(
             $this->stateService->getEncryptedIdentity(),
+            $this->publicKeyHelper->getClientPublicKey(),
             $request->validated('date_from'),
             $request->validated('date_to'),
             $request->validated('subsidies'),
             $request->validated('statuses'),
         );
 
-        $list = $this->messageService->listMessages($params);
-
-        return new EncodableResponse($list);
+        $response = $this->messageService->listMessages($params);
+        return $this->encryptedResponse($response);
     }
 
     public function showFilters(): MessageFiltersResource
@@ -44,11 +44,11 @@ class MessageController extends Controller
         return $this->messageService->getFilters();
     }
 
-    public function view(string $id, ClientPublicKeyHelper $publicKeyHelper): Response
+    public function view(string $id): Response
     {
         $params = new MessageParams(
             $this->stateService->getEncryptedIdentity(),
-            $publicKeyHelper->getClientPublicKey(),
+            $this->publicKeyHelper->getClientPublicKey(),
             $id
         );
         $response = $this->messageService->getMessage($params);
@@ -57,12 +57,11 @@ class MessageController extends Controller
 
     public function download(
         string $id,
-        string $format,
-        ClientPublicKeyHelper $publicKeyHelper
+        string $format
     ): Response {
         $params = new MessageDownloadParams(
             $this->stateService->getEncryptedIdentity(),
-            $publicKeyHelper->getClientPublicKey(),
+            $this->publicKeyHelper->getClientPublicKey(),
             $id,
             MessageDownloadFormat::from($format)
         );

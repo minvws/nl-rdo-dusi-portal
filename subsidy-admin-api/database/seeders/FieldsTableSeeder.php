@@ -94,6 +94,16 @@ class FieldsTableSeeder extends Seeder
 
     public function createPCZMFields(): void
     {
+        $this->pczmApplicationFields();
+        $this->pczmFirstAssessmentFields();
+        $this->pczmSeconcAssessmentFields();
+        $this->pczmInternalAssessmentFields();
+        $this->pczmCoordinatorImplemenationFields();
+    }
+
+
+    public function pczmApplicationFields(): void
+    {
         $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'firstName', title: 'Voornaam',);
 
         $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'infix', title: 'Tussenvoegsel', isRequired: false,);
@@ -122,9 +132,15 @@ class FieldsTableSeeder extends Seeder
 
         $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'bankAccountHolder', title: 'Naam rekeninghouder', maxLength: 50,);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'certifiedEmploymentDocument', title: 'Gewaarmerkt verzekeringsbericht', mimeTypes: ['image/*','application/pdf'], maxFileSize: 20971520);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'certifiedEmploymentDocument', title: 'Gewaarmerkt verzekeringsbericht', mimeTypes: [
+            'image/*',
+            'application/pdf'
+        ], maxFileSize: 20971520);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionDocument', title: 'WIA-Beslissing', mimeTypes: ['image/*','application/pdf'], maxFileSize: 20971520);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionDocument', title: 'WIA-Beslissing', mimeTypes: [
+            'image/*',
+            'application/pdf'
+        ], maxFileSize: 20971520);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'isWiaDecisionPostponed', title: 'Is WIA beslissing uitgesteld?', options: [
             "Ja",
@@ -132,92 +148,120 @@ class FieldsTableSeeder extends Seeder
         ]);
 
         //If isWiaDecisionPostponed === yes
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionPostponedLetter', title: 'Toekenningsbrief', mimeTypes: ['image/*','application/pdf'], maxFileSize: 20971520);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'wiaDecisionPostponedLetter', title: 'Toekenningsbrief', mimeTypes: [
+            'image/*',
+            'application/pdf'
+        ], maxFileSize: 20971520,
+            isRequired: false);
 
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Bewijs dienstverband', mimeTypes: ['image/*','application/pdf'], maxFileSize: 20971520);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentContract', title: 'Bewijs dienstverband', mimeTypes: [
+            'image/*',
+            'application/pdf'
+        ], maxFileSize: 20971520);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employmentFunction', title: 'Functie', options: [
-                "Ambulancechauffeur",
-                "Anesthesiemedewerker en/of operatieassistent",
-                "Arts",
-                "Bachelor medisch hulpverlener",
-                "Doktersassistent",
-                "Helpende",
-                "Physician assistant",
-                "Praktijkondersteuner huisarts",
-                "Verpleegkundig specialist",
-                "(gespecialiseerd) Verpleegkundige",
-                "Verzorgende in de individuele gezondheidszorg (VIG’er) of verzorgende",
-                "Zorgondersteuner en/of voedingsassistent",
-                "Anders",
-            ]);
+            "Ambulancechauffeur",
+            "Anesthesiemedewerker en/of operatieassistent",
+            "Arts",
+            "Bachelor medisch hulpverlener",
+            "Doktersassistent",
+            "Helpende",
+            "Physician assistant",
+            "Praktijkondersteuner huisarts",
+            "Verpleegkundig specialist",
+            "(gespecialiseerd) Verpleegkundige",
+            "Verzorgende in de individuele gezondheidszorg (VIG’er) of verzorgende",
+            "Zorgondersteuner en/of voedingsassistent",
+            "Anders",
+        ]);
 
-        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmploymentFunction', title: 'Andere functie', maxLength: 300,);
+        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmploymentFunction', title: 'Andere functie', maxLength: 300, isRequired: false);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'employerKind', title: 'Werkgever', options: [
             "Zorgaanbieder",
             "Andere organisatie",
         ]);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerDeclarationFile', title: 'Zorgaanbiedersverklaring', mimeTypes: ['image/*','application/pdf'], maxFileSize: 20971520);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'otherEmployerDeclarationFile', title: 'Verklaring zorgaanbieder', mimeTypes: [
+            'image/*',
+            'application/pdf'
+        ], maxFileSize: 20971520,
+            isRequired: false);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'hasBeenWorkingAtJudicialInstitution', title: 'Bent u werkzaamh geweest bij een justitiële inrichting?', options: [
             "Ja",
             "Nee",
         ]);
 
-        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'BIGNumberJudicialInstitution', title: 'BIG-nummer', maxLength: 11,);
+        $this->createTextField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'BIGNumberJudicialInstitution', title: 'BIG-nummer', maxLength: 11, isRequired: false,);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Sociaal-medische beoordeling', mimeTypes: ['image/*','application/pdf'], maxFileSize: 20971520);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'socialMedicalAssessment', title: 'Medisch onderzoeksverslag', mimeTypes: [
+            'image/*',
+            'application/pdf'
+        ], maxFileSize: 20971520);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'hasPostCovidDiagnose', title: 'Heeft langdurige post-COVID klachten', options: [
             "Ja",
             "Nee",
         ]);
 
-        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'doctorsCertificate', title: 'Verklaring arts', mimeTypes: ['image/*','application/pdf'], maxFileSize: 20971520);
-
-        $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'permissionToProcessPersonalData', title: 'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',);
+        $this->createUploadField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'doctorsCertificate', title: 'Verklaring arts', mimeTypes: [
+            'image/*',
+            'application/pdf'
+        ], maxFileSize: 20971520,
+            isRequired: false);
 
         $this->createCheckboxField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID, code: 'truthfullyCompleted', title: '');
+    }
 
+    public function pczmFirstAssessmentFields(): void
+    {
         // Eerste beoordeling
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'checklist', title: 'Controlevragen', options: [
             "Vraag 1",
             "Vraag 2",
             "Vraag 3",
             "Vraag 4"
-        ]);
+        ], isRequired: false);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'amount', title: 'Bedrag', options: [
             "€ 15.000"
-        ]);
+        ], isRequired: false);
 
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID, code: 'firstAssessment', title: 'Beoordeling', options: [
-                "Onbeoordeeld",
-                "Aanvulling nodig",
-                "Afgekeurd",
-                "Goedgekeurd"
-            ]);
+            "Onbeoordeeld",
+            "Aanvulling nodig",
+            "Afgekeurd",
+            "Goedgekeurd"
+        ]);
+    }
 
+    public function pczmSeconcAssessmentFields(): void
+    {
         //Tweede beoordeling
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID, code: 'secondAssessment', title: 'Beoordeling', options: [
-                "Oneens met de eerste beoordeling",
-                "Eens met de eerste beoordeling",
-            ]);
+            "Oneens met de eerste beoordeling",
+            "Eens met de eerste beoordeling",
+        ]);
+    }
 
+    public function pczmInternalAssessmentFields(): void
+    {
         //Interne controle
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID, code: 'internalAssessment', title: 'Beoordeling', options: [
-                "Onbeoordeeld",
-                "Afgekeurd",
-                "Goedgekeurd"
-            ]);
+            "Onbeoordeeld",
+            "Afgekeurd",
+            "Goedgekeurd"
+        ]);
+    }
 
+    public function pczmCoordinatorImplemenationFields(): void
+    {
         //Uitvoeringscoördinator controle
         $this->createSelectField(subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID, code: 'implementationCoordinatorAssessment', title: 'Beoordeling', options: [
-                "Afgekeurd",
-                "Goedgekeurd"
-            ]);
+            "Afgekeurd",
+            "Goedgekeurd"
+        ]);
     }
 }

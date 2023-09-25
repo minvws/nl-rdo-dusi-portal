@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Rules;
+namespace MinVWS\DUSi\Shared\Tests\Unit\Rules;
 
-use MinVWS\DUSi\Application\Backend\Rules\ClamAv;
-use MinVWS\DUSi\Application\Backend\Services\Clamav\ClamAvService;
 use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
+use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ClamAv;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
