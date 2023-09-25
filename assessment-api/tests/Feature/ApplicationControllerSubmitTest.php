@@ -24,7 +24,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use MinVWS\DUSi\Shared\Tests\MocksEncryption;
+use MinVWS\DUSi\Shared\Test\MocksEncryption;
 
 /**
  * @group assessment-submit

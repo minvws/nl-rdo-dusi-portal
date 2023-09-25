@@ -33,7 +33,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use MinVWS\DUSi\Shared\Tests\MocksEncryption;
+use MinVWS\DUSi\Shared\Test\MocksEncryption;
 use MinVWS\DUSi\Shared\Tests\TestCase;
 use Ramsey\Uuid\Uuid;
 

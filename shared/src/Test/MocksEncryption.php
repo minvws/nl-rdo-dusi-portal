@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Tests;
+namespace MinVWS\DUSi\Shared\Test;
 
 use Illuminate\Encryption\Encrypter;
 use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
