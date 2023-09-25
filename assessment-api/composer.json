@@ -15,7 +15,8 @@
         "latte/latte": "^3.0",
         "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "minvws/laravel-logging": "^2.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
@@ -86,6 +87,10 @@
         {
             "type": "path",
             "url": "../shared"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/minvws/nl-rdo-laravel-logging.git"
         }
     ]
 }
