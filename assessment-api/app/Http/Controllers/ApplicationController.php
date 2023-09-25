@@ -18,7 +18,6 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -99,20 +98,24 @@ class ApplicationController extends Controller
 
     public function submitAssessment(Application $application, Request $request): ApplicationSubsidyVersionResource
     {
-        //Validations:
+        //Validations ToDo:
         // - isReviewableForAssessor
+        // - Validate required fields for stage
         // - field validations (not mvp)
 
-        /** @var ApplicationSaveBody $submittedData */
-        $submittedData = $request->json();
+        $submittedData = $request->json()->all();
 
         $applicationStage = $application->currentApplicationStage;
 
         //Save data
-        $this->applicationDataService->saveApplicationStageData($applicationStage, $submittedData->data);
+        $this->applicationDataService->saveApplicationStageData(
+            $applicationStage,
+            (object)$submittedData['data'],
+            $submittedData['submit']
+        );
 
         //Stage flow
-        if ($submittedData->submit) {
+        if ($submittedData['submit']) {
             $this->applicationFlowService->submitApplicationStage($applicationStage);
         }
 
