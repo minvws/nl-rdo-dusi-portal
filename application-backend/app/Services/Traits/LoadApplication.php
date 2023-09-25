@@ -23,8 +23,7 @@ trait LoadApplication
 
         throw new EncryptedResponseException(
             EncryptedResponseStatus::NOT_FOUND,
-            'application_not_found',
-            'Application not found.'
+            'application_not_found'
         );
     }
 }

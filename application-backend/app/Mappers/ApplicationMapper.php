@@ -10,6 +10,8 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as Applicati
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList as ApplicationListDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplication as ApplicationListApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message as MessageDTO;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList as MessageListDTO;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListMessage as MessageListMessageDTO;
 
 class ApplicationMapper
 {
@@ -70,5 +72,20 @@ class ApplicationMapper
             $message->is_new,
             $body
         );
+    }
+
+    public function mapApplicationMessageArrayToMessageListDTO(array $applicationMessages): MessageListDTO
+    {
+        $messages = array_map(
+            fn (ApplicationMessage $message) => new MessageListMessageDTO(
+                $message->id,
+                $message->subject,
+                $message->sent_at,
+                $message->is_new,
+            ),
+            $applicationMessages
+        );
+
+        return new MessageListDTO($messages);
     }
 }
