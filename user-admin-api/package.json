@@ -18,7 +18,7 @@
     ],
     "devDependencies": {
         "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.14",
-        "autoprefixer": "^10.4.15",
+        "autoprefixer": "^10.4.16",
         "axios": "^1.5.0",
         "better-npm-audit": "^3.7.3",
         "eslint": "^8.50.0",
