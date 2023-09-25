@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Tests;
+namespace MinVWS\DUSi\Shared\Test;
 
 use Illuminate\Encryption\Encrypter;
 use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationFileEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmService;
@@ -20,6 +18,9 @@ use Mockery;
 
 trait MocksEncryption
 {
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setupMocksEncryption(): void
     {
         $privateKey = openssl_pkey_new();
