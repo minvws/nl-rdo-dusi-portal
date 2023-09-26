@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Assessment\API\Tests\Feature\Services;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationAssessorService;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\AlreadyAssignedException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidAssignmentException;
@@ -13,7 +14,6 @@ use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -36,6 +36,9 @@ class ApplicationAssessorServiceTest extends TestCase
     private Application $application;
     private ApplicationAssessorService $assessorService;
 
+    /**
+     * @psalm-suppress InvalidPropertyAssignmentValue
+     */
     protected function setUp(): void
     {
         parent::setUp();
