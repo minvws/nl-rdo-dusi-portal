@@ -72,7 +72,7 @@ class PCZMUIFormTableSeeder extends Seeder
 
     private function buildViewSchema(): array
     {
-        $filePath = __DIR__ . '/resources/pczm/viewschema.json';
+        $filePath = __DIR__ . '/resources/pczm/viewschema-stage1.json';
         if(!file_exists($filePath)) {
             return [];
         }
