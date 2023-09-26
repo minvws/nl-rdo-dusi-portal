@@ -249,7 +249,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/docterFoundInBigRegister",
+                                    "scope" => "#/properties/doctorFoundInBigRegister",
                                     "options" => [
                                         "format" => "radio"
                                     ]

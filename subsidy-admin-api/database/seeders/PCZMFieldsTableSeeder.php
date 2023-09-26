@@ -25,7 +25,7 @@ class PCZMFieldsTableSeeder extends Seeder
     {
         $this->pczmApplicationFields();
         $this->pczmFirstAssessmentFields();
-        $this->pczmSeconcAssessmentFields();
+        $this->pczmSecondAssessmentFields();
         $this->pczmInternalAssessmentFields();
         $this->pczmCoordinatorImplemenationFields();
     }
@@ -269,6 +269,7 @@ class PCZMFieldsTableSeeder extends Seeder
     public function pczmFirstAssessmentFields(): void
     {
         // Eerste beoordeling
+        //Persoonsgegevens
         $this->createMultiSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             code: 'personalDataChecklist',
@@ -282,6 +283,166 @@ class PCZMFieldsTableSeeder extends Seeder
             isRequired: false
         );
 
+        //Vaststellen wia
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'wiaChecklist',
+            title: 'Controlevragen',
+            options: [
+                "Het verzekeringsbericht is gewaarmerkt en het BSN is zichtbaar in de upload",
+                "Het BSN op het verzekeringsbericht komt overeen met dat van de aanvrager",
+                "Uit het verzekeringsbericht blijkt dat de aanvrager in de WIA zit",
+                "De ingangsdatum van de WIA in de WIA-beslissing komt overeen met de ingangsdatum op het verzekeringsbericht",
+                "Uit de WIA-beslissing blijkt dat de aanvrager in aanmerking komt voor subsidie",
+            ],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstSickDayWithinExpiryDate',
+            title: 'Uit de toekenningsbrief van de afgesproken loondoorbetaling blijkt dat de eerste ziektedag in de periode van 1 maart 2020 en 1 juli 2020 ligt',
+            options: [
+                'Nee',
+                'Ja',
+                'Niet van toepassing'
+            ],
+            isRequired: false
+        );
+
+        //Zorgaanbieder en functie
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'employerChecklist',
+            title: 'Controlevragen',
+            options: [
+                "De werkgever komt overeen met de laatste werkgever vóór de WIA in het verzekeringsbericht",
+                "Uit de arbeidsovereenkomst en/of de verklaring van de zorgaanbieder blijkt dat er sprake is van werkzaamheden die binnen de subsidieregeling vallen"
+            ],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderStatementIsComplete',
+            title: 'De verklaring van de zorgaanbieder is volledig ingevuld',
+            options: [
+                'Nee',
+                'Ja',
+                'Niet van toepassing',
+            ],
+            isRequired: false
+         );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'employerName',
+            title: 'Naam werkgever',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderName',
+            title: 'Naam zorgaanbieder, indien niet werkgever',
+            isRequired: false
+        );
+
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'chamberOfCommerceNumberEmployer',
+            title: 'KVK-nummer werkgever',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'chamberOfCommerceNumberHealtcareProvider',
+            title: 'KVK-nummer zorgaanbieder, indien niet werkgever',
+            isRequired: false
+        );
+
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderChecklist',
+            title: 'Controlevragen',
+            options: [
+                "De zorgaanbieder waar de aanvrager werkzaam is geweest heeft de juiste SBI-code",
+                "De zorgaanbieder waar de aanvrager werkzaam is geweest heeft de juiste AGB-code",
+                "De zorgaanbieder voldoet aan de eisen binnen de regeling"
+            ],
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderSBICode',
+            title: 'SBI-code zorgaanbieder',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderAGBCode',
+            title: 'AGB-code zorgaanbieder',
+            isRequired: false
+        );
+
+        //Justitiële inrichting
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'judicialInstitutionIsEligible',
+            title: 'De justitiële inrichting waar de aanvrager werkzaam is geweest valt binnen de regeling',
+            options: ['Nee', 'Ja', 'Niet van toepassing'],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'applicantFoundInBigRegister',
+            title: 'De aanvrager is op basis van het doorgegeven BIG-nummer terug te vinden in het BIG-register',
+            options: ['Nee', 'Ja', 'Niet van toepassing'],
+            isRequired: false
+        );
+
+        //Vaststellen post-COVID
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'postCovidChecklist',
+            title: 'Controlevragen',
+            options: [
+                "Op basis van het sociaal-medisch verslag en/of de verklaring van de arts is vast te stellen dat er een post-COVID diagnose is gesteld",
+                "De post-COVID diagnose is vóór 1 juni 2023 gesteld",
+            ],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'doctorFoundInBigRegister',
+            title: 'De arts die de verklaring heeft afgegeven is als arts geregistreerd in het BIG-register',
+            options: [
+                'Nee',
+                'Ja',
+                'Niet van toepassing'
+            ],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'doctorsCertificateIsComplete',
+            title: 'De verklaring van de arts is volledig ingevuld',
+            options: [
+                'Nee',
+                'Ja',
+                'Niet van toepassing',
+            ],
+            isRequired: false
+        );
+
+        //Status
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             code: 'amount',
@@ -298,7 +459,7 @@ class PCZMFieldsTableSeeder extends Seeder
         );
     }
 
-    public function pczmSeconcAssessmentFields(): void
+    public function pczmSecondAssessmentFields(): void
     {
         //Tweede beoordeling
         $this->createSelectField(
