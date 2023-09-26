@@ -17,7 +17,6 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
