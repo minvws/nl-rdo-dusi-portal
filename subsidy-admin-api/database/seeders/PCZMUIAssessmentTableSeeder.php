@@ -56,16 +56,226 @@ class PCZMUIAssessmentTableSeeder extends Seeder
             "elements" => [
                 [
                     "type" => "Group",
-                    "label" => "Checklist",
+                    "label" => "Persoonsgegevens",
                     "elements" => [
                         [
                             "type" => "VerticalLayout",
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/checklist",
+                                    "scope" => "#/properties/personalDataChecklist",
                                     "options" => [
-                                        "format" => "checkbox-group"
+                                        "format" => "checkbox"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Vaststellen WIA",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/wiaChecklist",
+                                    "options" => [
+                                        "format" => "checkbox"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstSickDayWithinExpiryDate",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Zorgaanbieder en functie",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/employerChecklist",
+                                    "options" => [
+                                        "format" => "checkbox"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderStatementIsComplete",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/employerName",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderName",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/chamberOfCommerceNumberEmployer",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/chamberOfCommerceNumberHealtcareProvider",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderChecklist",
+                                    "options" => [
+                                        "format" => "checkbox"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderSBICode",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderAGBCode",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Justitiële inrichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/judicialInstitutionIsEligible",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/applicantFoundInBigRegister",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Vaststellen post-COVID",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/postCovidChecklist",
+                                    "options" => [
+                                        "format" => "checkbox"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/docterFoundInBigRegister",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/doctorsCertificateIsComplete",
+                                    "options" => [
+                                        "format" => "radio"
                                     ]
                                 ]
                             ]

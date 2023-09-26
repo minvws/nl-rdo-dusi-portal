@@ -455,7 +455,12 @@ class FieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             code: 'checklist',
             title: 'Controlevragen',
-            options: ['Vraag 1', 'Vraag 2', 'Vraag 3', 'Vraag 4'],
+            options: [
+                "Alle aangeleverde documenten zijn te herleiden tot dezelfde persoon op basis van BSN en de overige persoonsgegevens",
+                "Het IBAN bestaat en is actief",
+                "Het opgegeven IBAN staat op naam van de aanvrager",
+                "Op basis van de SurePay terugkoppeling ben ik akkoord met het opgegeven rekeningnummer"
+            ],
             isRequired: false
         );
 
