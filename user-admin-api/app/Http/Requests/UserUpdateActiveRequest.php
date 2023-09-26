@@ -6,7 +6,7 @@ namespace MinVWS\DUSi\User\Admin\API\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 class UserUpdateActiveRequest extends FormRequest
 {

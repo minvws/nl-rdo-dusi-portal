@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\User\Admin\API\Console\Commands;
 
 use Illuminate\Contracts\Console\PromptsForMissingInput;
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Enums\Role;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
@@ -59,12 +60,11 @@ class CreateAdmin extends Command implements PromptsForMissingInput
         ]);
         $user->save();
 
-        $user->attachRole('admin');
+        $user->attachRole(Role::UserAdmin);
 
-        $this->info(
-            "Admin user created. Please add the following to your authenticator app: \n" .
-            $user->twoFactorQrCodeUrl()
-        );
+        $this->info("User admin " . $user->email . " created. Please add the following to your authenticator app:");
+        $this->info($user->twoFactorQrCodeUrl());
+        $this->newLine();
 
         return 0;
     }

@@ -7,11 +7,12 @@ namespace MinVWS\DUSi\User\Admin\API\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\User\Admin\API\Components\FlashNotification;
 use MinVWS\DUSi\User\Admin\API\Enums\FlashNotificationTypeEnum;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserRoleAttachRequest;
-use MinVWS\DUSi\User\Admin\API\Models\Role;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\Role;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 class UserRolesController extends Controller
 {
@@ -40,7 +41,7 @@ class UserRolesController extends Controller
     {
 
         $user->attachRole(
-            role: $request->validated('role'),
+            role: RoleEnum::from($request->validated('role')),
             subsidyId: $request->validated('subsidy_id'),
         );
 

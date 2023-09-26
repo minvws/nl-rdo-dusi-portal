@@ -10,10 +10,10 @@
             <x-nav-item :route="'home'"><span class="icon icon-home"></span>@lang('Homepage') </x-nav-item>
 
             @auth
-                @can('viewAny', \MinVWS\DUSi\User\Admin\API\Models\Organisation::class)
+                @can('viewAny', \MinVWS\DUSi\Shared\User\Models\Organisation::class)
                     <x-nav-item :route="'organisations.index'">@lang('Organisations') </x-nav-item>
                 @endcan
-                @can('viewAny', \MinVWS\DUSi\User\Admin\API\Models\User::class)
+                @can('viewAny', \MinVWS\DUSi\Shared\User\Models\User::class)
                     <x-nav-item :route="'users.index'">@lang('Users') </x-nav-item>
                 @endcan
             @endauth

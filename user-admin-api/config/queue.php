@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use MinVWS\DUSi\User\Admin\API\Models\Connection;
+use MinVWS\DUSi\Shared\User\Models\Connection as UserConnection;
 
 return [
 
@@ -89,7 +89,7 @@ return [
     */
 
     'batching' => [
-        'database' => Connection::USER,
+        'database' => UserConnection::USER,
         'table' => 'job_batches',
     ],
 
@@ -106,7 +106,7 @@ return [
 
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
-        'database' => Connection::USER,
+        'database' => UserConnection::USER,
         'table' => 'failed_jobs',
     ],
 
