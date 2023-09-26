@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Console\Commands;
 
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Enums\Role;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
@@ -17,7 +18,7 @@ class CreateUser extends Command
      *
      * @var string
      */
-    protected $signature = 'user:create {email} {name} {password}';
+    protected $signature = 'user:create {email} {name} {password} {role?}';
 
     /**
      * The console command description.
@@ -67,13 +68,27 @@ class CreateUser extends Command
             'two_factor_secret' => encrypt($this->authProvider->generateSecretKey()),
             'two_factor_recovery_codes' => null
         ]);
+
+        $role = $this->getRoleFromArgument($this->argument('role'));
+        if ($role !== null) {
+            $user->attachRole($role);
+        }
+
         $user->save();
 
-        $this->info(
-            "User created. Please add the following to your authenticator app: \n" .
-                $user->twoFactorQrCodeUrl()
-        );
+        $this->info("User " . $user->email . " created. Please add the following to your authenticator app:");
+        $this->info($user->twoFactorQrCodeUrl());
+        $this->newLine();
 
         return 0;
+    }
+
+    private function getRoleFromArgument(mixed $roleArgument): ?Role
+    {
+        if (!is_string($roleArgument)) {
+            return null;
+        }
+
+        return Role::tryFrom($roleArgument);
     }
 }

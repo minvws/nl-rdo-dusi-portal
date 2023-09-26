@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Exception;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterResource;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationRequestsFilterResource;
-use MinVWS\DUSi\Assessment\API\Models\User;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

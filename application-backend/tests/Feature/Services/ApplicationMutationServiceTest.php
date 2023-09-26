@@ -17,7 +17,6 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
@@ -366,10 +365,9 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertCount(2, get_object_vars($app->data));
         $this->assertObjectHasProperty($this->uploadField->code, $app->data);
 
-        /** @var FileList $uploadData */
-        $uploadData = $app->data->{$this->uploadField->code};
 
-        $this->assertEquals($body->data->{$this->uploadField->code}, $uploadData->items);
+        $uploadData = $app->data->{$this->uploadField->code};
+        $this->assertEquals($body->data->{$this->uploadField->code}, $uploadData);
     }
 
     /**
