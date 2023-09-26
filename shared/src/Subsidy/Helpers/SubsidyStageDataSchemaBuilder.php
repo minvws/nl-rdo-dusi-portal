@@ -56,7 +56,10 @@ class SubsidyStageDataSchemaBuilder
                 $result['format'] = 'date';
                 break;
             case FieldType::Multiselect:
-                $result['enum'] = $field->params['options'];
+                $result['items'] = [
+                    'type' => 'string',
+                    'enum' => $field->params['options']
+                ];
                 break;
             case FieldType::Select:
                 $result['enum'] = $field->params['options'];

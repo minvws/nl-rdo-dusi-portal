@@ -462,23 +462,57 @@ class PCZMFieldsTableSeeder extends Seeder
     public function pczmSecondAssessmentFields(): void
     {
         //Tweede beoordeling
+        $this->createCheckboxField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            code: 'firstAssessorMotivatedValid',
+            title: 'De motivatie van de eerste behandelaar is duidelijk en correct',
+            isRequired: false
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
             code: 'secondAssessment',
             title: 'Beoordeling',
             options: ['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling']
         );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            code: 'secondAssessmentInternalNote',
+            title: 'Interne notitie',
+            isRequired: false
+        );
     }
 
     public function pczmInternalAssessmentFields(): void
     {
         //Interne controle
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            code: 'internalAssessmentChecklist',
+            title: 'Controlevragen',
+            options: [
+                "Alle benodigde documenten zijn aangeleverd",
+                "Uit de dataverificatie blijkt dat er geen onvolkomenheden zijn geconstateerd",
+                "De motivatie van de eerste beoordeling is duidelijk"
+            ],
+            isRequired: false
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
             options: ['Onbeoordeeld', 'Afgekeurd', 'Goedgekeurd']
         );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            code: 'internalAssessmentNote',
+            title: 'Extra informatie over de beoordeling',
+            isRequired: false
+        );
+
     }
 
     public function pczmCoordinatorImplemenationFields(): void
@@ -489,6 +523,21 @@ class PCZMFieldsTableSeeder extends Seeder
             code: 'implementationCoordinatorAssessment',
             title: 'Beoordeling',
             options: ['Afgekeurd', 'Goedgekeurd']
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            code: 'coordinatorImplementationNote',
+            title: 'Interne notitie',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            code: 'coordinatorImplementationReasonForRejection',
+            title: 'Extra informatie over de gedane wijzigingen',
+            isRequired: false,
+            requiredCondition: new ComparisonCondition(5, 'implementationCoordinatorAssessment', Operator::Identical, 'Afgekeurd'),
         );
     }
 }

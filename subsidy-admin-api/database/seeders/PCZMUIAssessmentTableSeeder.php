@@ -53,7 +53,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/personalDataChecklist",
                                     "options" => [
-                                        "format" => "checkbox"
+                                        "format" => "checkbox-group"
                                     ]
                                 ]
                             ]
@@ -71,7 +71,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/wiaChecklist",
                                     "options" => [
-                                        "format" => "checkbox"
+                                        "format" => "checkbox-group"
                                     ]
                                 ]
                             ]
@@ -101,7 +101,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/employerChecklist",
                                     "options" => [
-                                        "format" => "checkbox"
+                                        "format" => "checkbox-group"
                                     ]
                                 ]
                             ]
@@ -169,7 +169,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/healthcareProviderChecklist",
                                     "options" => [
-                                        "format" => "checkbox"
+                                        "format" => "checkbox-group"
                                     ]
                                 ]
                             ]
@@ -239,7 +239,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/postCovidChecklist",
                                     "options" => [
-                                        "format" => "checkbox"
+                                        "format" => "checkbox-group"
                                     ]
                                 ]
                             ]
@@ -339,9 +339,39 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessorMotivatedValid",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
                                     "scope" => "#/properties/secondAssessment",
                                     "options" => [
                                         "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+
+                                "type" => "CustomControl",
+                                "scope" => "#/properties/secondAssessmentInternalNote",
+                                "options" => [
+                                ],
+                                "rule" => [
+                                    "effect" => "SHOW",
+                                    "condition" =>  [
+                                        "scope" => "#/properties/secondAssessment",
+                                        "schema" =>  [
+                                            "const" => "Oneens met de eerste beoordeling"
+                                        ]
                                     ]
                                 ]
                             ]
@@ -374,6 +404,24 @@ class PCZMUIAssessmentTableSeeder extends Seeder
             "elements" => [
                 [
                     "type" => "Group",
+                    "label" => "Checklist",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/internalAssessmentChecklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
                     "label" => "Status",
                     "elements" => [
                         [
@@ -389,7 +437,25 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             ]
                         ]
                     ]
-                ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Toelichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/internalAssessmentNote",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+
             ]
         ];
 
@@ -426,6 +492,44 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "scope" => "#/properties/implementationCoordinatorAssessment",
                                     "options" => [
                                         "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Toelichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/coordinatorImplementationNote",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/coordinatorImplementationReasonForRejection",
+                                    "options" => [
+                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/implementationCoordinatorAssessment",
+                                            "schema" =>  [
+                                                "const" => "Afgekeurd"
+                                            ]
+                                        ]
                                     ]
                                 ]
                             ]
