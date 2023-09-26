@@ -6,10 +6,14 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits;
 
 use Illuminate\Support\Facades\DB;
+use MinVWS\Codable\JSON\JSONEncoder;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 use Ramsey\Uuid\Uuid;
 
 trait CreateField
 {
+    private readonly JSONEncoder $encoder;
+
     private function createField(
         string $subsidyStageId,
         string $code,
@@ -17,7 +21,8 @@ trait CreateField
         string $type,
         ?string $description = null,
         ?array $params = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         $id = Uuid::uuid4()->toString();
 
@@ -29,7 +34,8 @@ trait CreateField
             'description' => $description,
             'type' => $type,
             'params' => json_encode($params),
-            'is_required' => $isRequired,
+            'is_required' => is_null($requiredCondition) ? false : $isRequired,
+            'required_condition' => $this->getRequiredCondition($requiredCondition),
         ]);
 
         return $id;
@@ -42,7 +48,8 @@ trait CreateField
         ?string $description = null,
         ?string $inputMode = null,
         ?int $maxLength = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -52,6 +59,7 @@ trait CreateField
             type: $inputMode !== null ? "text:$inputMode" : 'text',
             params: ['maxLength' => $maxLength],
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -60,7 +68,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -68,7 +77,8 @@ trait CreateField
             title: $title,
             description: $description,
             type: 'date',
-            isRequired: $isRequired
+            isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -78,7 +88,8 @@ trait CreateField
         string $title,
         array $options,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -88,6 +99,7 @@ trait CreateField
             type: 'multiselect',
             params: ['options' => $options],
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -96,7 +108,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -105,6 +118,7 @@ trait CreateField
             description: $description,
             type: 'checkbox',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -115,7 +129,8 @@ trait CreateField
         array $options,
         ?string $description = null,
         string|null $default = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition  $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -125,6 +140,7 @@ trait CreateField
             type: 'select',
             params: ['options' => $options, 'default' => $default],
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -133,7 +149,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -142,6 +159,7 @@ trait CreateField
             description: $description,
             type: 'textarea',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -150,7 +168,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -159,6 +178,7 @@ trait CreateField
             description: $description,
             type: 'custom:postalcode',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -167,7 +187,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createSelectField(
             subsidyStageId: $subsidyStageId,
@@ -426,6 +447,7 @@ trait CreateField
                 "Zwitserland"
             ],
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -434,7 +456,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -443,6 +466,7 @@ trait CreateField
             description: $description,
             type: 'custom:bankaccount',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -454,6 +478,7 @@ trait CreateField
         bool $isRequired = true,
         ?array $mimeTypes = null,
         ?int $maxFileSize = null,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -462,10 +487,21 @@ trait CreateField
             description: $description,
             type: 'upload',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
             params: array_filter([
                 'mimeTypes' => $mimeTypes,
                 'maxFileSize' => $maxFileSize,
             ]),
         );
+    }
+
+    private function getEncoder(): JSONEncoder
+    {
+        return $this->encoder ??= new JSONEncoder();
+    }
+
+    private function getRequiredCondition(?Condition $requiredCondition = null): ?string
+    {
+        return is_null($requiredCondition) ? $requiredCondition : $this->getEncoder()->encode($requiredCondition);
     }
 }
