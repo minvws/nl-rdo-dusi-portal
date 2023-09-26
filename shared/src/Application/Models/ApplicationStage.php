@@ -51,6 +51,11 @@ class ApplicationStage extends Model
         return $this->belongsTo(Application::class, 'application_id', 'id');
     }
 
+    public function assessorUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assessor_user_id', 'id');
+    }
+
     public function subsidyStage(): BelongsTo
     {
         return $this->belongsTo(SubsidyStage::class, 'subsidy_stage_id', 'id');

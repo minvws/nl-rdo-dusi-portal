@@ -60,4 +60,9 @@ class ApplicationService
         $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
         return ApplicationRequestsFilterResource::make(['shortRegulations' => $shortRegulations]);
     }
+
+    public function assignToMe(User $user): Resource
+    {
+
+    }
 }
