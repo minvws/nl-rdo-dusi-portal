@@ -31,6 +31,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 
@@ -56,7 +57,8 @@ readonly class ApplicationMutationService
         private ApplicationMapper $applicationMapper,
         private ApplicationReferenceService $applicationReferenceService,
         private FrontendDecryption $frontendDecryptionService,
-        private EncryptedResponseExceptionHelper $exceptionHelper
+        private EncryptedResponseExceptionHelper $exceptionHelper,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -184,6 +186,10 @@ readonly class ApplicationMutationService
         try {
             $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data, $body->submit);
         } catch (ValidationException $e) {
+            $this->logger->debug('Data validation failed', [
+                'errors' => $e->errors(),
+            ]);
+
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::BAD_REQUEST,
                 'invalid_data',
