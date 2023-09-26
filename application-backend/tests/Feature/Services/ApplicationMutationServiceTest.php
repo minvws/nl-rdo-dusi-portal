@@ -366,10 +366,9 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertCount(2, get_object_vars($app->data));
         $this->assertObjectHasProperty($this->uploadField->code, $app->data);
 
-        /** @var FileList $uploadData */
-        $uploadData = $app->data->{$this->uploadField->code};
 
-        $this->assertEquals($body->data->{$this->uploadField->code}, $uploadData->items);
+        $uploadData = $app->data->{$this->uploadField->code};
+        $this->assertEquals($body->data->{$this->uploadField->code}, $uploadData);
     }
 
     /**
