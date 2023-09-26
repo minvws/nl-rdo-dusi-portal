@@ -10,7 +10,6 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use MinVWS\DUSi\Assessment\API\Models\User;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
@@ -23,6 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -286,7 +286,7 @@ class ApplicationRepository
 
     public function assignApplicationStage(ApplicationStage $applicationStage, ?User $user): void
     {
-        $applicationStage->assessorUser->associate($user);
+        $applicationStage->assessorUser()->associate($user);
         $applicationStage->save();
     }
 }

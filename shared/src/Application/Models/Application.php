@@ -31,7 +31,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTimeInterface $submitted_at
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read HasMany<ApplicationMessage> $applicationMessages
- * @property-read ApplicationStage $currentApplicationStage
+ * @property-read ApplicationStage|null $currentApplicationStage
  * @method static Builder<self> forIdentity(Identity $identity)
  * @method Builder<self> forIdentity(Identity $identity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
