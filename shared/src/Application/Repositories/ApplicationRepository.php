@@ -22,6 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -281,5 +282,11 @@ class ApplicationRepository
                     $query->where('field_id', $field->id);
                 }
             );
+    }
+
+    public function assignApplicationStage(ApplicationStage $applicationStage, ?User $user): void
+    {
+        $applicationStage->assessorUser()->associate($user);
+        $applicationStage->save();
     }
 }

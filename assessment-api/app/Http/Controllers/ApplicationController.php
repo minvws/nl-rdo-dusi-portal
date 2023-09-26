@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
@@ -14,10 +15,10 @@ use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationService;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -26,9 +27,7 @@ class ApplicationController extends Controller
 {
     public function __construct(
         private ApplicationSubsidyService $applicationSubsidyService,
-        private ApplicationService $applicationService,
-        private ApplicationDataService $applicationDataService,
-        private ApplicationFlowService $applicationFlowService,
+        private ApplicationService $applicationService
     ) {
     }
 
@@ -96,29 +95,20 @@ class ApplicationController extends Controller
         return JsonResource::make([]);
     }
 
-    public function submitAssessment(Application $application, Request $request): ApplicationSubsidyVersionResource
-    {
-        //Validations ToDo:
-        // - isReviewableForAssessor
-
+    public function saveAssessment(
+        Application $application,
+        User $user,
+        Request $request
+    ): ApplicationSubsidyVersionResource {
         $submittedData = $request->json()->all();
+        $data = (object)($submittedData['data'] ?? []);
+        $submit = (bool)($submittedData['submit'] ?? false);
 
-        $applicationStage = $application->currentApplicationStage;
-
-        //Save data
-        $this->applicationDataService->saveApplicationStageData(
-            $applicationStage,
-            (object)$submittedData['data'],
-            $submittedData['submit']
-        );
-
-        //Stage flow
-        if ($submittedData['submit']) {
-            $this->applicationFlowService->submitApplicationStage($applicationStage);
+        try {
+            $application = $this->applicationService->saveAssessment($application, $data, $submit, $user);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+        } catch (InvalidApplicationSaveException) {
+            abort(Response::HTTP_FORBIDDEN);
         }
-
-        $application->refresh();
-
-        return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
     }
 }
