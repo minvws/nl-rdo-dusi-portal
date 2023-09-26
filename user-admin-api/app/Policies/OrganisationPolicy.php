@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Policies;
 
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 class OrganisationPolicy
 {
@@ -15,7 +15,7 @@ class OrganisationPolicy
      */
     public function before(User $user, string $ability): bool|null
     {
-        if ($user->isAdministrator()) {
+        if ($user->isUserAdministrator()) {
             return true;
         }
 

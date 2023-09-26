@@ -6,9 +6,9 @@ namespace MinVWS\DUSi\User\Admin\API\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
 use MinVWS\DUSi\User\Admin\API\Policies\OrganisationPolicy;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\Policies\UserPolicy;
 
 class AuthServiceProvider extends ServiceProvider

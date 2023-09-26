@@ -9,7 +9,7 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Collection;
 use JsonException;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\View\Data\UserCredentialsData;
 use Minvws\HorseBattery\PasswordGenerator;
 

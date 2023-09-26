@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\User\Admin\API\Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
-use MinVWS\DUSi\User\Admin\API\Models\Role;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\Role;
+use MinVWS\DUSi\Shared\User\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

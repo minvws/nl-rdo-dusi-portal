@@ -199,6 +199,7 @@ return [
 
         // Laravel Fortify
         MinVWS\DUSi\User\Admin\API\Providers\FortifyServiceProvider::class,
+        MinVWS\DUSi\Shared\User\DatabaseServiceProvider::class,
     ],
 
     /*
