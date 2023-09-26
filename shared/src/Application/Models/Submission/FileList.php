@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Models\Submission;
 
+use JsonSerializable;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Decoding\Decodable;
 use MinVWS\Codable\Decoding\DecodingContainer;
 use MinVWS\Codable\Encoding\EncodingContainer;
 
-class FileList implements Codable
+class FileList implements Codable, JsonSerializable
 {
     /**
      * @param array<File> $items
@@ -40,5 +41,10 @@ class FileList implements Codable
     public function getFileIds(): array
     {
         return array_map(fn(File $file) => $file->id, $this->items);
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->items;
     }
 }
