@@ -95,10 +95,13 @@ class ApplicationController extends Controller
         return JsonResource::make([]);
     }
 
-    public function saveAssessment(Application $application, User $user, Request $request): ApplicationSubsidyVersionResource
-    {
+    public function saveAssessment(
+        Application $application,
+        User $user,
+        Request $request
+    ): ApplicationSubsidyVersionResource {
         $submittedData = $request->json()->all();
-        $data = (object)($submittedData['data'] ?? []),
+        $data = (object)($submittedData['data'] ?? []);
         $submit = (bool)($submittedData['submit'] ?? false);
 
         try {

@@ -32,6 +32,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read HasMany<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage|null $currentApplicationStage
+ * @property-read ApplicationStage $lastApplicationStage
  * @method static Builder<self> forIdentity(Identity $identity)
  * @method Builder<self> forIdentity(Identity $identity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -78,6 +79,14 @@ class Application extends Model
         return
             $this->hasOne(ApplicationStage::class)
                 ->where('is_current', true)
+                ->orderBy('sequence_number', 'desc')
+                ->limit(1);
+    }
+
+    public function lastApplicationStage(): HasOne
+    {
+        return
+            $this->hasOne(ApplicationStage::class)
                 ->orderBy('sequence_number', 'desc')
                 ->limit(1);
     }

@@ -176,7 +176,7 @@ readonly class ApplicationMutationService
         }
 
         $applicationStage = $application->currentApplicationStage;
-        if ($applicationStage->subsidyStage->stage !== 1) {
+        if ($applicationStage === null || $applicationStage->subsidyStage->stage !== 1) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
                 'application_readonly'
