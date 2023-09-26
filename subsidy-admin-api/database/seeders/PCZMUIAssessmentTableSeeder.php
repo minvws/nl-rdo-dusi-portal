@@ -20,32 +20,20 @@ class PCZMUIAssessmentTableSeeder extends Seeder
         $this->implementationCoordinatorAssessment();
     }
 
+    private function buildViewSchema(int $stage): array
+    {
+        $filePath = __DIR__ . sprintf('/resources/pczm/viewschema-stage%d.json', $stage);
+        if (!file_exists($filePath)) {
+            return [];
+        }
+        $json = file_get_contents($filePath);
+        assert(is_string($json));
+        return json_decode($json, true);
+    }
+
     public function firstAssessment(): void
     {
-        $applicationSection = $this->getAssessmentSection();
-
-        $firstAssessmentSection = $this->getFirstAssessmentSection();
-
-        $view_ui = [
-            'type' => 'FormGroupControl',
-            'elements' => [
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Aanvraag',
-                    'elements' => [$applicationSection],
-                    'options' => [
-                    ]
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Eerste beoordeling',
-                    'elements' => [$firstAssessmentSection],
-                    'options' => [
-                        'required' => ['firstAssessment']
-                    ]
-                ]
-            ]
-        ];
+        $view_ui = $this->buildViewSchema(2);
 
         $input_ui = [
             "type" => "FormGroupControl",
@@ -333,39 +321,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
 
     public function secondAssessment(): void
     {
-        $applicationSection = $this->getAssessmentSection();
-
-        $firstAssessmentSection = $this->getFirstAssessmentSection();
-
-        $secondAssessmentSection = $this->getSecondAssessmentSection();
-
-        $view_ui = [
-            'type' => 'FormGroupControl',
-            'elements' => [
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Aanvraag',
-                    'elements' => [$applicationSection],
-                    'options' => [
-                    ]
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Eerste aanvraag',
-                    'elements' => [$firstAssessmentSection],
-                    'options' => [
-                    ]
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Tweede aanvraag',
-                    'elements' => [$secondAssessmentSection],
-                    'options' => [
-                        'required' => ['secondAssessment']
-                    ]
-                ]
-            ]
-        ];
+        $view_ui = $this->buildViewSchema(3);
 
         $input_ui = [
             "type" => "FormGroupControl",
@@ -407,39 +363,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
 
     public function internalAssessment(): void
     {
-        $applicationSection = $this->getAssessmentSection();
-
-        $firstAssessmentSection = $this->getFirstAssessmentSection();
-
-        $secondAssessmentSection = $this->getSecondAssessmentSection();
-
-        $internalAssessmentSection = $this->getInternalAssessmentSection();
-
-        $view_ui = [
-            'type' => 'FormGroupControl',
-            'elements' => [
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Aanvraag',
-                    'elements' => [$applicationSection],
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Eerste beoordeling',
-                    'elements' => [$firstAssessmentSection],
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Tweede beoordeling',
-                    'elements' => [$secondAssessmentSection],
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Interne controle',
-                    'elements' => [$internalAssessmentSection],
-                ]
-            ]
-        ];
+        $view_ui = $this->buildViewSchema(4);
 
         $input_ui = [
             "type" => "FormGroupControl",
@@ -481,46 +405,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
 
     public function implementationCoordinatorAssessment(): void
     {
-        $applicationSection = $this->getAssessmentSection();
-
-        $firstAssessmentSection = $this->getFirstAssessmentSection();
-
-        $secondAssessmentSection = $this->getSecondAssessmentSection();
-
-        $internalAssessmentSection = $this->getInternalAssessmentSection();
-
-        $implementationCoordinatorAssessmentSection = $this->getImplementationCoordinatorAssessmentSection();
-
-        $view_ui = [
-            'type' => 'FormGroupControl',
-            'elements' => [
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Aanvraag',
-                    'elements' => [$applicationSection],
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Eerste beoordeling',
-                    'elements' => [$firstAssessmentSection],
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Tweede beoordeling',
-                    'elements' => [$secondAssessmentSection],
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Interne controle',
-                    'elements' => [$internalAssessmentSection],
-                ],
-                [
-                    'type' => 'FormGroupControl',
-                    'label' => 'Uitvoeringscoördinator controle',
-                    'elements' => [$implementationCoordinatorAssessmentSection],
-                ]
-            ]
-        ];
+        $view_ui = $this->buildViewSchema(5);
 
         $input_ui = [
             "type" => "FormGroupControl",
@@ -558,159 +443,5 @@ class PCZMUIAssessmentTableSeeder extends Seeder
             'input_ui' => json_encode($input_ui),
             'view_ui' => json_encode($view_ui)
         ]);
-    }
-
-    public function getAssessmentSection(): array
-    {
-        $applicationSection = [
-            "type" => "CustomGroupControl",
-            "options" => [
-                "section" => true
-            ],
-            "label" => "Aanvraag",
-            "elements" => [
-                [
-                    "type" => "VerticalLayout",
-                    "elements" => [
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/firstName"
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/infix"
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/lastName"
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/street"
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/houseNumber"
-                        ]
-                    ]
-                ]
-            ]
-        ];
-
-        return $applicationSection;
-    }
-
-    public function getFirstAssessmentSection(): array
-    {
-        return [
-            "type" => "CustomGroupControl",
-            "options" => [
-                "section" => true
-            ],
-            "label" => "Eerste beoordeling",
-            "elements" => [
-                [
-                    "type" => "VerticalLayout",
-                    "elements" => [
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/checklist",
-                            "options" => [
-                                "format" => "checkbox"
-                            ]
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/amount",
-                            "options" => [
-                                "format" => "radio"
-                            ]
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/firstAssessment",
-                            "options" => [
-                                "format" => "radio"
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    public function getSecondAssessmentSection(): array
-    {
-        return [
-            "type" => "CustomGroupControl",
-            "options" => [
-                "section" => true
-            ],
-            "label" => "Tweede beoordeling",
-            "elements" => [
-                [
-                    "type" => "VerticalLayout",
-                    "elements" => [
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/secondAssessment",
-                            "options" => [
-                                "format" => "radio"
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    public function getInternalAssessmentSection(): array
-    {
-        return [
-            "type" => "CustomGroupControl",
-            "options" => [
-                "section" => true
-            ],
-            "label" => "Interne controle",
-            "elements" => [
-                [
-                    "type" => "VerticalLayout",
-                    "elements" => [
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/internalAssessment",
-                            "options" => [
-                                "format" => "radio"
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    public function getImplementationCoordinatorAssessmentSection(): array
-    {
-        return [
-            "type" => "CustomGroupControl",
-            "options" => [
-                "section" => true
-            ],
-            "label" => "Uitvoeringscoördinator controle",
-            "elements" => [
-                [
-                    "type" => "VerticalLayout",
-                    "elements" => [
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/implementationCoordinatorAssessment",
-                            "options" => [
-                                "format" => "radio"
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
     }
 }

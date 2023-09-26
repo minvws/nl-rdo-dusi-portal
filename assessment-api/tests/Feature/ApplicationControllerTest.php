@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use MinVWS\DUSi\Assessment\API\Models\Connection;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;

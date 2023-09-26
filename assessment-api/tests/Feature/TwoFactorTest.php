@@ -5,20 +5,24 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\TwoFactorAuthenticationProvider;
-use MinVWS\DUSi\Assessment\API\Models\Connection;
-use MinVWS\DUSi\Assessment\API\Models\User;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\User;
+use PragmaRX\Google2FA\Google2FA;
+use MinVWS\DUSi\Shared\Application\Models\Connection as ApplicationConnection;
+use MinVWS\DUSi\Shared\User\Models\Connection as UserConnection;
 
 class TwoFactorTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected array $connectionsToTransact = [Connection::APPLICATION, Connection::USER];
+    protected array $connectionsToTransact = [ApplicationConnection::APPLICATION, UserConnection::USER];
     private Application $application;
     private ApplicationStage $applicationStage;
 
@@ -27,20 +31,15 @@ class TwoFactorTest extends TestCase
         parent::setUp();
         $authProvider = app(TwoFactorAuthenticationProvider::class);
 
-        $user = User::query()->where('email', 'user@example.com')->first();
-
-        if (!$user) {
-            $newUser = new User();
-            $newUser->name = 'New User';
-            $newUser->email = 'user@example.com';
-            $newUser->password = \Hash::make('password');
-            $newUser->two_factor_secret = encrypt($authProvider->generateSecretKey());
-            $newUser->save();
-
-            echo "User created successfully.";
-        } else {
-            echo "User already exists.";
-        }
+        $user = User::updateOrCreate([
+            'email' => 'user@example.com'
+        ], [
+            'name' => 'New User',
+            'password' => Hash::make('password'),
+            'organisation_id' => Organisation::factory()->create()?->id,
+        ]);
+        $user->two_factor_secret = encrypt($authProvider->generateSecretKey());
+        $user->save();
 
         Subsidy::query()->truncate();
         SubsidyVersion::query()->truncate();
@@ -91,5 +90,33 @@ class TwoFactorTest extends TestCase
         $data = json_decode($response->getContent(), true);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($this->application->id, $data['data'][0]['id']);
+    }
+
+    public function testLogin(): void
+    {
+        $engine = new Google2FA();
+
+        $user = User::factory()
+            ->withPassword('password')
+            ->withTwoFactorSecret($engine->generateSecretKey())
+            ->create();
+
+        $response = $this
+            ->postJson('/api/login', [
+                'email'    => $user->email,
+                'password' => 'password',
+            ]);
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'two_factor' => true,
+            ]);
+
+        $response = $this
+            ->postJson('/api/two-factor-challenge', [
+                'code' => $engine->getCurrentOtp(decrypt($user->two_factor_secret))
+            ]);
+
+        $response->assertStatus(204);
     }
 }

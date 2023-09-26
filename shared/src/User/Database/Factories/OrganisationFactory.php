@@ -1,15 +1,22 @@
 <?php
 
-namespace MinVWS\DUSi\User\Admin\API\Database\Factories;
+declare(strict_types=1);
 
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
+namespace MinVWS\DUSi\Shared\User\Database\Factories;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
 
 /**
  * @phpstan-extends Factory<Organisation>
  */
 class OrganisationFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     */
+    protected $model = Organisation::class;
+
     /**
      * Define the model's default state.
      *

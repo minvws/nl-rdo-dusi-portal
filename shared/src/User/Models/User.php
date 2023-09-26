@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\User\Admin\API\Models;
+namespace MinVWS\DUSi\Shared\User\Models;
 
 use Carbon\Carbon;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,13 +14,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use MinVWS\DUSi\Shared\User\Database\Factories\UserFactory;
+use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 
+/**
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string $organisation_id
+ * @property DateTimeInterface $active_until
+ * @property Collection<Role> $roles
+ * @property Organisation $organisation
+ * @method bool can($abilities, $arguments = [])
+ */
 class User extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
     use HasUuids;
     use TwoFactorAuthenticatable;
+
+    protected $connection = Connection::USER;
 
     /**
      * The attributes that are mass assignable.
@@ -54,6 +70,10 @@ class User extends Authenticatable
         'password_updated_at' => 'timestamp',
     ];
 
+    protected $with = [
+        'roles',
+    ];
+
     /**
      * User that created this user.
      * @return BelongsTo
@@ -74,37 +94,37 @@ class User extends Authenticatable
             ->withPivot('subsidy_id');
     }
 
-    public function attachRole(string $role, string $subsidyId = null): void
+    public function attachRole(RoleEnum $role, string $subsidyId = null): void
     {
         if (
             $this->roles()
-            ->where('name', $role)
-            ->wherePivot('subsidy_id', $subsidyId)
-            ->exists()
+                ->where('name', $role->value)
+                ->wherePivot('subsidy_id', $subsidyId)
+                ->exists()
         ) {
             return;
         }
 
-        $this->roles()->attach($role, ['subsidy_id' => $subsidyId]);
+        $this->roles()->attach($role->value, ['subsidy_id' => $subsidyId]);
     }
 
-    public function detachRole(string $role, string $subsidyId = null): void
+    public function detachRole(RoleEnum $role, string $subsidyId = null): void
     {
         $this->roles()
-            ->where('name', $role)
+            ->where('name', $role->value)
             ->wherePivot('subsidy_id', $subsidyId)
             ->detach();
     }
 
-    public function isAdministrator(): bool
+    public function isUserAdministrator(): bool
     {
-        return $this->hasRole('admin');
+        return $this->hasRole(RoleEnum::UserAdmin);
     }
 
-    public function hasRole(string $roleName, ?string $subsidyId = null): bool
+    public function hasRole(RoleEnum $role, ?string $subsidyId = null): bool
     {
         return $this->roles()
-            ->where('role_name', $roleName)
+            ->where('role_name', $role->value)
             ->wherePivot('subsidy_id', $subsidyId)
             ->exists();
     }
@@ -126,5 +146,10 @@ class User extends Authenticatable
     {
         $svgTag = $this->twoFactorQrCodeSvg();
         return str_replace('<svg ', '<svg role="img"focusable="false" aria-label="QR-code" ', $svgTag);
+    }
+
+    protected static function newFactory(): UserFactory
+    {
+        return new UserFactory();
     }
 }

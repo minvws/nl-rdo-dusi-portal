@@ -34,7 +34,7 @@ trait CreateField
             'description' => $description,
             'type' => $type,
             'params' => json_encode($params),
-            'is_required' => is_null($requiredCondition) ? false : $isRequired,
+            'is_required' => $isRequired && $requiredCondition === null,
             'required_condition' => $this->getRequiredCondition($requiredCondition),
         ]);
 

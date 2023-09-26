@@ -85,6 +85,13 @@ cd "$BASEDIR/user-admin-api"
 
 vendor/bin/sail artisan organisation:create "DUS-I"
 vendor/bin/sail artisan admin:create user@example.com user password
+vendor/bin/sail artisan user:create assessor@example.com password assessor
+vendor/bin/sail artisan user:create implementationCoordinator@example.com password implementationCoordinator
+vendor/bin/sail artisan user:create internalAuditor@example.com password internalAuditor
 
-echo "Log user in with: user@example.com password"
+echo "User for user admin: user@example.com password"
+echo "Assessor user for assessment portal: assessor@example.com password"
+echo "ImplementationCoordinator user for assessment portal: implementationCoordinator@example.com password"
+echo "InternalAuditor user for assessment portal: internalAuditor@example.com password"
+
 cd "$BASEDIR"

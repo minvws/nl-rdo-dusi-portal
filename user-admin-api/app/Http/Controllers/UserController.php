@@ -13,8 +13,8 @@ use MinVWS\DUSi\User\Admin\API\Http\Requests\UserCreateRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserResetCredentialsRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserUpdateActiveRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserUpdateRequest;
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\Services\UserService;
 use MinVWS\DUSi\User\Admin\API\View\Data\UserCredentialsData;
 

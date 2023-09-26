@@ -10,7 +10,7 @@ use MinVWS\DUSi\User\Admin\API\Components\FlashNotification;
 use MinVWS\DUSi\User\Admin\API\Enums\FlashNotificationTypeEnum;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\OrganisationCreateRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\OrganisationUpdateRequest;
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
 
 class OrganisationController extends Controller
 {

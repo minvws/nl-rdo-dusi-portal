@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Str;
-use MinVWS\DUSi\User\Admin\API\Models\Connection;
+use MinVWS\DUSi\Shared\Application\Models\Connection as ApplicationConnection;
+use MinVWS\DUSi\Shared\User\Models\Connection as UserConnection;
 
 return [
 
@@ -18,7 +19,7 @@ return [
     |
     */
 
-    'default' => Connection::USER,
+    'default' => UserConnection::USER,
 
     /*
     |--------------------------------------------------------------------------
@@ -37,7 +38,7 @@ return [
     */
 
     'connections' => [
-        Connection::USER => [
+        UserConnection::USER => [
             'driver' => 'pgsql',
             'url' => env('USER_DATABASE_URL'),
             'host' => env('DB_USER_HOST', '127.0.0.1'),
@@ -54,7 +55,7 @@ return [
             'sslcert' => env('DB_USER_SSLCERT', null),
             'sslkey' => env('DB_USER_SSLKEY', null),
         ],
-        Connection::APPLICATION => [
+        ApplicationConnection::APPLICATION => [
             'driver' => 'pgsql',
             'url' => env('FORM_DATABASE_URL'),
             'host' => env('DB_APPLICATION_HOST', '127.0.0.1'),
