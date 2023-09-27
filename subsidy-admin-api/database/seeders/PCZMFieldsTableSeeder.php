@@ -9,7 +9,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
-class FieldsTableSeeder extends Seeder
+class PCZMFieldsTableSeeder extends Seeder
 {
     use CreateField;
 
@@ -18,196 +18,14 @@ class FieldsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->createBTVFields();
         $this->createPCZMFields();
-    }
-
-    public function createBTVFields(): void
-    {
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'firstName',
-            title: 'Voornaam',
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'infix',
-            title: 'Tussenvoegsel',
-            isRequired: false,
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'lastName',
-            title: 'Achternaam',
-        );
-
-        $this->createDateField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'dateOfBirth',
-            title: 'Geboortedatum',
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'street',
-            title: 'Straat',
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'houseNumber',
-            title: 'Huisnummer',
-            inputMode: 'numeric',
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'houseNumberSuffix',
-            title: 'Huisnummer toevoeging',
-            maxLength: 10,
-            isRequired: false,
-        );
-
-        $this->createPostalCodeField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'postalCode',
-            title: 'Postcode',
-            isRequired: false,
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'city',
-            title: 'Plaats',
-            maxLength: 100,
-        );
-
-        $this->createCountryField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'country',
-            title: 'Land',
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'phoneNumber',
-            title: 'Telefoonnummer',
-            inputMode: 'tel',
-            maxLength: 20,
-            isRequired: false,
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'email',
-            title: 'E-mailadres',
-            inputMode: 'email',
-            maxLength: 300,
-            isRequired: false,
-        );
-
-        $this->createBankAccountField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'bankAccountNumber',
-            title: 'IBAN',
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'bankAccountHolder',
-            title: 'Naam rekeninghouder',
-            maxLength: 50,
-        );
-
-        $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'bankStatement',
-            title: 'Kopie bankafschrift',
-            mimeTypes: ['image/*', 'application/pdf'],
-            maxFileSize: 5242880
-        );
-
-        $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'extractPersonalRecordsDatabase',
-            title: 'Uittreksel bevolkingsregister niet ouder dan 3 maanden',
-            mimeTypes: ['image/*', 'application/pdf'],
-            maxFileSize: 5242880
-        );
-
-        $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'proofOfMedicalTreatment',
-            title: 'Verklaring behandeltraject',
-            mimeTypes: ['image/*', 'application/pdf'],
-            maxFileSize: 5242880
-        );
-
-        $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'proofOfTypeOfMedicalTreatment',
-            title: 'Verklaring type behandeling',
-            mimeTypes: ['image/*', 'application/pdf'],
-            maxFileSize: 5242880
-        );
-
-        $this->createCheckboxField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'permissionToProcessPersonalData',
-            title: 'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',
-        );
-
-        $this->createCheckboxField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code: 'truthfullyCompleted',
-            title: ''
-        );
-
-        $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
-            code: 'checklist',
-            title: 'Gecontroleerd',
-            options: [
-                'Uittreksel van het BRP is opgestuurd',
-                'De aanvrager is een ingezetene (> 4 maanden) in Nederland',
-                'de aanvrager is ouder dan 18 jaar',
-                'De verklaring van de arts over het behandeltraject is opgestuurd',
-                'De verklaring van de arts over het behandeltraject is minder dan 2 maanden oud',
-                'De verklaring van de arts over het behandeltraject is ondertekend en voorzien van een naamstempel',
-                'Het opgegeven BIG-nummer komt overeen met het BIG-register',
-                'De operatie heeft nog niet plaatsgevonden',
-                'De aanvrager heeft genderdysforie',
-                'De aanvrager heeft minimaal een jaar voor de aanvraag hormoonbehandeling ondergaan, of is hiermee vanwege medische redenen gestopt of kon deze om medische redenen niet ondergaan',
-                'De verklaring van de arts met de vermelding van de type behandeling is opgestuurd',
-                'De verklaring van de arts met de vermelding van de type behandeling is ondertekend en voorzien van een naamstempel',
-                'De type behandeling voldoet aan de voorwaarden conform de subsidieregeling',
-                'Het IBAN-nummer klopt met het opgegeven IBAN-nummer van de aanvraag',
-                'De tenaamstelling op het bankafschrift of bankpas klopt'
-            ],
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
-            code: 'amount',
-            title: 'Bedrag',
-            options: ['€ 3.830', '€ 13.720']
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
-            code: 'review',
-            title: 'Beoordeling',
-            options: ['Onbeoordeeld', 'Aanvulling nodig', 'Afgekeurd', 'Goedgekeurd']
-        );
     }
 
     public function createPCZMFields(): void
     {
         $this->pczmApplicationFields();
         $this->pczmFirstAssessmentFields();
-        $this->pczmSeconcAssessmentFields();
+        $this->pczmSecondAssessmentFields();
         $this->pczmInternalAssessmentFields();
         $this->pczmCoordinatorImplemenationFields();
     }
@@ -451,14 +269,180 @@ class FieldsTableSeeder extends Seeder
     public function pczmFirstAssessmentFields(): void
     {
         // Eerste beoordeling
-        $this->createSelectField(
+        //Persoonsgegevens
+        $this->createMultiSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
-            code: 'checklist',
+            code: 'personalDataChecklist',
             title: 'Controlevragen',
-            options: ['Vraag 1', 'Vraag 2', 'Vraag 3', 'Vraag 4'],
+            options: [
+                "Alle aangeleverde documenten zijn te herleiden tot dezelfde persoon op basis van BSN en de overige persoonsgegevens",
+                "Het IBAN bestaat en is actief",
+                "Het opgegeven IBAN staat op naam van de aanvrager",
+                "Op basis van de SurePay terugkoppeling ben ik akkoord met het opgegeven rekeningnummer"
+            ],
             isRequired: false
         );
 
+        //Vaststellen wia
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'wiaChecklist',
+            title: 'Controlevragen',
+            options: [
+                "Het verzekeringsbericht is gewaarmerkt en het BSN is zichtbaar in de upload",
+                "Het BSN op het verzekeringsbericht komt overeen met dat van de aanvrager",
+                "Uit het verzekeringsbericht blijkt dat de aanvrager in de WIA zit",
+                "De ingangsdatum van de WIA in de WIA-beslissing komt overeen met de ingangsdatum op het verzekeringsbericht",
+                "Uit de WIA-beslissing blijkt dat de aanvrager in aanmerking komt voor subsidie",
+            ],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstSickDayWithinExpiryDate',
+            title: 'Uit de toekenningsbrief van de afgesproken loondoorbetaling blijkt dat de eerste ziektedag in de periode van 1 maart 2020 en 1 juli 2020 ligt',
+            options: [
+                'Nee',
+                'Ja',
+                'Niet van toepassing'
+            ],
+            isRequired: false
+        );
+
+        //Zorgaanbieder en functie
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'employerChecklist',
+            title: 'Controlevragen',
+            options: [
+                "De werkgever komt overeen met de laatste werkgever vóór de WIA in het verzekeringsbericht",
+                "Uit de arbeidsovereenkomst en/of de verklaring van de zorgaanbieder blijkt dat er sprake is van werkzaamheden die binnen de subsidieregeling vallen"
+            ],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderStatementIsComplete',
+            title: 'De verklaring van de zorgaanbieder is volledig ingevuld',
+            options: [
+                'Nee',
+                'Ja',
+                'Niet van toepassing',
+            ],
+            isRequired: false
+         );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'employerName',
+            title: 'Naam werkgever',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderName',
+            title: 'Naam zorgaanbieder, indien niet werkgever',
+            isRequired: false
+        );
+
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'chamberOfCommerceNumberEmployer',
+            title: 'KVK-nummer werkgever',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'chamberOfCommerceNumberHealtcareProvider',
+            title: 'KVK-nummer zorgaanbieder, indien niet werkgever',
+            isRequired: false
+        );
+
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderChecklist',
+            title: 'Controlevragen',
+            options: [
+                "De zorgaanbieder waar de aanvrager werkzaam is geweest heeft de juiste SBI-code",
+                "De zorgaanbieder waar de aanvrager werkzaam is geweest heeft de juiste AGB-code",
+                "De zorgaanbieder voldoet aan de eisen binnen de regeling"
+            ],
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderSBICode',
+            title: 'SBI-code zorgaanbieder',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'healthcareProviderAGBCode',
+            title: 'AGB-code zorgaanbieder',
+            isRequired: false
+        );
+
+        //Justitiële inrichting
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'judicialInstitutionIsEligible',
+            title: 'De justitiële inrichting waar de aanvrager werkzaam is geweest valt binnen de regeling',
+            options: ['Nee', 'Ja', 'Niet van toepassing'],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'applicantFoundInBigRegister',
+            title: 'De aanvrager is op basis van het doorgegeven BIG-nummer terug te vinden in het BIG-register',
+            options: ['Nee', 'Ja', 'Niet van toepassing'],
+            isRequired: false
+        );
+
+        //Vaststellen post-COVID
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'postCovidChecklist',
+            title: 'Controlevragen',
+            options: [
+                "Op basis van het sociaal-medisch verslag en/of de verklaring van de arts is vast te stellen dat er een post-COVID diagnose is gesteld",
+                "De post-COVID diagnose is vóór 1 juni 2023 gesteld",
+            ],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'doctorFoundInBigRegister',
+            title: 'De arts die de verklaring heeft afgegeven is als arts geregistreerd in het BIG-register',
+            options: [
+                'Nee',
+                'Ja',
+                'Niet van toepassing'
+            ],
+            isRequired: false
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'doctorsCertificateIsComplete',
+            title: 'De verklaring van de arts is volledig ingevuld',
+            options: [
+                'Nee',
+                'Ja',
+                'Niet van toepassing',
+            ],
+            isRequired: false
+        );
+
+        //Status
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             code: 'amount',
@@ -471,30 +455,101 @@ class FieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             code: 'firstAssessment',
             title: 'Beoordeling',
-            options: ['Onbeoordeeld', 'Aanvulling nodig', 'Afgekeurd', 'Goedgekeurd']
+            options: ['Aanvulling nodig', 'Afgekeurd', 'Goedgekeurd']
+        );
+
+        //Toelichting
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentRequestedComplementReason',
+            title: 'Reden',
+            options: ['Incomplete aanvraag', 'Onduidelijkheid of vervolgvragen'],
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentInternalNote',
+            title: 'Interne notitie',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentRequestedComplementNote',
+            title: 'Toelichting van benodigde aanvullingen',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentRejectedNote',
+            title: 'Reden van afkeuring',
+            isRequired: false
         );
     }
 
-    public function pczmSeconcAssessmentFields(): void
+    public function pczmSecondAssessmentFields(): void
     {
         //Tweede beoordeling
+        $this->createCheckboxField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            code: 'firstAssessorMotivatedValid',
+            title: 'De motivatie van de eerste behandelaar is duidelijk en correct',
+            isRequired: false
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
             code: 'secondAssessment',
             title: 'Beoordeling',
             options: ['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling']
         );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            code: 'secondAssessmentInternalNote',
+            title: 'Interne notitie',
+            isRequired: false
+        );
     }
 
     public function pczmInternalAssessmentFields(): void
     {
         //Interne controle
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            code: 'internalAssessmentChecklist',
+            title: 'Controlevragen',
+            options: [
+                "Alle benodigde documenten zijn aangeleverd",
+                "Uit de dataverificatie blijkt dat er geen onvolkomenheden zijn geconstateerd",
+                "De motivatie van de eerste beoordeling is duidelijk"
+            ],
+            isRequired: false
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
-            options: ['Onbeoordeeld', 'Afgekeurd', 'Goedgekeurd']
+            options: ['Afgekeurd', 'Goedgekeurd']
         );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            code: 'internalAssessmentRejectionNote',
+            title: 'Reden van afkeuring',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            code: 'internalAssessmentApprovalNote',
+            title: 'Extra informatie over de beoordeling',
+            isRequired: false
+        );
+
     }
 
     public function pczmCoordinatorImplemenationFields(): void
@@ -505,6 +560,27 @@ class FieldsTableSeeder extends Seeder
             code: 'implementationCoordinatorAssessment',
             title: 'Beoordeling',
             options: ['Afgekeurd', 'Goedgekeurd']
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            code: 'coordinatorImplementationNote',
+            title: 'Interne notitie',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            code: 'coordinatorImplementationReasonForRejection',
+            title: 'Reden van afkeuring',
+            isRequired: false,
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            code: 'coordinatorImplementationApprovalNote',
+            title: 'Extra informatie over de gedane wijzigingen',
+            isRequired: false,
         );
     }
 }
