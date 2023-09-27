@@ -159,6 +159,7 @@ class ApplicationRepository
             $stage->application->applicationStages()
                 ->with('subsidyStage')
                 ->where('sequence_number', '<=', $stage->sequence_number)
+                ->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage)
                 ->orderBy('sequence_number')
                 ->get();
 
