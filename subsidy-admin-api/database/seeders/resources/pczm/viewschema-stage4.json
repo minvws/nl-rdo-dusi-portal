@@ -4,12 +4,28 @@
         "section": true
     },
     "elements": [
+
         {
-            "type": "FormResultsTable",
+            "type": "CustomControl",
+            "scope": "#/properties/internalAssessmentChecklist",
             "options": {
-                "fields": {
-                    "Beoordeling": "{internalAssessment}"
-                }
+                "readonly": true,
+                "format": "checkbox-group"
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/internalAssessment",
+            "options": {
+                "readonly": true,
+                "format": "radio"
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/internalAssessmentInternalNote",
+            "options": {
+                "readonly": true
             }
         }
     ]

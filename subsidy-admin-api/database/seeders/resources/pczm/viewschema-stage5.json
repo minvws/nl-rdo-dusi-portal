@@ -5,11 +5,18 @@
     },
     "elements": [
         {
-            "type": "FormResultsTable",
+            "type": "CustomControl",
+            "scope": "#/properties/implementationCoordinatorAssessment",
             "options": {
-                "fields": {
-                    "Beoordeling": "{implementationCoordinatorAssessment}"
-                }
+                "readonly": true,
+                "format": "radio"
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/implementationCoordinatorInternalNote",
+            "options": {
+                "readonly": true
             }
         }
     ]
