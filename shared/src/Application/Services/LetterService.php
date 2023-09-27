@@ -53,7 +53,7 @@ readonly class LetterService
     {
         $result = new LetterStages();
         foreach ($answers->stages as $applicationStageAnswers) {
-            $stageKey = $applicationStageAnswers->stage->subsidyStage->stage;
+            $stageKey = 'stage' . $applicationStageAnswers->stage->subsidyStage->stage;
             $stageData = new LetterStageData();
 
             $encrypter = $this->encryptionService->getEncrypter($applicationStageAnswers->stage);
@@ -97,6 +97,13 @@ readonly class LetterService
     private function generatePDFLetter(string $template, LetterData $data): PDF
     {
         $html = $this->generateHTMLLetter($template, $data);
+
+        // TODO: move to service provider on injection from config file
+        // Override dompdf config to allow asset loading from shared.
+        config()->set('dompdf.public_path', realpath(__DIR__ . '/../../../public'));
+        config()->set('dompdf.options.chroot', realpath(__DIR__ . '/../../..'));
+        config()->set('dompdf.options.font_cache', realpath(__DIR__ . '/../../../storage/fonts'));
+        config()->set('dompdf.options.font_dir', realpath(__DIR__ . '/../../../public/build/fonts'));
 
         $pdf = PDFHelper::loadHTML($html);
         $pdf->render();
@@ -149,29 +156,10 @@ readonly class LetterService
         return $pdf;
     }
 
-    private function getCssPath(): string
-    {
-        $manifestPath = file_get_contents(public_path('build/manifest.json'));
-
-        if (!$manifestPath) {
-            return '';
-        }
-
-        $manifest = json_decode($manifestPath, true);
-        $cssFile = $manifest['resources/scss/pdf.scss']['file'];
-
-        return public_path('build/' . $cssFile);
-    }
-
-
     private function collectGenericDataForTemplate(ApplicationStage $stage): LetterData
     {
         $answers = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($stage);
         $data = $this->convertAnswersToTemplateData($answers);
-
-        $cssPath = $this->getCssPath();
-        $logoPath = public_path('img/vws_dusi_logo.svg');
-        $signaturePath = public_path('img/vws_dusi_signature.jpg');
 
         return new LetterData(
             subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
@@ -181,9 +169,6 @@ readonly class LetterService
             reference: $stage->application->reference,
             motivation: '', // TODO: replace with motivation
             applicationCode: null,
-            cssPath: $cssPath,
-            logoPath: $logoPath,
-            signaturePath: $signaturePath,
         );
     }
 

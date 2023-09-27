@@ -20,17 +20,24 @@ use MinVWS\DUSi\Shared\Application\Services\LatteLetterLoaderService;
 
 class LetterServiceProvider extends ServiceProvider
 {
+    private const VIEWS_BASE_PATH = __DIR__ . '/../../resources/views';
+
     public function register()
     {
         $this->app->singleton(Engine::class, function ($app) {
+            $latteLoaderService = new LatteLetterLoaderService(self::VIEWS_BASE_PATH . '/letters');
+
             $latte = new Engine();
             $latte->setSandboxMode();
             $latte->setTempDirectory($app->config->get('view.compiled'));
-            $latte->setLoader(new LatteLetterLoaderService(resource_path('views/letters')));
+            $latte->setLoader($latteLoaderService);
 
             $policy = new SecurityPolicy();
             $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include']);
-            $policy->allowFilters(['date', 'join', 'spaceless', 'capitalize', 'firstUpper', 'lower', 'upper', 'round']);
+            $policy->allowFilters([
+                'dataStream', 'date', 'join', 'spaceless', 'capitalize',
+                'firstUpper', 'lower', 'upper', 'round'
+            ]);
 
             $policy->allowProperties(LetterData::class, $policy::All);
             $policy->allowProperties(LetterStages::class, $policy::All);
@@ -51,6 +58,6 @@ class LetterServiceProvider extends ServiceProvider
                 return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
             });
 
-        $this->loadViewsFrom(__DIR__ . '../resources/views', 'dusi');
+        $this->loadViewsFrom(self::VIEWS_BASE_PATH, 'dusi');
     }
 }

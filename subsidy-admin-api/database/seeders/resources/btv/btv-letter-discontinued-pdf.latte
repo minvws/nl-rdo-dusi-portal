@@ -1,4 +1,9 @@
-{layout 'dusi::letter_layout.latte'}
+{layout 'letter_layout.latte'}
+
+{block concern}
+    Buiten behandeling stellen aanvraag {$content->subsidyTitle}
+{/block}
+
 {block content}
     <p>Beste lezer,</p>
     <p>
