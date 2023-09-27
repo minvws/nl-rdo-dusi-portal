@@ -44,13 +44,17 @@ readonly class LetterData
     private function getStylesheetPath(): string
     {
         $manifestContent = file_get_contents(self::PUBLIC_PATH . '/build/manifest.json');
+        assert(is_string($manifestContent));
         $manifest = json_decode($manifestContent, true);
-
-        return realpath(self::PUBLIC_PATH . '/build/' . $manifest['resources/scss/pdf.scss']['file']);
+        $path = realpath(self::PUBLIC_PATH . '/build/' . $manifest['resources/scss/pdf.scss']['file']);
+        assert(is_string($path));
+        return $path;
     }
 
     private function getImageStream(string $image): string
     {
-        return file_get_contents(self::RESOURCE_PATH . "/img/{$image}");
+        $contents = file_get_contents(self::RESOURCE_PATH . "/img/{$image}");
+        assert(is_string($contents));
+        return $contents;
     }
 }

@@ -98,6 +98,7 @@ readonly class LetterService
     {
         $html = $this->generateHTMLLetter($template, $data);
 
+        // TODO: move to service provider on injection from config file
         // Override dompdf config to allow asset loading from shared.
         config()->set('dompdf.public_path', realpath(__DIR__ . '/../../../public'));
         config()->set('dompdf.options.chroot', realpath(__DIR__ . '/../../..'));

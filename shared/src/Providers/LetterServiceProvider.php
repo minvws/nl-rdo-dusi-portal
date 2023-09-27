@@ -34,7 +34,10 @@ class LetterServiceProvider extends ServiceProvider
 
             $policy = new SecurityPolicy();
             $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include']);
-            $policy->allowFilters(['dataStream', 'date', 'join', 'spaceless', 'capitalize', 'firstUpper', 'lower', 'upper', 'round']);
+            $policy->allowFilters([
+                'dataStream', 'date', 'join', 'spaceless', 'capitalize',
+                'firstUpper', 'lower', 'upper', 'round'
+            ]);
 
             $policy->allowProperties(LetterData::class, $policy::All);
             $policy->allowProperties(LetterStages::class, $policy::All);
