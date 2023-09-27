@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\Services;
+namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Latte\Loader;
 use Latte\RuntimeException;

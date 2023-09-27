@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "52b3872cdb01b523e4e142a62daf4a68",
+    "content-hash": "13726ab143b1c3dd7f9c82eeb84af0a6",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2835,22 +2835,26 @@
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-feat/enable-assignment-view-event",
+            "version": "dev-feature/letter-service-shared",
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "0b4959af630f6ef1c6052d62dea704e0c5d7b4c9"
+                "reference": "211bf6b640d8e4d61b7bcc983b68d6cfbbb7e495"
             },
             "require": {
+                "barryvdh/laravel-dompdf": "^2.0",
                 "doctrine/dbal": "^3.6",
                 "guzzlehttp/guzzle": "^7.8",
                 "laravel/framework": "^10.17",
+                "latte/latte": "^3.0",
                 "minvws/codable": "dev-main as 1.0.x-dev",
+                "minvws/laravel-logging": "^2.1",
                 "php": "^8.2",
                 "xenolope/quahog": "^3.0"
             },
             "require-dev": {
                 "fakerphp/faker": "^1.23",
+                "laravel/fortify": "^1.18",
                 "nunomaduro/larastan": "^2.0",
                 "orchestra/testbench": "^8.6",
                 "phpmd/phpmd": "^2.13",
@@ -2864,7 +2868,8 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider"
+                        "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider",
+                        "MinVWS\\DUSi\\Shared\\Providers\\LetterServiceProvider"
                     ]
                 }
             },
@@ -2910,12 +2915,6 @@
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-laravel-logging.git",
                 "reference": "6484a35a3debdd17c72bfa4b4bb271becefcc334"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-laravel-logging/zipball/6484a35a3debdd17c72bfa4b4bb271becefcc334",
-                "reference": "6484a35a3debdd17c72bfa4b4bb271becefcc334",
-                "shasum": ""
             },
             "require": {
                 "laravel/framework": "^7.30.6|^8.75.0|^9.0|^10.0",
@@ -2981,10 +2980,6 @@
                 "laravel",
                 "logging"
             ],
-            "support": {
-                "source": "https://github.com/minvws/nl-rdo-laravel-logging/tree/v2.1.0",
-                "issues": "https://github.com/minvws/nl-rdo-laravel-logging/issues"
-            },
             "time": "2023-09-25T21:08:06+00:00"
         },
         {
@@ -13608,5 +13603,5 @@
         "php": "^8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

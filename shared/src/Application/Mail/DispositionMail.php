@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\Mail;
+namespace MinVWS\DUSi\Shared\Application\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use MinVWS\DUSi\Assessment\API\DTO\DispositionMailData;
+use MinVWS\DUSi\Shared\Application\DTO\DispositionMailData;
 
 class DispositionMail extends Mailable
 {
@@ -37,8 +37,8 @@ class DispositionMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.disposition-html',
-            text: 'emails.disposition-text',
+            html: 'dusi::emails.disposition-html',
+            text: 'dusi::emails.disposition-text',
             with: [
                 'name' => $this->data->toName,
             ]

@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\DTO;
+namespace MinVWS\DUSi\Shared\Application\DTO;
 
 use DateTimeInterface;
 
@@ -14,7 +14,7 @@ readonly class LetterData
      */
     public function __construct(
         public string $subsidyTitle,
-        public ApplicationStages $stages,
+        public LetterStages $stages,
         public DateTimeInterface $createdAt,
         public string $contactEmailAddress,
         public string $reference,
@@ -26,12 +26,12 @@ readonly class LetterData
     ) {
     }
 
-    public function getStage(string $key): ?ApplicationStageData
+    public function getStage(string $key): ?LetterStageData
     {
         return $this->stages->get($key);
     }
 
-    public function __get(string $key): ?ApplicationStageData
+    public function __get(string $key): ?LetterStageData
     {
         return $this->getStage($key);
     }

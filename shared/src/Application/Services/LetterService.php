@@ -7,24 +7,24 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\Services;
+namespace MinVWS\DUSi\Shared\Application\Services;
 
-use Dompdf\Canvas;
-use Dompdf\FontMetrics;
-use Illuminate\Support\Facades\Log;
-use MinVWS\Codable\JSON\JSONDecoder;
-use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageAnswer;
-use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageData;
-use MinVWS\DUSi\Assessment\API\DTO\ApplicationStages;
-use MinVWS\DUSi\Assessment\API\DTO\DispositionMailData;
-use MinVWS\DUSi\Assessment\API\DTO\LetterData;
 use Barryvdh\DomPDF\Facade\Pdf as PDFHelper;
 use Barryvdh\DomPDF\PDF;
+use Dompdf\Canvas;
+use Dompdf\FontMetrics;
 use Exception;
 use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Facades\Log;
 use Latte\Engine as RenderEngine;
-use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswer;
+use MinVWS\DUSi\Shared\Application\DTO\LetterStages;
+use MinVWS\DUSi\Shared\Application\DTO\DispositionMailData;
+use MinVWS\DUSi\Shared\Application\DTO\LetterData;
+use MinVWS\DUSi\Shared\Application\DTO\LetterStageData;
+use MinVWS\DUSi\Shared\Application\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
@@ -49,12 +49,12 @@ readonly class LetterService
     ) {
     }
 
-    private function convertAnswersToTemplateData(AnswersByApplicationStage $answers): ApplicationStages
+    private function convertAnswersToTemplateData(AnswersByApplicationStage $answers): LetterStages
     {
-        $result = new ApplicationStages();
+        $result = new LetterStages();
         foreach ($answers->stages as $applicationStageAnswers) {
             $stageKey = $applicationStageAnswers->stage->subsidyStage->stage;
-            $stageData = new ApplicationStageData();
+            $stageData = new LetterStageData();
 
             $encrypter = $this->encryptionService->getEncrypter($applicationStageAnswers->stage);
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\DTO\Logging\Events;
+namespace MinVWS\DUSi\Shared\Application\Events;
 
 use MinVWS\Logging\Laravel\Events\Logging\GeneralLogEvent;
 

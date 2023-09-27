@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\Jobs;
+namespace MinVWS\DUSi\Shared\Application\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,8 +11,8 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use MinVWS\DUSi\Assessment\API\DTO\DispositionMailData;
-use MinVWS\DUSi\Assessment\API\Mail\DispositionMail;
+use MinVWS\DUSi\Shared\Application\DTO\DispositionMailData;
+use MinVWS\DUSi\Shared\Application\Mail\DispositionMail;
 
 class SendDispositionNotificationJob implements ShouldQueue
 {

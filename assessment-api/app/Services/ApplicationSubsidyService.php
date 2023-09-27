@@ -6,8 +6,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Auth;
-use MinVWS\DUSi\Assessment\API\DTO\Logging\Events\ViewAssignmentEvent;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
+use MinVWS\DUSi\Shared\Application\Events\ViewAssignmentEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;

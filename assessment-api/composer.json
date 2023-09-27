@@ -6,17 +6,14 @@
     "license": "EUPL-1.2",
     "require": {
         "php": "^8.2",
-        "barryvdh/laravel-dompdf": "^2.0",
         "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
         "laravel/framework": "^10.17",
         "laravel/sanctum": "^3.3",
-        "latte/latte": "^3.0",
         "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
-        "predis/predis": "^2.2",
-        "minvws/laravel-logging": "^2.1"
+        "predis/predis": "^2.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
@@ -85,12 +82,12 @@
             "url": "git@github.com:minvws/nl-rdo-php-codable.git"
         },
         {
-            "type": "path",
-            "url": "../shared"
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
         },
         {
-            "type": "vcs",
-            "url": "https://github.com/minvws/nl-rdo-laravel-logging.git"
+            "type": "path",
+            "url": "../shared"
         }
     ]
 }

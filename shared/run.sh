@@ -56,4 +56,7 @@ if $INSTALL ; then
     else
         composer install
     fi
+
+    npm install
+    npm run build
 fi

@@ -96,6 +96,10 @@
             "url": "git@github.com:minvws/nl-rdo-php-codable.git"
         },
         {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
+        },
+        {
             "type": "path",
             "url": "../shared"
         }

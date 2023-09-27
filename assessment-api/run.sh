@@ -103,9 +103,6 @@ APP_KEY_ESCAPED=$(echo "$APP_KEY" | sed 's/[\*\.&\/]/\\&/g')
 # Use the escaped variables in the sed command
 sed -i -e "s%$APP_KEY_ESCAPED%$USER_APP_KEY_ESCAPED%" .env
 
-npm install
-npm run build
-
 vendor/bin/sail up -d --remove-orphans
 
 

@@ -6,8 +6,8 @@ namespace MinVWS\DUSi\Assessment\API\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
-use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
-use MinVWS\DUSi\Assessment\API\Jobs\SendDispositionNotificationJob;
+use MinVWS\DUSi\Shared\Application\Events\LetterGeneratedEvent;
+use MinVWS\DUSi\Shared\Application\Jobs\SendDispositionNotificationJob;
 
 class SendDispositionNotification implements ShouldQueue
 {

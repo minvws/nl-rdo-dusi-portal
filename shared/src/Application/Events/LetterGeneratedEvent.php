@@ -3,11 +3,11 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\Events;
+namespace MinVWS\DUSi\Shared\Application\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use MinVWS\DUSi\Assessment\API\DTO\DispositionMailData;
+use MinVWS\DUSi\Shared\Application\DTO\DispositionMailData;
 
 readonly class LetterGeneratedEvent
 {
