@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Providers;
 
-use GuzzleHttp\Client;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
@@ -12,11 +11,9 @@ use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\SurePayService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
-use RuntimeException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -45,7 +42,6 @@ class AppServiceProvider extends ServiceProvider
             ->giveConfig('frontend.form_encryption.private_key');
 
         $this->registerClamAv();
-        $this->registerSurePayService();
     }
 
     private function registerClamAv(): void
@@ -68,25 +64,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->when(ClamAvService::class)
             ->needs('$socketReadTimeout')
             ->giveConfig('clamav.socket_read_timeout');
-    }
-
-    public function registerSurePayService(): void
-    {
-        $this->app->singleton(SurePayService::class, function () {
-            $config = config('surepay_api');
-
-            if (empty($config->get('endpoint'))) {
-                throw new RuntimeException(
-                    'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
-                );
-            }
-
-            return new SurePayService(
-                client: new Client([
-                    'base_uri' => $config->get('endpoint'),
-                    'verify'   => false,
-                ]),
-            );
-        });
     }
 }

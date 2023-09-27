@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services\SurePay\Exceptions;
+namespace MinVWS\DUSi\Shared\Application\Services\SurePay\Exceptions;
 
 use RuntimeException;
 

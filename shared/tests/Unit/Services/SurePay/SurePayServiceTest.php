@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay;
+namespace MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay;
 
 use Faker\Factory;
 use GuzzleHttp\Client;
@@ -12,15 +12,18 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\Exceptions\SurePayServiceException;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\SurePayService;
-use MinVWS\DUSi\Application\Backend\Tests\TestCase;
-use MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay\Fakes\AccesstokenResponseFake;
-use MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
+use MinVWS\DUSi\Shared\Application\Services\SurePay\Exceptions\SurePayServiceException;
+use MinVWS\DUSi\Shared\Application\Services\SurePay\SurePayService;
+use MinVWS\DUSi\Shared\Tests\TestCase;
+use MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay\Fakes\AccesstokenResponseFake;
+use MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
 
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 
+/**
+ * @group sure-pay
+ */
 class SurePayServiceTest extends TestCase
 {
     private array $container = [];

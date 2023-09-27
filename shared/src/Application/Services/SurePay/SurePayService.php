@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services\SurePay;
+namespace MinVWS\DUSi\Shared\Application\Services\SurePay;
 
 use Carbon\Carbon;
 use GuzzleHttp\ClientInterface;
@@ -11,10 +11,10 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\DTO\AccesstokenResponse;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\DTO\CheckOrganisationsAccountResponse;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\DTO\CheckOrganisationsRequest;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\Exceptions\SurePayServiceException;
+use MinVWS\DUSi\Shared\Application\Services\SurePay\DTO\AccesstokenResponse;
+use MinVWS\DUSi\Shared\Application\Services\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Services\SurePay\DTO\CheckOrganisationsRequest;
+use MinVWS\DUSi\Shared\Application\Services\SurePay\Exceptions\SurePayServiceException;
 
 /**
  * ===========================================================================

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services\SurePay\DTO;
+namespace MinVWS\DUSi\Shared\Application\Services\SurePay\DTO;
 
 /**
  * Object holding the following bank account details.

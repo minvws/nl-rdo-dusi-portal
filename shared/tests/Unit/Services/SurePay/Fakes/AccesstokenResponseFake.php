@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Services\SurePay\Fakes;
+namespace MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay\Fakes;
 
 use Carbon\Carbon;
 use Faker\Factory;
