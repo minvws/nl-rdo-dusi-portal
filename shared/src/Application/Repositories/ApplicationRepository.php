@@ -77,6 +77,10 @@ class ApplicationRepository
             isset($filter->subsidy),
             fn() => $query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
         );
+        $query->when(
+            isset($filter->assessor),
+            fn() => $query->currentApplicationStage()->assessor($filter->assessor)->get() // @phpstan-ignore-line
+        );
         return $query->get();
     }
 

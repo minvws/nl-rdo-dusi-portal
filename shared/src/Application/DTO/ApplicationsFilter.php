@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Shared\Application\DTO;
 
 use DateTime;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @throws \Exception
@@ -46,6 +47,7 @@ class ApplicationsFilter
         public ?DateTime $dateFinalReviewDeadlineTo,
         public ?ApplicationStatus $status,
         public ?string $subsidy,
+        public ?User $assessor,
     ) {
     }
 
@@ -65,6 +67,7 @@ class ApplicationsFilter
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_to'),
             getStatusOrNull($inputArray, 'status'),
             $inputArray['subsidy'] ?? null,
+            $inputArray['assessor'] ?? null,
         );
     }
 }

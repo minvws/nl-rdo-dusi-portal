@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection as ArrayCollection;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use MinVWS\DUSi\Shared\User\Database\Factories\UserFactory;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
@@ -125,6 +126,17 @@ class User extends Authenticatable
     {
         return $this->roles()
             ->where('role_name', $role->value)
+            ->wherePivot('subsidy_id', $subsidyId)
+            ->exists();
+    }
+
+    /**
+     * @param ArrayCollection<array-key, RoleEnum> $roles
+     */
+    public function hasRoles(ArrayCollection $roles, ?string $subsidyId = null): bool
+    {
+        return $this->roles()
+            ->whereIn('role_name', $roles)
             ->wherePivot('subsidy_id', $subsidyId)
             ->exists();
     }
