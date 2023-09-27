@@ -15,8 +15,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('subsidy_stages', function (Blueprint $table) {
-            $table->enum('assessor_user_role', array_map(fn ($role) => $role->value, Role::cases()))
+        $roles = ['userAdmin', 'assessor', 'implementationCoordinator', 'internalAuditor'];
+        Schema::table('subsidy_stages', function (Blueprint $table) use ($roles) {
+            $table->enum('assessor_user_role', $roles)
                 ->nullable()
                 ->after('subject_role');
         });
