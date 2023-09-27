@@ -24,9 +24,4 @@ class ApplicationFileService
     {
         return $this->bridgeClient->call(RPCMethods::GET_APPLICATION_FILE, $params, EncryptedResponse::class);
     }
-
-    public function deleteApplicationFile(ApplicationFileParams $params): EncryptedResponse
-    {
-        return $this->bridgeClient->call(RPCMethods::DELETE_APPLICATION_FILE, $params, EncryptedResponse::class);
-    }
 }

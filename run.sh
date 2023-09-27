@@ -61,7 +61,7 @@ fi
 SCRIPT=$(readlink -f $0)
 BASEDIR=`dirname $SCRIPT`
 
-packages=( bridge serialisation-model subsidy-model application-model user-admin-api application-backend subsidy-admin-api application-api assessment-api )
+packages=( bridge shared application-backend user-admin-api subsidy-admin-api application-api assessment-api )
 for package in "${packages[@]}"
 do
   printf "\033[1;94mExecuting run.sh for ${package}\033[0m\n"
@@ -76,15 +76,22 @@ if "$DOWN" ; then
 fi
 
 cp "$BASEDIR/application-backend/secrets/public.key" "$BASEDIR/application-api/secrets/public.key"
+cp "$BASEDIR/application-backend/secrets/public.key" "$BASEDIR/assessment-api/secrets/public.key"
 cp "$BASEDIR/application-backend/secrets/pki/issued/softhsm^SoftHSMLabel^*=create,destroy,use,import.crt" "$BASEDIR/assessment-api/secrets/softhsm.crt"
 cp "$BASEDIR/application-backend/secrets/pki/private/softhsm^SoftHSMLabel^*=create,destroy,use,import.key" "$BASEDIR/assessment-api/secrets/softhsm.key"
 
 echo "Creating user:"
 cd "$BASEDIR/user-admin-api"
-vendor/bin/sail artisan user:create user@example.com user password
-echo "Log user in with: user@example.com password"
-cd "$BASEDIR"
 
-echo "Initialisation is finished, listening for incoming applications:"
-cd "$BASEDIR/application-backend"
-vendor/bin/sail artisan rabbitmq:consume
+vendor/bin/sail artisan organisation:create "DUS-I"
+vendor/bin/sail artisan admin:create user@example.com user password
+vendor/bin/sail artisan user:create assessor@example.com assessor password assessor
+vendor/bin/sail artisan user:create implementationCoordinator@example.com implementationCoordinator password implementationCoordinator
+vendor/bin/sail artisan user:create internalAuditor@example.com internalAuditor password internalAuditor
+
+echo "User for user admin: user@example.com password"
+echo "Assessor user for assessment portal: assessor@example.com password"
+echo "ImplementationCoordinator user for assessment portal: implementationCoordinator@example.com password"
+echo "InternalAuditor user for assessment portal: internalAuditor@example.com password"
+
+cd "$BASEDIR"

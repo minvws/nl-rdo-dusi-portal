@@ -40,6 +40,7 @@ class ApplicationController extends Controller
 
     public function uploadFile(
         string $applicationReference,
+        string $fieldCode,
         Request $request,
         StateService $stateService,
         ClientPublicKeyHelper $publicKeyHelper,
@@ -49,6 +50,7 @@ class ApplicationController extends Controller
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $applicationReference,
+            $fieldCode,
             new BinaryData($request->getContent())
         );
         $response = $applicationService->uploadApplicationFile($params);
@@ -56,7 +58,7 @@ class ApplicationController extends Controller
     }
 
     public function save(
-        string $applicationReference,
+        string $reference,
         Request $request,
         StateService $stateService,
         ClientPublicKeyHelper $publicKeyHelper,
@@ -65,7 +67,7 @@ class ApplicationController extends Controller
         $params = new EncryptedApplicationSaveParams(
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
-            $applicationReference,
+            $reference,
             new BinaryData($request->getContent())
         );
         $response = $applicationService->saveApplication($params);
@@ -101,7 +103,6 @@ class ApplicationController extends Controller
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $reference,
-            true,
             true
         );
         $response = $applicationService->getApplication($params);

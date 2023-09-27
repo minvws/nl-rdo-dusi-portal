@@ -13,10 +13,14 @@ use MinVWS\DUSi\User\Admin\API\Http\Requests\UserCreateRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserResetCredentialsRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserUpdateActiveRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserUpdateRequest;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\Services\UserService;
 use MinVWS\DUSi\User\Admin\API\View\Data\UserCredentialsData;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class UserController extends Controller
 {
     public function __construct(
@@ -30,7 +34,7 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        $users = User::query()->paginate();
+        $users = User::query()->with('organisation')->paginate();
 
         return view('users.index', [
             'users' => $users,
@@ -42,7 +46,10 @@ class UserController extends Controller
      */
     public function create(): View
     {
-        return view('users.create');
+        return view('users.create')
+            ->with([
+                'organisations' => Organisation::query()->pluck('name', 'id')
+            ]);
     }
 
     /**
@@ -56,6 +63,7 @@ class UserController extends Controller
             name: $request->validated('name'),
             email: $request->validated('email'),
             password: $password,
+            organisationId: $request->validated('organisation_id'),
         );
 
         return redirect()
@@ -91,6 +99,7 @@ class UserController extends Controller
     {
         return view('users.show', [
             'user' => $user,
+            'organisations' => Organisation::query()->pluck('name', 'id')
         ]);
     }
 

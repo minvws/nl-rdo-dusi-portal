@@ -10,7 +10,7 @@
             <h1>@lang("Edit user") {{ $user->email }}</h1>
 
             <div class="actions">
-                <a class="button" href="{{ route('users.organisations.index', $user->id) }}">@lang("Manage organisations")</a>
+                <a class="button" href="{{ route('users.roles.index', $user->id) }}">@lang("Manage roles")</a>
             </div>
 
             @if ($errors->any())
@@ -56,6 +56,18 @@
                             <input id="email" name="email" placeholder="" type="text"
                                    value="{{ old('email', $user->email ?? '') }}" aria-describedby="email_error">
                             <x-input-error for="email" id="email_error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="organisation_id">@lang("Organisation")</label>
+                        <div>
+                            <select id="organisation_id" name="organisation_id" aria-describedby="organisation_error">
+                                <option value="">@lang("Select an organisation")</option>
+                                @foreach ($organisations as $organisationId => $organisationName)
+                                    <option value="{{ $organisationId }}" {{ old('organisation_id', $user->organisation_id) === $organisationId ? 'selected' : '' }}>{{ $organisationName }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error for="organisation_id" id="organisation_error" />
                         </div>
                     </div>
                 </fieldset>

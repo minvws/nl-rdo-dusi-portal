@@ -7,67 +7,35 @@ use Illuminate\Support\Facades\DB;
 
 class PCZMUIAssessmentTableSeeder extends Seeder
 {
-    public const PCZM_STAGE2_V1_UUID = '71F71916-C0ED-45BC-8186-1B4F5DFB69E8';
+    public const PCZM_V1_STAGE2_UI_UUID = '71F71916-C0ED-45BC-8186-1B4F5DFB69E8';
+    public const PCZM_V1_STAGE3_UI_UUID = '44914BC7-9E4F-4B79-9498-01ADBE5C4CFE';
+    public const PCZM_V1_STAGE4_UI_UUID = 'E819DF05-03B7-4F37-B315-7F62339FD067';
+    public const PCZM_V1_STAGE5_UI_UUID = 'C51302F6-E131-45FF-8D4B-F4FF4A39B52F';
 
     public function run(): void
     {
-        $page1 = [
-            "type" => "CustomGroupControl",
-            "options" => [
-                "section" => true
-            ],
-            "label" => "Contactgegevens aanvrager",
-            "elements" => [
-                [
-                    "type" => "VerticalLayout",
-                    "elements" => [
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/formOfAddress",
-                            "options" => [
-                                "format" => "radio"
-                            ]
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/firstName"
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/infix"
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/lastName"
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/street"
-                        ],
-                        [
-                            "type" => "CustomControl",
-                            "scope" => "#/properties/houseNumber"
-                        ]
-                    ]
-                ]
-            ]
-        ];
+        $this->firstAssessment();
+        $this->secondAssessment();
+        $this->internalAssessment();
+        $this->implementationCoordinatorAssessment();
+    }
 
-        $view_ui = [
-            'type' => 'CustomPageNavigationControl',
-            'elements' => [
-                [
-                    'type' => 'CustomPageControl',
-                    'label' => 'Start',
-                    'elements' => [$page1],
-                    'options' => [
-                        'required' => ['firstname']
-                    ]
-                ]
-            ]
-        ];
+    private function buildViewSchema(int $stage): array
+    {
+        $filePath = __DIR__ . sprintf('/resources/pczm/viewschema-stage%d.json', $stage);
+        if (!file_exists($filePath)) {
+            return [];
+        }
+        $json = file_get_contents($filePath);
+        assert(is_string($json));
+        return json_decode($json, true);
+    }
 
-        $ui = [
+    public function firstAssessment(): void
+    {
+        $view_ui = $this->buildViewSchema(2);
+
+        $input_ui = [
             "type" => "FormGroupControl",
             "options" => [
                 "section" => true,
@@ -119,7 +87,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/review",
+                                    "scope" => "#/properties/firstAssessment",
                                     "options" => [
                                         "format" => "radio"
                                     ]
@@ -132,11 +100,137 @@ class PCZMUIAssessmentTableSeeder extends Seeder
         ];
 
         DB::table('subsidy_stage_uis')->insert([
-            'id' => self::PCZM_STAGE2_V1_UUID,
+            'id' => self::PCZM_V1_STAGE2_UI_UUID,
             'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             'version' => 1,
             'status' => 'published',
-            'input_ui' => json_encode($ui),
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+    }
+
+    public function secondAssessment(): void
+    {
+        $view_ui = $this->buildViewSchema(3);
+
+        $input_ui = [
+            "type" => "FormGroupControl",
+            "options" => [
+                "section" => true,
+                "group" => true
+            ],
+            "elements" => [
+                [
+                    "type" => "Group",
+                    "label" => "Status",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/secondAssessment",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::PCZM_V1_STAGE3_UI_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+    }
+
+    public function internalAssessment(): void
+    {
+        $view_ui = $this->buildViewSchema(4);
+
+        $input_ui = [
+            "type" => "FormGroupControl",
+            "options" => [
+                "section" => true,
+                "group" => true
+            ],
+            "elements" => [
+                [
+                    "type" => "Group",
+                    "label" => "Status",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/internalAssessment",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::PCZM_V1_STAGE4_UI_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+    }
+
+    public function implementationCoordinatorAssessment(): void
+    {
+        $view_ui = $this->buildViewSchema(5);
+
+        $input_ui = [
+            "type" => "FormGroupControl",
+            "options" => [
+                "section" => true,
+                "group" => true
+            ],
+            "elements" => [
+                [
+                    "type" => "Group",
+                    "label" => "Status",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/implementationCoordinatorAssessment",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::PCZM_V1_STAGE5_UI_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
             'view_ui' => json_encode($view_ui)
         ]);
     }

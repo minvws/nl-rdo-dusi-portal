@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Shared\Application\Repositories;
+
+use Illuminate\Database\Eloquent\Collection;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
+
+class ApplicationMessageRepository
+{
+    public function getMyMessage(Identity $identity, mixed $id): ?ApplicationMessage
+    {
+        $message = $identity->applicationMessages()->find($id);
+        /* @phpstan-ignore-next-line */
+        assert($message === null || $message instanceof ApplicationMessage);
+        return $message;
+    }
+
+    /**
+     * @return array<ApplicationMessage>
+     */
+    public function getMyMessages(Identity $identity): array
+    {
+        /** @var array<ApplicationMessage> $result */
+        $result = $identity->applicationMessages->all();
+        return $result;
+    }
+
+    public function createMessage(ApplicationStage $stage, string $subject, string $htmlPath, string $pdfPath): void
+    {
+        $stage->application->applicationMessages()->create([
+            'subject' => $subject,
+            'html_path' => $htmlPath,
+            'pdf_path' => $pdfPath,
+            'is_new' => true,
+        ]);
+    }
+}

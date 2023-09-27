@@ -9,7 +9,7 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Collection;
 use JsonException;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\View\Data\UserCredentialsData;
 use Minvws\HorseBattery\PasswordGenerator;
 
@@ -32,11 +32,13 @@ class UserService
         string $name = '',
         string $email = '',
         string $password = '',
+        string $organisationId = '',
     ): User {
         $user = User::create([
             'name' => $name,
             'email' => $email,
             'password' => $this->passwordHasher->make($password),
+            'organisation_id' => $organisationId,
         ]);
         $user->forceFill($this->getNewTwoFactorSecrets());
         $user->save();

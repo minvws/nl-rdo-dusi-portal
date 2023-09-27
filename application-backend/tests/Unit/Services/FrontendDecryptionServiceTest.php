@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Unit\Services;
 
-use Exception;
 use Generator;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionMissingKeyPairException;
 use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 class FrontendDecryptionServiceTest extends TestCase
 {
@@ -58,10 +58,13 @@ class FrontendDecryptionServiceTest extends TestCase
 
     /**
      * @dataProvider missingKeyPairProvider
+     * @param mixed $publicKey
+     * @param mixed $privateKey
+     * @param class-string<Throwable> $exception
      * @return void
-     * @throws Exception
+     * @throws FrontendDecryptionMissingKeyPairException
      */
-    public function testServiceCannotBeCreated($publicKey, $privateKey, $exception): void
+    public function testServiceCannotBeCreated(mixed $publicKey, mixed $privateKey, string $exception): void
     {
         $this->expectException($exception);
 
@@ -79,7 +82,7 @@ class FrontendDecryptionServiceTest extends TestCase
         );
 
         $encryptedData = sodium_crypto_box_seal('test', sodium_crypto_box_publickey($this->keyPair));
-        $decryptedData = $service->decrypt(base64_encode($encryptedData));
+        $decryptedData = $service->decrypt(sodium_bin2base64($encryptedData, SODIUM_BASE64_VARIANT_ORIGINAL));
 
         $this->assertEquals('test', $decryptedData);
     }
@@ -97,7 +100,7 @@ class FrontendDecryptionServiceTest extends TestCase
         $this->expectException(FrontendDecryptionFailedException::class);
         $this->expectExceptionMessage('Could not decrypt data');
 
-        $service->decrypt(base64_encode($encryptedData));
+        $service->decrypt(sodium_bin2base64($encryptedData, SODIUM_BASE64_VARIANT_ORIGINAL));
     }
 
     public function testCannotDecryptWithoutBase64EncodedData(): void
@@ -108,7 +111,7 @@ class FrontendDecryptionServiceTest extends TestCase
         );
 
         $this->expectException(FrontendDecryptionFailedException::class);
-        $this->expectExceptionMessage('Could not base64_decode data');
+        $this->expectExceptionMessage('Could not decrypt data');
 
         $service->decrypt('#$%&*()');
     }
@@ -123,6 +126,6 @@ class FrontendDecryptionServiceTest extends TestCase
         $this->expectException(FrontendDecryptionFailedException::class);
         $this->expectExceptionMessage('Could not decrypt data');
 
-        $service->decrypt(base64_encode('this is not encrypted data'));
+        $service->decrypt(sodium_bin2base64('this is not encrypted data', SODIUM_BASE64_VARIANT_ORIGINAL));
     }
 }

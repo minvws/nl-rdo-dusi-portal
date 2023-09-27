@@ -11,11 +11,9 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 interface FrontendDecryption
 {
     /**
-     * @param string $encryptedData Base64 encoded encrypted data
-     * @return string Decrypted data
      * @throws FrontendDecryptionFailedException
      */
-    public function decrypt(string $encryptedData): string;
+    public function decrypt(BinaryData|string $encryptedData): string;
 
     /**
      * @param class-string<T> $class

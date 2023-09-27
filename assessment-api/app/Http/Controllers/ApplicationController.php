@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
@@ -13,8 +15,10 @@ use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationService;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -26,6 +30,7 @@ class ApplicationController extends Controller
         private ApplicationService $applicationService
     ) {
     }
+
 
     /**
      * Display a listing of applications with filters on specific fields.
@@ -40,22 +45,9 @@ class ApplicationController extends Controller
      * Display the specified resource.
      * @throws \Exception
      */
-    public function show(Request $request, Application $application): ApplicationSubsidyVersionResource
+    public function show(Application $application): ApplicationSubsidyVersionResource
     {
-        try {
-            $publicKey = $request->hasHeader('publicKey') ? $request->header('publicKey')
-                : throw new \Exception('No public key provided');
-            $publicKey = $publicKey ?? throw new \Exception('No public key provided');
-            return $this->applicationSubsidyService->getApplicationSubsidyResource(
-                $application,
-                $publicKey
-            );
-        } catch (\Exception $e) {
-            if (!\Config::get('encryption.backend_encrypt')) { // TODO: remove when frontend supports decryption
-                return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
-            }
-            throw $e;
-        }
+        return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
     }
 
     /**
@@ -89,5 +81,34 @@ class ApplicationController extends Controller
     public function getApplicationRequestFilterResource(): ApplicationRequestsFilterResource
     {
         return $this->applicationService->getApplicationRequestFilterResource(null);
+    }
+
+    public function getApplicationHistory(): JsonResource
+    {
+        //TODO: implement this
+        return JsonResource::make([]);
+    }
+
+    public function getApplicationReviewer(): JsonResource
+    {
+        //TODO: implement this
+        return JsonResource::make([]);
+    }
+
+    public function saveAssessment(
+        Application $application,
+        User $user,
+        Request $request
+    ): ApplicationSubsidyVersionResource {
+        $submittedData = $request->json()->all();
+        $data = (object)($submittedData['data'] ?? []);
+        $submit = (bool)($submittedData['submit'] ?? false);
+
+        try {
+            $application = $this->applicationService->saveAssessment($application, $data, $submit, $user);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+        } catch (InvalidApplicationSaveException) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 }

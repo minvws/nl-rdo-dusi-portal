@@ -9,14 +9,16 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
+use MinVWS\Codable\Coding\Codable;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
-use MinVWS\DUSi\Application\Backend\Services\EncryptionService;
+use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
@@ -40,7 +42,7 @@ class ApplicationMessageServiceTest extends TestCase
     use WithFaker;
 
     private ApplicationMessageService $applicationMessageService;
-    private EncryptionService $encryptionService;
+    private ResponseEncryptionService $responseEncryptionService;
 
     private Filesystem $filesystem;
 
@@ -59,7 +61,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->filesystem = Storage::fake(Disk::APPLICATION_FILES);
 
         $this->applicationMessageService = App::make(ApplicationMessageService::class);
-        $this->encryptionService = App::make(EncryptionService::class);
+        $this->responseEncryptionService = App::make(ResponseEncryptionService::class);
 
         $this->keyPair = sodium_crypto_box_keypair();
         $publicKey = sodium_crypto_box_publickey($this->keyPair);
@@ -69,29 +71,37 @@ class ApplicationMessageServiceTest extends TestCase
 
         $this->encryptedIdentity = new EncryptedIdentity(
             type: IdentityType::CitizenServiceNumber,
-            encryptedIdentifier: $this->identity->hashed_identifier,
+            encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, ''),
         );
 
         $this->invalidEncryptedIdentity = new EncryptedIdentity(
             type: IdentityType::CitizenServiceNumber,
-            encryptedIdentifier: $this->faker->uuid,
+            encryptedIdentifier: new HsmEncryptedData($this->faker->uuid, ''),
         );
     }
 
     public function testListMessages(): void
     {
         ApplicationMessage::factory()->count(10)->forIdentity($this->identity)->create();
-        $response = $this->getMessageListResponse($this->encryptedIdentity);
+        $encryptedResponse = $this->getMessageListResponse($this->encryptedIdentity);
 
-        $this->assertCount(10, $response->items);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+
+        $messageList = $this->getDecryptedCodableResponse($encryptedResponse, MessageList::class);
+        $this->assertCount(10, $messageList->items);
     }
 
     public function testListMessagesWithInvalidIdentity(): void
     {
         ApplicationMessage::factory()->count(10)->forIdentity($this->identity)->create();
-        $response = $this->getMessageListResponse($this->invalidEncryptedIdentity);
+        $encryptedResponse = $this->getMessageListResponse($this->invalidEncryptedIdentity);
 
-        $this->assertCount(0, $response->items);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+
+        $messageList = $this->getDecryptedCodableResponse($encryptedResponse, MessageList::class);
+        $this->assertCount(0, $messageList->items);
     }
 
     public function testGetMessage(): void
@@ -116,7 +126,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('identity_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     public function testGetMessageWithInvalidApplicationMessage(): void
@@ -139,7 +149,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('message_body_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     public function testGetMessageDownloadHtml(): void
@@ -177,7 +187,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('identity_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     public function testGetMessageDownloadWithInvalidApplicationMessage(): void
@@ -200,7 +210,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('message_download_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     public function testGetMessageDownloadWithInvalidPdfContent(): void
@@ -212,7 +222,7 @@ class ApplicationMessageServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
 
         $error = $this->getDecryptedCodableResponse($encryptedResponse, Error::class);
-        $this->assertEquals('message_download_not_found', $error->code);
+        $this->assertEquals('message_not_found', $error->code);
     }
 
     private function getMessageResponse(EncryptedIdentity $encryptedIdentity, string $messageId): EncryptedResponse
@@ -246,20 +256,25 @@ class ApplicationMessageServiceTest extends TestCase
         return $this->getMessageDownloadResponse($encryptedIdentity, $messageId, MessageDownloadFormat::PDF);
     }
 
-    private function getMessageListResponse(EncryptedIdentity $encryptedIdentity): MessageList
+    private function getMessageListResponse(EncryptedIdentity $encryptedIdentity): EncryptedResponse
     {
-        $params = new MessageListParams($encryptedIdentity, null, null, [], []);
+        $params = new MessageListParams($encryptedIdentity, $this->clientPublicKey, null, null, [], []);
 
         return $this->applicationMessageService->listMessages($params);
     }
 
     private function getDecryptedResponse(EncryptedResponse $encryptedResponse): mixed
     {
-        return $this->encryptionService->decryptResponse($encryptedResponse, $this->keyPair);
+        return $this->responseEncryptionService->decrypt($encryptedResponse, $this->keyPair);
     }
 
+    /**
+     * @param EncryptedResponse $encryptedResponse
+     * @param class-string<Codable> $class
+     * @return mixed
+     */
     private function getDecryptedCodableResponse(EncryptedResponse $encryptedResponse, string $class): mixed
     {
-        return $this->encryptionService->decryptCodableResponse($encryptedResponse, $class, $this->keyPair);
+        return $this->responseEncryptionService->decryptCodable($encryptedResponse, $class, $this->keyPair);
     }
 }

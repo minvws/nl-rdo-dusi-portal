@@ -14,9 +14,9 @@
                     "options": {
                         "fields": {
                             "Naam": "{firstName} {infix} {lastName}",
-                            "Adres": "{streetName} {houseNumber}{houseNumberSuffix} {postalCode} {city}",
+                            "Adres": "{street} {houseNumber}{houseNumberSuffix} {postalCode} {city}",
                             "Telefoon": "{phoneNumber}",
-                            "E-mailadress": "{email}",
+                            "E-mailadres": "{email}",
                             "Geboortedatum": "{dateOfBirth}"
                         }
                     }
@@ -30,7 +30,7 @@
                 {
                     "type": "CustomControl",
                     "scope": "#/properties/truthfullyCompleted",
-                    "label": "Inhoud",
+                    "label": "Waarheidsverklaring",
                     "options": {
                         "description": "Ik verklaar het formulier naar waarheid te hebben ingevuld."
                     }

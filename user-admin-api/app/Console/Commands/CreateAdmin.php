@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Console\Commands;
 
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use Illuminate\Contracts\Console\PromptsForMissingInput;
+use MinVWS\DUSi\Shared\User\Enums\Role;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 
-class CreateAdmin extends Command
+class CreateAdmin extends Command implements PromptsForMissingInput
 {
     /**
      * The name and signature of the console command.
@@ -42,16 +45,13 @@ class CreateAdmin extends Command
      */
     public function handle()
     {
-        $passwd = $this->argument('password');
-        if (!is_string($passwd)) {
-            $this->error("Incorrect password");
-            return 1;
-        }
-
-        $user = User::create([
+        /** @var User $user */
+        $user = User::updateOrCreate([
             "email" => $this->argument('email'),
+        ], [
             "name" => $this->argument('name'),
-            "password" => Hash::make($passwd),
+            "password" => Hash::make($this->argument('password')),
+            "organisation_id" => Organisation::query()->first()?->id,
         ]);
 
         $user->forceFill([
@@ -60,10 +60,11 @@ class CreateAdmin extends Command
         ]);
         $user->save();
 
-        $this->info(
-            "Admin user created. Please add the following to your authenticator app: \n" .
-            $user->twoFactorQrCodeUrl()
-        );
+        $user->attachRole(Role::UserAdmin);
+
+        $this->info("User admin " . $user->email . " created. Please add the following to your authenticator app:");
+        $this->info($user->twoFactorQrCodeUrl());
+        $this->newLine();
 
         return 0;
     }

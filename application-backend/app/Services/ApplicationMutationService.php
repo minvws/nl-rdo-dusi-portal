@@ -1,31 +1,39 @@
 <?php
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ * Application Mutation Service
  */
 
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use Illuminate\Support\Facades\DB;
+use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
+use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -39,16 +47,18 @@ readonly class ApplicationMutationService
     private const CREATE_APPLICATION_ATTEMPTS = 3;
 
     public function __construct(
-        private ApplicationService $applicationService,
         private ApplicationDataService $applicationDataService,
-        private FormDecodingService $decodingService,
-        private EncryptionService $encryptionService,
+        private ApplicationStageEncryptionService $applicationEncryptionService,
+        private ApplicationFlowService $applicationFlowService,
+        private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private ApplicationRepository $applicationRepository,
         private SubsidyRepository $subsidyRepository,
         private ApplicationMapper $applicationMapper,
         private ApplicationReferenceService $applicationReferenceService,
         private FrontendDecryption $frontendDecryptionService,
+        private EncryptedResponseExceptionHelper $exceptionHelper,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -57,37 +67,49 @@ readonly class ApplicationMutationService
         Application $application,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
+        $stage = $this->applicationRepository->getApplicantApplicationStage($application, true);
+        $data = $stage !== null ? $this->applicationDataService->getApplicationStageData($stage) : null;
+
         $dto = $this->applicationMapper->mapApplicationToApplicationDTO(
             $application,
-            $this->applicationDataService->getApplicationData($application),
-            $this->applicationDataService->getApplicationFiles($application)
+            $data
         );
 
-        return $this->encryptionService->encryptCodableResponse($status, $dto, $publicKey);
+        return $this->responseEncryptionService->encryptCodable($status, $dto, $publicKey);
     }
 
     private function doFindOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
     {
-        $identity = $this->identityService->findOrCreateIdentity($params->identity);
-        $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
+        if (Uuid::isValid($params->subsidyCode)) {
+            // TODO: once frontend uses subsidy code, we can remove this code
+            $subsidy = $this->subsidyRepository->getSubsidyStage($params->subsidyCode)?->subsidyVersion?->subsidy;
+        } else {
+            $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
+        }
+
         if ($subsidy === null) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'subsidy_not_found',
-                'Subsidy with the given code does not exist.'
+                'subsidy_not_found'
             );
         }
+
+        $identity = $this->identityService->findOrCreateIdentity($params->identity);
 
         $application = $this->applicationRepository->findMyApplicationForSubsidy($identity, $subsidy);
         if ($application !== null && $application->status->isEditableForApplicant()) {
             return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
         }
 
+        if ($application !== null && $application->status->isNewApplicationAllowed()) {
+            // ignore existing and create a new one
+            $application = null;
+        }
+
         if ($application !== null) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_already_exists',
-                'There is already a submitted application for this identity.'
+                'application_already_exists'
             );
         }
 
@@ -106,7 +128,10 @@ readonly class ApplicationMutationService
         );
         $this->applicationRepository->saveApplication($application);
 
+        [$encryptedKey] = $this->applicationEncryptionService->generateEncryptionKey();
+
         $appStage = $this->applicationRepository->makeApplicationStage($application, $subsidyStage);
+        $appStage->encrypted_key = $encryptedKey;
         $appStage->sequence_number = 1;
         $appStage->is_current = true;
         $this->applicationRepository->saveApplicationStage($appStage);
@@ -116,22 +141,27 @@ readonly class ApplicationMutationService
 
     public function findOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
     {
-        return DB::transaction(
-            function () use ($params) {
-                try {
-                    return $this->doFindOrCreateApplication($params);
-                } catch (EncryptedResponseException $e) {
-                    return $this->encryptionService->encryptCodableResponse(
-                        $e->getStatus(),
-                        $e->getError(),
-                        $params->publicKey
-                    );
-                }
-            },
-            self::CREATE_APPLICATION_ATTEMPTS
-        );
+        try {
+            return DB::transaction(
+                fn () => $this->doFindOrCreateApplication($params),
+                self::CREATE_APPLICATION_ATTEMPTS
+            );
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::FIND_OR_CREATE_APPLICATION,
+                $params->publicKey
+            );
+        }
     }
 
+    /**
+     * @throws Throwable
+     * @throws FrontendDecryptionFailedException
+     * @throws EncryptedResponseException
+     */
     private function doSaveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse
     {
         $identity = $this->loadIdentity($params->identity);
@@ -141,53 +171,55 @@ readonly class ApplicationMutationService
         if (!$application->status->isEditableForApplicant()) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_readonly',
-                'Application is read-only'
+                'application_readonly'
             );
         }
 
         $applicationStage = $application->currentApplicationStage;
-        if ($applicationStage->subsidyStage->stage !== 1) {
+        if ($applicationStage === null || $applicationStage->subsidyStage->stage !== 1) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_readonly',
-                'Application is read-only'
+                'application_readonly'
             );
         }
 
-        $values = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $body->data);
+        try {
+            $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data, $body->submit);
+        } catch (ValidationException $e) {
+            $this->logger->debug('Data validation failed', [
+                'errors' => $e->errors(),
+            ]);
 
-        // TODO: Validation will be in other PR
-        $this->applicationService->processFieldValues($applicationStage, $values);
-
-        if ($body->status === ApplicationStatus::Submitted) {
-            $application->status = ApplicationStatus::Submitted;
-            $application->final_review_deadline =
-                Carbon::now()->addDays($applicationStage->application->subsidyVersion->review_period);
-            $this->applicationRepository->saveApplication($application);
-
-            $applicationStage->is_current = false;
-
-            // TODO: insert next application stage
-            // $this->appRepo->makeApplicationStage($applicationStage->application, $nextSubsidyStage);
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::BAD_REQUEST,
+                'invalid_data',
+                previous: $e
+            );
         }
 
-        $this->applicationRepository->saveApplicationStage($applicationStage);
-        return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
+        if ($body->submit) {
+            $this->applicationFlowService->submitApplicationStage($applicationStage);
+        }
+
+        return $this->applicationResponse(
+            EncryptedResponseStatus::OK,
+            $applicationStage->application,
+            $params->publicKey
+        );
     }
 
     public function saveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse
     {
-        return DB::transaction(function () use ($params) {
-            try {
-                return $this->doSaveApplication($params);
-            } catch (EncryptedResponseException $e) {
-                return $this->encryptionService->encryptCodableResponse(
-                    $e->getStatus(),
-                    $e->getError(),
-                    $params->publicKey
-                );
-            }
-        });
+        try {
+            return DB::transaction(fn () => $this->doSaveApplication($params));
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::SAVE_APPLICATION,
+                $params->publicKey
+            );
+        }
     }
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Providers;
 
-use MinVWS\DUSi\Application\API\Services\ApplicationService;
-use MinVWS\DUSi\Application\API\Services\Exceptions\ApplicationNotFoundException;
 use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
 use MinVWS\DUSi\Application\API\Services\SubsidyStageService;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -49,19 +47,8 @@ class RouteServiceProvider extends ServiceProvider
             'form',
             function (string $id) {
                 try {
-                    return app()->get(SubsidyStageService::class)->getSubsidyStage($id);
+                    return app()->get(SubsidyStageService::class)->getSubsidyStageData($id);
                 } catch (SubsidyStageNotFoundException $e) {
-                    abort(404, $e->getMessage());
-                }
-            }
-        );
-
-        Route::bind(
-            'application',
-            function (string $id) {
-                try {
-                    return app()->get(ApplicationService::class)->getDraftApplication($id);
-                } catch (ApplicationNotFoundException $e) {
                     abort(404, $e->getMessage());
                 }
             }

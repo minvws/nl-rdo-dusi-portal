@@ -24,12 +24,12 @@
                 <p class="hidden" id="name_status_text"></p>
                 <div class="horizontal-scroll">
                     <table id="user-overview-table">
-                        <caption>@lang("Account overview:")</caption>
+                        <caption>@lang("User accounts overview:")</caption>
                         <thead>
                         <tr>
                             <th scope="col"> @sortablelink('name', __('Name')) </th>
                             <th scope="col"> @sortablelink('email', __('Email')) </th>
-                            <th scope="col">@lang('Organisations')</th>
+                            <th scope="col">@lang('Organisation')</th>
                             <th scope="col">@lang('Active until')</th>
                             <th scope="col"></th>
                         </tr>
@@ -45,10 +45,9 @@
                                 </td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    {{ implode(', ', $user->organisations()->pluck('name')->toArray()) }}
-{{--                                    @foreach ($user->organisations as $organisation)--}}
-{{--                                        <a href="{{ route('organisations.show', $organisation->id) }}">{{ $organisation->name }}</a>--}}
-{{--                                    @endforeach--}}
+                                    @if($user->organisation)
+                                        <a href="{{ route('organisations.show', $user->organisation->id) }}">{{ $user->organisation->name }}</a>
+                                    @endif
                                 </td>
                                 <td>
                                     @if ($user->active_until)

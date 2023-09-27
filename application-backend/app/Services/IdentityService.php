@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use MinVWS\DUSi\Application\Backend\Repositories\IdentityRepository;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
@@ -13,7 +14,7 @@ class IdentityService
 {
     public function __construct(
         private readonly IdentityRepository $identityRepository,
-        private readonly EncryptionService $encryptionService,
+        private readonly HsmDecryptionService $decryptionService,
         private readonly string $hashSecret,
         private readonly string $hashAlgorithm = 'sha256'
     ) {
@@ -27,29 +28,34 @@ class IdentityService
 
     public function findOrCreateIdentity(EncryptedIdentity $encryptedIdentity): Identity
     {
-        $identity = $this->findIdentity($encryptedIdentity);
+        $identifier = $this->decryptionService->decrypt($encryptedIdentity->encryptedIdentifier);
+        $hashedIdentifier = $this->hashIdentifier($encryptedIdentity->type, $identifier);
+
+        $identity = $this->findIdentityByIdentifier($encryptedIdentity->type, $hashedIdentifier);
         if ($identity !== null) {
             return $identity;
         }
 
-        $identifier = $this->encryptionService->decryptData($encryptedIdentity->encryptedIdentifier);
-        $hashedIdentifier = $this->hashIdentifier($encryptedIdentity->type, $identifier);
-        $encryptedIdentifier = $this->encryptionService->encryptData($identifier);
-
         return $this->identityRepository->createIdentity(
             $encryptedIdentity->type,
-            $encryptedIdentifier,
+            $encryptedIdentity->encryptedIdentifier,
             $hashedIdentifier
         );
     }
 
     public function findIdentity(EncryptedIdentity $encryptedIdentity): ?Identity
     {
-        $identifier = $this->encryptionService->decryptData($encryptedIdentity->encryptedIdentifier);
+        $identifier = $this->decryptionService->decrypt($encryptedIdentity->encryptedIdentifier);
+        $hashedIdentifier = $this->hashIdentifier($encryptedIdentity->type, $identifier);
 
+        return $this->findIdentityByIdentifier($encryptedIdentity->type, $hashedIdentifier);
+    }
+
+    protected function findIdentityByIdentifier(IdentityType $type, string $hashedIdentifier): ?Identity
+    {
         return $this->identityRepository->findIdentity(
-            type: $encryptedIdentity->type,
-            hashedIdentifier: $this->hashIdentifier($encryptedIdentity->type, $identifier)
+            type: $type,
+            hashedIdentifier: $hashedIdentifier,
         );
     }
 }

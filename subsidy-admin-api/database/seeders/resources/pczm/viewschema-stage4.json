@@ -1,0 +1,16 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "FormResultsTable",
+            "options": {
+                "fields": {
+                    "Beoordeling": "{internalAssessment}"
+                }
+            }
+        }
+    ]
+}

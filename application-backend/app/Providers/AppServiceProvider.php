@@ -5,28 +5,17 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Providers;
 
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use MinVWS\DUSi\Application\Backend\Handlers\FileUploadHandler;
-use MinVWS\DUSi\Application\Backend\Handlers\FormSubmitHandler;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
-use MinVWS\DUSi\Application\Backend\Interfaces\KeyReader;
-use MinVWS\DUSi\Application\Backend\Repositories\ApplicationFileRepository;
-use MinVWS\DUSi\Application\Backend\Services\ApplicationService;
-use MinVWS\DUSi\Application\Backend\Services\FileKeyReader;
-use MinVWS\DUSi\Application\Backend\Services\Hsm\HsmService;
-use MinVWS\DUSi\Application\Backend\Services\SurePay\SurePayService;
 use MinVWS\DUSi\Application\Backend\Services\FrontendDecryptionService;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
+use MinVWS\DUSi\Application\Backend\Services\SurePay\SurePayService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
-use MinVWS\DUSi\Shared\Serialisation\Handlers\FileUploadHandlerInterface;
-use MinVWS\DUSi\Shared\Serialisation\Handlers\FormSubmitHandlerInterface;
-use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmInfoCommand;
-use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmLocalClearCommand;
-use MinVWS\DUSi\Application\Backend\Console\Commands\Hsm\HsmLocalInitCommand;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
 use RuntimeException;
 
 /**
@@ -34,53 +23,53 @@ use RuntimeException;
  */
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register(): void
     {
-        $this->app->singleton(KeyReader::class, FileKeyReader::class);
+        $this->app->when(IdentityService::class)->needs('$hashSecret')
+            ->giveConfig('identity.hash_secret');
+        $this->app->when(IdentityService::class)->needs('$hashAlgorithm')
+            ->giveConfig('identity.hash_algorithm');
 
-        $this->app->bind(
-            FileUploadHandlerInterface::class,
-            function (Application $app) {
-                return new FileUploadHandler($app->get(ApplicationService::class));
-            },
-        );
-        $this->app->bind(
-            FormSubmitHandlerInterface::class,
-            function (Application $app) {
-                return new FormSubmitHandler($app->get(ApplicationService::class));
-            },
-        );
-    }
+        $this->app->when(ApplicationFileRepository::class)
+            ->needs(Filesystem::class)
+            ->give(function (Application $app) {
+                return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
+            });
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    public function boot(): void
-    {
+        $this->app->bind(FrontendDecryption::class, FrontendDecryptionService::class);
+        $this->app->when(FrontendDecryptionService::class)
+            ->needs('$publicKey')
+            ->giveConfig('frontend.form_encryption.public_key');
+        $this->app->when(FrontendDecryptionService::class)
+            ->needs('$privateKey')
+            ->giveConfig('frontend.form_encryption.private_key');
+
+        $this->registerClamAv();
         $this->registerSurePayService();
-
-        $this->registerHsmService();
-
-        $this->registerHsmCommands();
-
-        $this->registerIdentityService();
-
-        $this->registerApplicationfileRepository();
-
-        $this->registerFrontendDecryption();
     }
 
-    /**
-     * @return void
-     */
+    private function registerClamAv(): void
+    {
+        $this->app->when(ClamAvService::class)
+            ->needs('$enabled')
+            ->giveConfig('clamav.enabled');
+        $this->app->when(ClamAvService::class)
+            ->needs('$preferredSocket')
+            ->giveConfig('clamav.preferred_socket');
+        $this->app->when(ClamAvService::class)
+            ->needs('$unixSocket')
+            ->giveConfig('clamav.unix_socket');
+        $this->app->when(ClamAvService::class)
+            ->needs('$tcpSocket')
+            ->giveConfig('clamav.tcp_socket');
+        $this->app->when(ClamAvService::class)
+            ->needs('$socketConnectTimeout')
+            ->giveConfig('clamav.socket_connect_timeout');
+        $this->app->when(ClamAvService::class)
+            ->needs('$socketReadTimeout')
+            ->giveConfig('clamav.socket_read_timeout');
+    }
+
     public function registerSurePayService(): void
     {
         $this->app->singleton(SurePayService::class, function () {
@@ -88,8 +77,7 @@ class AppServiceProvider extends ServiceProvider
 
             if (empty($config->get('endpoint'))) {
                 throw new RuntimeException(
-                    'SurePay API endpoint URL must be set in the environment config.
-                Please set SUREPAY_ENDPOINT.',
+                    'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
                 );
             }
 
@@ -100,134 +88,5 @@ class AppServiceProvider extends ServiceProvider
                 ]),
             );
         });
-    }
-
-    /**
-     * @return void
-     */
-    public function registerHsmService(): void
-    {
-        $this->app->singleton(HsmService::class, function (Application $app) {
-            $config = $app->make('config');
-
-            if (empty($config->get('hsm_api.endpoint_url'))) {
-                throw new RuntimeException(
-                    'HSM API endpoint URL must be set in the environment config.
-                Please set HSM_API_ENDPOINT_URL.',
-                );
-            }
-            if (empty($config->get('hsm_api.client_certificate_path'))) {
-                throw new RuntimeException(
-                    'HSM API Client certificate path must be set in the environment
-                config. Please set HSM_API_CLIENT_CERTIFICATE_PATH.',
-                );
-            }
-            if (empty($config->get('hsm_api.client_certificate_key_path'))) {
-                throw new RuntimeException(
-                    'HSM API Client certificate key path must be set in the environment
-                 config. Please set HSM_API_CLIENT_CERTIFICATE_KEY_PATH.',
-                );
-            }
-            if (empty($config->get('hsm_api.module'))) {
-                throw new RuntimeException(
-                    'HSM API module must be set in the environment config. Please set
-                 HSM_API_MODULE.',
-                );
-            }
-            if (empty($config->get('hsm_api.slot'))) {
-                throw new RuntimeException(
-                    'HSM API slot must be set in the environment config. Please set
-                 HSM_API_SLOT.',
-                );
-            }
-
-            return new HsmService(
-                client     : new Client([
-                    'base_uri' => $config->get('hsm_api.endpoint_url'),
-                    'verify'   => false,
-                    'cert'     => $config->get('hsm_api.client_certificate_path'),
-                    'ssl_key'  => $config->get('hsm_api.client_certificate_key_path'),
-                ]),
-                endpointUrl: $config->get('hsm_api.endpoint_url'),
-                module     : $config->get('hsm_api.module'),
-                slot       : $config->get('hsm_api.slot'),
-            );
-        });
-    }
-
-    /**
-     * @return void
-     */
-    public function registerHsmCommands(): void
-    {
-        $this->app->singleton(HsmInfoCommand::class, function (Application $app) {
-            $config = $app->make('config');
-
-            return new HsmInfoCommand(
-                service                 : $app->make(HsmService::class),
-                hsmApiModule            : $config->get('hsm_api.module') ?? '',
-                hsmApiSlot              : $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
-            );
-        });
-
-        $this->app->singleton(HsmLocalClearCommand::class, function (Application $app) {
-            $config = $app->make('config');
-
-            return new HsmLocalClearCommand(
-                environment             : $config->get('app.env'),
-                debugModeEnabled        : $config->get('app.debug'),
-                service                 : $app->make(HsmService::class),
-                hsmApiModule            : $config->get('hsm_api.module') ?? '',
-                hsmApiSlot              : $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
-            );
-        });
-
-        $this->app->singleton(HsmLocalInitCommand::class, function (Application $app) {
-            $config = $app->make('config');
-
-            return new HsmLocalInitCommand(
-                service                 : $app->make(HsmService::class),
-                hsmApiModule            : $config->get('hsm_api.module') ?? '',
-                hsmApiSlot              : $config->get('hsm_api.slot') ?? '',
-                hsmApiEncryptionKeyLabel: $config->get('hsm_api.encryption_key_label') ?? '',
-            );
-        });
-    }
-
-    /**
-     * @return void
-     */
-    public function registerIdentityService(): void
-    {
-        $this->app->when(IdentityService::class)->needs('$hashSecret')->giveConfig('identity.hash_secret');
-        $this->app->when(IdentityService::class)->needs('$hashAlgorithm')->giveConfig('identity.hash_algorithm');
-    }
-
-    /**
-     * @return void
-     */
-    public function registerFrontendDecryption(): void
-    {
-        $this->app->bind(FrontendDecryption::class, FrontendDecryptionService::class);
-        $this->app->when(FrontendDecryptionService::class)
-            ->needs('$publicKey')
-            ->giveConfig('frontend.form_encryption.public_key');
-        $this->app->when(FrontendDecryptionService::class)
-            ->needs('$privateKey')
-            ->giveConfig('frontend.form_encryption.private_key');
-    }
-
-    /**
-     * @return void
-     */
-    public function registerApplicationfileRepository(): void
-    {
-        $this->app->when(ApplicationFileRepository::class)
-            ->needs(Filesystem::class)
-            ->give(function (Application $app) {
-                return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
-            });
     }
 }

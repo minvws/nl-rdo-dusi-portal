@@ -7,8 +7,12 @@ namespace MinVWS\DUSi\Application\Backend\Mappers;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form as FormDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy as SubsidyDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
+/**
+ * @psalm-suppress InvalidTemplateParam
+ */
 class SubsidyMapper
 {
     public function mapSubsidyVersionToSubsidyDTO(SubsidyVersion $subsidyVersion): SubsidyDTO
@@ -27,8 +31,9 @@ class SubsidyMapper
         $subsidyStage =
             $subsidyVersion
                 ->subsidyStages
-                ->filter(fn ($s) => $s->subject_role === SubjectRole::Applicant)
+                ->filter(fn (SubsidyStage $stage) => $stage->subject_role === SubjectRole::Applicant)
                 ->first();
-        return new FormDTO($subsidyStage?->id ?? $subsidyVersion->id, $subsidyVersion->version);
+        assert($subsidyStage instanceof SubsidyStage);
+        return new FormDTO($subsidyStage->id, $subsidyVersion->version);
     }
 }

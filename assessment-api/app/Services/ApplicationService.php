@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Exception;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterResource;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationRequestsFilterResource;
-use MinVWS\DUSi\Assessment\API\Models\User;
+use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -22,6 +28,8 @@ use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 class ApplicationService
 {
     public function __construct(
+        private ApplicationDataService $applicationDataService,
+        private ApplicationFlowService $applicationFlowService,
         private ApplicationRepository $applicationRepository,
         private SubsidyRepository $subsidyRepository
     ) {
@@ -59,5 +67,31 @@ class ApplicationService
         }
         $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
         return ApplicationRequestsFilterResource::make(['shortRegulations' => $shortRegulations]);
+    }
+
+    /**
+     * @throws InvalidApplicationSaveException
+     * @throws ValidationException
+     * @throws ApplicationFlowException
+     */
+    public function saveAssessment(Application $application, object $data, bool $submit, User $user): Application
+    {
+        $stage = $application->currentApplicationStage;
+        if (
+            $stage === null ||
+            $stage->assessor_user_id !== $user->id ||
+            $stage->is_submitted
+        ) {
+            throw new InvalidApplicationSaveException();
+        }
+
+        $this->applicationDataService->saveApplicationStageData($stage, $data, $submit);
+        if ($submit) {
+            $this->applicationFlowService->submitApplicationStage($stage);
+        }
+
+        $application->refresh();
+
+        return $application;
     }
 }

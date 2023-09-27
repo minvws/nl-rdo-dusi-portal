@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Console\Commands;
 
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
 use Illuminate\Console\Command;
 
 class CreateOrganisation extends Command
@@ -36,7 +36,7 @@ class CreateOrganisation extends Command
             return 1;
         }
 
-        $organisation = Organisation::create([
+        $organisation = Organisation::firstOrCreate([
             "name" => $organisationName,
         ]);
 

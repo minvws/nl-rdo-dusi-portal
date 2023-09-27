@@ -24,10 +24,7 @@
         </x-header>
 
         <main class="{{ ($withSidemenu ?? false) ? 'sidemenu' : ''}}" id="main-content" tabindex="-1">
-
-            @if(session('status'))
-{{--                TODO: Show success ... --}}
-            @endif
+            <x-flash element="p" />
 
             @yield('content')
         </main>

@@ -6,10 +6,14 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits;
 
 use Illuminate\Support\Facades\DB;
+use MinVWS\Codable\JSON\JSONEncoder;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 use Ramsey\Uuid\Uuid;
 
 trait CreateField
 {
+    private readonly JSONEncoder $encoder;
+
     private function createField(
         string $subsidyStageId,
         string $code,
@@ -17,7 +21,8 @@ trait CreateField
         string $type,
         ?string $description = null,
         ?array $params = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         $id = Uuid::uuid4()->toString();
 
@@ -29,7 +34,8 @@ trait CreateField
             'description' => $description,
             'type' => $type,
             'params' => json_encode($params),
-            'is_required' => $isRequired,
+            'is_required' => $isRequired && $requiredCondition === null,
+            'required_condition' => $this->getRequiredCondition($requiredCondition),
         ]);
 
         return $id;
@@ -42,7 +48,8 @@ trait CreateField
         ?string $description = null,
         ?string $inputMode = null,
         ?int $maxLength = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -52,6 +59,7 @@ trait CreateField
             type: $inputMode !== null ? "text:$inputMode" : 'text',
             params: ['maxLength' => $maxLength],
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -60,7 +68,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -68,7 +77,8 @@ trait CreateField
             title: $title,
             description: $description,
             type: 'date',
-            isRequired: $isRequired
+            isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -78,7 +88,8 @@ trait CreateField
         string $title,
         array $options,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -88,6 +99,7 @@ trait CreateField
             type: 'multiselect',
             params: ['options' => $options],
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -96,7 +108,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -105,6 +118,7 @@ trait CreateField
             description: $description,
             type: 'checkbox',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -114,7 +128,9 @@ trait CreateField
         string $title,
         array $options,
         ?string $description = null,
-        bool $isRequired = true
+        string|null $default = null,
+        bool $isRequired = true,
+        ?Condition  $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -122,8 +138,9 @@ trait CreateField
             title: $title,
             description: $description,
             type: 'select',
-            params: ['options' => $options],
+            params: ['options' => $options, 'default' => $default],
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -132,7 +149,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -141,6 +159,7 @@ trait CreateField
             description: $description,
             type: 'textarea',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -149,7 +168,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -158,6 +178,7 @@ trait CreateField
             description: $description,
             type: 'custom:postalcode',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -166,36 +187,48 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createSelectField(
             subsidyStageId: $subsidyStageId,
             code: $code,
             title: $title,
             description: $description,
+            default: 'Nederland',
             options: [
                 "Afghanistan",
+                "Åland",
                 "Albanië",
                 "Algerije",
+                "Amerikaanse Maagdeneilanden",
+                "Amerikaans-Samoa",
                 "Andorra",
                 "Angola",
+                "Anguilla",
+                "Antarctica",
                 "Antigua en Barbuda",
                 "Argentinië",
                 "Armenië",
+                "Aruba",
                 "Australië",
                 "Azerbeidzjan",
-                "Bahama`s",
+                "Bahama’s",
                 "Bahrein",
                 "Bangladesh",
                 "Barbados",
                 "België",
                 "Belize",
                 "Benin",
+                "Bermuda",
                 "Bhutan",
                 "Bolivia",
                 "Bosnië en Herzegovina",
                 "Botswana",
+                "Bouveteiland",
                 "Brazilië",
+                "Britse Maagdeneilanden",
+                "Brits Indische Oceaanterritorium",
                 "Brunei",
                 "Bulgarije",
                 "Burkina Faso",
@@ -205,12 +238,16 @@ trait CreateField
                 "Centraal-Afrikaanse Republiek",
                 "Chili",
                 "China",
+                "Christmaseiland",
+                "Cocoseilanden",
                 "Colombia",
                 "Comoren",
                 "Congo-Brazzaville",
                 "Congo-Kinshasa",
+                "Cookeilanden",
                 "Costa Rica",
                 "Cuba",
+                "Curaçao",
                 "Cyprus",
                 "Denemarken",
                 "Djibouti",
@@ -224,23 +261,35 @@ trait CreateField
                 "Eritrea",
                 "Estland",
                 "Ethiopië",
+                "Faeröer",
+                "Falklandeilanden",
                 "Fiji",
                 "Filipijnen",
                 "Finland",
                 "Frankrijk",
+                "Franse Zuidelijke en Antarctische Gebieden",
+                "Frans-Guyana",
+                "Frans-Polynesië",
                 "Gabon",
                 "Gambia",
                 "Georgië",
                 "Ghana",
+                "Gibraltar",
                 "Grenada",
                 "Griekenland",
+                "Groenland",
+                "Guadeloupe",
+                "Guam",
                 "Guatemala",
+                "Guernsey",
                 "Guinee",
                 "Guinee-Bissau",
                 "Guyana",
                 "Haïti",
+                "Heard en McDonaldeilanden",
                 "Honduras",
                 "Hongarije",
+                "Hongkong",
                 "Ierland",
                 "IJsland",
                 "India",
@@ -253,13 +302,16 @@ trait CreateField
                 "Jamaica",
                 "Japan",
                 "Jemen",
+                "Jersey",
                 "Jordanië",
+                "Kaaimaneilanden",
                 "Kaapverdië",
                 "Kameroen",
                 "Kazachstan",
                 "Kenia",
                 "Kirgizië",
                 "Kiribati",
+                "Kleine Pacifische eilanden van de Verenigde Staten",
                 "Koeweit",
                 "Kroatië",
                 "Laos",
@@ -271,22 +323,26 @@ trait CreateField
                 "Liechtenstein",
                 "Litouwen",
                 "Luxemburg",
+                "Macau",
                 "Madagaskar",
                 "Malawi",
-                "Malediven",
+                "Maldiven",
                 "Maleisië",
                 "Mali",
                 "Malta",
                 "Marokko",
                 "Marshalleilanden",
+                "Martinique",
                 "Mauritanië",
                 "Mauritius",
+                "Mayotte",
                 "Mexico",
-                "Micronesië",
+                "Micronesia",
                 "Moldavië",
                 "Monaco",
                 "Mongolië",
                 "Montenegro",
+                "Montserrat",
                 "Mozambique",
                 "Myanmar",
                 "Namibië",
@@ -294,12 +350,17 @@ trait CreateField
                 "Nederland",
                 "Nepal",
                 "Nicaragua",
+                "Nieuw-Caledonië",
                 "Nieuw-Zeeland",
                 "Niger",
                 "Nigeria",
+                "Niue",
+                "Noordelijke Marianen",
                 "Noord-Korea",
                 "Noord-Macedonië",
+                "code Land",
                 "Noorwegen",
+                "Norfolk",
                 "Oeganda",
                 "Oekraïne",
                 "Oezbekistan",
@@ -308,18 +369,24 @@ trait CreateField
                 "Oost-Timor",
                 "Pakistan",
                 "Palau",
+                "Palestina",
                 "Panama",
                 "Papoea-Nieuw-Guinea",
                 "Paraguay",
                 "Peru",
+                "Pitcairneilanden",
                 "Polen",
                 "Portugal",
+                "Puerto Rico",
                 "Qatar",
+                "Réunion",
                 "Roemenië",
                 "Rusland",
                 "Rwanda",
+                "Saint-Barthélemy",
                 "Saint Kitts en Nevis",
                 "Saint Lucia",
+                "Saint-Pierre en Miquelon",
                 "Saint Vincent en de Grenadines",
                 "Salomonseilanden",
                 "Samoa",
@@ -331,19 +398,25 @@ trait CreateField
                 "Seychellen",
                 "Sierra Leone",
                 "Singapore",
+                "Sint-Helena, Ascension en Tristan da Cunha",
+                "Sint-Maarten",
+                "Sint Maarten",
                 "Slovenië",
                 "Slowakije",
                 "Soedan",
                 "Somalië",
                 "Spanje",
+                "Spitsbergen en Jan Mayen",
                 "Sri Lanka",
                 "Suriname",
                 "Swaziland",
                 "Syrië",
                 "Tadzjikistan",
+                "Taiwan",
                 "Tanzania",
                 "Thailand",
                 "Togo",
+                "Tokelau",
                 "Tonga",
                 "Trinidad en Tobago",
                 "Tsjaad",
@@ -351,24 +424,30 @@ trait CreateField
                 "Tunesië",
                 "Turkije",
                 "Turkmenistan",
+                "Turks- en Caicoseilanden",
                 "Tuvalu",
                 "Uruguay",
                 "Vanuatu",
+                "Vaticaanstad",
                 "Venezuela",
                 "Verenigde Arabische Emiraten",
                 "Verenigde Staten",
                 "Verenigd Koninkrijk",
                 "Vietnam",
+                "Wallis en Futuna",
+                "Westelijke Sahara",
                 "Wit-Rusland",
                 "Zambia",
                 "Zimbabwe",
                 "Zuid-Afrika",
+                "Zuid-Georgia en de Zuidelijke Sandwicheilanden",
                 "Zuid-Korea",
                 "Zuid-Soedan",
                 "Zweden",
                 "Zwitserland"
             ],
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -377,7 +456,8 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -386,6 +466,7 @@ trait CreateField
             description: $description,
             type: 'custom:bankaccount',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
         );
     }
 
@@ -394,7 +475,10 @@ trait CreateField
         string $code,
         string $title,
         ?string $description = null,
-        bool $isRequired = true
+        bool $isRequired = true,
+        ?array $mimeTypes = null,
+        ?int $maxFileSize = null,
+        ?Condition $requiredCondition = null,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -403,6 +487,21 @@ trait CreateField
             description: $description,
             type: 'upload',
             isRequired: $isRequired,
+            requiredCondition: $requiredCondition,
+            params: array_filter([
+                'mimeTypes' => $mimeTypes,
+                'maxFileSize' => $maxFileSize,
+            ]),
         );
+    }
+
+    private function getEncoder(): JSONEncoder
+    {
+        return $this->encoder ??= new JSONEncoder();
+    }
+
+    private function getRequiredCondition(?Condition $requiredCondition = null): ?string
+    {
+        return is_null($requiredCondition) ? $requiredCondition : $this->getEncoder()->encode($requiredCondition);
     }
 }

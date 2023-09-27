@@ -17,9 +17,9 @@ class SubsidyStageService
     /**
      * @throws SubsidyStageNotFoundException
      */
-    public function getSubsidyStage(string $id): SubsidyStageData
+    public function getSubsidyStageData(string $id): SubsidyStageData
     {
-        $subsidyStage = $this->cacheService->getCachedSubsidyStage($id);
+        $subsidyStage = $this->cacheService->getCachedSubsidyStageData($id);
         if ($subsidyStage === null) {
             throw new SubsidyStageNotFoundException();
         }

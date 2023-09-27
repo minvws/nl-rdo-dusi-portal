@@ -26,7 +26,7 @@ jobs:
         id: package_json_exist
         uses: andstor/file-existence-action@v2
         with:
-          files: "package.json"
+          files: "${{ matrix.directory }}/package.json"
 
       - name: Install Node.js
         if: steps.package_json_exist.outputs.files_exists == 'true'
@@ -35,7 +35,7 @@ jobs:
           node-version: '16'
           cache: 'npm'
           registry-url: 'https://npm.pkg.github.com'
-          cache-dependency-path: '**/package-lock.json'
+          cache-dependency-path: '${{ matrix.directory }}/package-lock.json'
 
       - name: Install npm dependencies
         if: steps.package_json_exist.outputs.files_exists == 'true'
@@ -58,7 +58,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles(matrix.directory, '/composer.lock') }}
           restore-keys: ${{ runner.os }}-${{ matrix.directory }}-composer-
 
       - name: Install Dependencies
@@ -80,7 +80,7 @@ jobs:
         shell: bash
 
       - name: Create tar
-        run: tar -czhf ${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}.tar.gz ./app ./bootstrap ./config ./database ./lang ./public ./resources ./routes ./storage ./vendor ./composer.json
+        run: tar -czhf ${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}.tar.gz ./app ./bootstrap ./config ./database ./lang ./public ./resources ./routes ./vendor ./composer.json
 
       - name: Upload release tar
         uses: actions/upload-artifact@v3

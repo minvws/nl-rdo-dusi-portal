@@ -125,7 +125,7 @@ return [
 
     'key' => env('APP_KEY'),
 
-    'cipher' => 'AES-256-CBC',
+    'cipher' => 'AES-256-GCM',
 
     /*
     |--------------------------------------------------------------------------
@@ -198,6 +198,7 @@ return [
         MinVWS\DUSi\Application\API\Providers\RouteServiceProvider::class,
         MinVWS\DUSi\Application\API\Providers\OidcServiceProvider::class,
         MinVWS\DUSi\Application\API\Providers\PortalUserGuardProvider::class,
+        \MinVWS\DUSi\Shared\Providers\HsmEncryptionServiceProvider::class
     ],
 
     /*

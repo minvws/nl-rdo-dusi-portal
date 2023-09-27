@@ -12,7 +12,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 class SubsidiesTableSeeder extends Seeder
 {
     public const BTV_UUID = '00f26400-7232-475f-922c-6b569b7e421a';
-    public const PCZM_UUID = '06A6B91C-D59B-401E-A5BF-4BF9262D85F8';
+    public const PCZM_UUID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
     /**
      * Run the database seeds.
      */
@@ -46,8 +46,7 @@ class SubsidiesTableSeeder extends Seeder
                         'subsidy_page_url' => 'https://www.dus-i.nl/subsidies',
                         'contact_mail_address' => 'dienstpostbus@minvws.nl',
                         'mail_to_address_field_identifier' => 'email',
-                        'mail_to_name_field_identifier' => 'firstName;infix;lastName',
-                        'message_overview_subject' => 'Onderwerp voor overzicht'
+                        'mail_to_name_field_identifier' => 'firstName;infix;lastName'
                     ]
                 )
                     ->create()

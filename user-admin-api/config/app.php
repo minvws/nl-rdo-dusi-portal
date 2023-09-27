@@ -126,7 +126,7 @@ return [
 
     'key' => env('APP_KEY'),
 
-    'cipher' => 'AES-256-CBC',
+    'cipher' => 'AES-256-GCM',
 
     /*
     |--------------------------------------------------------------------------
@@ -199,6 +199,7 @@ return [
 
         // Laravel Fortify
         MinVWS\DUSi\User\Admin\API\Providers\FortifyServiceProvider::class,
+        MinVWS\DUSi\Shared\User\DatabaseServiceProvider::class,
     ],
 
     /*

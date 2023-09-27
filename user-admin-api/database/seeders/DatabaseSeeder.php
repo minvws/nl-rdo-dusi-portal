@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\User\Admin\API\Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use MinVWS\DUSi\User\Admin\API\Models\Organisation;
-use MinVWS\DUSi\User\Admin\API\Models\Role;
-use MinVWS\DUSi\User\Admin\API\Models\User;
+use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\Role;
+use MinVWS\DUSi\Shared\User\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,6 +17,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            RoleSeeder::class,
+        ]);
+
+        $organisation = Organisation::firstOrCreate([
+            'name' => 'DUS-I',
+        ]);
+
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
@@ -24,22 +32,27 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-//        $role = Role::create([
+//        $role = Role::firstOrCreate([
 //            'name' => 'admin',
 //        ]);
 //
-//        $organisation = Organisation::create([
+//        $organisation = Organisation::firstOrCreate([
 //            'name' => 'Test Organisation',
 //        ]);
 //
-//        $user = User::create([
-//            'name' => 'Test User',
-//            'email' => 'test@example.nl',
-//            'password' => bcrypt('password'),
-//        ]);
+//        $user = User::firstOrCreate(
+//            ['email' => 'test@example.nl'],
+//            [
+//                'name' => 'Test User',
+//                'password' => bcrypt('password'),
+//                'organisation_id' => $organisation->id,
+//            ]
+//        );
 //
-//        $user->organisations()->attach($organisation->id, [
-//            'role_name' => $role->name,
-//        ]);
+//        if ($user->roles()->where('name', $role->name)->exists()) {
+//            return;
+//        }
+//
+//        $user->roles()->attach($role->name);
     }
 }

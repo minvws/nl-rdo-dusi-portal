@@ -11,6 +11,8 @@ namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Dompdf\Canvas;
 use Dompdf\FontMetrics;
+use Illuminate\Support\Facades\Log;
+use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageAnswer;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStageData;
 use MinVWS\DUSi\Assessment\API\DTO\ApplicationStages;
@@ -25,13 +27,16 @@ use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-
 readonly class LetterService
 {
     public function __construct(
@@ -39,7 +44,8 @@ readonly class LetterService
         private ApplicationMessageRepository $messageRepository,
         private FilesystemManager $filesystemManager,
         private RenderEngine $engine,
-        private EncryptionService $encryptionService,
+        private ApplicationStageEncryptionService $encryptionService,
+        private JSONDecoder $jsonDecoder,
     ) {
     }
 
@@ -47,23 +53,30 @@ readonly class LetterService
     {
         $result = new ApplicationStages();
         foreach ($answers->stages as $applicationStageAnswers) {
-            $stageKey = 'stage' . $applicationStageAnswers->stage->subsidyStage->stage;
-            $stageData = new ApplicationStageData($stageKey);
+            $stageKey = $applicationStageAnswers->stage->subsidyStage->stage;
+            $stageData = new ApplicationStageData();
+
+            $encrypter = $this->encryptionService->getEncrypter($applicationStageAnswers->stage);
 
             foreach ($applicationStageAnswers->answers as $answer) {
                 assert($answer->field !== null);
                 $answerKey = $answer->field->code;
-                $answerData = null;
 
-                if ($answer->encrypted_answer !== null) {
-                    $answerData = json_decode($this->encryptionService->decryptData($answer->encrypted_answer), true);
+                $value = $encrypter->decrypt($answer->encrypted_answer);
+                if ($value === null) {
+                    continue;
                 }
 
-                $answer = new ApplicationStageAnswer($answerKey, $answerData);
-                $stageData->$answerKey = $answer;
+                $value = match ($answer->field->type) {
+                    FieldType::Upload => $this->jsonDecoder->decode($value)->decodeObject(FileList::class),
+                    default => $value,
+                };
+
+                $answer = new ApplicationStageAnswer($answerKey, $value);
+                $stageData->put($answerKey, $answer);
             }
 
-            $result->$stageKey = $stageData;
+            $result->put($stageKey, $stageData);
         }
 
         return $result;
@@ -138,14 +151,14 @@ readonly class LetterService
 
     private function getCssPath(): string
     {
-        $manifestPath = file_get_contents(__DIR__ . '/../../public/build/manifest.json');
+        $manifestPath = file_get_contents(public_path('build/manifest.json'));
 
         if (!$manifestPath) {
             return '';
         }
 
-        $manifest = json_decode($manifestPath);
-        $cssFile = $manifest->{'resources/scss/pdf.scss'}->file;
+        $manifest = json_decode($manifestPath, true);
+        $cssFile = $manifest['resources/scss/pdf.scss']['file'];
 
         return public_path('build/' . $cssFile);
     }
@@ -158,19 +171,19 @@ readonly class LetterService
 
         $cssPath = $this->getCssPath();
         $logoPath = public_path('img/vws_dusi_logo.svg');
-
-        assert($stage->assessor_decision !== null);
+        $signaturePath = public_path('img/vws_dusi_signature.jpg');
 
         return new LetterData(
             subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
-            decision: $stage->assessor_decision->value,
             stages: $data,
             createdAt: $stage->application->created_at,
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
-            reference: substr($stage->application->id, 0, 8),
+            reference: $stage->application->reference,
+            motivation: '', // TODO: replace with motivation
             applicationCode: null,
             cssPath: $cssPath,
             logoPath: $logoPath,
+            signaturePath: $signaturePath,
         );
     }
 
@@ -187,7 +200,7 @@ readonly class LetterService
         // when several fields are combined like "firstName;lastName", they are returned as "firstName lastName"
         $values = [];
         foreach (explode(';', $fieldCode) as $answerKey) {
-            $values[] = $data->getStage($stageKey)?->getAnswerData($answerKey);
+            $values[] = $data->getStage($stageKey)?->get($answerKey);
         }
 
         $valueString = implode(' ', $values);
@@ -205,8 +218,18 @@ readonly class LetterService
         assert($mailToAddressIdentifier !== null && $mailToAddressIdentifier !== '');
         assert($mailToNameIdentifier !== null && $mailToNameIdentifier !== '');
 
+        if (!$mailToNameIdentifier || !$mailToAddressIdentifier) {
+            Log::info('No mailToNameIdentifier or mailToAddressIdentifier found');
+            return;
+        }
+
         $mailToAddress = $this->extractDataFromAnswers($mailToAddressIdentifier, $data);
         $mailToName = $this->extractDataFromAnswers($mailToNameIdentifier, $data);
+
+        if (!$mailToAddress || !$mailToName) {
+            Log::info('No mailToName or mailToAddress found');
+            return;
+        }
 
         LetterGeneratedEvent::dispatch(new DispositionMailData($mailToName, $mailToAddress));
     }
@@ -214,16 +237,11 @@ readonly class LetterService
     /**
      * @throws Exception
      */
-    public function generateLetters(ApplicationStage $stage): void
+    public function generateLetters(SubsidyStageTransitionMessage $message, ApplicationStage $stage): void
     {
-        $letter = $stage->subsidyStage->subsidyVersion->publishedSubsidyLetter;
-        if ($letter === null) {
-            throw new Exception('No published subsidy letter template found!');
-        }
-
         $data = $this->collectGenericDataForTemplate($stage);
 
-        $pdf = $this->generatePDFLetter($letter->content_pdf, $data);
+        $pdf = $this->generatePDFLetter($message->content_pdf, $data);
         $pdfPath = sprintf(
             'applications/%s/letters/%d/%s.pdf',
             $stage->application->id,
@@ -233,7 +251,7 @@ readonly class LetterService
         // TODO: encrypt
         $pdf->save($pdfPath, Disk::APPLICATION_FILES);
 
-        $html = $this->generateHTMLLetter($letter->content_view, $data);
+        $html = $this->generateHTMLLetter($message->content_html, $data);
         $htmlPath = sprintf(
             'applications/%s/letters/%d/%s.html',
             $stage->application->id,
@@ -243,7 +261,7 @@ readonly class LetterService
         // TODO: encrypt
         $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($htmlPath, $html);
 
-        $this->messageRepository->createMessage($stage, $pdfPath, $htmlPath);
+        $this->messageRepository->createMessage($stage, $message->subject, $htmlPath, $pdfPath);
 
         $this->triggerMailNotification($stage, $data);
     }

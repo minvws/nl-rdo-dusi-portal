@@ -1,39 +1,41 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
+
 
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Services;
 
+use Auth;
+use MinVWS\DUSi\Assessment\API\DTO\Logging\Events\ViewAssignmentEvent;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
+use MinVWS\Logging\Laravel\LogService;
 
-class ApplicationSubsidyService
+readonly class ApplicationSubsidyService
 {
     public function __construct(
-        private SubsidyRepository $subsidyRepository,
-        private EncryptionService $encryptionService
+        private ApplicationDataService $applicationDataService,
+        private SubsidyStageDataSchemaBuilder $dataSchemaBuilder,
+        private LogService $logger,
     ) {
     }
 
-    /**
-     * @param Application $application
-     * @return ApplicationSubsidyVersionResource
-     * @throws \Exception
-     */
     public function getApplicationSubsidyResource(
-        Application $application,
-        string|null $publicKey = null
+        Application $application
     ): ApplicationSubsidyVersionResource {
-        $subsidyVersion = $this->subsidyRepository->getSubsidyVersion($application->subsidy_version_id);
-        if (!isset($subsidyVersion)) {
-            throw new \Exception('Subsidy version should always exist');
-        }
+        $this->logger->log((new ViewAssignmentEvent())
+        ->withData([
+            'applicationId' => $application->id,
+            //TODO: Update this to withActor and a loggable user object when user login is finished
+            /** @phpstan-ignore-next-line */
+            'userId' => Auth::User()?->id,
+        ]));
         return new ApplicationSubsidyVersionResource(
             $application,
-            $subsidyVersion,
-            $publicKey,
-            $this->encryptionService
+            $this->applicationDataService,
+            $this->dataSchemaBuilder
         );
     }
 }
