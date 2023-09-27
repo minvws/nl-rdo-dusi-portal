@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
@@ -23,9 +24,10 @@ class ApplicationAssessorController extends Controller
     ) {
     }
 
-    public function claim(Application $application, User $user): ApplicationSubsidyVersionResource
+    public function claim(Application $application, Authenticatable $user): ApplicationSubsidyVersionResource
     {
         try {
+            assert($user instanceof User);
             $this->assessorService->assignApplication($application, $user);
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
         } catch (InvalidAssignmentException) {
@@ -35,9 +37,10 @@ class ApplicationAssessorController extends Controller
         }
     }
 
-    public function release(Application $application, User $user): Response|ResponseFactory
+    public function release(Application $application, Authenticatable $user): Response|ResponseFactory
     {
         try {
+            assert($user instanceof User);
             $this->assessorService->releaseApplication($application, $user);
             return response('', Response::HTTP_NO_CONTENT);
         } catch (InvalidReleaseException) {
