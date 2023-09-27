@@ -41,6 +41,7 @@ class DispositionMail extends Mailable
             text: 'dusi::emails.disposition-text',
             with: [
                 'name' => $this->data->toName,
+                'logoPath' => realpath(__DIR__ . '/../../../resources/img/vws_dusi_logo.png'),
             ]
         );
     }

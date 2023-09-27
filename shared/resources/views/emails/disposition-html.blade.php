@@ -73,7 +73,7 @@
                     <div style="text-align: center; width: 100%; height: 77px;">
                         <center>
                             <div style="width: 230px; height: 120px; margin-left: 145px;">
-                                <img src="{{ $message->embed(public_path('img/vws_dusi_logo.png')) }}"
+                                <img src="{{ $message->embed($logoPath) }}"
                                      alt="Logo Dienst Uitvoering Subsidies aan Instellingen"
                                      width="230" height="120"
                                      style="display: block; border: none; width: 230px; height: 120px;"

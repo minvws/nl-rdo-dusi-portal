@@ -1,4 +1,9 @@
-{layout 'dusi::letter_layout.latte'}
+{layout 'letter_layout.latte'}
+
+{block concern}
+    Betreft: Verlening aanvraag {$content->subsidyTitle}
+{/block}
+
 {block content}
     <p>Beste lezer,</p>
     <p>
@@ -8,7 +13,7 @@
     <p>&nbsp;</p>
 
     <h2>Besluit</h2>
-    <p>Hierbij verleen ik u de financiële tegemoetkoming/subsidie van {$content->stages[2]->amount}.</p>
+    <p>Hierbij verleen ik u de financiële tegemoetkoming/subsidie van {$content->stage2->amount}.</p>
     <p>&nbsp;</p>
 
     {if $content->motivation}
