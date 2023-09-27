@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStageDecision;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @property string $id
@@ -33,6 +34,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
  * @property-read Application $application
  * @property-read SubsidyStage $subsidyStage
  * @property-read Collection<array-key, Answer> $answers
+ * @property-read ?User $assessorUser
  */
 class ApplicationStage extends Model
 {
@@ -49,6 +51,11 @@ class ApplicationStage extends Model
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
+    }
+
+    public function assessorUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assessor_user_id', 'id');
     }
 
     public function subsidyStage(): BelongsTo

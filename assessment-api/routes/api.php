@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationAssessorController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\UserController;
 
@@ -20,9 +21,16 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/', 'filterApplications');
             Route::get('{application}', 'show');
-            Route::put('{application}', 'submitAssessment');
+            Route::put('{application}', 'saveAssessment');
             Route::get('{application}/history', 'getApplicationHistory');
             Route::get('{application}/reviewer', 'getApplicationReviewer');
+        });
+
+    Route::prefix('applications/{application}/assessor')
+        ->controller(ApplicationAssessorController::class)
+        ->group(function () {
+            Route::put('', 'claim');
+            Route::delete('', 'release');
         });
 
     Route::get('/ui/applications/count', [ApplicationController::class, 'getApplicationsCount']);
