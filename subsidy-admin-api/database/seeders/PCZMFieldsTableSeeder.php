@@ -455,7 +455,37 @@ class PCZMFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             code: 'firstAssessment',
             title: 'Beoordeling',
-            options: ['Onbeoordeeld', 'Aanvulling nodig', 'Afgekeurd', 'Goedgekeurd']
+            options: ['Aanvulling nodig', 'Afgekeurd', 'Goedgekeurd']
+        );
+
+        //Toelichting
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentRequestedComplementReason',
+            title: 'Reden',
+            options: ['Incomplete aanvraag', 'Onduidelijkheid of vervolgvragen'],
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentInternalNote',
+            title: 'Interne notitie',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentRequestedComplementNote',
+            title: 'Toelichting van benodigde aanvullingen',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentRejectedNote',
+            title: 'Reden van afkeuring',
+            isRequired: false
         );
     }
 
@@ -503,12 +533,19 @@ class PCZMFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
-            options: ['Onbeoordeeld', 'Afgekeurd', 'Goedgekeurd']
+            options: ['Afgekeurd', 'Goedgekeurd']
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
-            code: 'internalAssessmentNote',
+            code: 'internalAssessmentRejectionNote',
+            title: 'Reden van afkeuring',
+            isRequired: false
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            code: 'internalAssessmentApprovalNote',
             title: 'Extra informatie over de beoordeling',
             isRequired: false
         );
@@ -535,9 +572,15 @@ class PCZMFieldsTableSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
             code: 'coordinatorImplementationReasonForRejection',
+            title: 'Reden van afkeuring',
+            isRequired: false,
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            code: 'coordinatorImplementationApprovalNote',
             title: 'Extra informatie over de gedane wijzigingen',
             isRequired: false,
-            requiredCondition: new ComparisonCondition(5, 'implementationCoordinatorAssessment', Operator::Identical, 'Afgekeurd'),
         );
     }
 }

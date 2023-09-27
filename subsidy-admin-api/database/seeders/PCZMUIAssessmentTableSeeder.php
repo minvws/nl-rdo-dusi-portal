@@ -305,6 +305,108 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             ]
                         ]
                     ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Toelichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentRequestedComplementReason",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "const" => "Aanvulling nodig"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentInternalNote",
+                                    "options" => [
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "not" => [
+                                                   "const" => "Goedgekeurd"
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentRequestedComplementNote",
+                                    "options" => [
+                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "const" => "Aanvulling nodig"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentRejectedNote",
+                                    "options" => [
+                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "const" => "Afgekeurd"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ],
+                    "rule" => [
+                        "effect" => "SHOW",
+                        "condition" =>  [
+                            "scope" => "#/properties/firstAssessment",
+                            "schema" =>  [
+                                "not" => [
+                                    "const" => "Goedgekeurd"
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             ]
         ];
@@ -360,17 +462,18 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                         [
                             "type" => "VerticalLayout",
                             "elements" => [
-
-                                "type" => "CustomControl",
-                                "scope" => "#/properties/secondAssessmentInternalNote",
-                                "options" => [
-                                ],
-                                "rule" => [
-                                    "effect" => "SHOW",
-                                    "condition" =>  [
-                                        "scope" => "#/properties/secondAssessment",
-                                        "schema" =>  [
-                                            "const" => "Oneens met de eerste beoordeling"
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/secondAssessmentInternalNote",
+                                    "options" => [
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/secondAssessment",
+                                            "schema" =>  [
+                                                "const" => "Oneens met de eerste beoordeling"
+                                            ]
                                         ]
                                     ]
                                 ]
@@ -447,12 +550,41 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/internalAssessmentNote",
+                                    "scope" => "#/properties/internalAssessmentRejectionNote",
                                     "options" => [
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/internalAssessment",
+                                            "schema" =>  [
+                                                "const" => "Afgekeurd"
+                                            ]
+                                        ]
                                     ]
                                 ]
                             ]
-                        ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/internalAssessmentApprovalNote",
+                                    "options" => [
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/internalAssessment",
+                                            "schema" =>  [
+                                                "const" => "Goedgekeurd"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
                     ]
                 ],
 
@@ -528,6 +660,22 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                             "scope" => "#/properties/implementationCoordinatorAssessment",
                                             "schema" =>  [
                                                 "const" => "Afgekeurd"
+                                            ]
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/coordinatorImplementationApprovalNote",
+                                    "options" => [
+                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/implementationCoordinatorAssessment",
+                                            "schema" =>  [
+                                                "const" => "Goedgekeurd"
                                             ]
                                         ]
                                     ]
