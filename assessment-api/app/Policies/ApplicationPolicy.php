@@ -30,12 +30,47 @@ class ApplicationPolicy
 
     public function release(User $user, Application $application): bool
     {
+        $stage = $application->currentApplicationStage;
+        if ($stage === null || $stage->assessor_user_id !== $user->id) {
+            return false;
+        }
 
+        return true;
     }
 
     public function claim(User $user, Application $application): bool
     {
+        $stage = $application->currentApplicationStage;
 
+        if ($stage === null) {
+            Log::debug('No current stage found for application');
+
+            return false;
+        }
+
+        $subsidyStage = $stage->subsidyStage;
+        if ($subsidyStage->subject_role !== SubjectRole::Assessor) {
+            Log::debug('Current stage is not available for Assessor');
+
+            return false;
+        }
+
+        if ($stage->is_submitted) {
+            Log::debug('Current stage is already submitted');
+
+            return false;
+        }
+
+        if ($stage->assessor_user_id !== null) {
+            Log::debug('Current stage is already assigned');
+
+            return false;
+        }
+
+        $subsidyId = $application->subsidyVersion->subsidy_id;
+        $rolesToCheck = collect([Role::ImplementationCoordinator, Role::Assessor]);
+
+        return $user->hasRoles($rolesToCheck, $subsidyId) || $user->hasRoles($rolesToCheck);
     }
 
     private function authorizeAssessorAndCoordinator(User $user, Application $application): bool
