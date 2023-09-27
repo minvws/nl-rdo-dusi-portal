@@ -81,13 +81,49 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
+                                    "scope" => "#/properties/WIADecisionIndicates",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
                                     "scope" => "#/properties/firstSickDayWithinExpiryDate",
                                     "options" => [
                                         "format" => "radio"
                                     ]
                                 ]
                             ]
-                        ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/IVA_Or_WIA_Checklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/WIA_RejectedOnHighSalaryChecklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ],
                     ]
                 ],
                 [
@@ -145,18 +181,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/chamberOfCommerceNumberEmployer",
-                                    "options" => [
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
-                                    "scope" => "#/properties/chamberOfCommerceNumberHealtcareProvider",
+                                    "scope" => "#/properties/chamberOfCommerceNumberHealthcareProvider",
                                     "options" => [
                                     ]
                                 ]
@@ -336,31 +361,9 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/firstAssessmentInternalNote",
-                                    "options" => [
-                                    ],
-                                    "rule" => [
-                                        "effect" => "SHOW",
-                                        "condition" =>  [
-                                            "scope" => "#/properties/firstAssessment",
-                                            "schema" =>  [
-                                                "not" => [
-                                                   "const" => "Goedgekeurd"
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentRequestedComplementNote",
                                     "options" => [
-                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Toelichting: Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -381,7 +384,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentRejectedNote",
                                     "options" => [
-                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Toelichting: Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -395,14 +398,14 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                 ]
                             ]
                         ],
-                    ],
-                    "rule" => [
-                        "effect" => "SHOW",
-                        "condition" =>  [
-                            "scope" => "#/properties/firstAssessment",
-                            "schema" =>  [
-                                "not" => [
-                                    "const" => "Goedgekeurd"
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentInternalNote",
+                                    "options" => [
+                                    ]
                                 ]
                             ]
                         ]
@@ -443,6 +446,7 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessorMotivatedValid",
                                     "options" => [
+                                        "format" => "checkbox"
                                     ]
                                 ]
                             ]
@@ -467,15 +471,6 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "scope" => "#/properties/secondAssessmentInternalNote",
                                     "options" => [
                                     ],
-                                    "rule" => [
-                                        "effect" => "SHOW",
-                                        "condition" =>  [
-                                            "scope" => "#/properties/secondAssessment",
-                                            "schema" =>  [
-                                                "const" => "Oneens met de eerste beoordeling"
-                                            ]
-                                        ]
-                                    ]
                                 ]
                             ]
                         ]
@@ -550,37 +545,8 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/internalAssessmentRejectionNote",
+                                    "scope" => "#/properties/internalAssessmentInternalNote",
                                     "options" => [
-                                    ],
-                                    "rule" => [
-                                        "effect" => "SHOW",
-                                        "condition" =>  [
-                                            "scope" => "#/properties/internalAssessment",
-                                            "schema" =>  [
-                                                "const" => "Afgekeurd"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
-                                    "scope" => "#/properties/internalAssessmentApprovalNote",
-                                    "options" => [
-                                    ],
-                                    "rule" => [
-                                        "effect" => "SHOW",
-                                        "condition" =>  [
-                                            "scope" => "#/properties/internalAssessment",
-                                            "schema" =>  [
-                                                "const" => "Goedgekeurd"
-                                            ]
-                                        ]
                                     ]
                                 ]
                             ]
@@ -639,17 +605,6 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/coordinatorImplementationNote",
-                                    "options" => [
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
                                     "scope" => "#/properties/coordinatorImplementationReasonForRejection",
                                     "options" => [
                                         "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
@@ -678,6 +633,17 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                                 "const" => "Goedgekeurd"
                                             ]
                                         ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/coordinatorImplementationInternalNote",
+                                    "options" => [
                                     ]
                                 ]
                             ]

@@ -5,11 +5,25 @@
     },
     "elements": [
         {
-            "type": "FormResultsTable",
+            "type": "CustomControl",
+            "scope": "#/properties/firstAssessorMotivatedValid",
             "options": {
-                "fields": {
-                    "Beoordeling": "{secondAssessment}"
-                }
+                "readonly": true
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/secondAssessment",
+            "options": {
+                "readonly": true,
+                "format": "radio"
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/secondAssessmentInternalNote",
+            "options": {
+                "readonly": true
             }
         }
     ]
