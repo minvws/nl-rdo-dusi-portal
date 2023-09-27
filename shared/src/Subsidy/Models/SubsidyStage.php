@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
+use MinVWS\DUSi\Shared\User\Enums\Role;
 
 /**
  * @property string $id
@@ -24,6 +25,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property VersionStatus $status
  * @property int $stage
  * @property SubjectRole $subject_role
+ * @property Role|null $assessor_user_role
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read Collection<int, SubsidyStageTransition> $subsidyStageTransitions
  */
@@ -46,6 +48,7 @@ class SubsidyStage extends Model
     protected $casts = [
         'id' => 'string',
         'subject_role' => SubjectRole::class,
+        'assessor_user_role' => Role::class
     ];
 
     public function subsidyVersion(): BelongsTo
