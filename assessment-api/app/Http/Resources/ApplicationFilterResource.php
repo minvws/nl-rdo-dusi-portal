@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
-use DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Database\Eloquent\Collection;
