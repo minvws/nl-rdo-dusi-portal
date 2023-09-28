@@ -9,6 +9,7 @@ use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Shared\Application\Events\ViewAssignmentEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\Logging\Laravel\LogService;
@@ -18,6 +19,7 @@ readonly class ApplicationSubsidyService
     public function __construct(
         private ApplicationDataService $applicationDataService,
         private SubsidyStageDataSchemaBuilder $dataSchemaBuilder,
+        private HsmDecryptionService $hsmDecryptionService,
         private LogService $logger,
     ) {
     }
@@ -36,7 +38,8 @@ readonly class ApplicationSubsidyService
             $application,
             $user,
             $this->applicationDataService,
-            $this->dataSchemaBuilder
+            $this->dataSchemaBuilder,
+            $this->hsmDecryptionService
         );
     }
 }
