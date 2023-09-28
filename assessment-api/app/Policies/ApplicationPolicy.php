@@ -21,7 +21,14 @@ class ApplicationPolicy
 
     public function viewAllStages(User $user, Subsidy $subsidy): bool
     {
-        return $user->hasRoleForSubsidy(Role::ImplementationCoordinator, $subsidy);
+        return $user->hasRoleToViewAllStagesForSubsidy($subsidy);
+    }
+
+    public function viewAllStagesAndAssessor(User $user, Subsidy $subsidy): bool
+    {
+        return
+            $this->viewAllStages($user, $subsidy) &&
+            $user->hasRoleForSubsidy(Role::ImplementationCoordinator, $subsidy);
     }
 
     public function showList(User $user): bool

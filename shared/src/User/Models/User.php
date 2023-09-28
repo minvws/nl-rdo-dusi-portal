@@ -127,8 +127,9 @@ class User extends Authenticatable
     /**
      * @return Collection<int, Role>
      */
-    private function getRolesForSubsidy(string $subsidyId): Collection
+    private function getRolesForSubsidy(Subsidy|string $subsidyId): Collection
     {
+        $subsidyId = $subsidy instanceof Subsidy ? $subsidy->id : $subsidyId;
         return
             $this->roles
                 ->filter(fn (Role $userRole) => $userRole->subsidy_id === $subsidyId || $userRole->subsidy_id === null);
@@ -136,7 +137,6 @@ class User extends Authenticatable
 
     public function hasRoleToViewAllStagesForSubsidy(Subsidy|string $subsidyId): bool
     {
-        $subsidyId = $subsidy instanceof Subsidy ? $subsidy->id : $subsidyId;
         return
             $this->getRolesForSubsidy($subsidyId)
                 ->filter(fn (Role $userRole) => $userRole->view_all_stages)
@@ -149,7 +149,7 @@ class User extends Authenticatable
 
         return
             $this->getRolesForSubsidy($subsidyId)
-                ->filter(fn (Role $userRole) => in_array($userRole->role_name, $roles))
+                ->filter(fn (Role $userRole) => in_array($userRole->name, $roles))
                 ->isNotEmpty();
     }
 
@@ -158,8 +158,8 @@ class User extends Authenticatable
         $roles = is_array($role) ? $role : [$role];
 
         return
-            $this-roles
-                ->filter(fn (Role $userRole) => in_array($userRole->role_name, $roles))
+            $this->roles
+                ->filter(fn (Role $userRole) => in_array($userRole->name, $roles))
                 ->isNotEmpty();
     }
 

@@ -59,11 +59,12 @@ class ApplicationFilterResource extends JsonResource
             'subsidy_stage_title' => $this->currentApplicationStage->subsidyStage->title ?? 'Afgerond',
             'final_review_deadline' => $this->final_review_deadline,
             'updated_at' => $this->updated_at,
+            'assessor' => null,
             'actions' => $actions
         ];
 
         if (
-            $user->can('viewAllStages', [$application->subsidyVersion->subsidy]) &&
+            $user->can('viewAllStagesAndAssessor', [$application->subsidyVersion->subsidy]) &&
             isset($this->currentApplicationStage->assessorUser)
         ) {
             $result['assessor'] = [
