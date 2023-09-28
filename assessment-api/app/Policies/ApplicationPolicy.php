@@ -50,6 +50,12 @@ class ApplicationPolicy
             $user->hasRoleToViewAllStagesForSubsidy($application->subsidyVersion->subsidy_id);
     }
 
+    public function save(User $user, Application $application): bool
+    {
+        $stage = $application->currentApplicationStage;
+        return $stage !== null && !$stage->is_submitted && $stage->assessor_user_id === $user->id;
+    }
+
     public function release(User $user, Application $application): bool
     {
         $stage = $application->currentApplicationStage;

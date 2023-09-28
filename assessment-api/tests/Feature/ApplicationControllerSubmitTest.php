@@ -25,6 +25,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Test\MocksEncryption;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @group assessment-submit
@@ -114,6 +115,13 @@ class ApplicationControllerSubmitTest extends TestCase
 
         $this->flowService->submitApplicationStage($applicationStage1);
 
+        $user = User::factory()->create();
+        $application->refresh();
+        $currentStage = $application->currentApplicationStage;
+        $this->assertNotNull($currentStage);
+        $currentStage->assessor_user_id = $user->id;
+        $currentStage->save();
+
         $body = new ApplicationSaveBody(
             (object)[
                 $this->statusField->code => 'Goedgekeurd',
@@ -123,6 +131,7 @@ class ApplicationControllerSubmitTest extends TestCase
 
         $json = (new JSONEncoder())->encode($body);
 
+        $this->be($user);
         $response = $this->putJson(sprintf('/api/applications/%s', $application->id), json_decode($json, true));
 
         $response->assertOk();
