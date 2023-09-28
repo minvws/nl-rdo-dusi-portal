@@ -73,6 +73,9 @@ jobs:
       - name: Clean build
         run: rm -rfv node_modules
 
+      - name: Run shared build task
+        run: cd ../shared && npm run build && rm -rfv node_modules
+
       - name: Create lang dir if not exists
         run: mkdir --parents lang
 
