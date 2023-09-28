@@ -10,12 +10,11 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Barryvdh\DomPDF\Facade\Pdf as PDFHelper;
-use Barryvdh\DomPDF\PDF;
 use Dompdf\Canvas;
 use Dompdf\FontMetrics;
 use Exception;
-use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Latte\Engine as RenderEngine;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
@@ -26,7 +25,6 @@ use MinVWS\DUSi\Shared\Application\DTO\LetterData;
 use MinVWS\DUSi\Shared\Application\DTO\LetterStageData;
 use MinVWS\DUSi\Shared\Application\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
@@ -40,12 +38,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 readonly class LetterService
 {
     public function __construct(
-        private ApplicationRepository $applicationRepository,
+        private ApplicationFileManager $applicationFileManager,
         private ApplicationMessageRepository $messageRepository,
-        private FilesystemManager $filesystemManager,
-        private RenderEngine $engine,
+        private ApplicationRepository $applicationRepository,
         private ApplicationStageEncryptionService $encryptionService,
         private JSONDecoder $jsonDecoder,
+        private RenderEngine $engine,
     ) {
     }
 
@@ -94,7 +92,7 @@ readonly class LetterService
         return $this->engine->renderToString($templateKey, ['content' => $data]);
     }
 
-    private function generatePDFLetter(string $template, LetterData $data): PDF
+    private function generatePDFLetter(string $template, LetterData $data): string
     {
         $html = $this->generateHTMLLetter($template, $data);
 
@@ -153,7 +151,7 @@ readonly class LetterService
             );
         }
 
-        return $pdf;
+        return $pdf->output();
     }
 
     private function collectGenericDataForTemplate(ApplicationStage $stage): LetterData
@@ -228,23 +226,21 @@ readonly class LetterService
 
         $pdf = $this->generatePDFLetter($message->content_pdf, $data);
         $pdfPath = sprintf(
-            'applications/%s/letters/%d/%s.pdf',
+            'applications/%s/letters/%d/%s',
             $stage->application->id,
             $stage->sequence_number,
-            'letter'
+            Str::uuid(),
         );
-        // TODO: encrypt
-        $pdf->save($pdfPath, Disk::APPLICATION_FILES);
+        $this->applicationFileManager->writeEncryptedFile($pdfPath, $pdf);
 
         $html = $this->generateHTMLLetter($message->content_html, $data);
         $htmlPath = sprintf(
-            'applications/%s/letters/%d/%s.html',
+            'applications/%s/letters/%d/%s',
             $stage->application->id,
             $stage->sequence_number,
-            'letter'
+            Str::uuid(),
         );
-        // TODO: encrypt
-        $this->filesystemManager->disk(Disk::APPLICATION_FILES)->put($htmlPath, $html);
+        $this->applicationFileManager->writeEncryptedFile($htmlPath, $html);
 
         $this->messageRepository->createMessage($stage, $message->subject, $htmlPath, $pdfPath);
 

@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
         $this->call(SubsidyStageTransitionsTableSeeder::class);
         $this->call(SubsidyStageTransitionMessagesTableSeeder::class);
 
-        $this->call(BTVFieldsTableSeeder::class);
-        $this->call(BTVUIFormTableSeeder::class);
-        $this->call(BTVUIAssessmentTableSeeder::class);
+//        $this->call(BTVFieldsTableSeeder::class);
+//        $this->call(BTVUIFormTableSeeder::class);
+//        $this->call(BTVUIAssessmentTableSeeder::class);
 
         $this->call(PCZMFieldsTableSeeder::class);
         $this->call(PCZMUIFormTableSeeder::class);

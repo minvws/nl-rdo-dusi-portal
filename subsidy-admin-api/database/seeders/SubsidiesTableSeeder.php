@@ -18,41 +18,41 @@ class SubsidiesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('subsidies')->insert([
-            'id' => self::BTV_UUID,
-            'title' => 'Borstprothesen transvrouwen',
-            'reference_prefix' => 'BTV23',
-            'code' => 'BTV',
-            'description' => "Transvrouwen zijn man-vrouw transgenders die negatieve gevoelens ('genderdysforie') ervaren omdat ze als man geboren zijn en in transitie zijn om als vrouw te leven. De meerderheid van de transvrouwen vindt, ook na behandeling (de zogeheten genderbevestigende hormonale therapie), dat zij te weinig borstweefsel heeft voor een vrouwelijk profiel. Dit kan een grote hindernis zijn bij de transitie. Een borstvergroting kan deze hinder verminderen.",
-            'valid_from' => '2019-02-01',
-            'valid_to' => null
-        ]);
+//        DB::table('subsidies')->insert([
+//            'id' => self::BTV_UUID,
+//            'title' => 'Borstprothesen transvrouwen',
+//            'reference_prefix' => 'BTV23',
+//            'code' => 'BTV',1
+//            'description' => "Transvrouwen zijn man-vrouw transgenders die negatieve gevoelens ('genderdysforie') ervaren omdat ze als man geboren zijn en in transitie zijn om als vrouw te leven. De meerderheid van de transvrouwen vindt, ook na behandeling (de zogeheten genderbevestigende hormonale therapie), dat zij te weinig borstweefsel heeft voor een vrouwelijk profiel. Dit kan een grote hindernis zijn bij de transitie. Een borstvergroting kan deze hinder verminderen.",
+//            'valid_from' => '2019-02-01',
+//            'valid_to' => null
+//        ]);
         DB::table('subsidies')->insert([
             'id' => self::PCZM_UUID,
-            'title' => 'Aanvraagformulier financiële ondersteuning Zorgmedewerkers met langdurige post-COVID klachten',
+            'title' => 'Zorgmedewerkers met langdurige post-COVID klachten',
             'reference_prefix' => 'PCZM23',
             'code' => 'PCZM',
             'description' => "De regeling Zorgmedewerkers met langdurige post-COVID klachten richt zich op zorgmedewerkers die tijdens de eerste golf van de COVID-19 pandemie besmet zijn geraakt met COVID-19 en sindsdien langdurige post-COVID klachten hebben. Deze klachten hebben grote invloed op het werk en het privéleven van deze zorgmedewerkers. Zij kunnen soms hun eigen werk als zorgmedewerker niet meer (volledig) doen. Voor deze specifieke groep zorgmedewerkers is een eenmalige financiële ondersteuning van €15.000 beschikbaar.",
             'valid_from' => '2023-09-01',
             'valid_to' => null
         ]);
-        Subsidy::factory()->count(2)
-            ->create()
-            ->each(function ($subsidy){
-                SubsidyVersion::factory(
-                    [
-                        'subsidy_id' => $subsidy->id,
-                        'status' => VersionStatus::Published,
-                        'subsidy_page_url' => 'https://www.dus-i.nl/subsidies',
-                        'contact_mail_address' => 'dienstpostbus@minvws.nl',
-                        'mail_to_address_field_identifier' => 'email',
-                        'mail_to_name_field_identifier' => 'firstName;infix;lastName'
-                    ]
-                )
-                    ->create()
-                    ->each(function($subsidyVersion){
-                    SubsidyStage::factory(['subsidy_version_id' => $subsidyVersion->id])->create();
-                });
-            });
+//        Subsidy::factory()->count(2)
+//            ->create()
+//            ->each(function ($subsidy){
+//                SubsidyVersion::factory(
+//                    [
+//                        'subsidy_id' => $subsidy->id,
+//                        'status' => VersionStatus::Published,
+//                        'subsidy_page_url' => 'https://www.dus-i.nl/subsidies',
+//                        'contact_mail_address' => 'dienstpostbus@minvws.nl',
+//                        'mail_to_address_field_identifier' => 'email',
+//                        'mail_to_name_field_identifier' => 'firstName;infix;lastName'
+//                    ]
+//                )
+//                    ->create()
+//                    ->each(function($subsidyVersion){
+//                    SubsidyStage::factory(['subsidy_version_id' => $subsidyVersion->id])->create();
+//                });
+//            });
     }
 }
