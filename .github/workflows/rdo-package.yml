@@ -32,6 +32,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
+          cache: 'npm'
           registry-url: 'https://npm.pkg.github.com'
 
       - name: Install npm dependencies
@@ -40,6 +41,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
           cache-dependency-path: '${{ matrix.directory }}/package-lock.json'
+
+      - name: Install npm dependencies
+        if: steps.package_json_exist.outputs.files_exists != 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
+          cache-dependency-path: 'shared/package-lock.json'
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
