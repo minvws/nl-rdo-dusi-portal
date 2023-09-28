@@ -38,7 +38,8 @@
     },
     "autoload": {
         "psr-4": {
-            "MinVWS\\DUSi\\Application\\Backend\\": "app/"
+            "MinVWS\\DUSi\\Application\\Backend\\": "app/",
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
@@ -81,6 +82,10 @@
         {
             "type": "git",
             "url": "git@github.com:minvws/nl-rdo-php-codable.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
         },
         {
             "type": "path",

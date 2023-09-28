@@ -6,9 +6,9 @@ namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Queue;
-use MinVWS\DUSi\Assessment\API\Jobs\GenerateLetterJob;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
+use MinVWS\DUSi\Shared\Application\Jobs\GenerateLetterJob;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;

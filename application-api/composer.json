@@ -10,7 +10,6 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.5",
         "minvws/php-rmq-rpc-bridge": "@dev",
@@ -79,6 +78,10 @@
         {
             "type": "git",
             "url": "git@github.com:minvws/nl-rdo-php-codable.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
         },
         {
             "type": "git",

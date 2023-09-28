@@ -44,16 +44,251 @@ class PCZMUIAssessmentTableSeeder extends Seeder
             "elements" => [
                 [
                     "type" => "Group",
-                    "label" => "Checklist",
+                    "label" => "Persoonsgegevens",
                     "elements" => [
                         [
                             "type" => "VerticalLayout",
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/checklist",
+                                    "scope" => "#/properties/personalDataChecklist",
                                     "options" => [
                                         "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Vaststellen WIA",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/wiaChecklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/WIADecisionIndicates",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstSickDayWithinExpiryDate",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/IVA_Or_WIA_Checklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/WIA_RejectedOnHighSalaryChecklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Zorgaanbieder en functie",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/employerChecklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderStatementIsComplete",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/employerName",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderName",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/chamberOfCommerceNumberHealthcareProvider",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderChecklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderSBICode",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/healthcareProviderAGBCode",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Justitiële inrichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/judicialInstitutionIsEligible",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/applicantFoundInBigRegister",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Vaststellen post-COVID",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/postCovidChecklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/doctorFoundInBigRegister",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/doctorsCertificateIsComplete",
+                                    "options" => [
+                                        "format" => "radio"
                                     ]
                                 ]
                             ]
@@ -95,6 +330,86 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             ]
                         ]
                     ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Toelichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentRequestedComplementReason",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "const" => "Aanvulling nodig"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentRequestedComplementNote",
+                                    "options" => [
+                                        "tip" => "Toelichting: Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "const" => "Aanvulling nodig"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentRejectedNote",
+                                    "options" => [
+                                        "tip" => "Toelichting: Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "const" => "Afgekeurd"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentInternalNote",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             ]
         ];
@@ -129,10 +444,33 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessorMotivatedValid",
+                                    "options" => [
+                                        "format" => "checkbox"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
                                     "scope" => "#/properties/secondAssessment",
                                     "options" => [
                                         "format" => "radio"
                                     ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/secondAssessmentInternalNote",
+                                    "options" => [
+                                    ],
                                 ]
                             ]
                         ]
@@ -164,6 +502,24 @@ class PCZMUIAssessmentTableSeeder extends Seeder
             "elements" => [
                 [
                     "type" => "Group",
+                    "label" => "Checklist",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/internalAssessmentChecklist",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
                     "label" => "Status",
                     "elements" => [
                         [
@@ -179,7 +535,25 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                             ]
                         ]
                     ]
-                ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Toelichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/internalAssessmentInternalNote",
+                                    "options" => [
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ]
+                ],
+
             ]
         ];
 
@@ -216,6 +590,60 @@ class PCZMUIAssessmentTableSeeder extends Seeder
                                     "scope" => "#/properties/implementationCoordinatorAssessment",
                                     "options" => [
                                         "format" => "radio"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Toelichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/coordinatorImplementationReasonForRejection",
+                                    "options" => [
+                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/implementationCoordinatorAssessment",
+                                            "schema" =>  [
+                                                "const" => "Afgekeurd"
+                                            ]
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/coordinatorImplementationApprovalNote",
+                                    "options" => [
+                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/implementationCoordinatorAssessment",
+                                            "schema" =>  [
+                                                "const" => "Goedgekeurd"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/coordinatorImplementationInternalNote",
+                                    "options" => [
                                     ]
                                 ]
                             ]

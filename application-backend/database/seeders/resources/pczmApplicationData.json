@@ -1,0 +1,62 @@
+{
+    "data": {
+        "firstName": "Voornaam",
+        "infix": "Tussenvoegsel",
+        "lastName": "Achternaam",
+        "dateOfBirth": "2023-09-26",
+        "street": "Straat",
+        "houseNumber": 4,
+        "houseNumberSuffix": "Huisnummer",
+        "postalCode": "Postcode",
+        "city": "Plaats",
+        "phoneNumber": "+31(0) 611111111",
+        "email": "e@mail.com",
+        "bankAccountHolder": "Naam rekeninghouder",
+        "bankAccountNumber": "NL91ABNA0417164300",
+        "country": "Nederland",
+        "certifiedEmploymentDocument": [
+            {
+                "id": "739cecda-0aa3-4692-a5e7-040984d5ff2a",
+                "mimeType": "application/pdf",
+                "name": "nvt.pdf"
+            }
+        ],
+        "wiaDecisionDocument": [
+            {
+                "id": "337016e7-20e8-4d5e-9f20-1999980d4b5c",
+                "mimeType": "application/pdf",
+                "name": "nvt.pdf"
+            }
+        ],
+        "isWiaDecisionPostponed": "Ja",
+        "wiaDecisionPostponedLetter": [
+            {
+                "id": "1dbbc21d-8c2b-4075-bf1e-7bd208006117",
+                "mimeType": "application/pdf",
+                "name": "nvt.pdf"
+            }
+        ],
+        "employmentContract": [
+            {
+                "id": "dbef8055-7c3e-4025-89fb-a1e5e1a73f98",
+                "mimeType": "application/pdf",
+                "name": "nvt.pdf"
+            }
+        ],
+        "employmentFunction": "Ambulancechauffeur",
+        "otherEmploymentFunction": "Andere functie",
+        "employerKind": "Zorgaanbieder",
+        "hasBeenWorkingAtJudicialInstitution": "Ja",
+        "BIGNumberJudicialInstitution": "BIG-nummer",
+        "socialMedicalAssessment": [
+            {
+                "id": "89040bab-5f11-40ec-9a2c-57081acbeb4c",
+                "mimeType": "application/pdf",
+                "name": "nvt.pdf"
+            }
+        ],
+        "hasPostCovidDiagnose": "Ja",
+        "truthfullyCompleted": true
+    },
+    "submit": true
+}

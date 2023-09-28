@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use MinVWS\DUSi\Assessment\API\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Assessment\API\Listeners\GenerateLetter;
 use MinVWS\DUSi\Assessment\API\Listeners\SendDispositionNotification;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
+use MinVWS\DUSi\Shared\Application\Events\LetterGeneratedEvent;
 
 class EventServiceProvider extends ServiceProvider
 {

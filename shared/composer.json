@@ -7,10 +7,13 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^10.17",
-        "minvws/codable": "dev-main as 1.0.x-dev",
+        "barryvdh/laravel-dompdf": "^2.0",
         "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.8",
+        "laravel/framework": "^10.17",
+        "latte/latte": "^3.0",
+        "minvws/codable": "dev-main as 1.0.x-dev",
+        "minvws/laravel-logging": "^2.1",
         "xenolope/quahog": "^3.0"
     },
     "require-dev": {
@@ -38,7 +41,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider"
+                "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider",
+                "MinVWS\\DUSi\\Shared\\Providers\\LetterServiceProvider"
             ]
         }
     },
@@ -59,6 +63,10 @@
         {
             "type": "git",
             "url": "git@github.com:minvws/nl-rdo-php-codable.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
         }
     ]
 }
