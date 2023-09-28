@@ -153,11 +153,15 @@ class ApplicationRepository
         $answer->save();
     }
 
-    public function getAnswersForApplicationStagesUpToIncluding(
-        ApplicationStage $stage
-    ): AnswersByApplicationStage {
-        $stages = [];
-
+    /**
+     * Returns a list of application stages up to (and including) the given stage. If an application
+     * has gone through certain stages multiple times only the latest instance of the stages
+     * will be returned.
+     *
+     * @return array<int, ApplicationStage> Application stages indexed by stage number.
+     */
+    public function getApplicationStagesUpToIncluding(ApplicationStage $stage): array
+    {
         /** @var array<ApplicationStage> $matchingStages */
         $matchingStages =
             $stage->application->applicationStages()
@@ -174,6 +178,15 @@ class ApplicationRepository
             $uniqueStages[$stageNumber] = $currentStage;
         }
 
+        return $uniqueStages;
+    }
+
+    public function getAnswersForApplicationStagesUpToIncluding(
+        ApplicationStage $stage
+    ): AnswersByApplicationStage {
+        $uniqueStages = $this->getApplicationStagesUpToIncluding($stage);
+
+        $stages = [];
         foreach ($uniqueStages as $currentStage) {
             /** @var array<Answer> $answers */
             $answers = $currentStage->answers()->with('field')->get()->all();
