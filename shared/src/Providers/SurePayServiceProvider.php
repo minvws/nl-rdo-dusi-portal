@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Shared\Providers;
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Shared\Application\Console\Commands\CheckSurePay;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use RuntimeException;
 
 class SurePayServiceProvider extends ServiceProvider
@@ -30,14 +30,14 @@ class SurePayServiceProvider extends ServiceProvider
             'surepay_api'
         );
 
-        $this->app->singleton(SurePayRepository::class, function () {
+        $this->app->singleton(SurePayClient::class, function () {
             if (empty(config('surepay_api.endpoint'))) {
                 throw new RuntimeException(
                     'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
                 );
             }
 
-            return new SurePayRepository(
+            return new SurePayClient(
                 client: new Client([
                     'base_uri' => config('surepay_api.endpoint'),
                     'verify' => false,

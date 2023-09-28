@@ -27,7 +27,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayReposi
  * needs to be whitelisted before you can initiate an API call.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SurePayRepository
+class SurePayClient
 {
     private mixed $config;
     private array $baseRequestOptions;

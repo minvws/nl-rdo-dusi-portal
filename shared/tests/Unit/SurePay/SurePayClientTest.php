@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay;
+namespace MinVWS\DUSi\Shared\Tests\Unit\SurePay;
 
 use Faker\Factory;
 use GuzzleHttp\Client;
@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Tests\TestCase;
-use MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay\Fakes\AccesstokenResponseFake;
-use MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
+use MinVWS\DUSi\Shared\Tests\Unit\SurePay\Fakes\AccesstokenResponseFake;
+use MinVWS\DUSi\Shared\Tests\Unit\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
 
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
@@ -25,15 +25,15 @@ use function PHPUnit\Framework\assertEquals;
 /**
  * @group sure-pay
  */
-class SurePayRepositoryTest extends TestCase
+class SurePayClientTest extends TestCase
 {
     private array $container = [];
 
     /**
      * @param array $mockResponses [new Response(200), new Response(400)]
-     * @return SurePayRepository
+     * @return SurePayClient
      */
-    public function initSUT(array $mockResponses = [new Response()]): SurePayRepository
+    public function initSUT(array $mockResponses = [new Response()]): SurePayClient
     {
         $this->container = [];
         $history = Middleware::history($this->container);
@@ -43,7 +43,7 @@ class SurePayRepositoryTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $handlerStack->push($history);
 
-        return new SurePayRepository(
+        return new SurePayClient(
             client: new Client([
                 'base_uri' => '',
                 'handler' => $handlerStack
