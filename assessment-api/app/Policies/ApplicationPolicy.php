@@ -4,6 +4,7 @@ namespace MinVWS\DUSi\Assessment\API\Policies;
 
 use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -16,6 +17,11 @@ class ApplicationPolicy
     public function __construct()
     {
         // can view_all_stages -> readonly voor over alle rollen van 1 subsidy
+    }
+
+    public function viewAllStages(User $user, Subsidy $subsidy): bool
+    {
+        return $user->hasRoles(collect(Role::ImplementationCoordinator), $subsidy->id);
     }
 
     public function showList(User $user): bool
