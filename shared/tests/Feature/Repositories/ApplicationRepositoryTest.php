@@ -93,7 +93,7 @@ class ApplicationRepositoryTest extends TestCase
 
         $appFilter = ApplicationsFilter::fromArray($filter);
 
-        $foundApplication = $this->repository->filterApplications($user, false,$appFilter);
+        $foundApplication = $this->repository->filterApplications($user, false, $appFilter);
         $this->assertEmpty($foundApplication);
     }
 
