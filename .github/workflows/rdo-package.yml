@@ -29,19 +29,29 @@ jobs:
           files: "${{ matrix.directory }}/package.json"
 
       - name: Install Node.js
-        if: steps.package_json_exist.outputs.files_exists == 'true'
         uses: actions/setup-node@v3
+        if: steps.package_json_exist.outputs.files_exists == 'true'
         with:
           node-version: '16'
           cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
           cache-dependency-path: '${{ matrix.directory }}/package-lock.json'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install Node.js for shared
+        uses: actions/setup-node@v3
+        if: steps.package_json_exist.outputs.files_exists != 'true'
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: 'shared/package-lock.json'
+          registry-url: 'https://npm.pkg.github.com'
 
       - name: Install npm dependencies
         if: steps.package_json_exist.outputs.files_exists == 'true'
         run: npm ci --ignore-scripts --no-audit --no-fund
         env:
           NODE_AUTH_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
+          cache-dependency-path: '${{ matrix.directory }}/package-lock.json'
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -74,7 +84,9 @@ jobs:
         run: rm -rfv node_modules
 
       - name: Run shared build task
-        run: cd ../shared && npm run build && rm -rfv node_modules
+        run: cd ../shared && npm ci --ignore-scripts --no-audit --no-fund && npm run build && rm -rfv node_modules
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
 
       - name: Create lang dir if not exists
         run: mkdir --parents lang
