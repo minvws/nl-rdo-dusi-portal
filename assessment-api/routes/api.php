@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationAssessorController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationController;
+use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationFileController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\UserController;
 
 /*
@@ -25,6 +26,13 @@ Route::middleware('auth')->group(function () {
             Route::get('{application}/history', 'getApplicationHistory');
             Route::get('{application}/reviewer', 'getApplicationReviewer');
         });
+
+    Route::prefix('applications')
+        ->controller(ApplicationFileController::class)
+        ->group(function () {
+            Route::get('{application}/stages/{applicationStageId}/fields/{fieldCode}/files/{id}', 'show');
+        });
+
 
     Route::prefix('applications/{application}/assessor')
         ->controller(ApplicationAssessorController::class)
