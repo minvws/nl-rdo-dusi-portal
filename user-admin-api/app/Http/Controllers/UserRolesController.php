@@ -59,7 +59,7 @@ class UserRolesController extends Controller
     public function destroy(UserRoleAttachRequest $request, User $user): RedirectResponse
     {
         $user->detachRole(
-            role: $request->validated('role'),
+            role: RoleEnum::from($request->validated('role')),
             subsidyId: $request->validated('subsidy_id'),
         );
 
