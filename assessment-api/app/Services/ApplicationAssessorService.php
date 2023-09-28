@@ -6,12 +6,10 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Assessment\API\Services\Exceptions\AlreadyAssignedException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidAssignmentException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidReleaseException;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 readonly class ApplicationAssessorService
@@ -23,22 +21,14 @@ readonly class ApplicationAssessorService
 
     /**
      * @throws InvalidAssignmentException
-     * @throws AlreadyAssignedException
+
      */
     public function assignApplication(Application $application, User $user): void
     {
         DB::transaction(function () use ($application, $user) {
             $stage = $application->currentApplicationStage;
-            if (
-                $stage === null ||
-                $stage->subsidyStage->subject_role !== SubjectRole::Assessor ||
-                $stage->is_submitted
-            ) {
+            if ($stage === null) {
                 throw new InvalidAssignmentException();
-            }
-
-            if ($stage->assessor_user_id !== null) {
-                throw new AlreadyAssignedException();
             }
 
             $this->applicationRepository->assignApplicationStage($stage, $user);
@@ -48,11 +38,11 @@ readonly class ApplicationAssessorService
     /**
      * @throws InvalidReleaseException
      */
-    public function releaseApplication(Application $application, User $user): void
+    public function releaseApplication(Application $application): void
     {
-        DB::transaction(function () use ($application, $user) {
+        DB::transaction(function () use ($application) {
             $stage = $application->currentApplicationStage;
-            if ($stage === null || $stage->assessor_user_id !== $user->id) {
+            if ($stage === null) {
                 throw new InvalidReleaseException();
             }
 

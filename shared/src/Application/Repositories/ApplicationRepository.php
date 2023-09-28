@@ -30,9 +30,64 @@ use MinVWS\DUSi\Shared\User\Models\User;
  */
 class ApplicationRepository
 {
-    public function filterApplications(ApplicationsFilter $filter): array|Collection
+    private function filterForUser(Builder $query, User $user): void
     {
+        $clauses = [];
+        $bindings = [];
+        foreach ($user->roles as $role) {
+            if ($role->view_all_stages && $role->subsidy_id === null) {
+                $clauses[] = '(1 = 1)';
+            } elseif ($role->view_all_stages) {
+                $clauses[] = '(sv.subsidy_id = ?)';
+                $bindings[] = $role->subsidy_id;
+            } else {
+                $clause = '((s.assessor_user_id IS NULL OR s.assessor_user_id = ?) AND ss.assessor_user_role = ?)';
+                $bindings[] = $user->id;
+                $bindings[] = $role->name->value;
+
+                if ($role->subsidy_id !== null) {
+                    $clause = '(' . $clause . ' AND sv.subsidy_id = ?)';
+                    $bindings[] = $role->subsidy_id;
+                }
+
+                $clauses[] = $clause;
+            }
+        }
+
+        $sql = "
+            EXISTS (
+                SELECT 1
+                FROM application_stages s
+                JOIN subsidy_stages ss ON (ss.id = s.subsidy_stage_id)
+                JOIN subsidy_versions sv ON (sv.id = ss.subsidy_version_id)
+                WHERE s.application_id = applications.id
+                AND s.is_current = true
+                AND (
+                    (" . implode(") OR (", $clauses) . ")
+                )
+            )
+        ";
+
+        $query->whereRaw($sql, $bindings);
+    }
+
+    public function filterApplications(User $user, bool $onlyAssignedToMe, ApplicationsFilter $filter): array|Collection
+    {
+        if ($user->roles->isEmpty()) {
+            return [];
+        }
+
         $query = Application::query();
+        $this->filterForUser($query, $user);
+
+        $query->when(
+            $onlyAssignedToMe,
+            fn() => $query->whereRelation(
+                'currentApplicationStage',
+                'assessor_user_id',
+                $user->id
+            )
+        );
         $query->when(
             isset($filter->applicationTitle),
             fn() => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
@@ -76,10 +131,6 @@ class ApplicationRepository
         $query->when(
             isset($filter->subsidy),
             fn() => $query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->assessor),
-            fn() => $query->currentApplicationStage()->assessor($filter->assessor)->get() // @phpstan-ignore-line
         );
         return $query->get();
     }

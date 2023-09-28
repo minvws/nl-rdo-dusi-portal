@@ -20,6 +20,7 @@ class ApplicationFileController extends Controller
         string $fieldCode,
         string $fileId
     ): Response {
+        $this->authorize('show', $application);
         return $this->applicationFileService->getApplicationFile(
             $application,
             $applicationStageId,

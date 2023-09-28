@@ -15,7 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection as ArrayCollection;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\User\Database\Factories\UserFactory;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 
@@ -26,7 +26,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
  * @property string $password
  * @property string $organisation_id
  * @property DateTimeInterface $active_until
- * @property Collection<Role> $roles
+ * @property Collection<int, Role> $roles
  * @property Organisation $organisation
  * @method bool can($abilities, $arguments = [])
  */
@@ -129,10 +129,10 @@ class User extends Authenticatable
      */
     private function getRolesForSubsidy(Subsidy|string $subsidyId): Collection
     {
-        $subsidyId = $subsidy instanceof Subsidy ? $subsidy->id : $subsidyId;
-        return
-            $this->roles
-                ->filter(fn (Role $userRole) => $userRole->subsidy_id === $subsidyId || $userRole->subsidy_id === null);
+        $subsidyId = $subsidyId instanceof Subsidy ? $subsidyId->id : $subsidyId;
+
+        return $this->roles
+            ->filter(fn (Role $userRole) => $userRole->subsidy_id === $subsidyId || $userRole->subsidy_id === null);
     }
 
     public function hasRoleToViewAllStagesForSubsidy(Subsidy|string $subsidyId): bool

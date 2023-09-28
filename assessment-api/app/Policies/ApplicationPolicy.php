@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Assessment\API\Policies;
 
 use Illuminate\Support\Facades\Log;
@@ -31,9 +33,14 @@ class ApplicationPolicy
             $user->hasRoleForSubsidy(Role::ImplementationCoordinator, $subsidy);
     }
 
-    public function showList(User $user): bool
+    public function filterApplications(User $user): bool
     {
         return $user->hasRole([Role::Assessor, Role::InternalAuditor, Role::ImplementationCoordinator]);
+    }
+
+    public function filterAssignedApplications(User $user): bool
+    {
+        return $this->filterApplications($user);
     }
 
     public function show(User $user, Application $application): bool
@@ -46,11 +53,7 @@ class ApplicationPolicy
     public function release(User $user, Application $application): bool
     {
         $stage = $application->currentApplicationStage;
-        if ($stage === null || $stage->assessor_user_id !== $user->id) {
-            return false;
-        }
-
-        return true;
+        return $stage !== null && $stage->assessor_user_id === $user->id;
     }
 
     public function claim(User $user, Application $application): bool

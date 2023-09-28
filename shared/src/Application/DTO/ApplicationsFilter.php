@@ -46,8 +46,7 @@ class ApplicationsFilter
         public ?DateTime $dateFinalReviewDeadlineFrom,
         public ?DateTime $dateFinalReviewDeadlineTo,
         public ?ApplicationStatus $status,
-        public ?string $subsidy,
-        public ?User $assessor,
+        public ?string $subsidy
     ) {
     }
 
@@ -66,8 +65,7 @@ class ApplicationsFilter
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_from'),
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_to'),
             getStatusOrNull($inputArray, 'status'),
-            $inputArray['subsidy'] ?? null,
-            $inputArray['assessor'] ?? null,
+            $inputArray['subsidy'] ?? null
         );
     }
 }

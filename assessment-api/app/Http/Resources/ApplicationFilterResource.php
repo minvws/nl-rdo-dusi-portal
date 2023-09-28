@@ -64,7 +64,7 @@ class ApplicationFilterResource extends JsonResource
         ];
 
         if (
-            $user->can('viewAllStagesAndAssessor', [$application->subsidyVersion->subsidy]) &&
+            $user->can('viewAllStagesAndAssessor', [Application::class, $application->subsidyVersion->subsidy]) &&
             isset($this->currentApplicationStage->assessorUser)
         ) {
             $result['assessor'] = [

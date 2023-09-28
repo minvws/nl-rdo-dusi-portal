@@ -39,10 +39,15 @@ class ApplicationService
      * @param ApplicationsFilter $applicationsFilter
      * @return AnonymousResourceCollection
      */
-    public function getApplications(ApplicationsFilter $applicationsFilter): AnonymousResourceCollection
-    {
-        return ApplicationFilterResource::Collection($this->applicationRepository
-            ->filterApplications($applicationsFilter));
+    public function getApplications(
+        User $user,
+        bool $onlyAssignedToMe,
+        ApplicationsFilter $applicationsFilter
+    ): AnonymousResourceCollection {
+        $applications = $this->applicationRepository
+            ->filterApplications($user, $onlyAssignedToMe, $applicationsFilter);
+
+        return ApplicationFilterResource::Collection($applications);
     }
 
     public function getApplicationsCountMock(): ApplicationCountResource

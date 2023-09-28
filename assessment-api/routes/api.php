@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
         ->controller(ApplicationController::class)
         ->group(function () {
             Route::get('/', 'filterApplications');
+            Route::get('assigned', 'filterAssignedApplications');
             Route::get('{application}', 'show');
             Route::put('{application}', 'saveAssessment');
             Route::get('{application}/history', 'getApplicationHistory');
