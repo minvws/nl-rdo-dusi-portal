@@ -41,7 +41,6 @@ class SubsidyStageDataSchemaBuilder
     {
         switch ($field->type) {
             case FieldType::Checkbox:
-                $result['const'] = true;
                 break;
             case FieldType::CustomBankAccount:
                 $result['iban'] = true;

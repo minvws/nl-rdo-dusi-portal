@@ -39,19 +39,24 @@ class ApplicationFileManager
             && $this->fileRepository->fileExists($path . self::KEYINFO_FILE_EXTENSION);
     }
 
-    /**
-     * @throws Exception
-     */
     public function readFile(ApplicationStage $applicationStage, Field $field, string $fileId): string
     {
         $file = $this->getFilePath($applicationStage, $field, $fileId);
 
-        $keyInfo = $this->fileRepository->readFile($file . self::KEYINFO_FILE_EXTENSION);
+        return $this->readEncryptedFile($file);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function readEncryptedFile(string $filepath): string
+    {
+        $keyInfo = $this->fileRepository->readFile($filepath . self::KEYINFO_FILE_EXTENSION);
         if (empty($keyInfo)) {
             throw new Exception('File key info cannot be empty!');
         }
 
-        $file = $this->fileRepository->readFile($file);
+        $file = $this->fileRepository->readFile($filepath);
         if (empty($file)) {
             throw new Exception('File content cannot be empty!');
         }
@@ -59,21 +64,26 @@ class ApplicationFileManager
         return $this->encryptionService->getEncrypter($keyInfo)->decryptString($file);
     }
 
+    public function writeFile(ApplicationStage $applicationStage, Field $field, string $fileId, string $content): bool
+    {
+        $file = $this->getFilePath($applicationStage, $field, $fileId);
+
+        return $this->writeEncryptedFile($file, $content);
+    }
+
     /**
      * @throws Exception
      */
-    public function writeFile(ApplicationStage $applicationStage, Field $field, string $fileId, string $content): bool
+    public function writeEncryptedFile(string $filepath, string $content): bool
     {
         if (empty($content)) {
             throw new Exception('File content cannot be empty!');
         }
 
-        $file = $this->getFilePath($applicationStage, $field, $fileId);
-
         [$keyInfo, $encrypter] = $this->encryptionService->generateKeyInfo();
 
-        $fileWritten = $this->fileRepository->writeFile($file, $encrypter->encryptString($content));
-        $fileKeyInfoWritten = $this->fileRepository->writeFile($file . self::KEYINFO_FILE_EXTENSION, $keyInfo);
+        $fileWritten = $this->fileRepository->writeFile($filepath, $encrypter->encryptString($content));
+        $fileKeyInfoWritten = $this->fileRepository->writeFile($filepath . self::KEYINFO_FILE_EXTENSION, $keyInfo);
 
         return $fileWritten && $fileKeyInfoWritten;
     }

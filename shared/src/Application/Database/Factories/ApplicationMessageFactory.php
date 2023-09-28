@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\App;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
-use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 
 /**
  * @extends Factory<ApplicationMessage>
@@ -50,24 +50,24 @@ class ApplicationMessageFactory extends Factory
 
         $state = $this->state(fn (array $attributes) => [
             'html_path' => sprintf(
-                'applications/%s/letters/%d/%s.html',
+                'applications/%s/letters/%d/%s',
                 $attributes['id'],
                 $stageSequenceNumber,
-                'letter'
+                $this->faker->uuid,
             ),
             'pdf_path' => sprintf(
-                'applications/%s/letters/%d/%s.pdf',
+                'applications/%s/letters/%d/%s',
                 $attributes['id'],
                 $stageSequenceNumber,
-                'letter'
+                $this->faker->uuid,
             ),
         ]);
 
         return $state->afterMaking(function (ApplicationMessage $applicationMessage) use ($body) {
-            $filesystem = Storage::disk(Disk::APPLICATION_FILES);
+            $fileManager = App::make(ApplicationFileManager::class);
 
-            $filesystem->put($applicationMessage->html_path, sprintf('%s HTML', $body));
-            $filesystem->put($applicationMessage->pdf_path, sprintf('%s PDF', $body));
+            $fileManager->writeEncryptedFile($applicationMessage->html_path, sprintf('%s HTML', $body));
+            $fileManager->writeEncryptedFile($applicationMessage->pdf_path, sprintf('%s PDF', $body));
         });
     }
 }

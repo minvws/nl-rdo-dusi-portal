@@ -8,11 +8,12 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Exception;
 use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
-use MinVWS\DUSi\Shared\Application\Repositories\LetterRepository;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
@@ -33,9 +34,9 @@ readonly class ApplicationMessageService
 
     public function __construct(
         private ResponseEncryptionService $responseEncryptionService,
+        private ApplicationFileManager $applicationFileManager,
         private ApplicationMessageRepository $messageRepository,
         private IdentityService $identityService,
-        private LetterRepository $letterRepository,
         private ApplicationMapper $applicationMapper,
         private EncryptedResponseExceptionHelper $exceptionHelper
     ) {
@@ -105,10 +106,16 @@ readonly class ApplicationMessageService
             );
         }
 
-        $body = $this->letterRepository->getHtmlContent($message);
-        // TODO: should be encrypted $body = $this->encryptionService->decryptData($body);
+        try {
+            $body = $this->applicationFileManager->readEncryptedFile($message->html_path);
+        } catch (Exception $e) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::NOT_FOUND,
+                'message_file_not_found'
+            );
+        }
 
-        if ($body === null) {
+        if (empty($body)) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::NOT_FOUND,
                 'message_file_not_found'
@@ -151,22 +158,29 @@ readonly class ApplicationMessageService
             );
         }
 
-        $content = match ($params->format) {
-            MessageDownloadFormat::HTML => $this->letterRepository->getHtmlContent($message),
-            MessageDownloadFormat::PDF => $this->letterRepository->getPdfContent($message),
-        };
-
-        $contentType =  match ($params->format) {
-            MessageDownloadFormat::HTML => 'text/html',
-            MessageDownloadFormat::PDF => 'application/pdf'
-        };
-
-        if ($content === null) {
+        try {
+            $content = match ($params->format) {
+                MessageDownloadFormat::HTML => $this->applicationFileManager->readEncryptedFile($message->html_path),
+                MessageDownloadFormat::PDF => $this->applicationFileManager->readEncryptedFile($message->pdf_path),
+            };
+        } catch (Exception $e) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::NOT_FOUND,
                 'message_file_not_found'
             );
         }
+
+        if (empty($content)) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::NOT_FOUND,
+                'message_file_not_found'
+            );
+        }
+
+        $contentType =  match ($params->format) {
+            MessageDownloadFormat::HTML => 'text/html',
+            MessageDownloadFormat::PDF => 'application/pdf'
+        };
 
         return $this->responseEncryptionService->encrypt(
             EncryptedResponseStatus::OK,
