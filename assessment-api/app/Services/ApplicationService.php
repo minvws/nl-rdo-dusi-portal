@@ -39,10 +39,15 @@ class ApplicationService
      * @param ApplicationsFilter $applicationsFilter
      * @return AnonymousResourceCollection
      */
-    public function getApplications(ApplicationsFilter $applicationsFilter): AnonymousResourceCollection
-    {
-        return ApplicationFilterResource::Collection($this->applicationRepository
-            ->filterApplications($applicationsFilter));
+    public function getApplications(
+        User $user,
+        bool $onlyAssignedToMe,
+        ApplicationsFilter $applicationsFilter
+    ): AnonymousResourceCollection {
+        $applications = $this->applicationRepository
+            ->filterApplications($user, $onlyAssignedToMe, $applicationsFilter);
+
+        return ApplicationFilterResource::Collection($applications);
     }
 
     public function getApplicationsCountMock(): ApplicationCountResource
@@ -74,14 +79,10 @@ class ApplicationService
      * @throws ValidationException
      * @throws ApplicationFlowException
      */
-    public function saveAssessment(Application $application, object $data, bool $submit, User $user): Application
+    public function saveAssessment(Application $application, object $data, bool $submit): Application
     {
         $stage = $application->currentApplicationStage;
-        if (
-            $stage === null ||
-            $stage->assessor_user_id !== $user->id ||
-            $stage->is_submitted
-        ) {
+        if ($stage === null || $stage->is_submitted) {
             throw new InvalidApplicationSaveException();
         }
 

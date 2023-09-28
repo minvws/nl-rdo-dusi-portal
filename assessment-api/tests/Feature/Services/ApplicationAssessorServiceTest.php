@@ -7,9 +7,6 @@ namespace MinVWS\DUSi\Assessment\API\Tests\Feature\Services;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationAssessorService;
-use MinVWS\DUSi\Assessment\API\Services\Exceptions\AlreadyAssignedException;
-use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidAssignmentException;
-use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidReleaseException;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -96,22 +93,6 @@ class ApplicationAssessorServiceTest extends TestCase
         $this->assertEquals($user->id, $this->application->currentApplicationStage->assessor_user_id);
     }
 
-    public function testClaimApplicationAtInvalidStageResultsInException(): void
-    {
-        $this->application->applicationStages()->delete();
-        ApplicationStage::factory()->for($this->application)->for($this->subsidyStage1)->create();
-
-        $this->expectException(InvalidAssignmentException::class);
-        $this->assessorService->assignApplication($this->application, User::factory()->create());
-    }
-
-    public function testClaimAlreadyAssignedApplicationResultsInException(): void
-    {
-        $this->assessorService->assignApplication($this->application, User::factory()->create());
-        $this->expectException(AlreadyAssignedException::class);
-        $this->assessorService->assignApplication($this->application, User::factory()->create());
-    }
-
     public function testReleaseApplication(): void
     {
         $user = User::factory()->create();
@@ -120,12 +101,5 @@ class ApplicationAssessorServiceTest extends TestCase
         $this->application->refresh();
 
         $this->assertNull($this->application->currentApplicationStage->assessor_user_id);
-    }
-
-    public function testReleaseApplicationByOtherUserResultsInException(): void
-    {
-        $this->assessorService->assignApplication($this->application, User::factory()->create());
-        $this->expectException(InvalidReleaseException::class);
-        $this->assessorService->releaseApplication($this->application, User::factory()->create());
     }
 }

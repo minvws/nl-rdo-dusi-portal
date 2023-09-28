@@ -73,6 +73,11 @@ class ApplicationStage extends Model
         return $query->orderBy('sequence_number');
     }
 
+    public function scopeAssessor(Builder $query, User $assessor): Builder
+    {
+        return $query->where('assessor_user_id', $assessor->id);
+    }
+
     protected static function newFactory(): ApplicationStageFactory
     {
         return ApplicationStageFactory::new();

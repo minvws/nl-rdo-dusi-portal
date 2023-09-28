@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
@@ -38,16 +39,37 @@ class ApplicationController extends Controller
      */
     public function filterApplications(ApplicationRequest $request): AnonymousResourceCollection
     {
-        return $this->applicationService->getApplications(ApplicationsFilter::fromArray($request->validated()));
+        $this->authorize('filterApplications', [Application::class]);
+
+        $user = $request->user();
+        assert($user !== null);
+
+        $filter = ApplicationsFilter::fromArray($request->validated());
+
+        return $this->applicationService->getApplications($user, false, $filter);
+    }
+
+    public function filterAssignedApplications(ApplicationRequest $request): AnonymousResourceCollection
+    {
+        $this->authorize('filterAssignedApplications', [Application::class]);
+
+        $user = $request->user();
+        assert($user !== null);
+
+        $filter = ApplicationsFilter::fromArray($request->validated());
+
+        return $this->applicationService->getApplications($user, true, $filter);
     }
 
     /**
      * Display the specified resource.
      * @throws \Exception
      */
-    public function show(Application $application): ApplicationSubsidyVersionResource
+    public function show(Application $application, Authenticatable $user): ApplicationSubsidyVersionResource
     {
-        return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+        $this->authorize('show', $application);
+        assert($user instanceof User);
+        return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $user);
     }
 
     /**
@@ -97,16 +119,20 @@ class ApplicationController extends Controller
 
     public function saveAssessment(
         Application $application,
-        User $user,
+        Authenticatable $user,
         Request $request
     ): ApplicationSubsidyVersionResource {
+        $this->authorize('save', $application);
+
         $submittedData = $request->json()->all();
         $data = (object)($submittedData['data'] ?? []);
         $submit = (bool)($submittedData['submit'] ?? false);
 
+        assert($user instanceof User);
+
         try {
-            $application = $this->applicationService->saveAssessment($application, $data, $submit, $user);
-            return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+            $application = $this->applicationService->saveAssessment($application, $data, $submit);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $user);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
         }
