@@ -46,7 +46,7 @@ class ApplicationsFilter
         public ?DateTime $dateFinalReviewDeadlineFrom,
         public ?DateTime $dateFinalReviewDeadlineTo,
         public ?ApplicationStatus $status,
-        public ?string $subsidy
+        public ?string $subsidy,
     ) {
     }
 
