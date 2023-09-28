@@ -72,8 +72,8 @@ class ApplicationControllerTest extends TestCase
 
         $response->assertJsonFragment([
             'application_title' => $this->application->application_title,
-            'subsidy' => $this->subsidy->title,
-            'status' => 'ToDo',
+            'subsidy' => $this->subsidy->code,
+            'status' => $this->application->status->value,
             'final_review_deadline' => $this->application->final_review_deadline,
             'updated_at' => $this->application->updated_at,
         ]);
