@@ -13,17 +13,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection as ArrayCollection;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\User\Database\Factories\UserFactory;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 
 /**
+ * @property string $id
  * @property string $name
  * @property string $email
  * @property string $password
  * @property string $organisation_id
  * @property DateTimeInterface $active_until
- * @property Collection<Role> $roles
+ * @property Collection<int, Role> $roles
  * @property Organisation $organisation
  * @method bool can($abilities, $arguments = [])
  */
@@ -121,12 +124,43 @@ class User extends Authenticatable
         return $this->hasRole(RoleEnum::UserAdmin);
     }
 
-    public function hasRole(RoleEnum $role, ?string $subsidyId = null): bool
+    /**
+     * @return Collection<int, Role>
+     */
+    private function getRolesForSubsidy(Subsidy|string $subsidyId): Collection
     {
-        return $this->roles()
-            ->where('role_name', $role->value)
-            ->wherePivot('subsidy_id', $subsidyId)
-            ->exists();
+        $subsidyId = $subsidyId instanceof Subsidy ? $subsidyId->id : $subsidyId;
+
+        return $this->roles
+            ->filter(fn (Role $userRole) => $userRole->subsidy_id === $subsidyId || $userRole->subsidy_id === null);
+    }
+
+    public function hasRoleToViewAllStagesForSubsidy(Subsidy|string $subsidyId): bool
+    {
+        return
+            $this->getRolesForSubsidy($subsidyId)
+                ->filter(fn (Role $userRole) => $userRole->view_all_stages)
+                ->isNotEmpty();
+    }
+
+    public function hasRoleForSubsidy(RoleEnum|array $role, Subsidy|string $subsidyId): bool
+    {
+        $roles = is_array($role) ? $role : [$role];
+
+        return
+            $this->getRolesForSubsidy($subsidyId)
+                ->filter(fn (Role $userRole) => in_array($userRole->name, $roles))
+                ->isNotEmpty();
+    }
+
+    public function hasRole(RoleEnum|array $role): bool
+    {
+        $roles = is_array($role) ? $role : [$role];
+
+        return
+            $this->roles
+                ->filter(fn (Role $userRole) => in_array($userRole->name, $roles))
+                ->isNotEmpty();
     }
 
     public function getActiveAttribute(): bool

@@ -8,9 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Database\Eloquent\Collection;
 use DateTime;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @property string $id
@@ -34,7 +36,20 @@ class ApplicationFilterResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $user = $request->user();
+        assert($user instanceof User);
+
+        $application = $this->resource;
+        assert($application instanceof Application);
+
+        $actions = [];
+        foreach (['show', 'claim', 'release'] as $action) {
+            if ($user->can($action, [$application])) {
+                $actions[] = $action;
+            }
+        }
+
+        $result = [
             'id' => $this->id,
             'reference' => $this->reference,
             'subsidy_page_url' => $this->subsidyVersion->subsidy_page_url,
@@ -44,6 +59,20 @@ class ApplicationFilterResource extends JsonResource
             'subsidy_stage_title' => $this->currentApplicationStage->subsidyStage->title ?? 'Afgerond',
             'final_review_deadline' => $this->final_review_deadline,
             'updated_at' => $this->updated_at,
+            'assessor' => null,
+            'actions' => $actions
         ];
+
+        if (
+            $user->can('viewAllStagesAndAssessor', [Application::class, $application->subsidyVersion->subsidy]) &&
+            isset($this->currentApplicationStage->assessorUser)
+        ) {
+            $result['assessor'] = [
+                'id' => $this->currentApplicationStage->assessorUser->id,
+                'name' => $this->currentApplicationStage->assessorUser->name
+            ];
+        }
+
+        return $result;
     }
 }

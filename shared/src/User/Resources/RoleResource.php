@@ -21,7 +21,7 @@ class RoleResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'name' => $this->name,
+            'name' => $this->name->value,
             'subsidyId' => $this->pivot->subsidy_id, // @phpstan-ignore-line
             'viewAllStages' => $this->view_all_stages,
         ];

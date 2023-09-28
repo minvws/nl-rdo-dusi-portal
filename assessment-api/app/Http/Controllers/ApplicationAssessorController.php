@@ -26,6 +26,7 @@ class ApplicationAssessorController extends Controller
 
     public function claim(Application $application, Authenticatable $user): ApplicationSubsidyVersionResource
     {
+        $this->authorize('claim', $application);
         try {
             assert($user instanceof User);
             $this->assessorService->assignApplication($application, $user);
@@ -37,11 +38,11 @@ class ApplicationAssessorController extends Controller
         }
     }
 
-    public function release(Application $application, Authenticatable $user): Response|ResponseFactory
+    public function release(Application $application): Response|ResponseFactory
     {
+        $this->authorize('release', $application);
         try {
-            assert($user instanceof User);
-            $this->assessorService->releaseApplication($application, $user);
+            $this->assessorService->releaseApplication($application);
             return response('', Response::HTTP_NO_CONTENT);
         } catch (InvalidReleaseException) {
             abort(Response::HTTP_FORBIDDEN);

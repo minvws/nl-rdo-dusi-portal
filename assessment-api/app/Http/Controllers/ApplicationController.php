@@ -38,7 +38,26 @@ class ApplicationController extends Controller
      */
     public function filterApplications(ApplicationRequest $request): AnonymousResourceCollection
     {
-        return $this->applicationService->getApplications(ApplicationsFilter::fromArray($request->validated()));
+        $this->authorize('filterApplications', [Application::class]);
+
+        $user = $request->user();
+        assert($user !== null);
+
+        $filter = ApplicationsFilter::fromArray($request->validated());
+
+        return $this->applicationService->getApplications($user, false, $filter);
+    }
+
+    public function filterAssignedApplications(ApplicationRequest $request): AnonymousResourceCollection
+    {
+        $this->authorize('filterAssignedApplications', [Application::class]);
+
+        $user = $request->user();
+        assert($user !== null);
+
+        $filter = ApplicationsFilter::fromArray($request->validated());
+
+        return $this->applicationService->getApplications($user, true, $filter);
     }
 
     /**
@@ -47,6 +66,8 @@ class ApplicationController extends Controller
      */
     public function show(Application $application): ApplicationSubsidyVersionResource
     {
+        $this->authorize('show', $application);
+
         return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
     }
 

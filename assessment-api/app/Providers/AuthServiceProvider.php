@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Assessment\API\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use MinVWS\DUSi\Assessment\API\Policies\ApplicationPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        \MinVWS\DUSi\Shared\Application\Models\Application::class => ApplicationPolicy::class,
     ];
 
     /**
