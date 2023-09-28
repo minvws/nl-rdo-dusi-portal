@@ -38,7 +38,8 @@
     },
     "autoload": {
         "psr-4": {
-            "MinVWS\\DUSi\\Application\\Backend\\": "app/"
+            "MinVWS\\DUSi\\Application\\Backend\\": "app/",
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {

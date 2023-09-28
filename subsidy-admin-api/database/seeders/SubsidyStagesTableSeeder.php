@@ -23,22 +23,21 @@ class SubsidyStagesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('subsidy_stages')->insert([
-            'id' => self::BTV_STAGE_1_UUID,
-            'subsidy_version_id' => SubsidyVersionsTableSeeder::BTV_VERSION_UUID,
-            'title' => 'Aanvraag',
-            'subject_role' => SubjectRole::Applicant->value,
-            'stage' => 1,
-        ]);
-        DB::table('subsidy_stages')->insert([
-            'id' => self::BTV_STAGE_2_UUID,
-            'subsidy_version_id' => SubsidyVersionsTableSeeder::BTV_VERSION_UUID,
-            'title' => 'Beoordeling',
-            'subject_role' => SubjectRole::Assessor->value,
-            'assessor_user_role' => Role::Assessor->value,
-            'stage' => 2,
-        ]);
-
+//        DB::table('subsidy_stages')->insert([
+//            'id' => self::BTV_STAGE_1_UUID,
+//            'subsidy_version_id' => SubsidyVersionsTableSeeder::BTV_VERSION_UUID,
+//            'title' => 'Aanvraag',
+//            'subject_role' => SubjectRole::Applicant->value,
+//            'stage' => 1,
+//        ]);
+//        DB::table('subsidy_stages')->insert([
+//            'id' => self::BTV_STAGE_2_UUID,
+//            'subsidy_version_id' => SubsidyVersionsTableSeeder::BTV_VERSION_UUID,
+//            'title' => 'Beoordeling',
+//            'subject_role' => SubjectRole::Assessor->value,
+//            'assessor_user_role' => Role::Assessor->value,
+//            'stage' => 2,
+//        ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_1_UUID,
             'subsidy_version_id' => SubsidyVersionsTableSeeder::PCZM_VERSION_UUID,
