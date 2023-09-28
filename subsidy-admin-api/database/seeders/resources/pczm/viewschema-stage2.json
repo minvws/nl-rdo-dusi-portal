@@ -211,6 +211,13 @@
             "elements": [
                 {
                     "type": "CustomControl",
+                    "scope": "#/properties/amount",
+                    "options": {
+                        "readonly": true
+                    }
+                },
+                {
+                    "type": "CustomControl",
                     "scope": "#/properties/firstAssessment",
                     "options": {
                         "readonly": true,

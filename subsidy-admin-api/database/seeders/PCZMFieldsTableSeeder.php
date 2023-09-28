@@ -394,7 +394,7 @@ class PCZMFieldsTableSeeder extends Seeder
             title: 'Controlevragen',
             options: [
                 "De zorgaanbieder waar de aanvrager werkzaam is geweest heeft de juiste SBI-code",
-                "De zorgaanbieder waar de aanvrager werkzaam is geweest heeft de juiste AGB-code",
+                "De zorgaanbieder waar de aanvrager werkzaam is geweest heeft de juiste AGB code of is een Jeugdhulp aanbieder die op de lijst staat",
                 "De zorgaanbieder voldoet aan de eisen binnen de regeling"
             ],
             isRequired: false
