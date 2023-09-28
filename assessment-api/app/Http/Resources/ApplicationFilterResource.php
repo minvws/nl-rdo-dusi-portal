@@ -37,11 +37,11 @@ class ApplicationFilterResource extends JsonResource
         return [
             'id' => $this->id,
             'reference' => $this->reference,
-            'external_subsidy_id' => $this->subsidyVersion->subsidy_page_url,
+            'subsidy_page_url' => $this->subsidyVersion->subsidy_page_url,
             'application_title' => $this->application_title,
             'subsidy' => $this->subsidyVersion->subsidy->code,
             'status' => $this->status->value,
-            'fase' => $this->currentApplicationStage->subsidyStage->title ?? 'Afgerond',
+            'subsidy_stage_title' => $this->currentApplicationStage->subsidyStage->title ?? 'Afgerond',
             'final_review_deadline' => $this->final_review_deadline,
             'updated_at' => $this->updated_at,
         ];
