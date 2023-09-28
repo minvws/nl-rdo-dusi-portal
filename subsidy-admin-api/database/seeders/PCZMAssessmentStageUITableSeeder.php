@@ -5,7 +5,7 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class PCZMUIAssessmentTableSeeder extends Seeder
+class PCZMAssessmentStageUITableSeeder extends Seeder
 {
     public const PCZM_V1_STAGE2_UI_UUID = '71F71916-C0ED-45BC-8186-1B4F5DFB69E8';
     public const PCZM_V1_STAGE3_UI_UUID = '44914BC7-9E4F-4B79-9498-01ADBE5C4CFE';

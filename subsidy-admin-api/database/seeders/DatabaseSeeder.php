@@ -18,8 +18,9 @@ class DatabaseSeeder extends Seeder
 //        $this->call(BTVUIFormTableSeeder::class);
 //        $this->call(BTVUIAssessmentTableSeeder::class);
 
-        $this->call(PCZMFieldsTableSeeder::class);
-        $this->call(PCZMUIFormTableSeeder::class);
-        $this->call(PCZMUIAssessmentTableSeeder::class);
+        $this->call(PCZMApplicationFieldsTableSeeder::class);
+        $this->call(PCZMApplicationStageUITableSeeder::class);
+        $this->call(PCZMAssessmentFieldsTableSeeder::class);
+        $this->call(PCZMAssessmentStageUITableSeeder::class);
     }
 }

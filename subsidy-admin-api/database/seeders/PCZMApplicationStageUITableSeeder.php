@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use stdClass;
 
-class PCZMUIFormTableSeeder extends Seeder
+class PCZMApplicationStageUITableSeeder extends Seeder
 {
     public const PCZM_STAGE1_V1_UUID = 'e6d5cd35-8c67-40c4-abc4-b1d6bf8afb97';
 
