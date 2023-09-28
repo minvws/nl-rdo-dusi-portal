@@ -39,6 +39,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use Queue;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -65,6 +66,9 @@ class ApplicationMutationServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Queue::fake();
+
         $this->loadCustomMigrations();
         $this->withoutFrontendEncryption();
 

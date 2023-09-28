@@ -12,6 +12,14 @@
     <env name="DB_APPLICATION_PASSWORD" value="postgres"/>
     <env name="DB_APPLICATION_PORT" value="54322"/>
     <env name="DB_APPLICATION_USERNAME" value="postgres"/>
+    <env name="SUREPAY_KEY" value="mock-key"/>
+    <env name="SUREPAY_SECRET" value="mock-secret"/>
+    <env name="SUREPAY_ENDPOINT" value="https://api.acc.surepay.io/"/>
+    <env name="SUREPAY_DEBUG" value="true"/>
+    <env name="SUREPAY_REQUEST_TIMEOUT_SECONDS" value="3"/>
+    <env name="SUREPAY_CONNECT_TIMEOUT_SECONDS" value="3"/>
+    <env name="SUREPAY_ENDPOINT_REQUEST_ACCESSTOKEN" value="oauth/client_credential/accesstoken"/>
+    <env name="SUREPAY_ENDPOINT_CHECK_ORGANISATIONS" value="account/check/organisations"/>
   </php>
   <source>
     <include>

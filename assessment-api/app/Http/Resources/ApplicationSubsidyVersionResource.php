@@ -8,6 +8,7 @@ use MinVWS\DUSi\Assessment\API\Models\Enums\UIType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
@@ -73,6 +74,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
                     'finalReviewDeadline' => [
                         'type' => 'string',
                         'format' => 'date'
+                    ],
+                    'surePayResult' => [
+                        'type' => 'string'
                     ]
                 ]
             ],
@@ -91,7 +95,8 @@ class ApplicationSubsidyVersionResource extends JsonResource
                             'fields' => [
                                 'Dossiernummer' => '{reference}',
                                 'Aangevraagd op' => '{submittedAt}',
-                                'Uiterste behandeldatum' => '{finalReviewDeadline}'
+                                'Uiterste behandeldatum' => '{finalReviewDeadline}',
+                                'SurePay controle resultaat' => '{surePayResult}'
                             ]
                         ]
                     ]
@@ -102,7 +107,13 @@ class ApplicationSubsidyVersionResource extends JsonResource
                 'status' => $this->application->status->name,
                 // TODO: submitted_at at the application level!
                 'submittedAt' => $this->application->created_at->format('Y-m-d'),
-                'finalReviewDeadline' => $this->application->final_review_deadline?->format('Y-m-d')
+                'finalReviewDeadline' => $this->application->final_review_deadline?->format('Y-m-d'),
+                'surePayResult' =>
+                    match ($this->application->applicationSurePayResult?->account_number_validation) {
+                        AccountNumberValidation::Valid => 'Geldig',
+                        AccountNumberValidation::Invalid => 'Niet geldig',
+                        default => 'Onbekend'
+                    }
             ]
         ];
     }

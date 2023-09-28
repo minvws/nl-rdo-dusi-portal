@@ -21,7 +21,7 @@ class HsmApiServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/../../../config/bridge.php' => config_path('bridge.php'),
+            __DIR__ . '/../../config/hsm_api.php' => config_path('hsm_api.php'),
         ]);
 
         if ($this->app->runningInConsole()) {

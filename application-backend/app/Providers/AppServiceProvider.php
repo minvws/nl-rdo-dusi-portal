@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Providers;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
@@ -21,25 +20,12 @@ use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
  */
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register(): void
     {
-    }
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    public function boot(): void
-    {
-        $this->app->when(IdentityService::class)->needs('$hashSecret')->giveConfig('identity.hash_secret');
-        $this->app->when(IdentityService::class)->needs('$hashAlgorithm')->giveConfig('identity.hash_algorithm');
+        $this->app->when(IdentityService::class)->needs('$hashSecret')
+            ->giveConfig('identity.hash_secret');
+        $this->app->when(IdentityService::class)->needs('$hashAlgorithm')
+            ->giveConfig('identity.hash_algorithm');
 
         $this->app->when(ApplicationFileRepository::class)
             ->needs(Filesystem::class)

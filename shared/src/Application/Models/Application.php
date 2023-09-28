@@ -33,6 +33,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read HasMany<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage|null $currentApplicationStage
  * @property-read ApplicationStage $lastApplicationStage
+ * @property-read ApplicationSurePayResult|null $applicationSurePayResult
  * @method static Builder<self> forIdentity(Identity $identity)
  * @method Builder<self> forIdentity(Identity $identity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -58,6 +59,11 @@ class Application extends Model
         'final_review_deadline',
         'locked_from'
     ];
+
+    public function applicationSurePayResult(): HasOne
+    {
+        return $this->hasOne(ApplicationSurePayResult::class, 'application_id', 'id');
+    }
 
     public function applicationHashes(): HasMany
     {
