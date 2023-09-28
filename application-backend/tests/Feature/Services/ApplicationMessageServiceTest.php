@@ -30,6 +30,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
+use Queue;
 
 /**
  * @group application
@@ -56,6 +57,8 @@ class ApplicationMessageServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Queue::fake();
 
         // Must be defined before services
         $this->filesystem = Storage::fake(Disk::APPLICATION_FILES);

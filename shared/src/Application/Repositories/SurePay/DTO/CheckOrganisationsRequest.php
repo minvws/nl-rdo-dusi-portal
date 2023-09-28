@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\Services\SurePay\DTO;
+namespace MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Shared\Application\Services\SurePay\Exceptions\SurePayServiceException;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
 
 class CheckOrganisationsRequest
 {
@@ -62,7 +62,7 @@ class CheckOrganisationsRequest
     /**
      * @param array $request
      * @return void
-     * @throws SurePayServiceException
+     * @throws SurePayRepositoryException
      */
     private function throwIfInvalid(array $request): void
     {
@@ -76,7 +76,7 @@ class CheckOrganisationsRequest
                 'accountId.value.regex' => 'The :attribute format is invalid. It should match the given pattern.',
             ])->validate();
         } catch (ValidationException $e) {
-            throw new SurePayServiceException('Request validation failed: ', 0, $e);
+            throw new SurePayRepositoryException('Request validation failed: ', 0, $e);
         }
     }
 }

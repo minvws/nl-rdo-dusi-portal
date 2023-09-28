@@ -16,6 +16,7 @@ use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
+use MinVWS\DUSi\Shared\Application\Jobs\CheckSurePayJob;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
@@ -199,6 +200,9 @@ readonly class ApplicationMutationService
 
         if ($body->submit) {
             $this->applicationFlowService->submitApplicationStage($applicationStage);
+
+            // TODO: this should be generalized
+            DB::afterCommit(fn () => CheckSurePayJob::dispatch($application->id));
         }
 
         return $this->applicationResponse(

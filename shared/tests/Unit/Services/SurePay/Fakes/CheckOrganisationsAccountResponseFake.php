@@ -13,13 +13,15 @@ class CheckOrganisationsAccountResponseFake
         $faker = Factory::create();
 
         return [
-            'accountNumberValidation' => 'VALID',
-            'paymentPreValidation' => 'PASS',
-            'status' => 'ACTIVE',
-            'accountType' => 'NP',
-            'jointAccount' => $faker->boolean,
-            'numberOfAccountHolders' => $faker->numberBetween(1, 5),
-            'countryCode' => $faker->countryCode
+            'account' => [
+                'accountNumberValidation' => 'VALID',
+                'paymentPreValidation' => 'PASS',
+                'status' => 'ACTIVE',
+                'accountType' => 'NP',
+                'jointAccount' => $faker->boolean,
+                'numberOfAccountHolders' => $faker->numberBetween(1, 5),
+                'countryCode' => $faker->countryCode
+            ]
         ];
     }
 }

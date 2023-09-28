@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\Services\SurePay\DTO;
+namespace MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -30,18 +30,18 @@ class AccesstokenResponse
     {
         $this->throwIfInvalid($response);
 
-        $this->refreshTokenExpiresIn = $response['refresh_token_expires_in'];
+        $this->refreshTokenExpiresIn = (int)$response['refresh_token_expires_in'];
         $this->apiProductList = $response['api_product_list'];
         $this->apiProductListJson = $response['api_product_list_json'];
         $this->organizationName = $response['organization_name'];
         $this->tokenType = $response['token_type'];
-        $this->issuedAt = $response['issued_at'];
+        $this->issuedAt = (int)$response['issued_at'];
         $this->clientId = $response['client_id'];
         $this->accessToken = $response['access_token'];
         $this->applicationName = $response['application_name'];
         $this->scope = $response['scope'];
-        $this->expiresIn = $response['expires_in'];
-        $this->refreshCount = $response['refresh_count'];
+        $this->expiresIn = (int)$response['expires_in'];
+        $this->refreshCount = (int)$response['refresh_count'];
         $this->status = $response['status'];
     }
 

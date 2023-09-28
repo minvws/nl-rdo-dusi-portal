@@ -12,8 +12,9 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Shared\Application\Services\SurePay\Exceptions\SurePayServiceException;
-use MinVWS\DUSi\Shared\Application\Services\SurePay\SurePayService;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountStatus;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayRepository;
 use MinVWS\DUSi\Shared\Tests\TestCase;
 use MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay\Fakes\AccesstokenResponseFake;
 use MinVWS\DUSi\Shared\Tests\Unit\Services\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
@@ -24,15 +25,15 @@ use function PHPUnit\Framework\assertEquals;
 /**
  * @group sure-pay
  */
-class SurePayServiceTest extends TestCase
+class SurePayRepositoryTest extends TestCase
 {
     private array $container = [];
 
     /**
      * @param array $mockResponses [new Response(200), new Response(400)]
-     * @return SurePayService
+     * @return SurePayRepository
      */
-    public function initSUT(array $mockResponses = [new Response()]): SurePayService
+    public function initSUT(array $mockResponses = [new Response()]): SurePayRepository
     {
         $this->container = [];
         $history = Middleware::history($this->container);
@@ -42,7 +43,7 @@ class SurePayServiceTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $handlerStack->push($history);
 
-        return new SurePayService(
+        return new SurePayRepository(
             client: new Client([
                 'base_uri' => '',
                 'handler' => $handlerStack
@@ -74,7 +75,7 @@ class SurePayServiceTest extends TestCase
     public function testConstructorThrowsSurePayServiceExceptionForIncorrectConfig()
     {
         // Arrange & Assert
-        $this->expectException(SurePayServiceException::class);
+        $this->expectException(SurePayRepositoryException::class);
 
         Config::set('surepay_api', [
             'key' => null,
@@ -98,7 +99,7 @@ class SurePayServiceTest extends TestCase
     public function testCheckOrganisationsAccountThrowsExceptionOnFetchAccessTokenFailure()
     {
         // Arrange & Assert
-        $this->expectException(SurePayServiceException::class);
+        $this->expectException(SurePayRepositoryException::class);
 
         $body401 = '{"ErrorCode": "invalid_request", "Error": "Invalid client id : abc. ClientId is Invalid"}';
         $sut = $this->initSUT([new Response(status: 401, body: $body401)]);
@@ -114,7 +115,7 @@ class SurePayServiceTest extends TestCase
     public function testCheckOrganisationsAccountFailsForInvalidInput()
     {
         // Arrange & Assert
-        $this->expectException(SurePayServiceException::class);
+        $this->expectException(SurePayRepositoryException::class);
 
         $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(AccesstokenResponseFake::build()));
         $checkOrganisationsAccountResponse = new Response(status: 500);
@@ -148,7 +149,7 @@ class SurePayServiceTest extends TestCase
         // Act
         $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban);
 
-        assertEquals($response->status, 'ACTIVE');
+        assertEquals($response->status, AccountStatus::Active);
     }
 
     /**
@@ -167,12 +168,12 @@ class SurePayServiceTest extends TestCase
         $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban('NL'));
         $twoCallsMessage = 'Expect 2 calls, 1 for fetching the token second for checkOrganisationsAccount.';
         assertCount(2, $this->container, $twoCallsMessage);
-        assertEquals($response->status, 'ACTIVE');
+        assertEquals($response->status, AccountStatus::Active);
 
         $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban('NL'));
         $threeCallsMessage = 'Expect 3 calls, 1 for fetching the token and 2 for checkOrganisationsAccount.
         In the second call token should be reused';
         assertCount(3, $this->container, $threeCallsMessage);
-        assertEquals($response->status, 'ACTIVE');
+        assertEquals($response->status, AccountStatus::Active);
     }
 }

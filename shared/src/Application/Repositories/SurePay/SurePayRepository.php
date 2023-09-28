@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\Services\SurePay;
+namespace MinVWS\DUSi\Shared\Application\Repositories\SurePay;
 
 use Carbon\Carbon;
 use GuzzleHttp\ClientInterface;
@@ -11,10 +11,11 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Shared\Application\Services\SurePay\DTO\AccesstokenResponse;
-use MinVWS\DUSi\Shared\Application\Services\SurePay\DTO\CheckOrganisationsAccountResponse;
-use MinVWS\DUSi\Shared\Application\Services\SurePay\DTO\CheckOrganisationsRequest;
-use MinVWS\DUSi\Shared\Application\Services\SurePay\Exceptions\SurePayServiceException;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccesstokenResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccountInfo;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsRequest;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
 
 /**
  * ===========================================================================
@@ -24,9 +25,9 @@ use MinVWS\DUSi\Shared\Application\Services\SurePay\Exceptions\SurePayServiceExc
  * Please note that the sandbox environment is only available from 07:00-20:00 on working days.
  * Outside of these hours you’d receive a timeout error. Also, be aware that the IP
  * needs to be whitelisted before you can initiate an API call.
- *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SurePayService
+class SurePayRepository
 {
     private mixed $config;
     private array $baseRequestOptions;
@@ -93,7 +94,7 @@ class SurePayService
 
             return AccesstokenResponse::fromJson($response->getBody()->getContents());
         } catch (GuzzleException $e) {
-            throw new SurePayServiceException('Unable to get accesstoken', 0, $e);
+            throw new SurePayRepositoryException('Unable to get accesstoken', 0, $e);
         }
     }
 
@@ -101,14 +102,13 @@ class SurePayService
      * @param string $accountOwner
      * @param string $accountNumber
      * @param string $accountType
-     * @return CheckOrganisationsAccountResponse
      * @throws ValidationException
      */
     public function checkOrganisationsAccount(
         string $accountOwner,
         string $accountNumber,
         string $accountType = 'IBAN'
-    ): CheckOrganisationsAccountResponse {
+    ): AccountInfo {
         try {
             $response = $this->client->request(
                 'POST',
@@ -128,15 +128,15 @@ class SurePayService
                 )
             );
 
-            return CheckOrganisationsAccountResponse::fromJson($response->getBody()->getContents());
+            return CheckOrganisationsAccountResponse::fromJson($response->getBody()->getContents())->account;
         } catch (GuzzleException $e) {
-            throw new SurePayServiceException('Unable to get accesstoken', 0, $e);
+            throw new SurePayRepositoryException('Unable to get accesstoken', 0, $e);
         }
     }
 
     /**
      * @return void
-     * @throws SurePayServiceException
+     * @throws SurePayRepositoryException
      */
     private function validateConfigOrThrow(): void
     {
@@ -152,10 +152,9 @@ class SurePayService
                     'endpoint_check_organisations' => 'required|doesnt_start_with:/,http',
                 ])->validate();
         } catch (ValidationException $e) {
-            throw new SurePayServiceException(
-                'SurePay API config invalid it must be set in the environment config.',
-                0,
-                $e
+            throw new SurePayRepositoryException(
+                'SurePay API config invalid: ' . $e->getMessage(),
+                previous: $e
             );
         }
     }
@@ -172,7 +171,7 @@ class SurePayService
         }
 
         if (!isset($this->accessToken->accessToken)) {
-            throw new SurePayServiceException('Accesstoken not set');
+            throw new SurePayRepositoryException('Accesstoken not set');
         }
 
         return $this->accessToken->accessToken;
