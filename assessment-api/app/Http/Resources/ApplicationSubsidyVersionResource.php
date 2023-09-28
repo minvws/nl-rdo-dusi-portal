@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  *  @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -19,6 +20,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
 {
     public function __construct(
         private readonly Application $application,
+        private readonly User $user,
         private readonly ApplicationDataService $applicationDataService,
         private readonly SubsidyStageDataSchemaBuilder $dataSchemaBuilder
     ) {
@@ -122,7 +124,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
         $subsidyStage = $applicationStage->subsidyStage;
         $data = $applicationStageData->data;
 
-        if ($applicationStage->is_current) {
+        if ($applicationStage->is_current && $applicationStage->assessor_user_id === $this->user->id) {
             $uiType = UIType::Input;
             $uiSchema = $subsidyStage->publishedUI?->input_ui;
         } else {

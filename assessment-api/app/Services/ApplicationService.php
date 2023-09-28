@@ -79,14 +79,10 @@ class ApplicationService
      * @throws ValidationException
      * @throws ApplicationFlowException
      */
-    public function saveAssessment(Application $application, object $data, bool $submit, User $user): Application
+    public function saveAssessment(Application $application, object $data, bool $submit): Application
     {
         $stage = $application->currentApplicationStage;
-        if (
-            $stage === null ||
-            $stage->assessor_user_id !== $user->id ||
-            $stage->is_submitted
-        ) {
+        if ($stage === null || $stage->is_submitted) {
             throw new InvalidApplicationSaveException();
         }
 

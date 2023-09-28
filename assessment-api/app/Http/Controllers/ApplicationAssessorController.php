@@ -30,7 +30,7 @@ class ApplicationAssessorController extends Controller
         try {
             assert($user instanceof User);
             $this->assessorService->assignApplication($application, $user);
-            return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $user);
         } catch (InvalidAssignmentException) {
             abort(Response::HTTP_BAD_REQUEST);
         } catch (AlreadyAssignedException) {

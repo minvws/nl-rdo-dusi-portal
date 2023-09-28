@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
@@ -64,11 +65,11 @@ class ApplicationController extends Controller
      * Display the specified resource.
      * @throws \Exception
      */
-    public function show(Application $application): ApplicationSubsidyVersionResource
+    public function show(Application $application, Authenticatable $user): ApplicationSubsidyVersionResource
     {
         $this->authorize('show', $application);
-
-        return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+        assert($user instanceof User);
+        return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $user);
     }
 
     /**
@@ -118,16 +119,20 @@ class ApplicationController extends Controller
 
     public function saveAssessment(
         Application $application,
-        User $user,
+        Authenticatable $user,
         Request $request
     ): ApplicationSubsidyVersionResource {
+        $this->authorize('save', $application);
+
         $submittedData = $request->json()->all();
         $data = (object)($submittedData['data'] ?? []);
         $submit = (bool)($submittedData['submit'] ?? false);
 
+        assert($user instanceof User);
+
         try {
-            $application = $this->applicationService->saveAssessment($application, $data, $submit, $user);
-            return $this->applicationSubsidyService->getApplicationSubsidyResource($application);
+            $application = $this->applicationService->saveAssessment($application, $data, $submit);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $user);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
         }
