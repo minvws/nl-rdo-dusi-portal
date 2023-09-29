@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Shared\Application\Console\Commands\CheckSurePay;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
+use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use RuntimeException;
 
 class SurePayServiceProvider extends ServiceProvider
@@ -30,29 +31,37 @@ class SurePayServiceProvider extends ServiceProvider
             'surepay_api'
         );
 
-        $this->app->singleton(SurePayClient::class, function () {
-            if (empty(config('surepay_api.endpoint'))) {
-                throw new RuntimeException(
-                    'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
-                );
-            }
+        $this->app->when(SurePayService::class)
+            ->needs(SurePayClient::class)
+            ->give(fn () => $this->buildSurePayClient());
+    }
 
-            $options = [
-                'base_uri' => config('surepay_api.endpoint'),
-                'verify' => config('surepay_api.verify_ssl', false),
-                'proxy' => []
-            ];
+    private function buildSurePayClient(): ?SurePayClient
+    {
+        if (!config('surepay_api.enabled')) {
+            return null;
+        }
 
-            if (!empty(config('surepay_api.proxy.http'))) {
-                $options['proxy']['http'] = config('surepay_api.proxy.http');
-            }
+        if (empty(config('surepay_api.endpoint'))) {
+            throw new RuntimeException(
+                'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
+            );
+        }
 
-            if (!empty(config('surepay_api.proxy.https'))) {
-                $options['proxy']['https'] = config('surepay_api.proxy.https');
-            }
+        $options = [
+            'base_uri' => config('surepay_api.endpoint'),
+            'verify' => config('surepay_api.verify_ssl', false),
+            'proxy' => []
+        ];
 
+        if (!empty(config('surepay_api.proxy.http'))) {
+            $options['proxy']['http'] = config('surepay_api.proxy.http');
+        }
 
-            return new SurePayClient(client: new Client($options));
-        });
+        if (!empty(config('surepay_api.proxy.https'))) {
+            $options['proxy']['https'] = config('surepay_api.proxy.https');
+        }
+
+        return new SurePayClient(client: new Client($options));
     }
 }

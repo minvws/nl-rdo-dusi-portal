@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'enabled' => env('SUREPAY_ENABLED', true),
     'key' => env('SUREPAY_KEY'),
     'secret' => env('SUREPAY_SECRET'),
     'endpoint' => env('SUREPAY_ENDPOINT'),
