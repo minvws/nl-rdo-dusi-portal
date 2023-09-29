@@ -7,7 +7,6 @@ namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\Codable\JSON\JSONEncoder;
-use MinVWS\DUSi\Assessment\API\Http\Middleware\Authenticate;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -25,6 +24,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Test\MocksEncryption;
+use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
@@ -50,8 +50,6 @@ class ApplicationControllerSubmitTest extends TestCase
     {
         parent::setUp();
 
-        //ToDo: Disabled authentication temporarily
-        $this->withoutMiddleware(Authenticate::class);
         $this->setupMocksEncryption();
 
         $this->flowService = $this->app->get(ApplicationFlowService::class);
@@ -63,11 +61,13 @@ class ApplicationControllerSubmitTest extends TestCase
             ->create(['status' => VersionStatus::Published]);
         $this->subsidyStage1 = SubsidyStage::factory()->for($this->subsidyVersion)->create([
             'stage' => 1,
-            'subject_role' => SubjectRole::Applicant
+            'subject_role' => SubjectRole::Applicant,
+            'assessor_user_role' => RoleEnum::Assessor,
         ]);
         $this->subsidyStage2 = SubsidyStage::factory()->for($this->subsidyVersion)->create([
             'stage' => 2,
-            'subject_role' => SubjectRole::Assessor
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => RoleEnum::Assessor,
         ]);
         $this->statusField = Field::factory()->for($this->subsidyStage2)->create([
             'code' => 'firstAssessment',
@@ -143,7 +143,6 @@ class ApplicationControllerSubmitTest extends TestCase
 
     public function testShowAssessment(): void
     {
-        self::markTestSkipped('Will be fixed later');
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
 
         [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
@@ -154,7 +153,12 @@ class ApplicationControllerSubmitTest extends TestCase
 
         $this->flowService->submitApplicationStage($applicationStage1);
 
-        $response = $this->getJson(sprintf('/api/applications/%s', $application->id));
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::ImplementationCoordinator);
+
+        $response = $this
+            ->be($user)
+            ->getJson(sprintf('/api/applications/%s', $application->id));
 
         $response->assertOk();
     }

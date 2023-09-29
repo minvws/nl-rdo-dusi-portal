@@ -12,6 +12,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\Organisation;
 use MinVWS\DUSi\Shared\User\Models\User;
 use PragmaRX\Google2FA\Google2FA;
@@ -64,7 +65,6 @@ class TwoFactorTest extends TestCase
 
     public function testTwoFactor()
     {
-        self::markTestSkipped('Will be fixed later');
         $response = $this->json('POST', '/api/login', [
             'email' => 'user@example.com',
             'password' => 'password',
@@ -80,6 +80,9 @@ class TwoFactorTest extends TestCase
             json_decode($response->getContent(), true)
         );
 
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor);
+
         $response = $this->json('GET', '/api/applications');
         $data = json_decode($response->getContent(), true);
         $this->assertEquals(401, $response->getStatusCode());
@@ -87,7 +90,7 @@ class TwoFactorTest extends TestCase
 
         $this->withoutMiddleware(); // disable authentication and test again
 
-        $response = $this->json('GET', '/api/applications');
+        $response = $this->be($user)->json('GET', '/api/applications');
         $data = json_decode($response->getContent(), true);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($this->application->id, $data['data'][0]['id']);

@@ -19,6 +19,9 @@ class TestCase extends BaseTestCase
 
     protected function loadCustomMigrations(): void
     {
+        Artisan::call('db:wipe', ['--database' => 'pgsql_application']);
+        Artisan::call('db:wipe', ['--database' => 'pgsql_user']);
+
         Artisan::call('migrate:fresh');
     }
 
@@ -26,7 +29,8 @@ class TestCase extends BaseTestCase
     public function getPackageProviders($app): array
     {
         return [
-            'MinVWS\DUSi\Shared\Providers\DatabaseServiceProvider'
+            'MinVWS\DUSi\Shared\Providers\DatabaseServiceProvider',
+            'MinVWS\DUSi\Shared\User\DatabaseServiceProvider',
         ];
     }
 
@@ -41,6 +45,20 @@ class TestCase extends BaseTestCase
                 'database' => env('DB_APPLICATION_DATABASE'),
                 'username' => env('DB_APPLICATION_USERNAME'),
                 'password' => env('DB_APPLICATION_PASSWORD'),
+                'charset' => 'utf8',
+                'prefix' => '',
+                'prefix_indexes' => true,
+                'search_path' => 'public',
+                'sslmode' => 'prefer',
+            ]);
+
+            $config->set('database.connections.pgsql_user', [
+                'driver' => 'pgsql',
+                'host' => env('DB_USER_HOST'),
+                'port' => env('DB_USER_PORT'),
+                'database' => env('DB_USER_DATABASE'),
+                'username' => env('DB_USER_USERNAME'),
+                'password' => env('DB_USER_PASSWORD'),
                 'charset' => 'utf8',
                 'prefix' => '',
                 'prefix_indexes' => true,

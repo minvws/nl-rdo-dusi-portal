@@ -18,7 +18,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Test\MocksEncryption;
-use MinVWS\DUSi\Shared\User\Enums\Role;
+use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
@@ -44,15 +44,18 @@ class ApplicationAssessorControllerTest extends TestCase
         $subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create(['status' => VersionStatus::Published]);
         $this->subsidyStage1 = SubsidyStage::factory()->for($subsidyVersion)->create([
             'stage' => 1,
-            'subject_role' => SubjectRole::Applicant
+            'subject_role' => SubjectRole::Applicant,
+            'assessor_user_role' => RoleEnum::Assessor,
         ]);
         $subsidyStage2 = SubsidyStage::factory()->for($subsidyVersion)->create([
             'stage' => 2,
-            'subject_role' => SubjectRole::Assessor
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => RoleEnum::Assessor,
         ]);
         $subsidyStage3 = SubsidyStage::factory()->for($subsidyVersion)->create([
             'stage' => 3,
-            'subject_role' => SubjectRole::Assessor
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => RoleEnum::ImplementationCoordinator,
         ]);
         SubsidyStageTransition::factory()
             ->for($this->subsidyStage1, 'currentSubsidyStage')
@@ -82,15 +85,15 @@ class ApplicationAssessorControllerTest extends TestCase
 
     public function testClaimApplication(): void
     {
-        self::markTestSkipped('Will be fixed later');
         $this->assertNotNull($this->application->currentApplicationStage);
         $this->assertNull($this->application->currentApplicationStage->assessor_user_id);
 
         $user = User::factory()->create();
-        $user->attachRole(Role::Assessor);
-        $response =
-            $this->be($user)
-                ->json('PUT', '/api/applications/' . $this->application->id . '/assessor');
+        $user->attachRole(RoleEnum::Assessor);
+        $response = $this
+            ->be($user)
+            ->json('PUT', '/api/applications/' . $this->application->id . '/assessor')
+        ;
         $response->assertStatus(200);
 
         $this->application->refresh();
@@ -99,20 +102,19 @@ class ApplicationAssessorControllerTest extends TestCase
 
     public function testClaimApplicationTwiceResultsInAnError(): void
     {
-        self::markTestSkipped('Will be fixed later');
         $this->assertNotNull($this->application->currentApplicationStage);
         $this->assertNull($this->application->currentApplicationStage->assessor_user_id);
 
         $user = User::factory()->create();
-        $user->attachRole(Role::Assessor);
-        $response =
-            $this->be($user)
-                ->json('PUT', '/api/applications/' . $this->application->id . '/assessor');
+        $user->attachRole(RoleEnum::Assessor);
+        $response = $this
+            ->be($user)
+            ->json('PUT', '/api/applications/' . $this->application->id . '/assessor');
         $response->assertStatus(200);
 
-        $response =
-            $this->be($user)
-                ->json('PUT', '/api/applications/' . $this->application->id . '/assessor');
+        $response = $this
+            ->be($user)
+            ->json('PUT', '/api/applications/' . $this->application->id . '/assessor');
         $response->assertStatus(403);
     }
 
@@ -121,12 +123,14 @@ class ApplicationAssessorControllerTest extends TestCase
         $this->assertNotNull($this->application->currentApplicationStage);
 
         $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor);
+
         $this->application->currentApplicationStage->assessorUser()->associate($user);
         $this->application->currentApplicationStage->save();
 
-        $response =
-            $this->be($user)
-                ->json('DELETE', '/api/applications/' . $this->application->id . '/assessor');
+        $response = $this
+            ->be($user)
+            ->json('DELETE', '/api/applications/' . $this->application->id . '/assessor');
         $response->assertStatus(204);
 
         $this->application->refresh();
