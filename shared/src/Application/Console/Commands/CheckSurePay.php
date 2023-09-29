@@ -34,7 +34,7 @@ class CheckSurePay extends Command
 
 
         if (!$surePayService->shouldCheckSurePayForApplication($application)) {
-            $this->output->error('SurePay not supported for the subsidy of the provided application!');
+            $this->output->error('SurePay disabled or not supported for the subsidy of the provided application!');
             return self::INVALID;
         }
 

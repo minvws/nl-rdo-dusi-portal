@@ -32,32 +32,36 @@ class SurePayServiceProvider extends ServiceProvider
         );
 
         $this->app->when(SurePayService::class)
-            ->needs('$enabled')
-            ->giveConfig('surepay_api.enabled');
+            ->needs(SurePayClient::class)
+            ->give(fn () => $this->buildSurePayClient());
+    }
 
-        $this->app->singleton(SurePayClient::class, function () {
-            if (empty(config('surepay_api.endpoint'))) {
-                throw new RuntimeException(
-                    'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
-                );
-            }
+    private function buildSurePayClient(): ?SurePayClient
+    {
+        if (!config('surepay_api.enabled')) {
+            return null;
+        }
 
-            $options = [
-                'base_uri' => config('surepay_api.endpoint'),
-                'verify' => config('surepay_api.verify_ssl', false),
-                'proxy' => []
-            ];
+        if (empty(config('surepay_api.endpoint'))) {
+            throw new RuntimeException(
+                'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
+            );
+        }
 
-            if (!empty(config('surepay_api.proxy.http'))) {
-                $options['proxy']['http'] = config('surepay_api.proxy.http');
-            }
+        $options = [
+            'base_uri' => config('surepay_api.endpoint'),
+            'verify' => config('surepay_api.verify_ssl', false),
+            'proxy' => []
+        ];
 
-            if (!empty(config('surepay_api.proxy.https'))) {
-                $options['proxy']['https'] = config('surepay_api.proxy.https');
-            }
+        if (!empty(config('surepay_api.proxy.http'))) {
+            $options['proxy']['http'] = config('surepay_api.proxy.http');
+        }
 
+        if (!empty(config('surepay_api.proxy.https'))) {
+            $options['proxy']['https'] = config('surepay_api.proxy.https');
+        }
 
-            return new SurePayClient(client: new Client($options));
-        });
+        return new SurePayClient(client: new Client($options));
     }
 }

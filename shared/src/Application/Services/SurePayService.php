@@ -15,22 +15,21 @@ class SurePayService
     private const SUBSIDY_PZCM_ID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
 
     public function __construct(
-        private readonly SurePayClient $surePayClient,
+        private readonly ?SurePayClient $surePayClient,
         private readonly ApplicationDataService $applicationDataService,
-        private readonly ApplicationRepository $applicationRepository,
-        private bool $enabled
+        private readonly ApplicationRepository $applicationRepository
     ) {
     }
 
     public function shouldCheckSurePayForApplication(Application $application): bool
     {
         // temporary until we have generalized this
-        return $this->enabled && $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
+        return $this->surePayClient !== null && $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
     }
 
     public function checkSurePayForApplication(Application $application): ?ApplicationSurePayResult
     {
-        if (!$this->shouldCheckSurePayForApplication($application)) {
+        if (!$this->shouldCheckSurePayForApplication($application) || $this->surePayClient === null) {
             return null;
         }
 
