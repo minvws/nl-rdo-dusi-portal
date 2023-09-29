@@ -91,7 +91,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
                     )
                 ])
             ),
-            'send_message' => true
+            'send_message' => true,
+            'clone_data' => true
         ]);
 
         // Bij een beoordeeloptie 'Eens met de eerste beoordeling', wordt de aanvraag als volgt doorgezet:
