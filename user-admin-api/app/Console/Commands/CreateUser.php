@@ -18,7 +18,7 @@ class CreateUser extends Command
      *
      * @var string
      */
-    protected $signature = 'user:create {email} {name} {password} {role?}';
+    protected $signature = 'user:create {email} {name} {password} {role?} {--secret=}';
 
     /**
      * The console command description.
@@ -64,8 +64,10 @@ class CreateUser extends Command
             "organisation_id" => Organisation::query()->first()?->id,
         ]);
 
+        $secret = $this->option('secret') ?: $this->authProvider->generateSecretKey();
+
         $user->forceFill([
-            'two_factor_secret' => encrypt($this->authProvider->generateSecretKey()),
+            'two_factor_secret' => encrypt($secret),
             'two_factor_recovery_codes' => null
         ]);
 

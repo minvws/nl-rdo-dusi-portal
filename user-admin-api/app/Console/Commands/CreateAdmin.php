@@ -19,7 +19,7 @@ class CreateAdmin extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $signature = 'admin:create {email} {name} {password}';
+    protected $signature = 'admin:create {email} {name} {password} {--secret=}';
 
     /**
      * The console command description.
@@ -54,8 +54,10 @@ class CreateAdmin extends Command implements PromptsForMissingInput
             "organisation_id" => Organisation::query()->first()?->id,
         ]);
 
+        $secret = $this->option('secret') ?: $this->authProvider->generateSecretKey();
+
         $user->forceFill([
-            'two_factor_secret' => encrypt($this->authProvider->generateSecretKey()),
+            'two_factor_secret' => encrypt($secret),
             'two_factor_recovery_codes' => null,
         ]);
         $user->save();

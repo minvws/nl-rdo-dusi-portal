@@ -84,10 +84,10 @@ echo "Creating user:"
 cd "$BASEDIR/user-admin-api"
 
 vendor/bin/sail artisan organisation:create "DUS-I"
-vendor/bin/sail artisan admin:create user@example.com user password
-vendor/bin/sail artisan user:create assessor@example.com assessor password assessor
-vendor/bin/sail artisan user:create implementationCoordinator@example.com implementationCoordinator password implementationCoordinator
-vendor/bin/sail artisan user:create internalAuditor@example.com internalAuditor password internalAuditor
+vendor/bin/sail artisan admin:create user@example.com user password --secret=USERUSERUSERUSER
+vendor/bin/sail artisan user:create assessor@example.com assessor password assessor --secret=ASSESSORASSESSOR
+vendor/bin/sail artisan user:create implementationCoordinator@example.com implementationCoordinator password implementationCoordinator --secret=IMPLEMENTATIONCO
+vendor/bin/sail artisan user:create internalAuditor@example.com internalAuditor password internalAuditor --secret=INTERNALAUDITORI
 
 echo "User for user admin: user@example.com password"
 echo "Assessor user for assessment portal: assessor@example.com password"
