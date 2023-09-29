@@ -14,7 +14,7 @@ class ApplicationFileService
 {
     public function __construct(
         protected ApplicationFileManager $applicationFileManager,
-        protected ApplicationStageEncryptionService $applicationStageEncryptionService
+        protected ApplicationStageEncryptionService $applicationStageEncryptionService,
     ) {
     }
 

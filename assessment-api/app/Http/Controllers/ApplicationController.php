@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use MinVWS\DUSi\Assessment\API\Events\Logging\ViewApplicationEvent;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
@@ -20,6 +21,7 @@ use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveExcepti
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\User\Models\User;
+use MinVWS\Logging\Laravel\LogService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -28,7 +30,8 @@ class ApplicationController extends Controller
 {
     public function __construct(
         private ApplicationSubsidyService $applicationSubsidyService,
-        private ApplicationService $applicationService
+        private ApplicationService $applicationService,
+        private LogService $logger,
     ) {
     }
 
@@ -69,6 +72,11 @@ class ApplicationController extends Controller
     {
         $this->authorize('show', $application);
         assert($user instanceof User);
+        $this->logger->log((new ViewApplicationEvent())
+            ->withData([
+                'applicationId' => $application->id,
+                'userId' => $user->id,
+            ]));
         return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $user);
     }
 
