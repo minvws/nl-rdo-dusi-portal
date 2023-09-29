@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Shared\Application\Console\Commands\CheckSurePay;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
+use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use RuntimeException;
 
 class SurePayServiceProvider extends ServiceProvider
@@ -29,6 +30,10 @@ class SurePayServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/surepay_api.php',
             'surepay_api'
         );
+
+        $this->app->when(SurePayService::class)
+            ->needs('$enabled')
+            ->giveConfig('surepay_api.enabled');
 
         $this->app->singleton(SurePayClient::class, function () {
             if (empty(config('surepay_api.endpoint'))) {

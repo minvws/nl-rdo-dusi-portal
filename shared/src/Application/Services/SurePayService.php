@@ -17,14 +17,15 @@ class SurePayService
     public function __construct(
         private readonly SurePayClient $surePayClient,
         private readonly ApplicationDataService $applicationDataService,
-        private readonly ApplicationRepository $applicationRepository
+        private readonly ApplicationRepository $applicationRepository,
+        private bool $enabled
     ) {
     }
 
     public function shouldCheckSurePayForApplication(Application $application): bool
     {
         // temporary until we have generalized this
-        return $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
+        return $this->enabled && $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
     }
 
     public function checkSurePayForApplication(Application $application): ?ApplicationSurePayResult
