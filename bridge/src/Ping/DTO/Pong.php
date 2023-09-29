@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:disable PSR1.Files.SideEffects
+
 
 declare(strict_types=1);
 
@@ -6,32 +7,18 @@ namespace MinVWS\DUSi\Shared\Bridge\Ping\DTO;
 
 use DateTimeImmutable;
 use MinVWS\Codable\Coding\Codable;
-use MinVWS\Codable\Decoding\Decodable;
-use MinVWS\Codable\Decoding\DecodingContainer;
-use MinVWS\Codable\Encoding\EncodingContainer;
+use MinVWS\Codable\Coding\CodableSupport;
+use MinVWS\Codable\Reflection\Attributes\CodableDateTime;
 
-class Pong implements Codable
+readonly class Pong implements Codable
 {
+    use CodableSupport;
+
     public const DATETIME_FORMAT = Ping::DATETIME_FORMAT;
-    final public function __construct(
-        public readonly DateTimeImmutable $requestStamp,
-        public readonly DateTimeImmutable $responseStamp
+
+    public function __construct(
+        #[CodableDateTime(format: self::DATETIME_FORMAT)] public DateTimeImmutable $requestStamp,
+        #[CodableDateTime(format: self::DATETIME_FORMAT)] public DateTimeImmutable $responseStamp
     ) {
-    }
-
-    /**
-     * @SuppressWarnings(UnusedFormalParameter)
-     */
-    public static function decode(DecodingContainer $container, ?Decodable $object = null): static
-    {
-        $requestStamp = $container->{'requestStamp'}->decodeDateTime(self::DATETIME_FORMAT);
-        $responseStamp = $container->{'responseStamp'}->decodeDateTime(self::DATETIME_FORMAT);
-        return new static($requestStamp, $responseStamp);
-    }
-
-    public function encode(EncodingContainer $container): void
-    {
-        $container->{'requestStamp'}->encodeDateTime($this->requestStamp, self::DATETIME_FORMAT);
-        $container->{'responseStamp'}->encodeDateTime($this->responseStamp, self::DATETIME_FORMAT);
     }
 }

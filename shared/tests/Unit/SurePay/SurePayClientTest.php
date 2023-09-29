@@ -58,14 +58,14 @@ class SurePayClientTest extends TestCase
         $this->faker = Factory::create();
 
         Config::set('surepay_api', [
-            'key' => env('SUREPAY_KEY'),
-            'secret' => env('SUREPAY_SECRET'),
-            'endpoint' => env('SUREPAY_ENDPOINT'),
-            'debug' => env('SUREPAY_DEBUG', false),
-            'request_timeout_seconds' => env('SUREPAY_REQUEST_TIMEOUT_SECONDS', 3),
-            'connect_timeout_seconds' => env('SUREPAY_CONNECT_TIMEOUT_SECONDS', 3),
-            'endpoint_request_accesstoken' => env('SUREPAY_ENDPOINT_REQUEST_ACCESSTOKEN'),
-            'endpoint_check_organisations' => env('SUREPAY_ENDPOINT_CHECK_ORGANISATIONS'),
+            'key' => 'mock_key',
+            'secret' => 'mock_secret',
+            'endpoint' => 'http://example.com',
+            'debug' => false,
+            'request_timeout_seconds' => 3,
+            'connect_timeout_seconds' => 3,
+            'endpoint_request_accesstoken' => 'oauth/client_credential/accesstoken',
+            'endpoint_check_organisations' => 'account/check/organisations',
         ]);
     }
 
