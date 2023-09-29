@@ -48,7 +48,6 @@ class ApplicationController extends Controller
         assert($user !== null);
 
         $filter = ApplicationsFilter::fromArray($request->validated());
-
         return $this->applicationService->getApplications($user, false, $filter);
     }
 

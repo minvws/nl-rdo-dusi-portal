@@ -18,6 +18,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Tests\TestCase;
+use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 class ApplicationRepositoryTest extends TestCase
@@ -38,6 +39,8 @@ class ApplicationRepositoryTest extends TestCase
         $this->subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create();
         $this->subsidyStage = SubsidyStage::factory()->for($this->subsidyVersion)->create(['stage' => 1]);
         $this->repository = new ApplicationRepository();
+
+        User::factory()->make();
     }
 
     /**
@@ -45,7 +48,6 @@ class ApplicationRepositoryTest extends TestCase
      */
     public function testGetApplicationWith()
     {
-        self::markTestSkipped('Skipped for now, will be fixed when user database is also available in shared');
         // Create a test application
         $application = Application::factory()
             ->for($this->identity)
@@ -66,6 +68,7 @@ class ApplicationRepositoryTest extends TestCase
             ->create()->id;
 
         $user = User::factory()->create();
+        $user->attachRole(Role::Assessor);
 
         $filter = [
             'application_title' => 'some_application_title',

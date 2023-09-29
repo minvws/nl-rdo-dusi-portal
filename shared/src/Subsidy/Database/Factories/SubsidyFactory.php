@@ -29,7 +29,7 @@ class SubsidyFactory extends Factory
             'code' => $this->faker->unique()->regexify('[A-Z]{3}'),
             'description' => $this->faker->paragraph,
             'valid_from' => $this->faker->dateTimeBetween('-1 year', '+1 year'),
-            'valid_to' => $this->faker->dateTimeBetween('-1 year', '+1 year')
+            'valid_to' => $this->faker->dateTimeBetween('-1 year', '+1 year'),
         ];
     }
 }

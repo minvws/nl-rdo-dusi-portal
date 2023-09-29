@@ -28,6 +28,7 @@ class SubsidyStageFactory extends Factory
             'subsidy_version_id' => SubsidyVersion::factory(),
             'title' => $this->faker->sentence,
             'subject_role' => 'applicant',
+            'assessor_user_role' => 'assessor',
             'stage' => 1
         ];
     }
