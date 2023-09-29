@@ -36,7 +36,7 @@ readonly class EncryptedResponseExceptionHelper
             sprintf(
                 'Error %s / %s in %s::%s: %s (%s)',
                 $exception->getStatus()->name,
-                $exception->getCode(),
+                $exception->getErrorCode(),
                 $originClass,
                 $originMethod,
                 $error->message,
@@ -44,6 +44,13 @@ readonly class EncryptedResponseExceptionHelper
             ),
             ['trace' => $exception->getTraceAsString()]
         );
+
+        if ($exception->getPrevious() !== null) {
+            $this->logger->error(
+                sprintf('Previous error: %s', $exception->getPrevious()->getMessage()),
+                ['trace' => $exception->getPrevious()->getTraceAsString()]
+            );
+        }
 
         return $this->encryptionService->encryptCodable(
             $exception->getStatus(),
