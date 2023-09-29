@@ -32,6 +32,7 @@ class UserFactory extends Factory
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->email,
             'password' => $this->faker->password,
+            'password_updated_at' => now()->addDays(180),
             'active_until' => null,
             'two_factor_secret' => null,
             'password_reset_token' => null,

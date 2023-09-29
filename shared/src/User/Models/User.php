@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\User\Models;
 
-use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -13,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Collection as ArrayCollection;
+use Illuminate\Support\Carbon;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\User\Database\Factories\UserFactory;
@@ -26,6 +25,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
  * @property string $password
  * @property string $organisation_id
  * @property DateTimeInterface $active_until
+ * @property ?int $password_updated_at
  * @property Collection<int, Role> $roles
  * @property Organisation $organisation
  * @method bool can($abilities, $arguments = [])
@@ -174,6 +174,19 @@ class User extends Authenticatable
         }
 
         return $this->active_until->isFuture();
+    }
+
+    public function passwordExpired(int $withinDays = 0): bool
+    {
+        if ($this->password_updated_at === null) {
+            return true;
+        }
+
+        // Check if password expires within x days of 180 days
+        return Carbon::createFromTimestamp($this->password_updated_at)
+            ->addDays(180)
+            ->subDays($withinDays)
+            ->isPast();
     }
 
     public function twoFactorQrCodeSvgWithAria(): string
