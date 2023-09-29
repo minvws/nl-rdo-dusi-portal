@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'organisation' => OrganisationResource::make($this->organisation),
             'roles' => RoleResource::collection($this->whenLoaded('roles')),
-            'password_expired' => $this->passwordExpired(withinDays: 1),
+            'passwordExpired' => $this->passwordExpired(withinDays: 1),
         ];
     }
 }
