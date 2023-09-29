@@ -37,12 +37,22 @@ class SurePayServiceProvider extends ServiceProvider
                 );
             }
 
-            return new SurePayClient(
-                client: new Client([
-                    'base_uri' => config('surepay_api.endpoint'),
-                    'verify' => false,
-                ]),
-            );
+            $options = [
+                'base_uri' => config('surepay_api.endpoint'),
+                'verify' => config('surepay_api.verify_ssl', false),
+                'proxy' => []
+            ];
+
+            if (!empty(config('surepay_api.proxy.http'))) {
+                $options['proxy']['http'] = config('surepay_api.proxy.http');
+            }
+
+            if (!empty(config('surepay_api.proxy.https'))) {
+                $options['proxy']['https'] = config('surepay_api.proxy.https');
+            }
+
+
+            return new SurePayClient(client: new Client($options));
         });
     }
 }
