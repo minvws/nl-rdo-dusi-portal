@@ -55,6 +55,7 @@ class UserService
         if ($resetPassword) {
             $password = $this->passwordGenerator->generate(4);
             $update['password'] = $this->passwordHasher->make($password);
+            $update['password_updated_at'] = null;
         }
 
         if ($resetTwoFactor) {
