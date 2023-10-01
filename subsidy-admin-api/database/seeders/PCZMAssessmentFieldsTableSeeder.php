@@ -183,7 +183,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
             code: 'postCovidChecklist',
             title: 'Controlevragen',
             options: [
-                "Op basis van het sociaal-medisch verslag en/of de verklaring van de arts is vast te stellen dat er een post-COVID diagnose is gesteld",
+                "Op basis van het medisch onderzoeksverslag (medische rapportage) en/of de verklaring van de arts is vast te stellen dat er een post-COVID diagnose is gesteld",
                 "De post-COVID diagnose is vóór 1 juni 2023 gesteld",
             ],
             isRequired: false
