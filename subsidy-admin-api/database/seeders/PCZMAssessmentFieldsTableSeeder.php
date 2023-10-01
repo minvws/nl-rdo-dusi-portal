@@ -63,18 +63,6 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
             isRequired: false
         );
 
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
-            code: 'firstSickDayWithinExpiryDate',
-            title: 'Uit de toekenningsbrief van de afgesproken loondoorbetaling blijkt dat de eerste ziektedag in de periode van 1 maart 2020 en 1 juli 2020 ligt',
-            options: [
-                'Nee',
-                'Ja',
-                'Niet van toepassing'
-            ],
-            isRequired: false
-        );
-
         $this->createMultiSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             code: 'IVA_Or_WIA_Checklist',
