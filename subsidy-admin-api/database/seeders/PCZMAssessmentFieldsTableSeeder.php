@@ -34,7 +34,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
                 "Alle aangeleverde documenten zijn te herleiden tot dezelfde persoon op basis van BSN en de overige persoonsgegevens",
                 "Het IBAN bestaat en is actief",
                 "Het opgegeven IBAN staat op naam van de aanvrager of bewindvoerder",
-                "Op basis van de SurePay terugkoppeling ben ik akkoord met het opgegeven rekeningnummer"
+                "Op basis van de SurePay terugkoppeling, en de controle of de aanvrager onder bewind staat, ben ik akkoord met het opgegeven rekeningnummer"
             ],
             isRequired: false
         );
