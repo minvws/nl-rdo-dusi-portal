@@ -141,7 +141,7 @@
                             "Werkgever": "{employerKind}",
                             "Verklaring zorgaanbieder (indien anders)": "{otherEmployerDeclarationFile}",
                             "Heeft u gewerkt in een justitiële inrichting?": "{hasBeenWorkingAtJudicialInstitution}",
-                            "BIG-nummer justitiële inrichting": "{BIGNumberJudicialInstitution}"
+                            "BIG-nummer": "{BIGNumberJudicialInstitution}"
                         }
                     }
                 }
