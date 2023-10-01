@@ -30,8 +30,8 @@ class SubsidyStageTransitionMessagesTableSeeder extends Seeder
             'status' => VersionStatus::Published->value,
             'created_at' => Carbon::now(),
             'subject' => 'Aanvulling nodig',
-            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-question-pdf.latte'),
-            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-question-view.latte'),
+            'content_pdf' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-requestForChanges-pdf.latte'),
+            'content_html' => file_get_contents(__DIR__ . '/resources/pczm/pczm-letter-requestForChanges-view.latte'),
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
