@@ -34,7 +34,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
                 "Alle aangeleverde documenten zijn te herleiden tot dezelfde persoon op basis van BSN en de overige persoonsgegevens",
                 "Het IBAN bestaat en is actief",
                 "Het opgegeven IBAN staat op naam van de aanvrager of bewindvoerder",
-                "Op basis van de SurePay terugkoppeling ben ik akkoord met het opgegeven rekeningnummer"
+                "Op basis van de SurePay terugkoppeling, en de controle of de aanvrager onder bewind staat, ben ik akkoord met het opgegeven rekeningnummer"
             ],
             isRequired: false
         );
@@ -59,18 +59,6 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
                 'IVA uitkering',
                 'WGA uitkering',
                 'Geen WIA-uitkering met als reden dat meer dan 65% verdiend kan worden'
-            ],
-            isRequired: false
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
-            code: 'firstSickDayWithinExpiryDate',
-            title: 'Uit de toekenningsbrief van de afgesproken loondoorbetaling blijkt dat de eerste ziektedag in de periode van 1 maart 2020 en 1 juli 2020 ligt',
-            options: [
-                'Nee',
-                'Ja',
-                'Niet van toepassing'
             ],
             isRequired: false
         );
@@ -195,7 +183,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
             code: 'postCovidChecklist',
             title: 'Controlevragen',
             options: [
-                "Op basis van het sociaal-medisch verslag en/of de verklaring van de arts is vast te stellen dat er een post-COVID diagnose is gesteld",
+                "Op basis van het medisch onderzoeksverslag (medische rapportage) en/of de verklaring van de arts is vast te stellen dat er een post-COVID diagnose is gesteld",
                 "De post-COVID diagnose is vóór 1 juni 2023 gesteld",
             ],
             isRequired: false
