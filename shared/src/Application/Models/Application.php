@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Shared\Application\Models;
 use DateTime;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
@@ -28,7 +30,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTime $locked_from
  * @property DateTimeInterface|null $final_review_deadline
  * @property DateTimeInterface $created_at
- * @property DateTimeInterface $submitted_at
+ * @property DateTimeInterface|null $submitted_at
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read HasMany<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage|null $currentApplicationStage
@@ -38,6 +40,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @method Builder<self> forIdentity(Identity $identity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class Application extends Model
 {
@@ -59,6 +62,21 @@ class Application extends Model
         'final_review_deadline',
         'locked_from'
     ];
+
+    protected function submittedAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attrs) =>
+                ApplicationStage::query()
+                    ->where('application_id', '=', $attrs['id'])
+                    ->whereRelation('subsidyStage', 'stage', '=', 1)
+                    ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
+                    ->orderBy('sequence_number')
+                    ->limit(1)
+                    ->first(['submitted_at'])
+                    ?->submitted_at
+        )->shouldCache();
+    }
 
     public function applicationSurePayResult(): HasOne
     {

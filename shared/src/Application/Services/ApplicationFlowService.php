@@ -66,7 +66,7 @@ class ApplicationFlowService
             }
         }
 
-        return null;
+        throw new ApplicationFlowException('No matching transition found for submit!');
     }
 
     private function closeCurrentApplicationStage(ApplicationStage $stage): void

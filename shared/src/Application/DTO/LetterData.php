@@ -21,8 +21,7 @@ readonly class LetterData
         public DateTimeInterface $createdAt,
         public string $contactEmailAddress,
         public string $reference,
-        public ?string $motivation,
-        public ?string $applicationCode = null,
+        public DateTimeInterface $submittedAt
     ) {
     }
 

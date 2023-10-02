@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
-use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Assessment\API\Models\Enums\UIType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -12,10 +11,8 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
 use MinVWS\DUSi\Shared\User\Models\User;
-use Throwable;
 
 /**
  *  @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -24,10 +21,10 @@ class ApplicationSubsidyVersionResource extends JsonResource
 {
     public function __construct(
         private readonly Application $application,
+        private readonly string $citizenServiceNumber,
         private readonly User $user,
         private readonly ApplicationDataService $applicationDataService,
-        private readonly SubsidyStageDataSchemaBuilder $dataSchemaBuilder,
-        private readonly HsmDecryptionService $hsmDecryptionService
+        private readonly SubsidyStageDataSchemaBuilder $dataSchemaBuilder
     ) {
         parent::__construct($application);
     }
@@ -45,14 +42,6 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
     private function buildApplication(): array
     {
-        try {
-            $citizenServiceNumber =
-                $this->hsmDecryptionService->decrypt($this->application->identity->encrypted_identifier);
-        } catch (Throwable $e) {
-            Log::error('Error trying to decrypt citizen service number: ' . $e->getMessage());
-            $citizenServiceNumber = 'Onbekend';
-        }
-
         return [
             'metadata' => [
                 'application' => [
@@ -121,10 +110,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
             'data' => [
                 'reference' => $this->application->reference,
                 'status' => $this->application->status->name,
-                // TODO: submitted_at at the application level!
-                'submittedAt' => $this->application->created_at->format('Y-m-d'),
+                'submittedAt' => $this->application->submitted_at?->format('Y-m-d'),
                 'finalReviewDeadline' => $this->application->final_review_deadline?->format('Y-m-d'),
-                'citizenServiceNumber' => $citizenServiceNumber,
+                'citizenServiceNumber' => $this->citizenServiceNumber,
                 'surePayResult' =>
                     match ($this->application->applicationSurePayResult?->account_number_validation) {
                         AccountNumberValidation::Valid => 'Geldig',
@@ -140,8 +128,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
         $stage = $this->application->currentApplicationStage ?? $this->application->lastApplicationStage;
 
         return array_map(
-            fn (ApplicationStageData $applicationStageData) =>
-            $this->buildApplicationStage($applicationStageData),
+            fn (ApplicationStageData $applicationStageData) => $this->buildApplicationStage($applicationStageData),
             $this->applicationDataService->getApplicationStageDataUpToIncluding($stage)
         );
     }

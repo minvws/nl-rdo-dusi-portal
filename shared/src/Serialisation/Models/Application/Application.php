@@ -16,7 +16,7 @@ class Application implements Codable
     public function __construct(
         public readonly string $reference,
         public readonly Subsidy $subsidy,
-        public readonly DateTimeInterface $submittedAt,
+        public readonly ?DateTimeInterface $submittedAt,
         public readonly ?DateTimeInterface $deadlineForResponseAt,
         public readonly ApplicationStatus $status,
         public readonly bool $isEditable,

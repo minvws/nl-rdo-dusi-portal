@@ -4,7 +4,6 @@
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
 class PCZMAssessmentFieldsTableSeeder extends Seeder
