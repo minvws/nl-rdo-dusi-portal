@@ -59,6 +59,7 @@ class CreateAdmin extends Command implements PromptsForMissingInput
         $user->forceFill([
             'two_factor_secret' => encrypt($secret),
             'two_factor_recovery_codes' => null,
+            'password_updated_at' => now(),
         ]);
         $user->save();
 
