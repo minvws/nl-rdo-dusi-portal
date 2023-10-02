@@ -27,7 +27,7 @@ class ApplicationMapper
         return new ApplicationListApplicationDTO(
             $app->reference,
             $subsidy,
-            $app->created_at,
+            $app->submitted_at,
             $app->final_review_deadline,
             $app->status,
             $app->status->isEditableForApplicant(),
@@ -54,7 +54,7 @@ class ApplicationMapper
         return new ApplicationDTO(
             $app->reference,
             $subsidy,
-            $app->created_at, // TODO: $app->submitted_at,
+            $app->submitted_at,
             $app->final_review_deadline,
             $app->status,
             $app->status->isEditableForApplicant(),

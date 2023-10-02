@@ -258,7 +258,8 @@ class ApplicationRepository
                 ->applicationStages()
                 ->whereRelation('subsidyStage', 'stage', '=', 1)
                 ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
-                ->orderBy('sequence_number', 'desc');
+                ->orderBy('sequence_number', 'desc')
+                ->limit(1);
 
         if ($includeAnswers) {
             $query->with(['answers', 'answers.field']);

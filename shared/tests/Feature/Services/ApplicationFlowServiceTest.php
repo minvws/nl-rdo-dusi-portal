@@ -15,11 +15,10 @@ use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
-use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
@@ -472,5 +471,21 @@ class ApplicationFlowServiceTest extends TestCase
         $this->application->refresh();
 
         $this->assertEquals($this->subsidyVersion->review_deadline, $this->application->final_review_deadline);
+    }
+
+    public function testNoTransitionFound(): void
+    {
+        $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->assertNotNull($stage2);
+
+        // value for which no transition matches
+        $this->createAnswer($stage2, $this->subsidyStage2Field, $this->faker->word);
+        $stage3 = $this->flowService->submitApplicationStage($stage2);
+
+        $this->expectException(ApplicationFlowException::class);
+        $this->expectExceptionMessage('No matching transition found for submit!');
+
+        $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_AGREES);
+        $this->flowService->submitApplicationStage($stage3);
     }
 }

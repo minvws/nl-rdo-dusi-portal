@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Providers;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
@@ -18,6 +19,9 @@ use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Services\LatteLetterLoaderService;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class LetterServiceProvider extends ServiceProvider
 {
     private const VIEWS_BASE_PATH = __DIR__ . '/../../resources/views';
@@ -43,6 +47,7 @@ class LetterServiceProvider extends ServiceProvider
             $policy->allowProperties(LetterStages::class, $policy::All);
             $policy->allowProperties(LetterStageData::class, $policy::All);
             $policy->allowProperties(ApplicationStageAnswer::class, $policy::All);
+            $policy->allowMethods(CarbonImmutable::class, $policy::All);
 
             $latte->setPolicy($policy);
 
