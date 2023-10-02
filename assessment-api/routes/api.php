@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationAssessorController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationFileController;
-use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationImplementationCoordinatorController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\UserController;
 use MinVWS\DUSi\Assessment\API\Http\Middleware\EnsurePasswordUpdated;
 
@@ -42,12 +41,6 @@ Route::middleware(['auth'])->group(function () {
             ->controller(ApplicationAssessorController::class)
             ->group(function () {
                 Route::put('', 'claim');
-                Route::delete('', 'release');
-            });
-
-        Route::prefix('applications/{application}/coordinator')
-            ->controller(ApplicationImplementationCoordinatorController::class)
-            ->group(function () {
                 Route::delete('', 'release');
             });
 

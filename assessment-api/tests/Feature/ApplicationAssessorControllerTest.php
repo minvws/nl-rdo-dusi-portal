@@ -134,7 +134,7 @@ class ApplicationAssessorControllerTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function testReleaseApplication(): void
+    public function testReleaseApplicationByAssessor(): void
     {
         $this->assertNotNull($this->application->currentApplicationStage);
 
@@ -154,7 +154,7 @@ class ApplicationAssessorControllerTest extends TestCase
         $this->assertNull($this->application->currentApplicationStage->assessor_user_id);
     }
 
-    public function testReleaseApplicationOfOtherUser(): void
+    public function testReleaseApplicationByAssessorWhichIsTakenByOtherUserIsForbidden(): void
     {
         $this->assertNotNull($this->application->currentApplicationStage);
 
@@ -165,6 +165,50 @@ class ApplicationAssessorControllerTest extends TestCase
         $response =
             $this->be(User::factory()->create())
                 ->json('DELETE', '/api/applications/' . $this->application->id . '/assessor');
-        $response->assertStatus(403);
+        $response->assertForbidden();
+    }
+
+    public function testReleaseApplicationByCoordinator(): void
+    {
+        $this->assertNotNull($this->application->currentApplicationStage);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor, $this->subsidy->id);
+
+        $this->application->currentApplicationStage->assessorUser()->associate($user);
+        $this->application->currentApplicationStage->save();
+
+        $implementationCoordinator = User::factory()->create();
+        $implementationCoordinator->attachRole(RoleEnum::ImplementationCoordinator, $this->subsidy->d);
+        $implementationCoordinator->save();
+
+        $response = $this
+            ->be($implementationCoordinator)
+            ->json('DELETE', '/api/applications/' . $this->application->id . '/assessor');
+        $response->assertStatus(204);
+
+        $this->application->refresh();
+        $this->assertNotNull($this->application->currentApplicationStage);
+        $this->assertNull($this->application->currentApplicationStage->assessor_user_id);
+    }
+
+    public function testReleaseApplicationByCooordinatorOfAnotherSubsidyIsForbidden(): void
+    {
+        $this->assertNotNull($this->application->currentApplicationStage);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor, $this->subsidy->id);
+
+        $this->application->currentApplicationStage->assessorUser()->associate($user);
+        $this->application->currentApplicationStage->save();
+
+        $anotherSubsidy = Subsidy::factory()->create();
+        $implementationCoordinator = User::factory()->create();
+        $implementationCoordinator->attachRole(RoleEnum::ImplementationCoordinator, $anotherSubsidy->id);
+
+        $response = $this
+            ->be($implementationCoordinator)
+            ->json('DELETE', '/api/applications/' . $this->application->id . '/assessor');
+        $response->assertForbidden();
     }
 }
