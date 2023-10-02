@@ -363,7 +363,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentRequestedComplementNote",
                                     "options" => [
-                                        "tip" => "Toelichting: Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -384,7 +384,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentRejectedNote",
                                     "options" => [
-                                        "tip" => "Toelichting: Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -607,7 +607,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/coordinatorImplementationReasonForRejection",
                                     "options" => [
-                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -623,7 +623,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/coordinatorImplementationApprovalNote",
                                     "options" => [
-                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
