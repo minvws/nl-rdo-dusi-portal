@@ -11,11 +11,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountType;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\PaymentPreValidation;
 
 /**
  * @property string $application_id
  * @property AccountNumberValidation $account_number_validation
+ * @property NameMatchResult|null $name_match_result
  * @property PaymentPreValidation|null $payment_pre_validation
  * @property AccountStatus|null $status
  * @property AccountType|null $account_type
@@ -34,6 +36,7 @@ class ApplicationSurePayResult extends Model
     protected $connection = Connection::APPLICATION;
     protected $fillable = ['application_id'];
     protected $casts = [
+        'name_match_result' => NameMatchResult::class,
         'account_number_validation' => AccountNumberValidation::class,
         'payment_pre_validation' => PaymentPreValidation::class,
         'status' => AccountStatus::class,

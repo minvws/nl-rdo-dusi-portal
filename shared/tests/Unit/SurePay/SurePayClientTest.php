@@ -149,7 +149,7 @@ class SurePayClientTest extends TestCase
         // Act
         $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban);
 
-        assertEquals($response->status, AccountStatus::Active);
+        assertEquals($response->account->status, AccountStatus::Active);
     }
 
     /**
@@ -168,12 +168,12 @@ class SurePayClientTest extends TestCase
         $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban('NL'));
         $twoCallsMessage = 'Expect 2 calls, 1 for fetching the token second for checkOrganisationsAccount.';
         assertCount(2, $this->container, $twoCallsMessage);
-        assertEquals($response->status, AccountStatus::Active);
+        assertEquals($response->account->status, AccountStatus::Active);
 
         $response = $sut->checkOrganisationsAccount($this->faker->name, $this->faker->iban('NL'));
         $threeCallsMessage = 'Expect 3 calls, 1 for fetching the token and 2 for checkOrganisationsAccount.
         In the second call token should be reused';
         assertCount(3, $this->container, $threeCallsMessage);
-        assertEquals($response->status, AccountStatus::Active);
+        assertEquals($response->account->status, AccountStatus::Active);
     }
 }

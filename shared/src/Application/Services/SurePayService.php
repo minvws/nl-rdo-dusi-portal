@@ -56,13 +56,14 @@ class SurePayService
         );
 
         $model = ApplicationSurePayResult::firstOrNew(['application_id' => $application->id]);
-        $model->account_number_validation = $result->accountNumberValidation;
-        $model->payment_pre_validation = $result->paymentPreValidation;
-        $model->status = $result->status;
-        $model->account_type = $result->accountType;
-        $model->joint_account = $result->jointAccount;
-        $model->number_of_account_holders = $result->numberOfAccountHolders;
-        $model->country_code = $result->countryCode;
+        $model->name_match_result = $result->nameMatchResult;
+        $model->account_number_validation = $result->account->accountNumberValidation;
+        $model->payment_pre_validation = $result->account->paymentPreValidation;
+        $model->status = $result->account->status;
+        $model->account_type = $result->account->accountType;
+        $model->joint_account = $result->account->jointAccount;
+        $model->number_of_account_holders = $result->account->numberOfAccountHolders;
+        $model->country_code = $result->account->countryCode;
         $model->save();
 
         return $model;

@@ -13,6 +13,7 @@ class CheckOrganisationsAccountResponseFake
         $faker = Factory::create();
 
         return [
+            'name_match_result' => 'MATCH',
             'account' => [
                 'accountNumberValidation' => 'VALID',
                 'paymentPreValidation' => 'PASS',
