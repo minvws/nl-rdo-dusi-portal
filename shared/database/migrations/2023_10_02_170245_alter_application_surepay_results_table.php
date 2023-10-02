@@ -12,20 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('application_surepay_results', function (Blueprint $table) {
-            $table->string('payment_pre_validation', 20)->nullable();
-            $table->string('status', 20)->nullable();
-            $table->string('account_type', 20)->nullable();
-            $table->string('country_code', 2)->nullable();
+            $table->string('payment_pre_validation', 20)->nullable()->change();
+            $table->string('status', 20)->nullable()->change();
+            $table->string('account_type', 20)->nullable()->change();
+            $table->string('country_code', 2)->nullable()->change();
         });
     }
 
     public function down(): void
     {
         Schema::table('application_surepay_results', function (Blueprint $table) {
-            $table->string('payment_pre_validation', 20);
-            $table->string('status', 20);
-            $table->string('account_type', 20);
-            $table->string('country_code', 2);
+            $table->string('payment_pre_validation', 20)->change();
+            $table->string('status', 20)->change();
+            $table->string('account_type', 20)->change();
+            $table->string('country_code', 2)->change();
         });
     }
 };
