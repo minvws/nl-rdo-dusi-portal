@@ -48,14 +48,6 @@
                 },
                 {
                     "type": "CustomControl",
-                    "scope": "#/properties/firstSickDayWithinExpiryDate",
-                    "options": {
-                        "readonly": true,
-                        "format": "radio"
-                    }
-                },
-                {
-                    "type": "CustomControl",
                     "scope": "#/properties/IVA_Or_WIA_Checklist",
                     "options": {
                         "readonly": true,

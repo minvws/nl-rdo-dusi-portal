@@ -93,18 +93,6 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/firstSickDayWithinExpiryDate",
-                                    "options" => [
-                                        "format" => "radio"
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
                                     "scope" => "#/properties/IVA_Or_WIA_Checklist",
                                     "options" => [
                                         "format" => "checkbox-group"
