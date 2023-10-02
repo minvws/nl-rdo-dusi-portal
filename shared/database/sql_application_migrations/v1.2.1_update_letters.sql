@@ -7,7 +7,7 @@ UPDATE public.subsidy_stage_transition_messages
         Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
     </p>
 
-    {if $content->stage2->firstAssessmentRequestedComplementReason === 'Incomplete aanvraag'}
+    {if $content->stage2->firstAssessmentRequestedComplementReason === ''Incomplete aanvraag''}
         <p>Uw aanvraag bevat helaas nog onvoldoende gegevens om een beslissing te kunnen nemen over afhandeling.</p>
         <p>&nbsp;</p>
 
@@ -195,7 +195,7 @@ UPDATE public.subsidy_stage_transition_messages
     <p>&nbsp;</p>
 {/block}
 ',
-    content_pdf = '{layout 'letter_layout.latte'}
+    content_pdf = '{layout ''letter_layout.latte''}
 
 {block concern}
     Betreft: Verlening aanvraag {$content->subsidyTitle}
