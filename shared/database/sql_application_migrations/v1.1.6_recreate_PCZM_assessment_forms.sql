@@ -1,3 +1,5 @@
+BEGIN;
+
 delete
 from "fields"
 where "subsidy_stage_id" in ('8027c102-93ef-4735-ab66-97aa63b836eb', '61436439-E337-4986-BC18-57138E2FAB65',
@@ -199,3 +201,5 @@ VALUES ('c51302f6-e131-45ff-8d4b-f4ff4a39b52f', '85ed726e-cdbe-444e-8d12-c56f9be
         '{"type":"FormGroupControl","options":{"section":true,"group":true},"elements":[{"type":"Group","label":"Status","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/implementationCoordinatorAssessment","options":{"format":"radio"}}]}]},{"type":"Group","label":"Toelichting","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/coordinatorImplementationReasonForRejection","options":{"tip":"Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/implementationCoordinatorAssessment","schema":{"const":"Afgekeurd"}}}},{"type":"CustomControl","scope":"#\/properties\/coordinatorImplementationApprovalNote","options":{"tip":"Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/implementationCoordinatorAssessment","schema":{"const":"Goedgekeurd"}}}}]},{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/coordinatorImplementationInternalNote","options":[]}]}]}]}',
         null, null,
         '{"type":"FormGroupControl","options":{"section":true},"elements":[{"type":"CustomControl","scope":"#\/properties\/implementationCoordinatorAssessment","options":{"readonly":true,"format":"radio"}},{"type":"CustomControl","scope":"#\/properties\/implementationCoordinatorInternalNote","options":{"readonly":true}}]}');
+
+COMMIT;
