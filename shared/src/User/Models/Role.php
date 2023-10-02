@@ -12,7 +12,6 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 /**
  * @property RoleEnum $name
  * @property bool $view_all_stages
- * @property string|null $subsidy_id
  */
 class Role extends Model
 {

@@ -30,6 +30,7 @@ class ApplicationImplementationCoordiantorControllerTest extends TestCase
     use DatabaseTransactions;
     use MocksEncryption;
 
+    private Subsidy $subsidy;
     private SubsidyStage $subsidyStage1;
     private Application $application;
 
@@ -40,8 +41,10 @@ class ApplicationImplementationCoordiantorControllerTest extends TestCase
     {
         parent::setUp();
 
-        $subsidy = Subsidy::factory()->create();
-        $subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create(['status' => VersionStatus::Published]);
+        $this->subsidy = Subsidy::factory()->create();
+        $subsidyVersion = SubsidyVersion::factory()
+            ->for($this->subsidy)
+            ->create(['status' => VersionStatus::Published]);
         $this->subsidyStage1 = SubsidyStage::factory()->for($subsidyVersion)->create([
             'stage' => 1,
             'subject_role' => SubjectRole::Applicant,
@@ -89,13 +92,14 @@ class ApplicationImplementationCoordiantorControllerTest extends TestCase
         $this->assertNotNull($this->application->currentApplicationStage);
 
         $user = User::factory()->create();
-        $user->attachRole(RoleEnum::Assessor);
+        $user->attachRole(RoleEnum::Assessor, $this->subsidy->id);
 
         $this->application->currentApplicationStage->assessorUser()->associate($user);
         $this->application->currentApplicationStage->save();
 
         $implementationCoordinator = User::factory()->create();
-        $implementationCoordinator->attachRole(RoleEnum::ImplementationCoordinator);
+        $implementationCoordinator->attachRole(RoleEnum::ImplementationCoordinator, $this->subsidy->d);
+        $implementationCoordinator->save();
 
         $response = $this
             ->be($implementationCoordinator)
@@ -105,5 +109,25 @@ class ApplicationImplementationCoordiantorControllerTest extends TestCase
         $this->application->refresh();
         $this->assertNotNull($this->application->currentApplicationStage);
         $this->assertNull($this->application->currentApplicationStage->assessor_user_id);
+    }
+
+    public function testReleaseApplicationIsForbiddenForCooordinatorOfAnotherSubsidy(): void
+    {
+        $this->assertNotNull($this->application->currentApplicationStage);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor, $this->subsidy->id);
+
+        $this->application->currentApplicationStage->assessorUser()->associate($user);
+        $this->application->currentApplicationStage->save();
+
+        $anotherSubsidy = Subsidy::factory()->create();
+        $implementationCoordinator = User::factory()->create();
+        $implementationCoordinator->attachRole(RoleEnum::ImplementationCoordinator, $anotherSubsidy->id);
+
+        $response = $this
+            ->be($implementationCoordinator)
+            ->json('DELETE', '/api/applications/' . $this->application->id . '/coordinator');
+        $response->assertForbidden();
     }
 }

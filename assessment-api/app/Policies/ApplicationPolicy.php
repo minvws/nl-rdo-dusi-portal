@@ -63,7 +63,12 @@ class ApplicationPolicy
             return false;
         }
 
-        if ($user->hasRole(Role::ImplementationCoordinator)) {
+        if (
+            $user->hasRoleForSubsidy(
+                Role::ImplementationCoordinator,
+                $stage->subsidyStage->subsidyVersion->subsidy->id
+            )
+        ) {
             return true;
         }
 

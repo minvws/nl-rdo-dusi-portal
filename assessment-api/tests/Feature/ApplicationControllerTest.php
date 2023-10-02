@@ -158,7 +158,7 @@ class ApplicationControllerTest extends TestCase
             'status' => $this->application1->status->value,
             'final_review_deadline' => $this->application1->final_review_deadline,
             'updated_at' => $this->application1->updated_at,
-            'actions' => ['show']
+            'actions' => ['release', 'show']
         ]);
     }
 
@@ -179,7 +179,7 @@ class ApplicationControllerTest extends TestCase
             'status' => $this->application1->status->value,
             'final_review_deadline' => $this->application1->final_review_deadline,
             'updated_at' => $this->application1->updated_at,
-            'actions' => ['show'],
+            'actions' => ['release', 'show'],
         ]);
         $response->assertJsonFragment([
             'application_title' => $this->application2->application_title,
@@ -187,7 +187,7 @@ class ApplicationControllerTest extends TestCase
             'status' => $this->application2->status->value,
             'final_review_deadline' => $this->application2->final_review_deadline,
             'updated_at' => $this->application2->updated_at,
-            'actions' => ['show'],
+            'actions' => ['release', 'show'],
         ]);
     }
 
