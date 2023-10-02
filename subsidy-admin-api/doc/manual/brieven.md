@@ -15,11 +15,10 @@ openingsaccolade altijd gevolgd wordt `$content->`, bijvoorbeeld `{$content->sub
 ## Generieke codes
 
 - `{$content->subsidyTitle}`: De titel van de regeling
-- `{$content->decision}`: De beoordeling (in behandeling, goedgekeurd, afgekeurd)
-- `{$content->createdAt}`: De aanmaakdatum van de aanvraag
+- `{$content->createdAt}`: De aanmaakdatum van de brief
+- `{$content->submittedAt}`: De aanmaakdatum van de aanvraag
 - `{$content->contactEmailAddress}`: E-mailadres van de afdeling, in te vullen via de regeling versie
 - `{$content->reference}`: De interne referentie of kenmerk
-- `{$content->applicationCode}`: Dossiernummer
 
 ## Dynamische codes
 
@@ -57,9 +56,9 @@ De beschikbare functies op dit moment zijn:
 Voorbeeld van `if` / `elseif` / `else`:
 
 ```text
-{if $content->decision === 'accepted'}
+{if $content->stage2->decision === 'Goedgekeurd'}
     Uw aanvraag is geaccepteerd.
-{elseif $content->decision === 'request_for_changes'}
+{elseif $content->stage2->decision === 'Aanvulling nodig'}
     Uw aanvraag behoeft nog aanvulling.
 {else}
     We zijn uw aanvraag nog aan het beoordelen.

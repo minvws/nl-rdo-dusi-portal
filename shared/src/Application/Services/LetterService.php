@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Barryvdh\DomPDF\Facade\Pdf as PDFHelper;
+use Carbon\CarbonImmutable;
 use Dompdf\Canvas;
 use Dompdf\FontMetrics;
 use Exception;
@@ -158,15 +159,16 @@ readonly class LetterService
     {
         $answers = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($stage);
         $data = $this->convertAnswersToTemplateData($answers);
+        $submittedAt = $stage->application->submitted_at;
+        assert($submittedAt !== null);
 
         return new LetterData(
             subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
             stages: $data,
-            createdAt: $stage->application->created_at,
+            createdAt: CarbonImmutable::now(),
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
             reference: $stage->application->reference,
-            motivation: '', // TODO: replace with motivation
-            applicationCode: null,
+            submittedAt: CarbonImmutable::createFromInterface($submittedAt)
         );
     }
 

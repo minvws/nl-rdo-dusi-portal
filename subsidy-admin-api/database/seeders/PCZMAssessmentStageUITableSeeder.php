@@ -93,18 +93,6 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/firstSickDayWithinExpiryDate",
-                                    "options" => [
-                                        "format" => "radio"
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
                                     "scope" => "#/properties/IVA_Or_WIA_Checklist",
                                     "options" => [
                                         "format" => "checkbox-group"
@@ -363,7 +351,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentRequestedComplementNote",
                                     "options" => [
-                                        "tip" => "Toelichting: Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -384,7 +372,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentRejectedNote",
                                     "options" => [
-                                        "tip" => "Toelichting: Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -607,7 +595,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/coordinatorImplementationReasonForRejection",
                                     "options" => [
-                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -623,7 +611,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/coordinatorImplementationApprovalNote",
                                     "options" => [
-                                        "tip" => "Toelichting:  Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",

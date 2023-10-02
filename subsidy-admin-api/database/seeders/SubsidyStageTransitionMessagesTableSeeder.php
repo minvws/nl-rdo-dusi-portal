@@ -25,7 +25,7 @@ class SubsidyStageTransitionMessagesTableSeeder extends Seeder
     {
         DB::table('subsidy_stage_transition_messages')->insert([
             'id' => self::PCZM_TRANSITION_STAGE_3_TO_1_MESSAGE,
-            'subsidy_stage_transition_id' => SubsidyStageTransitionsTableSeeder::PZCM_TRANSITION_STAGE_3_TO_1,
+            'subsidy_stage_transition_id' => SubsidyStageTransitionsTableSeeder::PZCM_TRANSITION_STAGE_2_TO_1,
             'version' => 1,
             'status' => VersionStatus::Published->value,
             'created_at' => Carbon::now(),
@@ -36,7 +36,7 @@ class SubsidyStageTransitionMessagesTableSeeder extends Seeder
 
         DB::table('subsidy_stage_transition_messages')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_4_TO_REJECTED_MESSAGE,
-            'subsidy_stage_transition_id' => SubsidyStageTransitionsTableSeeder::PZCM_TRANSITION_STAGE_4_TO_REJECTED,
+            'subsidy_stage_transition_id' => SubsidyStageTransitionsTableSeeder::PZCM_TRANSITION_STAGE_3_TO_REJECTED,
             'version' => 1,
             'status' => VersionStatus::Published->value,
             'created_at' => Carbon::now(),
