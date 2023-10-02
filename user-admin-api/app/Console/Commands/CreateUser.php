@@ -68,7 +68,8 @@ class CreateUser extends Command
 
         $user->forceFill([
             'two_factor_secret' => encrypt($secret),
-            'two_factor_recovery_codes' => null
+            'two_factor_recovery_codes' => null,
+            'password_updated_at' => now(),
         ]);
 
         $role = $this->getRoleFromArgument($this->argument('role'));
