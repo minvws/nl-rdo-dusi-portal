@@ -20,9 +20,11 @@ class UpdateUserPassword implements UpdatesUserPasswords
      */
     public function update(User $user, array $input): void
     {
+        $passwordIsExpired = $user->passwordExpired();
+
         Validator::make($input, [
             'current_password' => [
-                Rule::requiredIf(fn() => !$user->passwordExpired()),
+                Rule::requiredIf(fn() => !$passwordIsExpired),
                 'string',
                 'current_password:web'
             ],
@@ -31,10 +33,18 @@ class UpdateUserPassword implements UpdatesUserPasswords
             'current_password.current_password' => __('The provided password does not match your current password.'),
         ])->validateWithBag('updatePassword');
 
+        $passwordHash = Hash::make($input['password']);
+
         $user->forceFill([
-            'password' => Hash::make($input['password']),
+            'password' => $passwordHash,
             'password_updated_at' => now(),
         ])->save();
+
+        if ($passwordIsExpired) {
+            session()->put([
+                'password_hash_web' => $passwordHash,
+            ]);
+        }
     }
 
     private function passwordRules(): array
