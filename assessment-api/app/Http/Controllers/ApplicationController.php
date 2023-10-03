@@ -170,7 +170,7 @@ class ApplicationController extends Controller
         }
     }
 
-    public function submit(Application $application): ApplicationSubsidyVersionResource
+    public function submitAssessment(Application $application): ApplicationSubsidyVersionResource
     {
         $this->authorize('submit', $application);
 
