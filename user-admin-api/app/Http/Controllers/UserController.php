@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use MinVWS\DUSi\User\Admin\API\Components\FlashNotification;
 use MinVWS\DUSi\User\Admin\API\Enums\FlashNotificationTypeEnum;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserCreateRequest;
+use MinVWS\DUSi\User\Admin\API\Http\Requests\UserFilterRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserResetCredentialsRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserUpdateActiveRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserUpdateRequest;
@@ -32,9 +33,12 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(UserFilterRequest $filterRequest): View
     {
-        $users = User::query()->with('organisation')->paginate();
+        $users = User::query()
+            ->with('organisation')
+            ->filterByNameOrEmail($filterRequest->validated('filter'))
+            ->paginate();
 
         return view('users.index', [
             'users' => $users,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\User\Models;
 
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -114,9 +115,8 @@ class User extends Authenticatable
     public function detachRole(RoleEnum $role, string $subsidyId = null): void
     {
         $this->roles()
-            ->where('name', $role->value)
             ->wherePivot('subsidy_id', $subsidyId)
-            ->detach();
+            ->detach($role->value);
     }
 
     public function isUserAdministrator(): bool
@@ -193,6 +193,18 @@ class User extends Authenticatable
     {
         $svgTag = $this->twoFactorQrCodeSvg();
         return str_replace('<svg ', '<svg role="img"focusable="false" aria-label="QR-code" ', $svgTag);
+    }
+
+    public function scopeFilterByNameOrEmail(Builder $query, ?string $filter = null): void
+    {
+        $query->when(
+            $filter,
+            fn () => $query->where(function (Builder $query) use ($filter) {
+                $query
+                    ->where('name', 'like', "%$filter%")
+                    ->orWhere('email', 'like', "%$filter%");
+            })
+        );
     }
 
     protected static function newFactory(): UserFactory

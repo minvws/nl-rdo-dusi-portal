@@ -3,8 +3,6 @@
 @section('page-title', __('Organisation management'))
 
 @section('content')
-    <x-flash element="p" />
-
     <section>
         <div>
             <h1>@lang("Organisation management")</h1>
@@ -13,7 +11,7 @@
                 <a class="button" href="{{route('organisations.create')}}">@lang("Create new organisation")</a>
             </div>
 
-            <x-filter-form-section/>
+            <x-filter-form-section :filter-placeholder="__('E.g search by name')" />
 
             @if ($organisations->isEmpty())
                 <div class="system-notification" role="group" aria-label="@lang('system notification')">

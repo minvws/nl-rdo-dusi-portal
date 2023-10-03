@@ -39,7 +39,6 @@ class UserRolesController extends Controller
      */
     public function store(UserRoleAttachRequest $request, User $user): RedirectResponse
     {
-
         $user->attachRole(
             role: RoleEnum::from($request->validated('role')),
             subsidyId: $request->validated('subsidy_id'),

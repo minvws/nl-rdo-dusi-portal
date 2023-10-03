@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use MinVWS\DUSi\User\Admin\API\Components\FlashNotification;
 use MinVWS\DUSi\User\Admin\API\Enums\FlashNotificationTypeEnum;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\OrganisationCreateRequest;
+use MinVWS\DUSi\User\Admin\API\Http\Requests\OrganisationFilterRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\OrganisationUpdateRequest;
 use MinVWS\DUSi\Shared\User\Models\Organisation;
 
@@ -25,9 +26,11 @@ class OrganisationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(OrganisationFilterRequest $filterRequest): View
     {
-        $organisations = Organisation::query()->paginate();
+        $organisations = Organisation::query()
+            ->filterByName($filterRequest->validated('filter'))
+            ->paginate();
 
         return view('organisations.index', [
             'organisations' => $organisations,

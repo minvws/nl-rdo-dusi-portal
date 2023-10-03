@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\User\Admin\API\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class OrganisationUpdateRequest extends FormRequest
 {
@@ -28,6 +29,7 @@ class OrganisationUpdateRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
+                Rule::unique('organisations', 'name')->ignore($this->route('organisation')),
             ],
         ];
     }
