@@ -63,8 +63,11 @@ class ApplicationPolicy
             return false;
         }
 
+        if (is_null($stage->assessor_user_id)) {
+            return false;
+        }
+
         if (
-            ($stage->assessor_user_id !== null) &&
             $user->hasRoleForSubsidy(
                 Role::ImplementationCoordinator,
                 $stage->subsidyStage->subsidyVersion->subsidy->id
