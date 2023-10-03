@@ -64,6 +64,7 @@ class ApplicationPolicy
         }
 
         if (
+            ($stage->assessor_user_id !== null) &&
             $user->hasRoleForSubsidy(
                 Role::ImplementationCoordinator,
                 $stage->subsidyStage->subsidyVersion->subsidy->id
