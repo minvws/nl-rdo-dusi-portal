@@ -56,6 +56,16 @@ class ApplicationPolicy
         return $stage !== null && !$stage->is_submitted && $stage->assessor_user_id === $user->id;
     }
 
+    public function previewTransition(User $user, Application $application): bool
+    {
+        return $this->save($user, $application);
+    }
+
+    public function submit(User $user, Application $application): bool
+    {
+        return $this->save($user, $application);
+    }
+
     public function release(User $user, Application $application): bool
     {
         $stage = $application->currentApplicationStage;

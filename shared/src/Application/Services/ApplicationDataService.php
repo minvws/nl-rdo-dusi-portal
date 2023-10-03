@@ -102,6 +102,26 @@ readonly class ApplicationDataService
         return $this->mapAnswersToData($applicationStage, $applicationStage->answers->all())->data;
     }
 
+
+    /**
+     * @return array<string, FieldValue>
+     * @throws Exception
+     */
+    public function getApplicationStageDataAsFieldValues(ApplicationStage $applicationStage): array
+    {
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+
+        $result = [];
+        foreach ($applicationStage->answers as $answer) {
+            $value = $this->mapAnswerToValue($answer, $encrypter);
+            if ($value !== null) {
+                $result[$answer->field->code] = new FieldValue($answer->field, $value);
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * @param ApplicationStage $applicationStage
      *
@@ -129,19 +149,25 @@ readonly class ApplicationDataService
 
         $data = new stdClass();
         foreach ($answers as $answer) {
-            $value = $answer->encrypted_answer !== null ? $encrypter->decrypt($answer->encrypted_answer) : null;
-            if ($value === null) {
-                continue;
+            $value = $this->mapAnswerToValue($answer, $encrypter);
+            if ($value !== null) {
+                $data->{$answer->field->code} = $value;
             }
-
-            $value = match ($answer->field->type) {
-                FieldType::Upload => $this->jsonDecoder->decode($value)->decodeObject(FileList::class),
-                default => $value,
-            };
-
-            $data->{$answer->field->code} = $value;
         }
 
         return new ApplicationStageData($stage, $data);
+    }
+
+    private function mapAnswerToValue(Answer $answer, Encrypter $encrypter): FileList|string|int|bool|float|array|null
+    {
+        $value = $answer->encrypted_answer !== null ? $encrypter->decrypt($answer->encrypted_answer) : null;
+        if ($value === null) {
+            return null;
+        }
+
+        return match ($answer->field->type) {
+            FieldType::Upload => $this->jsonDecoder->decode($value)->decodeObject(FileList::class),
+            default => $value,
+        };
     }
 }

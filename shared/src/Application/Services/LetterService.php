@@ -241,4 +241,11 @@ readonly class LetterService
 
         $this->triggerMailNotification($stage, $data);
     }
+
+    public function generatePreview(SubsidyStageTransitionMessage $message, ApplicationStage $stage): string
+    {
+        $data = $this->collectGenericDataForTemplate($stage);
+        $html = $this->generateHTMLLetter($message->content_html, $data);
+        return $html;
+    }
 }
