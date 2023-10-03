@@ -6,16 +6,16 @@ namespace MinVWS\DUSi\User\Admin\API\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use MinVWS\DUSi\Shared\User\Models\Organisation;
+use MinVWS\DUSi\Shared\User\Models\User;
 
-class OrganisationCreateRequest extends FormRequest
+class UserFilterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('create', Organisation::class) ?? false;
+        return $this->user()?->can('viewAny', User::class) ?? false;
     }
 
     /**
@@ -26,11 +26,7 @@ class OrganisationCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => [
-                'required',
-                'string',
-                'unique:organisations,name'
-            ],
+            'filter' => ['nullable', 'string']
         ];
     }
 }

@@ -108,7 +108,7 @@ class SurePayClient
         string $accountOwner,
         string $accountNumber,
         string $accountType = 'IBAN'
-    ): AccountInfo {
+    ): CheckOrganisationsAccountResponse {
         try {
             $response = $this->client->request(
                 'POST',
@@ -128,7 +128,7 @@ class SurePayClient
                 )
             );
 
-            return CheckOrganisationsAccountResponse::fromJson($response->getBody()->getContents())->account;
+            return CheckOrganisationsAccountResponse::fromJson($response->getBody()->getContents());
         } catch (GuzzleException $e) {
             throw new SurePayRepositoryException('Unable to get accesstoken', 0, $e);
         }

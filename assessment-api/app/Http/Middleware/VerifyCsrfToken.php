@@ -15,8 +15,6 @@ class VerifyCsrfToken extends BaseVerifyCsrfToken
      */
     protected $except = [
         '/api/login',
-        '/api/logout',
-        '/api/two-factor-challenge'
     ];
 
     /**

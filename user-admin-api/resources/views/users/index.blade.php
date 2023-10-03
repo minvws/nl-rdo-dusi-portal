@@ -3,8 +3,6 @@
 @section('page-title', __('User management'))
 
 @section('content')
-{{--    <x-flash element="p" />--}}
-
     <section>
         <div>
             <h1>@lang("User management")</h1>
@@ -13,7 +11,7 @@
                 <a class="button" href="{{ route('users.create') }}">@lang("Create new user")</a>
             </div>
 
-            <x-filter-form-section/>
+            <x-filter-form-section :filter-placeholder="__('E.g search by email or name')"/>
 
             @if ($users->isEmpty())
                 <div class="system-notification" role="group" aria-label="@lang('system notification')">

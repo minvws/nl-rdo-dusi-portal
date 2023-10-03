@@ -3,8 +3,6 @@
 @section('page-title', __('Edit organisation').' '.$organisation->name)
 
 @section('content')
-    <x-flash element="p" :only="['confirmation']"/>
-
     <section class="form-view">
         <div>
             <h1>@lang("Edit organisation") {{ $organisation->email }}</h1>

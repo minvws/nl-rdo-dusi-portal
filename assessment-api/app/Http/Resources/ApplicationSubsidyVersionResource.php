@@ -8,7 +8,7 @@ use MinVWS\DUSi\Assessment\API\Models\Enums\UIType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
@@ -114,9 +114,12 @@ class ApplicationSubsidyVersionResource extends JsonResource
                 'finalReviewDeadline' => $this->application->final_review_deadline?->format('Y-m-d'),
                 'citizenServiceNumber' => $this->citizenServiceNumber,
                 'surePayResult' =>
-                    match ($this->application->applicationSurePayResult?->account_number_validation) {
-                        AccountNumberValidation::Valid => 'Geldig',
-                        AccountNumberValidation::Invalid => 'Niet geldig',
+                    match ($this->application->applicationSurePayResult?->name_match_result) {
+                        NameMatchResult::Match => 'Goed',
+                        NameMatchResult::CloseMatch => 'Close match',
+                        NameMatchResult::NoMatch => 'Geen match',
+                        NameMatchResult::CouldNotMatch => 'Could not match',
+                        NameMatchResult::NameTooShort => 'Naam te kort',
                         default => 'Onbekend'
                     }
             ]
