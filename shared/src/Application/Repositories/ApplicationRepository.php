@@ -35,19 +35,19 @@ class ApplicationRepository
         $clauses = [];
         $bindings = [];
         foreach ($user->roles as $role) {
-            if ($role->view_all_stages && $role->subsidy_id === null) {
+            if ($role->view_all_stages && $role->pivot->subsidy_id === null) {
                 $clauses[] = '(1 = 1)';
             } elseif ($role->view_all_stages) {
                 $clauses[] = '(sv.subsidy_id = ?)';
-                $bindings[] = $role->subsidy_id;
+                $bindings[] = $role->pivot->subsidy_id;
             } else {
                 $clause = '((s.assessor_user_id IS NULL OR s.assessor_user_id = ?) AND ss.assessor_user_role = ?)';
                 $bindings[] = $user->id;
                 $bindings[] = $role->name->value;
 
-                if ($role->subsidy_id !== null) {
+                if ($role->pivot->subsidy_id !== null) {
                     $clause = '(' . $clause . ' AND sv.subsidy_id = ?)';
-                    $bindings[] = $role->subsidy_id;
+                    $bindings[] = $role->pivot->subsidy_id;
                 }
 
                 $clauses[] = $clause;
