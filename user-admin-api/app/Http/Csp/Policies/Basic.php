@@ -22,8 +22,10 @@ class Basic extends Policy
      */
     public function configure()
     {
-        $this->addDirective(Directive::DEFAULT, Keyword::SELF)
-            ->addDirective(Directive::SCRIPT, [Keyword::SELF, Keyword::UNSAFE_INLINE, Keyword::UNSAFE_EVAL])
+        $this
+            ->addDirective(Directive::BASE, Keyword::SELF)
+            ->addDirective(Directive::DEFAULT, Keyword::SELF)
+            ->addDirective(Directive::SCRIPT, [Keyword::SELF])
             ->addDirective(Directive::STYLE, Keyword::SELF)
             ->addDirective(Directive::CONNECT, ['*', 'data:'])
             ->addDirective(Directive::BLOCK_ALL_MIXED_CONTENT, false)
