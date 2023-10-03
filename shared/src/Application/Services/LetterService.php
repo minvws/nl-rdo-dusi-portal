@@ -161,7 +161,7 @@ readonly class LetterService
             createdAt: CarbonImmutable::now(),
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
             reference: $stage->application->reference,
-            submittedAt: CarbonImmutable::createFromInterface($submittedAt)
+            submittedAt: CarbonImmutable::createFromInterface($submittedAt ?? CarbonImmutable::now())
         );
     }
 
