@@ -93,16 +93,9 @@ readonly class LetterService
         return $this->engine->renderToString($templateKey, ['content' => $data]);
     }
 
-    private function generatePDFLetter(string $template, LetterData $data): string
+    public function generatePDFLetter(string $template, LetterData $data): string
     {
         $html = $this->generateHTMLLetter($template, $data);
-
-        // TODO: move to service provider on injection from config file
-        // Override dompdf config to allow asset loading from shared.
-        config()->set('dompdf.public_path', realpath(__DIR__ . '/../../../public'));
-        config()->set('dompdf.options.chroot', realpath(__DIR__ . '/../../..'));
-        config()->set('dompdf.options.font_cache', realpath(__DIR__ . '/../../../storage/fonts'));
-        config()->set('dompdf.options.font_dir', realpath(__DIR__ . '/../../../public/build/fonts'));
 
         $pdf = PDFHelper::loadHTML($html);
         $pdf->render();
