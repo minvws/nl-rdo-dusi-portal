@@ -21,7 +21,6 @@ readonly class ApplicationAssessorService
 
     /**
      * @throws InvalidAssignmentException
-
      */
     public function assignApplication(Application $application, User $user): void
     {

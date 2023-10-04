@@ -95,6 +95,7 @@ class User extends Authenticatable
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class)
+            ->using(RoleUser::class)
             ->withPivot('subsidy_id');
     }
 
@@ -132,7 +133,8 @@ class User extends Authenticatable
         $subsidyId = $subsidyId instanceof Subsidy ? $subsidyId->id : $subsidyId;
 
         return $this->roles
-            ->filter(fn (Role $userRole) => $userRole->subsidy_id === $subsidyId || $userRole->subsidy_id === null);
+            ->filter(fn (Role $userRole) =>
+                $userRole->pivot->subsidy_id === $subsidyId || $userRole->pivot->subsidy_id === null);
     }
 
     public function hasRoleToViewAllStagesForSubsidy(Subsidy|string $subsidyId): bool

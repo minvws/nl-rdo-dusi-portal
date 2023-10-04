@@ -6,13 +6,15 @@ namespace MinVWS\DUSi\Shared\User\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use MinVWS\DUSi\Shared\User\Database\Factories\RoleFactory;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 
 /**
  * @property RoleEnum $name
  * @property bool $view_all_stages
- * @property string|null $subsidy_id
+ * @property-read RoleUser $pivot
  */
 class Role extends Model
 {
@@ -41,5 +43,12 @@ class Role extends Model
     protected static function newFactory(): RoleFactory
     {
         return new RoleFactory();
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'role_user')
+            ->using(RoleUser::class)
+            ->withPivot('subsidy_id');
     }
 }
