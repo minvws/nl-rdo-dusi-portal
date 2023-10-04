@@ -59,7 +59,24 @@ class ApplicationPolicy
     public function release(User $user, Application $application): bool
     {
         $stage = $application->currentApplicationStage;
-        return $stage !== null && $stage->assessor_user_id === $user->id;
+        if ($stage === null) {
+            return false;
+        }
+
+        if (is_null($stage->assessor_user_id)) {
+            return false;
+        }
+
+        if (
+            $user->hasRoleForSubsidy(
+                Role::ImplementationCoordinator,
+                $stage->subsidyStage->subsidyVersion->subsidy->id
+            )
+        ) {
+            return true;
+        }
+
+        return $stage->assessor_user_id === $user->id;
     }
 
     public function claim(User $user, Application $application): bool
