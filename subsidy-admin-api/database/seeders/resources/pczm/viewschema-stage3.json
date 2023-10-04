@@ -23,7 +23,8 @@
             "type": "CustomControl",
             "scope": "#/properties/secondAssessmentInternalNote",
             "options": {
-                "readonly": true
+                "readonly": true,
+                "format": "textarea"
             }
         }
     ]

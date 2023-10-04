@@ -44,7 +44,7 @@ readonly class LetterService
         private ApplicationRepository $applicationRepository,
         private ApplicationStageEncryptionService $encryptionService,
         private JSONDecoder $jsonDecoder,
-        private RenderEngine $engine,
+        private RenderEngine $renderEngine,
     ) {
     }
 
@@ -84,13 +84,13 @@ readonly class LetterService
     private function generateHTMLLetter(string $template, LetterData $data): string
     {
         $templateKey = uniqid();
-        $loader = $this->engine->getLoader();
+        $loader = $this->renderEngine->getLoader();
 
         if ($loader instanceof LatteLetterLoaderService) {
             $loader->addTemplate($templateKey, $template);
         }
 
-        return $this->engine->renderToString($templateKey, ['content' => $data]);
+        return $this->renderEngine->renderToString($templateKey, ['content' => $data]);
     }
 
     public function generatePDFLetter(string $template, LetterData $data): string

@@ -19,7 +19,7 @@
     {if $content->stage2->firstAssessmentRejectedNote}
         <h2>Motivering bij het besluit</h2>
         <p>Uw aanvraag wordt afgewezen vanwege de volgende reden(en):</p>
-        <p>{$content->stage2->firstAssessmentRejectedNote}</p>
+        <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
         <p>&nbsp;</p>
     {/if}
 {/block}

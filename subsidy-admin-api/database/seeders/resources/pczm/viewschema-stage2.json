@@ -237,7 +237,8 @@
                     "type": "CustomControl",
                     "scope": "#/properties/firstAssessmentRequestedComplementNote",
                     "options": {
-                        "readonly": true
+                        "readonly": true,
+                        "format": "textarea"
                     },
                     "rule": {
                         "effect": "SHOW",
@@ -253,7 +254,8 @@
                     "type": "CustomControl",
                     "scope": "#/properties/firstAssessmentRejectedNote",
                     "options": {
-                        "readonly": true
+                        "readonly": true,
+                        "format": "textarea"
                     },
                     "rule": {
                         "effect": "SHOW",
@@ -269,7 +271,8 @@
                     "type": "CustomControl",
                     "scope": "#/properties/firstAssessmentInternalNote",
                     "options": {
-                        "readonly": true
+                        "readonly": true,
+                        "format": "textarea"
                     }
                 }
             ]

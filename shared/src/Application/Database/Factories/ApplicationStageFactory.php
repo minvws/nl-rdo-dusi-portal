@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
@@ -36,5 +37,15 @@ class ApplicationStageFactory extends Factory
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
             'updated_at' => $this->faker->dateTimeBetween('-1 month', 'now')
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (ApplicationStage $applicationStage) {
+            $applicationStage->update([
+                'submitted_at' => $applicationStage->is_submitted ?
+                    $this->faker->dateTimeBetween($applicationStage->created_at) : null,
+            ]);
+        });
     }
 }
