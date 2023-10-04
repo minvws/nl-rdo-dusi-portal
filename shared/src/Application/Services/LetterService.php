@@ -153,7 +153,7 @@ readonly class LetterService
         $answers = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($stage);
         $data = $this->convertAnswersToTemplateData($answers);
         $submittedAt = $stage->application->submitted_at;
-        assert($submittedAt !== null);
+        $submittedAt = $submittedAt ?? CarbonImmutable::now(); // preview doesn't have a submit timestamp
 
         return new LetterData(
             subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
@@ -161,7 +161,7 @@ readonly class LetterService
             createdAt: CarbonImmutable::now(),
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
             reference: $stage->application->reference,
-            submittedAt: CarbonImmutable::createFromInterface($submittedAt ?? CarbonImmutable::now())
+            submittedAt: CarbonImmutable::createFromInterface($submittedAt)
         );
     }
 

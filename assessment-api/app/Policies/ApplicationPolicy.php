@@ -12,6 +12,9 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ApplicationPolicy
 {
     /**

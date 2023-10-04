@@ -104,4 +104,8 @@ if $MIGRATE ; then
     vendor/bin/sail artisan migrate:fresh
 fi
 
-vendor/bin/sail artisan hsm:local-init --no-prompts=$NOPROMPTS
+if $INSTALL ; then
+    echo "Waiting for the HSM API to boot..."
+    sleep 5 # give the HSM API some time to boot
+    vendor/bin/sail artisan hsm:local-init --no-prompts=$NOPROMPTS
+fi

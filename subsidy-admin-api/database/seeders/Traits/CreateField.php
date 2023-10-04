@@ -12,7 +12,7 @@ use Ramsey\Uuid\Uuid;
 
 trait CreateField
 {
-    private readonly JSONEncoder $encoder;
+    private JSONEncoder $encoder;
 
     private function createField(
         string $subsidyStageId,
