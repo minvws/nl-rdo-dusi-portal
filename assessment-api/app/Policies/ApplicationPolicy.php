@@ -12,6 +12,9 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ApplicationPolicy
 {
     /**
@@ -54,6 +57,16 @@ class ApplicationPolicy
     {
         $stage = $application->currentApplicationStage;
         return $stage !== null && !$stage->is_submitted && $stage->assessor_user_id === $user->id;
+    }
+
+    public function previewTransition(User $user, Application $application): bool
+    {
+        return $this->save($user, $application);
+    }
+
+    public function submit(User $user, Application $application): bool
+    {
+        return $this->save($user, $application);
     }
 
     public function release(User $user, Application $application): bool

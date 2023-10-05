@@ -26,6 +26,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('assigned', 'filterAssignedApplications');
                 Route::get('{application}', 'show');
                 Route::put('{application}', 'saveAssessment');
+                Route::get('{application}/transition-preview', 'previewTransition');
+                Route::patch('{application}/submit', 'submitAssessment');
                 Route::get('{application}/history', 'getApplicationHistory');
                 Route::get('{application}/reviewer', 'getApplicationReviewer');
             });

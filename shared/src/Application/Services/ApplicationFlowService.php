@@ -59,14 +59,12 @@ class ApplicationFlowService
 
         $this->closeCurrentApplicationStage($stage);
 
-        $transitions = $stage->subsidyStage->subsidyStageTransitions;
-        foreach ($transitions as $transition) {
-            if ($this->evaluateTransitionForApplicationStage($transition, $stage)) {
-                return $this->performTransitionForApplicationStage($transition, $stage);
-            }
+        $transition = $this->evaluateTransitionsForApplicationStage($stage);
+        if ($transition === null) {
+            throw new ApplicationFlowException('No matching transition found for submit!');
         }
 
-        throw new ApplicationFlowException('No matching transition found for submit!');
+        return $this->performTransitionForApplicationStage($transition, $stage);
     }
 
     private function closeCurrentApplicationStage(ApplicationStage $stage): void
@@ -75,6 +73,18 @@ class ApplicationFlowService
         $stage->submitted_at = Carbon::now();
         $stage->is_current = false;
         $this->applicationRepository->saveApplicationStage($stage);
+    }
+
+    public function evaluateTransitionsForApplicationStage(ApplicationStage $stage): ?SubsidyStageTransition
+    {
+        $transitions = $stage->subsidyStage->subsidyStageTransitions;
+        foreach ($transitions as $transition) {
+            if ($this->evaluateTransitionForApplicationStage($transition, $stage)) {
+                return $transition;
+            }
+        }
+
+        return null;
     }
 
     private function evaluateTransitionForApplicationStage(
@@ -179,11 +189,12 @@ class ApplicationFlowService
             return;
         }
 
-        // TODO: Make sure the message is generated after the transition has been successfully saved to the database
-        ApplicationMessageEvent::dispatch(
-            $transition->publishedSubsidyStageTransitionMessage,
-            $closedStage
-        );
+        DB::afterCommit(function () use ($transition, $closedStage) {
+            ApplicationMessageEvent::dispatch(
+                $transition->publishedSubsidyStageTransitionMessage,
+                $closedStage
+            );
+        });
     }
 
     private function createNextApplicationStageForTransition(

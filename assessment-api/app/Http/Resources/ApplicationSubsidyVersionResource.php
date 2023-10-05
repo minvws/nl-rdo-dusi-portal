@@ -12,7 +12,6 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResul
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
-use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  *  @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -20,11 +19,11 @@ use MinVWS\DUSi\Shared\User\Models\User;
 class ApplicationSubsidyVersionResource extends JsonResource
 {
     public function __construct(
-        private readonly Application $application,
-        private readonly string $citizenServiceNumber,
-        private readonly User $user,
-        private readonly ApplicationDataService $applicationDataService,
-        private readonly SubsidyStageDataSchemaBuilder $dataSchemaBuilder
+        protected readonly Application $application,
+        protected readonly bool $readOnly,
+        protected readonly string $citizenServiceNumber,
+        protected readonly ApplicationDataService $applicationDataService,
+        protected readonly SubsidyStageDataSchemaBuilder $dataSchemaBuilder
     ) {
         parent::__construct($application);
     }
@@ -142,7 +141,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
         $subsidyStage = $applicationStage->subsidyStage;
         $data = $applicationStageData->data;
 
-        if ($applicationStage->is_current && $applicationStage->assessor_user_id === $this->user->id) {
+        if ($applicationStage->is_current && !$this->readOnly) {
             $uiType = UIType::Input;
             $uiSchema = $subsidyStage->publishedUI?->input_ui;
         } else {

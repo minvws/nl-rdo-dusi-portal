@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewApplicationEvent;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
@@ -18,6 +19,8 @@ use MinVWS\DUSi\Assessment\API\Services\ApplicationService;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveException;
+use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSubmitException;
+use MinVWS\DUSi\Assessment\API\Services\Exceptions\TransitionNotFoundException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\User\Models\User;
@@ -76,7 +79,12 @@ class ApplicationController extends Controller
                 'applicationId' => $application->id,
                 'userId' => $user->id,
             ]));
-        return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $user);
+
+        $readOnly =
+            $application->currentApplicationStage === null ||
+            $application->currentApplicationStage->assessor_user_id !== $user->id;
+
+        return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $readOnly);
     }
 
     /**
@@ -139,9 +147,40 @@ class ApplicationController extends Controller
 
         try {
             $application = $this->applicationService->saveAssessment($application, $data, $submit);
-            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, $user);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
+        } catch (ValidationException) {
+            abort(Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function previewTransition(
+        Application $application,
+        Authenticatable $user
+    ): ApplicationSubsidyVersionResource {
+        $this->authorize('previewTransition', $application);
+
+        assert($user instanceof User);
+
+        try {
+            return $this->applicationSubsidyService->getApplicationTransitionPreview($application);
+        } catch (TransitionNotFoundException) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function submitAssessment(Application $application): ApplicationSubsidyVersionResource
+    {
+        $this->authorize('submit', $application);
+
+        try {
+            $application = $this->applicationService->submitAssessment($application);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
+        } catch (InvalidApplicationSubmitException) {
+            abort(Response::HTTP_FORBIDDEN);
+        } catch (ValidationException) {
+            abort(Response::HTTP_BAD_REQUEST);
         }
     }
 }
