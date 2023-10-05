@@ -34,6 +34,7 @@ class ApplicationRepositoryTest extends TestCase
         parent::setUp();
         $subsidy = Subsidy::factory()->create([
             'title' => 'some_subsidy_title',
+            'code' => 'SST',
         ]);
         $this->identity = Identity::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create();
@@ -58,7 +59,7 @@ class ApplicationRepositoryTest extends TestCase
                 'updated_at' => new \DateTime('now'),
                 'created_at' => new \DateTime('now'),
                 'final_review_deadline' => new \DateTime('now'),
-                'status' => ApplicationStatus::Submitted
+                'status' => ApplicationStatus::Submitted,
                 ]
             );
 
@@ -80,8 +81,8 @@ class ApplicationRepositoryTest extends TestCase
                 ->createFromFormat('U', (string)strtotime('yesterday')),
             'date_final_review_deadline_to' => (new \DateTime())
                 ->createFromFormat('U', (string)strtotime('tomorrow')),
-            'status' => ApplicationStatus::Submitted,
-            'subsidy' => 'some_subsidy_title',
+            'status' => [ApplicationStatus::Submitted],
+            'subsidy' => ['SST'],
         ];
         $appFilter = ApplicationsFilter::fromArray($filter);
         // Test valid application

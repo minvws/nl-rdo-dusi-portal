@@ -315,65 +315,65 @@ class ApplicationControllerTest extends TestCase
 
     public static function noResultFilterProvider(): \Generator
     {
-        yield [
+        yield 'reference' => [
             [
-                'application_title' => "123test123",
+                'reference' => "123test123",
             ],
             200,
             '{"data":[]}',
         ];
-        yield [
+        yield 'dateFrom' => [
             [
                 'date_from' => Carbon::tomorrow(),
             ],
             200,
             '{"data":[]}',
         ];
-        yield [
+        yield 'dateTo' => [
             [
                 'date_to' => Carbon::yesterday(),
             ],
             200,
             '{"data":[]}',
         ];
-        yield [
+        yield 'dateLastModifiedFrom' => [
             [
                 'date_last_modified_from' => Carbon::tomorrow(),
             ],
             200,
             '{"data":[]}',
         ];
-        yield [
+        yield 'dateLastModifiedTo' => [
             [
                 'date_last_modified_to' => Carbon::yesterday(),
             ],
             200,
             '{"data":[]}',
         ];
-        yield [
+        yield 'dateFinalReviewDeadLineFrom' => [
             [
                 'date_final_review_deadline_from' => Carbon::tomorrow(),
             ],
             200,
             '{"data":[]}',
         ];
-        yield [
+        yield 'dateFinalReviewDeadLineTo' => [
             [
                 'date_final_review_deadline_to' => Carbon::yesterday(),
             ],
             200,
             '{"data":[]}',
         ];
-        yield [
+        yield 'Status' => [
             [
-                'status' => 'test',
+                'status' => ['test'],
             ],
             422,
-            '{"message":"The selected status is invalid.","errors":{"status":["The selected status is invalid."]}}',
+            '{"message":"The selected status.0 is invalid.","errors":{"status.0":["The selected status.0 is invalid."]}}', // @phpcs:ignore
         ];
-        yield [
+        yield 'Subsidy' => [
             [
-                'subsidy' => 'test',
+                'subsidy' => ['test'],
             ],
             200,
             '{"data":[]}',
@@ -396,22 +396,22 @@ class ApplicationControllerTest extends TestCase
     private function getFiltersForApplication(Application $application): array
     {
         return [
-            'application_title' => $application->application_title,
+            'reference' => $application->reference,
             'date_from' => $application->created_at,
             'date_to' => $application->created_at,
             'date_last_modified_from' => $application->updated_at,
             'date_last_modified_to' => $application->updated_at,
             'date_final_review_deadline_from' => $application->final_review_deadline,
             'date_final_review_deadline_to' => $application->final_review_deadline,
-            'status' => $application->status->value,
-            'subsidy' => $this->subsidy->title,
+            'status' => [$application->status->value],
+            'subsidy' => [$this->subsidy->code],
         ];
     }
 
     private function assertJsonFragment(TestResponse $response, Application $application, array $actions): void
     {
         $response->assertJsonFragment([
-            'application_title' => $application->application_title,
+            'reference' => $application->reference,
             'subsidy' => $this->subsidy->code,
             'status' => $application->status->value,
             'final_review_deadline' => $application->final_review_deadline,
