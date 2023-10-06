@@ -40,7 +40,7 @@ class LetterServiceProvider extends ServiceProvider
             $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include']);
             $policy->allowFilters([
                 'dataStream', 'date', 'join', 'spaceless', 'capitalize',
-                'firstUpper', 'lower', 'upper', 'round'
+                'firstUpper', 'lower', 'upper', 'round', 'breakLines'
             ]);
 
             $policy->allowProperties(LetterData::class, $policy::All);

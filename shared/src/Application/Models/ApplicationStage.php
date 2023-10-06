@@ -48,6 +48,10 @@ class ApplicationStage extends Model
         'submitted_at' => 'datetime'
     ];
 
+    protected $fillable = [
+        'submitted_at',
+    ];
+
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');

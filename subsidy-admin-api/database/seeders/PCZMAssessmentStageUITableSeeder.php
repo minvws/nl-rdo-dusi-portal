@@ -351,6 +351,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentRequestedComplementNote",
                                     "options" => [
+                                        "format" => "textarea",
                                         "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
@@ -372,6 +373,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentRejectedNote",
                                     "options" => [
+                                        "format" => "textarea",
                                         "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
@@ -393,6 +395,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentInternalNote",
                                     "options" => [
+                                        "format" => "textarea"
                                     ]
                                 ]
                             ]
@@ -458,6 +461,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/secondAssessmentInternalNote",
                                     "options" => [
+                                        "format" => "textarea"
                                     ],
                                 ]
                             ]
@@ -535,6 +539,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/internalAssessmentInternalNote",
                                     "options" => [
+                                        "format" => "textarea"
                                     ]
                                 ]
                             ]
@@ -595,6 +600,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/coordinatorImplementationReasonForRejection",
                                     "options" => [
+                                        "format" => "textarea",
                                         "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
                                     ],
                                     "rule" => [
@@ -611,7 +617,8 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/coordinatorImplementationApprovalNote",
                                     "options" => [
-                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager.",
+                                        "format" => "textarea"
                                     ],
                                     "rule" => [
                                         "effect" => "SHOW",
@@ -632,6 +639,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/coordinatorImplementationInternalNote",
                                     "options" => [
+                                        "format" => "textarea"
                                     ]
                                 ]
                             ]
