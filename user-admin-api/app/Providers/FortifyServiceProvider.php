@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Providers;
 
+use Illuminate\Support\Facades\Hash;
+use MinVWS\DUSi\Shared\User\Enums\Role;
+use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\Actions\Fortify\UpdateUserPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -18,7 +21,19 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = User::where('email', $request->email)->first();
+            if (
+                $user &&
+                $user->active &&
+                $user->hasRole([
+                    Role::UserAdmin,
+                ]) &&
+                Hash::check($request->password, $user->password)
+            ) {
+                return $user;
+            }
+        });
     }
 
     /**
