@@ -187,6 +187,15 @@ class SubsidyRepository
         return Subsidy::query()->active()->ordered()->pluck('code');
     }
 
+    /*
+     * @param SubsidyLetter $subsidyLetter
+     * @return Collection<SubsidyStage>
+     */
+    public function getSubsidyStageTitles(): Collection
+    {
+        return SubsidyStage::query()->distinct()->ordered()->get();
+    }
+
     public function findSubsidyByCode(string $code): ?Subsidy
     {
         return Subsidy::query()->where('code', '=', $code)->first();

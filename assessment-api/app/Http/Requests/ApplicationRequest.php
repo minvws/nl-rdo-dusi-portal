@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Enum;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 
@@ -19,6 +20,24 @@ class ApplicationRequest extends FormRequest
     //     return false;
     // }
 
+    /*
+     * We convert camelCased data to snake_case
+     */
+    protected function prepareForValidation(): void
+    {
+        $keys = array_keys($this->rules());
+
+        foreach ($keys as $key) {
+            $camelCasedKey = Str::camel($key);
+
+            if ($key !== $camelCasedKey && $this->has($camelCasedKey)) {
+                $value = $this->get($camelCasedKey);
+                $this->getInputSource()->set($key, $value);
+                $this->getInputSource()->remove($camelCasedKey);
+            }
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,18 +45,20 @@ class ApplicationRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'application_title' => 'string',
+        return [
+            'reference' => 'string',
             'date_from' => 'date',
             'date_to' => 'date',
-            'status' => [new Enum(ApplicationStatus::class)],
-            'subsidy' => 'string',
+            'status' => 'array',
+            'status.*' => [new Enum(ApplicationStatus::class)],
+            'subsidy' => 'array',
+            'subsidy.*' => 'string',
+            'phase' => 'array',
+            'phase.*' => 'string',
             'date_last_modified_from' => 'date',
             'date_last_modified_to' => 'date',
             'date_final_review_deadline_from' => 'date',
             'date_final_review_deadline_to' => 'date',
         ];
-
-        return $rules;
     }
 }

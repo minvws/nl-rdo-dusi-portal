@@ -20,21 +20,6 @@
     <php>
         <env name="APP_ENV" value="testing"/>
 
-        <env name="DB_APPLICATION_HOST" value="portal-backend-pgsql"/>
-        <env name="DB_APPLICATION_DATABASE" value="portal_backend"/>
-        <env name="DB_APPLICATION_PORT" value="5432"/>
-        <env name="DB_APPLICATION_USERNAME" value="postgres"/>
-        <env name="DB_APPLICATION_PASSWORD" value="password"/>
-        <env name="DB_APPLICATION_SSLMODE" value="prefer"/>
-        <env name="DB_APPLICATION_SSLROOTCERT" value="null"/>
-        <env name="DB_APPLICATION_SSLCERT" value="null"/>
-        <env name="DB_APPLICATION_SSLKEY" value="null"/>
-        <env name="DB_USER_HOST" value="pgsql_user"/>
-        <env name="DB_USER_DATABASE" value="user_admin_web"/>
-        <env name="DB_USER_PORT" value="5432"/>
-        <env name="DB_USER_USERNAME" value="postgres"/>
-        <env name="DB_USER_PASSWORD" value="password"/>
-        <env name="DB_USER_SSLMODE" value="prefer"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
         <!-- <env name="DB_CONNECTION" value="sqlite"/> -->

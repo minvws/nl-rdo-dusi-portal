@@ -23,30 +23,47 @@ function createDateTimeOrNull(array $inputArray, mixed $key): ?DateTime
     return null;
 }
 
-function getStatusOrNull(array $inputArray, mixed $key): ?ApplicationStatus
+/**
+ * @return array<array-key, ApplicationStatus|null>|null
+ */
+function getStatusOrNull(array $inputArray, mixed $key): ?array
 {
-    if (array_key_exists($key, $inputArray)) {
-        if ($inputArray[$key] instanceof ApplicationStatus) {
-            return $inputArray[$key];
+    if (!array_key_exists($key, $inputArray)) {
+        return null;
+    }
+
+    $states = [];
+
+    $stateList = $inputArray[$key];
+
+    foreach ($stateList as $state) {
+        if ($state instanceof ApplicationStatus) {
+            $states[] = $state;
         } else {
-            return ApplicationStatus::tryFrom($inputArray[$key]);
+            $states[] = ApplicationStatus::tryFrom($state);
         }
     }
-    return null;
+
+    return $states;
 }
 
 class ApplicationsFilter
 {
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function __construct(
         public ?string $applicationTitle,
+        public ?string $reference,
         public ?DateTime $dateFrom,
         public ?DateTime $dateTo,
         public ?DateTime $dateLastModifiedFrom,
         public ?DateTime $dateLastModifiedTo,
         public ?DateTime $dateFinalReviewDeadlineFrom,
         public ?DateTime $dateFinalReviewDeadlineTo,
-        public ?ApplicationStatus $status,
-        public ?string $subsidy,
+        public ?array $status,
+        public ?array $subsidy,
+        public ?array $phase,
     ) {
     }
 
@@ -58,6 +75,7 @@ class ApplicationsFilter
     {
         return new ApplicationsFilter(
             $inputArray['application_title'] ?? null,
+            $inputArray['reference'] ?? null,
             createDateTimeOrNull($inputArray, 'date_from'),
             createDateTimeOrNull($inputArray, 'date_to'),
             createDateTimeOrNull($inputArray, 'date_last_modified_from'),
@@ -65,7 +83,8 @@ class ApplicationsFilter
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_from'),
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_to'),
             getStatusOrNull($inputArray, 'status'),
-            $inputArray['subsidy'] ?? null
+            $inputArray['subsidy'] ?? null,
+            $inputArray['phase'] ?? null,
         );
     }
 }

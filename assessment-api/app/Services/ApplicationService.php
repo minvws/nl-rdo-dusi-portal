@@ -63,7 +63,9 @@ class ApplicationService
     public function getApplicationMessageFilterResource(): ApplicationMessageFilterResource
     {
         $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
-        return ApplicationMessageFilterResource::make(['shortRegulations' => $shortRegulations]);
+        $phases = $this->subsidyRepository->getSubsidyStageTitles();
+
+        return ApplicationMessageFilterResource::make(['shortRegulations' => $shortRegulations, 'phases' => $phases]);
     }
 
     /**
@@ -76,7 +78,9 @@ class ApplicationService
             throw new Exception("Not Implemented");
         }
         $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
-        return ApplicationRequestsFilterResource::make(['shortRegulations' => $shortRegulations]);
+        $phases = $this->subsidyRepository->getSubsidyStageTitles();
+
+        return ApplicationRequestsFilterResource::make(['shortRegulations' => $shortRegulations, 'phases' => $phases]);
     }
 
     public function getApplicationStagesResource(Application $application): ResourceCollection

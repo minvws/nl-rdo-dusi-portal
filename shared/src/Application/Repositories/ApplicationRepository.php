@@ -93,6 +93,10 @@ class ApplicationRepository
             fn() => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
         );
         $query->when(
+            isset($filter->reference),
+            fn() => $query->reference($filter->reference)->get() // @phpstan-ignore-line
+        );
+        $query->when(
             isset($filter->dateFrom),
             fn() => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
         );
@@ -125,13 +129,18 @@ class ApplicationRepository
             )->get()
         );
         $query->when(
-            isset($filter->status),
+            (isset($filter->status) && count($filter->status) > 0),
             fn() => $query->status($filter->status)->get() // @phpstan-ignore-line
         );
         $query->when(
-            isset($filter->subsidy),
-            fn() => $query->subsidyTitle($filter->subsidy)->get() // @phpstan-ignore-line
+            (isset($filter->subsidy) && count($filter->subsidy) > 0),
+            fn() => $query->subsidyCode($filter->subsidy)->get() // @phpstan-ignore-line
         );
+        $query->when(
+            (isset($filter->phase) && count($filter->phase) > 0),
+            fn() => $query->phase($filter->phase)->get() // @phpstan-ignore-line
+        );
+
         return $query->get();
     }
 

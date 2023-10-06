@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Database\Eloquent\Collection;
 use DateTime;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 
 /**
  * @property string $id
@@ -43,6 +44,9 @@ class ApplicationRequestsFilterResource extends JsonResource
         ];
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     private function toUIschema(): array
     {
         return [
@@ -60,10 +64,10 @@ class ApplicationRequestsFilterResource extends JsonResource
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/caseNumber",
+                                    "scope" => "#/properties/reference",
                                 ], [
                                     "type" => "FormGroupControl",
-                                    "label" => "Datum indeling",
+                                    "label" => "Datum indienen",
                                     "elements" => [
                                         [
                                             "type" => "CustomControl",
@@ -79,15 +83,24 @@ class ApplicationRequestsFilterResource extends JsonResource
                                             ]
                                         ]
                                     ]
-                                ], [
+                                ],
+                                [
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/status",
                                     "options" => [
                                         "format" => "checkbox-group"
                                     ]
-                                ], [
+                                ],
+                                [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/assessment",
+                                    "scope" => "#/properties/phase",
+                                    "options" => [
+                                        "format" => "checkbox-group"
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/subsidy",
                                     "options" => [
                                         "format" => "checkbox-group"
                                     ]
@@ -116,14 +129,14 @@ class ApplicationRequestsFilterResource extends JsonResource
                                     "elements" => [
                                         [
                                             "type" => "CustomControl",
-                                            "scope" => "#/properties/treatementFrom",
+                                            "scope" => "#/properties/dateFinalReviewDeadlineFrom",
                                             "options" => [
                                                 "inline" => true
                                             ]
                                         ],
                                         [
                                             "type" => "CustomControl",
-                                            "scope" => "#/properties/treatementTo",
+                                            "scope" => "#/properties/dateFinalReviewDeadlineTo",
                                             "options" => [
                                                 "inline" => true
                                             ]
@@ -143,7 +156,7 @@ class ApplicationRequestsFilterResource extends JsonResource
         //TODO dynamic content
         return [
             "properties" => [
-                'caseNumber' => [
+                'reference' => [
                     'type' => 'string',
                     'title' => 'Dossiernummer'
                 ],
@@ -161,18 +174,40 @@ class ApplicationRequestsFilterResource extends JsonResource
                     'type' => 'array',
                     'items' => [
                         'type' => 'string',
-                        'enum' => [
-                            'Nieuw',
-                            'Eerste beoordeling afgerond',
-                            'Tweede beoordeling afgerond',
-                            'Goedgekeurd',
-                            'Afbekeurd',
-                            'Herbeoordeling nodig'
-                        ]
+                        'oneOf' => [
+                            [
+                                'const' => ApplicationStatus::Draft,
+                                'title'  => 'Nog niet ingediend'
+                            ],
+                            [
+                                'const' => ApplicationStatus::Submitted,
+                                'title'  => 'Nieuw'
+                            ],
+                            [
+                                'const' => ApplicationStatus::RequestForChanges,
+                                'title' => 'Aanvulling nodig',
+                            ],
+                            [
+                                'const' => ApplicationStatus::Approved,
+                                'title' => 'Goedgekeurd',
+                            ],
+                            [
+                                'const' => ApplicationStatus::Rejected,
+                                'title' => 'Afgekeurd',
+                            ],
+                        ],
                     ],
                     'title' => 'Status'
                 ],
-                'assessment' => [
+                'phase' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'string',
+                        'enum' => $this['phases']->map(fn ($item) => $item->title)
+                    ],
+                    'title' => 'Fase'
+                ],
+                'subsidy' => [
                     'type' => 'array',
                     'items' => [
                         'type' => 'string',
@@ -190,12 +225,12 @@ class ApplicationRequestsFilterResource extends JsonResource
                     'format' => 'date',
                     'title' => 'Tot'
                 ],
-                'treatementFrom' => [
+                'dateFinalReviewDeadlineFrom' => [
                     'type' => 'string',
                     'format' => 'date',
                     'title' => 'Van'
                 ],
-                'treatementTo' => [
+                'dateFinalReviewDeadlineTo' => [
                     'type' => 'string',
                     'format' => 'date',
                     'title' => 'Tot'

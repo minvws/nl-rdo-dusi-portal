@@ -35,6 +35,7 @@ class ModelApplicationTest extends TestCase
 
         $this->subsidy = Subsidy::factory()->create([
             'title' => 'Test Subsidy',
+            'code' => 'TEST',
         ]);
         $this->subsidyVersion = SubsidyVersion::factory()->create([
             'subsidy_id' => $this->subsidy->id,
@@ -95,16 +96,16 @@ class ModelApplicationTest extends TestCase
 
     public function testScopeStatus()
     {
-        $query = Application::query()->status(ApplicationStatus::Submitted)->get();
+        $query = Application::query()->status([ApplicationStatus::Submitted])->get();
 
         $this->assertTrue($query->contains('id', $this->application->id));
 
         $this->assertFalse($query->contains('id', $this->falseApplication->id));
     }
 
-    public function testScopeSubsidyTitle()
+    public function testScopeSubsidyCode()
     {
-        $query = Application::query()->subsidyTitle('Test Subsidy')->get();
+        $query = Application::query()->subsidyCode(['TEST'])->get();
 
         $this->assertTrue($query->contains('subsidy_version_id', $this->subsidyVersion->id));
 

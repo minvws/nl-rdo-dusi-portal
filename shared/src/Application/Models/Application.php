@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
@@ -136,6 +137,10 @@ class Application extends Model
     {
         return $query->where('application_title', 'LIKE', '%' . $title . '%');
     }
+    public function scopeReference(Builder $query, string $title): Builder
+    {
+        return $query->where('reference', 'LIKE', '%' . $title . '%');
+    }
 
     public function scopeCreatedAtFrom(Builder $query, DateTime $timestamp): Builder
     {
@@ -167,19 +172,27 @@ class Application extends Model
         return $query->where('final_review_deadline', '<=', $timestamp);
     }
 
-    public function scopeStatus(Builder $query, ApplicationStatus $status): Builder
+    public function scopeStatus(Builder $query, array $status): Builder
     {
-        return $query->where('status', $status);
+        return $query->whereIn('status', $status);
     }
 
-    //TODO GB: This is not the correct way to do this, but it works for now
-    public function scopeSubsidyTitle(Builder $query, string $title): Builder
+    public function scopeSubsidyCode(Builder $query, array $codes): Builder
     {
-        $subVersions = SubsidyVersion::query()->whereHas('subsidy', function ($q) use ($title) {
-            $q->where('title', $title);
-        })->pluck('id');
+        return $query->whereHas('subsidyVersion.subsidy', function (Builder $q) use ($codes) {
+            $q->whereIn('code', $codes);
+        });
+    }
 
-        return $query->whereIn('subsidy_version_id', $subVersions);
+    /**
+     * Note that we search explicitly for a stage title as multiple subsidy stages belonging to different susbsidies
+     * could have the same stage title
+     */
+    public function scopePhase(Builder $query, array $titles): Builder
+    {
+        return $query->whereHas('currentApplicationStage.subsidyStage', function (Builder $q) use ($titles) {
+            $q->whereIn('title', $titles);
+        });
     }
 
     protected static function newFactory(): ApplicationFactory
