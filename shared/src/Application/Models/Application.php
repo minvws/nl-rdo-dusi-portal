@@ -8,6 +8,7 @@ use DateTime;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +36,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read HasMany<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage|null $currentApplicationStage
  * @property-read ApplicationStage $lastApplicationStage
+ * @property-read Collection<ApplicationStage> $applicationStages
  * @property-read ApplicationSurePayResult|null $applicationSurePayResult
  * @method static Builder<self> forIdentity(Identity $identity)
  * @method Builder<self> forIdentity(Identity $identity)

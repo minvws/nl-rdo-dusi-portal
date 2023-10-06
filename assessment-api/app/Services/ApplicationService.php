@@ -6,12 +6,14 @@ namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationRequestsFilterResource;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationStageResource;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSubmitException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
@@ -75,6 +77,11 @@ class ApplicationService
         }
         $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
         return ApplicationRequestsFilterResource::make(['shortRegulations' => $shortRegulations]);
+    }
+
+    public function getApplicationStagesResource(Application $application): ResourceCollection
+    {
+        return ApplicationStageResource::collection($application->applicationStages);
     }
 
     /**

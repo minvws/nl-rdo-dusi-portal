@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewApplicationEvent;
@@ -120,10 +121,9 @@ class ApplicationController extends Controller
         return $this->applicationService->getApplicationRequestFilterResource(null);
     }
 
-    public function getApplicationHistory(): JsonResource
+    public function getApplicationHistory(Application $application): ResourceCollection
     {
-        //TODO: implement this
-        return JsonResource::make([]);
+        return $this->applicationService->getApplicationStagesResource($application);
     }
 
     public function getApplicationReviewer(): JsonResource
