@@ -15,6 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\User\Database\Factories\UserFactory;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
@@ -212,5 +213,14 @@ class User extends Authenticatable
     protected static function newFactory(): UserFactory
     {
         return new UserFactory();
+    }
+
+    public function hasAssessedApplication(Application $application): bool
+    {
+         return Application::query()
+                ->join('application_stages', 'application_stages.application_id', 'applications.id')
+                ->where('application_stages.assessor_user_id', $this->id)
+                 ->where('applications.id', $application->id )
+                ->count() > 0;
     }
 }

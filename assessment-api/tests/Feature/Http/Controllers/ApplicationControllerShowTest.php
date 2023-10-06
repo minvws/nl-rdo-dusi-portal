@@ -2,18 +2,15 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
+namespace Feature\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
@@ -28,16 +25,15 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
- * @group assessment-submit
+ * @group application-show
  */
-class ApplicationControllerSubmitTest extends TestCase
+class ApplicationControllerShowTest extends TestCase
 {
     use DatabaseTransactions;
     use MocksEncryption;
 
     private ApplicationFlowService $flowService;
     private ApplicationStageEncryptionService $encryptionService;
-
 
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
@@ -99,49 +95,10 @@ class ApplicationControllerSubmitTest extends TestCase
         $this->identity = Identity::factory()->create();
     }
 
-    public function testSubmitAssessment(): void
-    {
-        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create([
-            'updated_at' => Carbon::today(),
-            'created_at' => Carbon::today(),
-            'final_review_deadline' => Carbon::today(),
-        ]);
-
-        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
-        $applicationStage1 = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create([
-            'sequence_number' => 1,
-            'encrypted_key' => $encryptedKey
-        ]);
-
-        $this->flowService->submitApplicationStage($applicationStage1);
-
-        $user = User::factory()->create();
-        $application->refresh();
-        $currentStage = $application->currentApplicationStage;
-        $this->assertNotNull($currentStage);
-        $currentStage->assessor_user_id = $user->id;
-        $currentStage->save();
-
-        $body = new ApplicationSaveBody(
-            (object)[
-                $this->statusField->code => 'Goedgekeurd',
-            ],
-            true
-        );
-
-        $json = (new JSONEncoder())->encode($body);
-
-        $this->be($user);
-        $response = $this->putJson(sprintf('/api/applications/%s', $application->id), json_decode($json, true));
-
-        $response->assertOk();
-
-        $application->refresh();
-        $this->assertEquals(3, $application->currentApplicationStage->sequence_number);
-        $this->assertTrue($application->currentApplicationStage->is_current);
-    }
-
-    public function testShowAssessment(): void
+    /**
+     * @dataProvider showUnassignedApplicationDataProvider
+     */
+    public function testShowUnassignedApplication(RoleEnum $roleEnum, bool $allowed): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
 
@@ -151,13 +108,135 @@ class ApplicationControllerSubmitTest extends TestCase
             'encrypted_key' => $encryptedKey
         ]);
 
-        $this->flowService->submitApplicationStage($applicationStage1);
-
         $user = User::factory()->create();
-        $user->attachRole(RoleEnum::ImplementationCoordinator);
+        $user->attachRole($roleEnum);
+
+        $this->flowService->submitApplicationStage($applicationStage1);
 
         $response = $this
             ->be($user)
+            ->getJson(sprintf('/api/applications/%s', $application->id));
+
+        if ($allowed) {
+            $response->assertOk();
+        } else {
+            $response->assertForbidden();
+        }
+    }
+
+    /**
+     * @dataProvider showAssignedApplicationDataProvider
+     */
+    public function testShowAssignedApplication(RoleEnum $roleEnum, bool $allowed): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage1 = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create([
+            'sequence_number' => 1,
+            'encrypted_key' => $encryptedKey
+        ]);
+
+        $user = User::factory()->create();
+        $user->attachRole($roleEnum);
+
+        $currentApplicationStage = $this->flowService->submitApplicationStage($applicationStage1);
+        $currentApplicationStage->assessor_user_id = $user->id;
+        $currentApplicationStage->save();
+
+        $response = $this
+            ->be($user)
+            ->getJson(sprintf('/api/applications/%s', $application->id));
+
+        if ($allowed) {
+            $response->assertOk();
+        } else {
+            $response->assertForbidden();
+        }
+    }
+
+    public static function showUnassignedApplicationDataProvider()
+    {
+        return [
+            'Assessor' => [RoleEnum::Assessor, false],
+            'InternalAuditor' => [RoleEnum::InternalAuditor, false],
+            'ImplementationCoordinator' => [RoleEnum::ImplementationCoordinator, true]
+        ];
+    }
+
+    public static function showAssignedApplicationDataProvider()
+    {
+        return [
+            'Assessor' => [RoleEnum::Assessor, true],
+            'InternalAuditor' => [RoleEnum::InternalAuditor, true],
+            'ImplementationCoordinator' => [RoleEnum::ImplementationCoordinator, true]
+        ];
+    }
+
+    public function testShowAssessmentForOtherUserIsForbidden(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage1 = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create([
+            'sequence_number' => 1,
+            'encrypted_key' => $encryptedKey
+        ]);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor);
+
+        $currentApplicationStage = $this->flowService->submitApplicationStage($applicationStage1);
+        $currentApplicationStage->assessor_user_id = $user->id;
+        $currentApplicationStage->save();
+
+        $anotherUser = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor);
+
+        $response = $this
+            ->be($anotherUser)
+            ->getJson(sprintf('/api/applications/%s', $application->id));
+
+        $response->assertForbidden();
+    }
+
+    public function testShowAssessmentForUserWhichHasAssessedBeforeIsAllowed(): void
+    {
+        $subsidyStage4 = SubsidyStage::factory()->for($this->subsidyVersion)->create([
+            'stage' => 3,
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => RoleEnum::Assessor,
+        ]);
+
+        SubsidyStageTransition::factory()
+            ->for($this->subsidyStage3, 'currentSubsidyStage')
+            ->for($subsidyStage4, 'targetSubsidyStage')
+            ->create(['target_application_status' => ApplicationStatus::Approved]);
+
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage1 = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create([
+            'sequence_number' => 1,
+            'encrypted_key' => $encryptedKey
+        ]);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor);
+
+        $nextApplicationStage = $this->flowService->submitApplicationStage($applicationStage1);
+        $nextApplicationStage->assessor_user_id = $user->id;
+        $nextApplicationStage->save();
+
+        $anotherUser = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor);
+
+        $currentApplicationStage = $this->flowService->submitApplicationStage($nextApplicationStage);
+        $currentApplicationStage->assessor_user_id = $anotherUser->id;
+        $currentApplicationStage->save();
+
+        $response = $this
+            ->be($anotherUser)
             ->getJson(sprintf('/api/applications/%s', $application->id));
 
         $response->assertOk();
