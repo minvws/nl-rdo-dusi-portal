@@ -22,7 +22,7 @@ class RoleResource extends JsonResource
     {
         return [
             'name' => $this->name->value,
-            'subsidyId' => $this->pivot->subsidy_id, // @phpstan-ignore-line
+            'subsidyId' => $this->pivot->subsidy_id,
             'viewAllStages' => $this->view_all_stages,
         ];
     }

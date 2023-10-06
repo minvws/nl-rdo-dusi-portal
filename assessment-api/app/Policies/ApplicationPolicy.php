@@ -12,6 +12,9 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ApplicationPolicy
 {
     /**
@@ -56,10 +59,37 @@ class ApplicationPolicy
         return $stage !== null && !$stage->is_submitted && $stage->assessor_user_id === $user->id;
     }
 
+    public function previewTransition(User $user, Application $application): bool
+    {
+        return $this->save($user, $application);
+    }
+
+    public function submit(User $user, Application $application): bool
+    {
+        return $this->save($user, $application);
+    }
+
     public function release(User $user, Application $application): bool
     {
         $stage = $application->currentApplicationStage;
-        return $stage !== null && $stage->assessor_user_id === $user->id;
+        if ($stage === null) {
+            return false;
+        }
+
+        if (is_null($stage->assessor_user_id)) {
+            return false;
+        }
+
+        if (
+            $user->hasRoleForSubsidy(
+                Role::ImplementationCoordinator,
+                $stage->subsidyStage->subsidyVersion->subsidy->id
+            )
+        ) {
+            return true;
+        }
+
+        return $stage->assessor_user_id === $user->id;
     }
 
     public function claim(User $user, Application $application): bool
