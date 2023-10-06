@@ -218,6 +218,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
             code: 'amount',
             title: 'Bedrag',
             options: ['€ 15.000'],
+            default: '€ 15.000',
             isRequired: false
         );
 
