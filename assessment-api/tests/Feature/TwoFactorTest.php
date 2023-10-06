@@ -42,6 +42,8 @@ class TwoFactorTest extends TestCase
         $user->two_factor_secret = encrypt($authProvider->generateSecretKey());
         $user->save();
 
+        $user->attachRole(RoleEnum::Assessor);
+
         Subsidy::query()->truncate();
         SubsidyVersion::query()->truncate();
         Application::query()->truncate();
@@ -104,6 +106,8 @@ class TwoFactorTest extends TestCase
             ->withPassword('password')
             ->withTwoFactorSecret($engine->generateSecretKey())
             ->create();
+
+        $user->attachRole(RoleEnum::Assessor);
 
         $response = $this
             ->postJson('/api/login', [

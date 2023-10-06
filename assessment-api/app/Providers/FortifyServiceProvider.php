@@ -6,12 +6,15 @@ namespace MinVWS\DUSi\Assessment\API\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\UpdatesUserPasswords as UpdatesUserPasswordContract;
 use Laravel\Fortify\Fortify;
 use MinVWS\DUSi\Assessment\API\Fortify\Actions\UpdateUserPassword;
+use MinVWS\DUSi\Shared\User\Enums\Role;
+use MinVWS\DUSi\Shared\User\Models\User;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -21,6 +24,22 @@ class FortifyServiceProvider extends ServiceProvider
             UpdatesUserPasswordContract::class,
             UpdateUserPassword::class
         );
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = User::where('email', $request->email)->first();
+            if (
+                $user &&
+                $user->active &&
+                $user->hasRole([
+                    Role::Assessor,
+                    Role::ImplementationCoordinator,
+                    Role::InternalAuditor,
+                ]) &&
+                Hash::check($request->password, $user->password)
+            ) {
+                return $user;
+            }
+        });
     }
 
     /**
