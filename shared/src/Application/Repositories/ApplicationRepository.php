@@ -368,4 +368,13 @@ class ApplicationRepository
         $applicationStage->assessorUser()->associate($user);
         $applicationStage->save();
     }
+
+    public function hasApplicationBeenAssessedByUser(Application $application, User $user): bool
+    {
+        return Application::query()
+                ->join('application_stages', 'application_stages.application_id', 'applications.id')
+                ->where('application_stages.assessor_user_id', $user->id)
+                ->where('applications.id', $application->id)
+                ->count() > 0;
+    }
 }

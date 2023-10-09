@@ -214,13 +214,4 @@ class User extends Authenticatable
     {
         return new UserFactory();
     }
-
-    public function hasAssessedApplication(Application $application): bool
-    {
-         return Application::query()
-                ->join('application_stages', 'application_stages.application_id', 'applications.id')
-                ->where('application_stages.assessor_user_id', $this->id)
-                 ->where('applications.id', $application->id)
-                ->count() > 0;
-    }
 }
