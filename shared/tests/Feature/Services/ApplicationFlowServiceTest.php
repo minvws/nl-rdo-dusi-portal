@@ -34,6 +34,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Test\MocksEncryption;
 use MinVWS\DUSi\Shared\Tests\TestCase;
+use MinVWS\DUSi\Shared\User\Enums\Role;
+use MinVWS\DUSi\Shared\User\Models\User;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -95,12 +97,14 @@ class ApplicationFlowServiceTest extends TestCase
         $this->subsidyStage1Upload = Field::factory()->for($this->subsidyStage1)->create(['type' => FieldType::Upload]);
         $this->subsidyStage2 = SubsidyStage::factory()->for($this->subsidyVersion)->create([
             'stage' => 2,
-            'subject_role' => SubjectRole::Assessor
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::Assessor,
         ]);
         $this->subsidyStage2Field = Field::factory()->for($this->subsidyStage1)->create(['type' => FieldType::Text]);
         $this->subsidyStage3 = SubsidyStage::factory()->for($this->subsidyVersion)->create([
             'stage' => 3,
-            'subject_role' => SubjectRole::Assessor
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::InternalAuditor,
         ]);
         $this->subsidyStage3Field = Field::factory()->for($this->subsidyStage1)->create(['type' => FieldType::Text]);
 
@@ -159,7 +163,8 @@ class ApplicationFlowServiceTest extends TestCase
                         Operator::Identical,
                         self::VALUE_DISAGREES
                     )
-                ])
+                ]),
+                'assign_to_previous_assessor' => true
             ]);
 
         SubsidyStageTransition::factory()
@@ -487,5 +492,88 @@ class ApplicationFlowServiceTest extends TestCase
 
         $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_AGREES);
         $this->flowService->submitApplicationStage($stage3);
+    }
+
+    public function testAssignToPreviousAssessor(): void
+    {
+        $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->assertNotNull($stage2);
+
+        $assessor = User::factory()->create();
+        $assessor->attachRole(Role::Assessor, $this->subsidyVersion->subsidy_id);
+        $stage2->assessor_user_id = $assessor->id;
+        $stage2->save();
+
+        $this->createAnswer($stage2, $this->subsidyStage2Field, self::VALUE_APPROVED);
+        $stage3 = $this->flowService->submitApplicationStage($stage2);
+
+        $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_DISAGREES);
+        $nextStage = $this->flowService->submitApplicationStage($stage3);
+        $this->assertEquals($assessor->id, $nextStage->assessor_user_id);
+    }
+
+    public function testAssignToPreviousAssessorShouldNotAssignIfUserNotActiveAnymore(): void
+    {
+        $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->assertNotNull($stage2);
+
+        $assessor = User::factory()->create();
+        $assessor->attachRole(Role::Assessor, $this->subsidyVersion->subsidy_id);
+        $stage2->assessor_user_id = $assessor->id;
+        $stage2->save();
+
+        $this->createAnswer($stage2, $this->subsidyStage2Field, self::VALUE_APPROVED);
+        $stage3 = $this->flowService->submitApplicationStage($stage2);
+
+        $assessor->active_until = CarbonImmutable::yesterday();
+        $assessor->save();
+
+        $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_DISAGREES);
+        $nextStage = $this->flowService->submitApplicationStage($stage3);
+        $this->assertNull($nextStage->assessor_user_id);
+    }
+
+    public function testAssignToPreviousAssessorShouldNotAssignIfUserDoesNotHaveRoleAnymore(): void
+    {
+        $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->assertNotNull($stage2);
+
+        $assessor = User::factory()->create();
+        $assessor->attachRole(Role::Assessor, $this->subsidyVersion->subsidy_id);
+        $stage2->assessor_user_id = $assessor->id;
+        $stage2->save();
+
+        $this->createAnswer($stage2, $this->subsidyStage2Field, self::VALUE_APPROVED);
+        $stage3 = $this->flowService->submitApplicationStage($stage2);
+
+        $assessor->detachRole(Role::Assessor, $this->subsidyVersion->subsidy_id);
+        $assessor->save();
+
+        $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_DISAGREES);
+        $nextStage = $this->flowService->submitApplicationStage($stage3);
+        $this->assertNull($nextStage->assessor_user_id);
+    }
+
+
+    public function testAssignToPreviousAssessorShouldNotAssignIfUserPickedUpEarlierStage(): void
+    {
+        $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->assertNotNull($stage2);
+
+        $assessor = User::factory()->create();
+        $assessor->attachRole(Role::Assessor, $this->subsidyVersion->subsidy_id);
+        $stage2->assessor_user_id = $assessor->id;
+        $stage2->save();
+
+        $this->createAnswer($stage2, $this->subsidyStage2Field, self::VALUE_APPROVED);
+        $stage3 = $this->flowService->submitApplicationStage($stage2);
+
+        // NOTE: although this is the applicant stage this doesn't really matter for the check we are testing
+        $this->applicationStage1->assessor_user_id = $assessor->id;
+        $this->applicationStage1->save();
+
+        $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_DISAGREES);
+        $nextStage = $this->flowService->submitApplicationStage($stage3);
+        $this->assertNull($nextStage->assessor_user_id);
     }
 }

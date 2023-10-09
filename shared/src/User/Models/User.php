@@ -26,6 +26,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
  * @property string $password
  * @property string $organisation_id
  * @property DateTimeInterface $active_until
+ * @property bool $active
  * @property ?int $password_updated_at
  * @property Collection<int, Role> $roles
  * @property Organisation $organisation

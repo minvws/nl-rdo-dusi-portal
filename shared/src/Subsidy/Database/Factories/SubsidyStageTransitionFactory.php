@@ -27,7 +27,9 @@ class SubsidyStageTransitionFactory extends Factory
             'current_subsidy_stage_id' => SubsidyStage::factory(),
             'target_subsidy_stage_id' => null,
             'target_application_status' => null,
-            'condition' => null
+            'condition' => null,
+            'clone_data' => false,
+            'assign_to_previous_assessor' => false
         ];
     }
 }

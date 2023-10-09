@@ -25,6 +25,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
  * @property Condition|null $condition
  * @property bool $send_message
  * @property bool $clone_data
+ * @property bool $assign_to_previous_assessor
  * @property-read Collection<int, SubsidyStageTransitionMessage> $subsidyStageTransitionMessages
  * @property-read SubsidyStageTransitionMessage|null $publishedSubsidyStageTransitionMessage
  */
@@ -40,7 +41,8 @@ class SubsidyStageTransition extends Model
         'id' => 'string',
         'target_application_status' => ApplicationStatus::class,
         'condition' => Condition::class,
-        'send_letter' => 'bool'
+        'send_letter' => 'bool',
+        'assign_to_previous_assessor' => 'bool'
     ];
 
     public function currentSubsidyStage(): BelongsTo
