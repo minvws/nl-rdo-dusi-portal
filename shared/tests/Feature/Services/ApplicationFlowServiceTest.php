@@ -63,6 +63,7 @@ class ApplicationFlowServiceTest extends TestCase
     private Field $subsidyStage2Field;
     private SubsidyStage $subsidyStage3;
     private Field $subsidyStage3Field;
+    private SubsidyStageTransition $subsidyStageTransition3To2;
 
     private Application $application;
     private ApplicationStage $applicationStage1;
@@ -147,7 +148,7 @@ class ApplicationFlowServiceTest extends TestCase
             ]);
         SubsidyStageTransitionMessage::factory()->for($transition)->create();
 
-        SubsidyStageTransition::factory()
+        $this->subsidyStageTransition3To2 = SubsidyStageTransition::factory()
             ->for($this->subsidyStage3, 'currentSubsidyStage')
             ->for($this->subsidyStage2, 'targetSubsidyStage')
             ->create([
@@ -510,6 +511,27 @@ class ApplicationFlowServiceTest extends TestCase
         $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_DISAGREES);
         $nextStage = $this->flowService->submitApplicationStage($stage3);
         $this->assertEquals($assessor->id, $nextStage->assessor_user_id);
+    }
+
+    public function testAssignToPreviousAssessorTurnedOff(): void
+    {
+        $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->assertNotNull($stage2);
+
+        $assessor = User::factory()->create();
+        $assessor->attachRole(Role::Assessor, $this->subsidyVersion->subsidy_id);
+        $stage2->assessor_user_id = $assessor->id;
+        $stage2->save();
+
+        $this->createAnswer($stage2, $this->subsidyStage2Field, self::VALUE_APPROVED);
+        $stage3 = $this->flowService->submitApplicationStage($stage2);
+
+        $this->subsidyStageTransition3To2->assign_to_previous_assessor = false;
+        $this->subsidyStageTransition3To2->save();
+
+        $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_DISAGREES);
+        $nextStage = $this->flowService->submitApplicationStage($stage3);
+        $this->assertNull($nextStage->assessor_user_id);
     }
 
     public function testAssignToPreviousAssessorShouldNotAssignIfUserNotActiveAnymore(): void
