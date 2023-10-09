@@ -197,6 +197,39 @@ class ApplicationFlowService
         });
     }
 
+    private function cloneApplicationStageData(ApplicationStage $source, ApplicationStage $target): void
+    {
+        $target->encrypted_key = $source->encrypted_key;
+        $this->applicationRepository->cloneApplicationStageAnswers($source, $target);
+        $this->applicationFileManager->copyFiles($source, $target);
+    }
+
+    private function assignApplicationStageToPreviousAssessor(ApplicationStage $source, ApplicationStage $target): void
+    {
+        $previousAssessor = $source->assessorUser;
+        if ($previousAssessor === null || !$previousAssessor->active) {
+            // user not active anymore
+            return;
+        }
+
+        $role = $target->subsidyStage->assessor_user_role;
+        $subsidy = $target->application->subsidyVersion->subsidy;
+        if ($role === null || !$previousAssessor->hasRoleForSubsidy($role, $subsidy)) {
+            // user doesn't have required role anymore
+            return;
+        }
+
+        $stages = $this->applicationRepository->getApplicationStagesUpToIncluding($target);
+        foreach ($stages as $stage) {
+            if ($stage->assessor_user_id === $previousAssessor->id) {
+                // assessor already picked up an earlier (active!) stage, not allowed to assess 2 stages
+                return;
+            }
+        }
+
+        $target->assessor_user_id = $previousAssessor->id;
+    }
+
     private function createNextApplicationStageForTransition(
         SubsidyStageTransition $transition,
         ApplicationStage $currentStage
@@ -208,7 +241,7 @@ class ApplicationFlowService
         $targetSubsidyStage = $transition->targetSubsidyStage;
 
         $previousInstanceOfTargetStage = null;
-        if ($transition->clone_data) {
+        if ($transition->clone_data || $transition->assign_to_previous_assessor) {
             $previousInstanceOfTargetStage = $this->applicationRepository->getLatestApplicationStageForSubsidyStage(
                 $currentStage->application,
                 $targetSubsidyStage
@@ -219,20 +252,20 @@ class ApplicationFlowService
         $stage->sequence_number = $currentStage->sequence_number + 1;
         $stage->is_submitted = false;
         $stage->is_current = true;
-
-        if (isset($previousInstanceOfTargetStage)) {
-            $stage->encrypted_key = $previousInstanceOfTargetStage->encrypted_key;
-        } else {
-            [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
-            $stage->encrypted_key = $encryptedKey;
-        }
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
+        $stage->encrypted_key = $encryptedKey;
 
         $this->applicationRepository->saveApplicationStage($stage);
 
-        if (isset($previousInstanceOfTargetStage)) {
-            $this->applicationRepository->cloneApplicationStageAnswers($previousInstanceOfTargetStage, $stage);
-            $this->applicationFileManager->copyFiles($previousInstanceOfTargetStage, $stage);
+        if ($transition->clone_data && isset($previousInstanceOfTargetStage)) {
+            $this->cloneApplicationStageData($previousInstanceOfTargetStage, $stage);
         }
+
+        if ($transition->assign_to_previous_assessor && isset($previousInstanceOfTargetStage)) {
+            $this->assignApplicationStageToPreviousAssessor($previousInstanceOfTargetStage, $stage);
+        }
+
+        $this->applicationRepository->saveApplicationStage($stage);
 
         return $stage;
     }

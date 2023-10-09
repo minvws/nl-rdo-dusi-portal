@@ -33,13 +33,15 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         $encoder = new JSONEncoder();
 
         // Inzenden aanvraag, aanvraag wordt beschikbaar gesteld voor de eerste beoordeling
+        // (of herbeoordeling na aanvulling)
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_1_TO_2,
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             'target_application_status' => ApplicationStatus::Submitted,
             'condition' => null,
-            'send_message' => false
+            'send_message' => false,
+            'assign_to_previous_assessor' => true
         ]);
 
 
@@ -90,7 +92,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
                     'Oneens met de eerste beoordeling'
                 )
             ),
-            'send_message' => false
+            'send_message' => false,
+            'assign_to_previous_assessor' => true
         ]);
 
 
@@ -185,7 +188,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
                     ])
                 ])
             ),
-            'send_message' => false
+            'send_message' => false,
+            'assign_to_previous_assessor' => true
         ]);
 
         // Bij een beoordeeloptie 'Goedgekeurd' door de eerste beoordelaar en 'Goedgekeurd' door de IC,
