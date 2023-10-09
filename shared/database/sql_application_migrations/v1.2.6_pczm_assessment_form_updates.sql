@@ -20,8 +20,6 @@ SET title              = 'Controlevragen',
 WHERE "subsidy_stage_id" = '8027c102-93ef-4735-ab66-97aa63b836eb' AND
       "code" = 'personalDataChecklist';
 
-WHERE id = 'a3f872d4-dbee-4ae1-ae73-8d13a21577a8';
-
 UPDATE public.fields
 SET title              = 'Controlevragen',
     description        = null,
