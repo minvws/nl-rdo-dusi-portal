@@ -21,7 +21,7 @@
         "autoprefixer": "^10.4.16",
         "axios": "^1.5.1",
         "better-npm-audit": "^3.7.3",
-        "eslint": "^8.50.0",
+        "eslint": "^8.51.0",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-compat": "^4.1.4",
         "eslint-plugin-prettier": "^5.0.0",
