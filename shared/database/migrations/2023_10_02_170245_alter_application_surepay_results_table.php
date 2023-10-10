@@ -22,10 +22,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('application_surepay_results', function (Blueprint $table) {
-            $table->string('payment_pre_validation', 20)->change();
-            $table->string('status', 20)->change();
-            $table->string('account_type', 20)->change();
-            $table->string('country_code', 2)->change();
+            $table->string('payment_pre_validation', 20)->nullable(false)->change();
+            $table->string('status', 20)->nullable(false)->change();
+            $table->string('account_type', 20)->nullable(false)->change();
+            $table->string('country_code', 2)->nullable(false)->change();
         });
     }
 };

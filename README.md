@@ -71,6 +71,18 @@ This application has been developed in Laravel, please see the
 [Laravel docs][laravel-docs]
 for Laravel specific details.
 
+To convert a laravel migration to a sql migration run the following command
+in application-backend:
+
+```shell
+vendor/bin/sail artisan sqlmigration description_of_the_migration
+```
+
+This command creates a sql migration file in shared/database/sql_application_migrations
+with the provided description in the filename.
+
+Always check if the desired result is correctly generated.
+
 ### Laravel Sail / Docker compose
 
 Docker compose is wrapped using Laravel Sail. Instead of using `docker compose`
