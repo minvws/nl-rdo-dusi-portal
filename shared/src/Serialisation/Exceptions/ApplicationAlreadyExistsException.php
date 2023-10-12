@@ -6,5 +6,4 @@ namespace MinVWS\DUSi\Shared\Serialisation\Exceptions;
 
 class ApplicationAlreadyExistsException extends EncryptedResponseException
 {
-
 }
