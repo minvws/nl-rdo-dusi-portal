@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Illuminate\Support\Facades\Log;
+use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckParams;
 
 class SurePayService
 {
@@ -17,7 +22,8 @@ class SurePayService
     public function __construct(
         private readonly ?SurePayClient $surePayClient,
         private readonly ApplicationDataService $applicationDataService,
-        private readonly ApplicationRepository $applicationRepository
+        private readonly ApplicationRepository $applicationRepository,
+        private EncryptedResponseExceptionHelper $exceptionHelper
     ) {
     }
 
@@ -67,5 +73,33 @@ class SurePayService
         $model->save();
 
         return $model;
+    }
+
+
+    public function accountCheck(SurePayAccountCheckParams $params): EncryptedResponse
+        {
+            try {
+                return $this->doAccountCheck($params);
+            } catch (Throwable $e) {
+                return $this->exceptionHelper->processException(
+                    $e,
+                    __CLASS__,
+                    __METHOD__,
+                    RPCMethods::GET_MESSAGE,
+                    $params->publicKey
+                );
+            }
+        }
+
+    private function doAccountCheck(SurePayAccountCheckParams $params): EncryptedResponse
+    {
+        //todo
+//        $result = $this->surePayClient->checkOrganisationsAccount(
+//            $data->bankAccountHolder,
+//            $data->bankAccountNumber
+//        );
+
+
+//        return $response;
     }
 }

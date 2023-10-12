@@ -61,6 +61,8 @@ Route::middleware('auth')->group(
 
         // TODO: route name not suitable for user messages
         Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters']);
+
+        Route::get('surepay/accountcheck', [SurePayController::class, 'accountCheck']);
     }
 );
 
