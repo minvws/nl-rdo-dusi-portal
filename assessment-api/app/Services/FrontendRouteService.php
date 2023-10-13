@@ -28,7 +28,7 @@ class FrontendRouteService
     protected function getRoutes(): array
     {
         return [
-            Route::get('/wachtwoord-wijzigen')
+            Route::get('/wachtwoord-reset')
                 ->name('password-reset'),
         ];
     }
