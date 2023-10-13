@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Helpers;
 
 use Illuminate\Contracts\Translation\Translator;
-use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
