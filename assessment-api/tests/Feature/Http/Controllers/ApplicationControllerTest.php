@@ -369,7 +369,7 @@ class ApplicationControllerTest extends TestCase
                 'status' => ['test'],
             ],
             422,
-            '{"message":"The selected status.0 is invalid.","errors":{"status.0":["The selected status.0 is invalid."]}}', // @phpcs:ignore
+            '{"message":"Gekozen status.0 is ongeldig.","errors":{"status.0":["Gekozen status.0 is ongeldig."]}}', // @phpcs:ignore
         ];
         yield 'Subsidy' => [
             [

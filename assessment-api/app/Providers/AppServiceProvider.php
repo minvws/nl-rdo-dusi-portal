@@ -14,6 +14,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
+use MinVWS\DUSi\Assessment\API\Services\FrontendRouteService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 
@@ -29,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(FrontendRouteService::class, function (Application $app) {
+            return new FrontendRouteService(
+                baseUrl: $app['config']['app.frontend_url'],
+            );
+        });
     }
 
     /**
