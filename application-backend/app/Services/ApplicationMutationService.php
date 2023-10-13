@@ -22,6 +22,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\Serialisation\Exceptions\ApplicationAlreadyExistsException;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -79,6 +80,13 @@ readonly class ApplicationMutationService
         return $this->responseEncryptionService->encryptCodable($status, $dto, $publicKey);
     }
 
+    /**
+     * @param ApplicationFindOrCreateParams $params
+     * @return EncryptedResponse
+     * @throws ApplicationAlreadyExistsException
+     * @throws EncryptedResponseException
+     * @throws Exceptions\ApplicationReferenceException
+     */
     private function doFindOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
     {
         if (Uuid::isValid($params->subsidyCode)) {
@@ -108,7 +116,7 @@ readonly class ApplicationMutationService
         }
 
         if ($application !== null) {
-            throw new EncryptedResponseException(
+            throw new ApplicationAlreadyExistsException(
                 EncryptedResponseStatus::FORBIDDEN,
                 'application_already_exists'
             );
@@ -146,6 +154,12 @@ readonly class ApplicationMutationService
             return DB::transaction(
                 fn () => $this->doFindOrCreateApplication($params),
                 self::CREATE_APPLICATION_ATTEMPTS
+            );
+        } catch (ApplicationAlreadyExistsException $e) {
+            return $this->exceptionHelper->createResponse(
+                $e,
+                RPCMethods::FIND_OR_CREATE_APPLICATION,
+                $params->publicKey
             );
         } catch (Throwable $e) {
             return $this->exceptionHelper->processException(

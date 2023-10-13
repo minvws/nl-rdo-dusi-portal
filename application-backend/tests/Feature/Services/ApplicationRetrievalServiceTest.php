@@ -133,6 +133,27 @@ class ApplicationRetrievalServiceTest extends TestCase
         $this->assertEquals($answerValue, $app->data->{$this->answer->field->code});
     }
 
+    /**
+     * @group application-not-found-exception
+     */
+    public function testGetUnknownApplicationShouldReturnNotFoundStatus(): void
+    {
+        $params = new ApplicationParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
+            $this->publicKey,
+            'unknown',
+            false,
+        );
+
+        /** @var EncryptedResponse $encryptedResponse */
+        $encryptedResponse = $this->app->get(ApplicationRetrievalService::class)->getApplication($params);
+
+        $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
+    }
+
     public static function useRealIdentityProvider(): array
     {
         return [

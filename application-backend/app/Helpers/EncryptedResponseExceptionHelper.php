@@ -9,6 +9,7 @@ use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -23,35 +24,34 @@ readonly class EncryptedResponseExceptionHelper
     }
 
     public function processException(
-        Throwable $exception,
+        Throwable $exceptionToProcess,
         string $originClass,
         string $originMethod,
         string $translationNamespace,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
-        $exception = EncryptedResponseException::forThrowable($exception);
+
+        $exception = EncryptedResponseException::forThrowable($exceptionToProcess);
         $error = $this->toError($exception, $translationNamespace);
 
-        $this->logger->error(
-            sprintf(
-                'Error %s / %s in %s::%s: %s (%s)',
-                $exception->getStatus()->name,
-                $exception->getErrorCode(),
-                $originClass,
-                $originMethod,
-                $error->message,
-                $error->code
-            ),
-            ['trace' => $exception->getTraceAsString()]
-        );
-
-        if ($exception->getPrevious() !== null) {
-            $this->logger->error(
-                sprintf('Previous error: %s', $exception->getPrevious()->getMessage()),
-                ['trace' => $exception->getPrevious()->getTraceAsString()]
-            );
+        if ($this->exceptionsNeedsLogging($exceptionToProcess)) {
+            $this->logException($exception, $originClass, $originMethod, $error);
         }
 
+        return $this->encryptionService->encryptCodable(
+            $exception->getStatus(),
+            $error,
+            $publicKey
+        );
+    }
+
+
+    public function createResponse(
+        EncryptedResponseException $exception,
+        string $translationNamespace,
+        ClientPublicKey $publicKey
+    ): EncryptedResponse {
+        $error = $this->toError($exception, $translationNamespace);
         return $this->encryptionService->encryptCodable(
             $exception->getStatus(),
             $error,
@@ -77,5 +77,79 @@ readonly class EncryptedResponseExceptionHelper
         }
 
         return new Error($code, $message);
+    }
+
+    private function exceptionsNeedsLogging(Throwable $e): bool
+    {
+        if ($e instanceof EncryptedResponseException) {
+            return in_array($e->getStatus(), [
+                EncryptedResponseStatus::INTERNAL_SERVER_ERROR,
+                EncryptedResponseStatus::FORBIDDEN,
+                EncryptedResponseStatus::NOT_FOUND,
+            ]);
+        }
+
+        return true;
+    }
+
+    private function logException(
+        EncryptedResponseException $exception,
+        string $originClass,
+        string $originMethod,
+        Error $error
+    ): void {
+
+        if ($this->isUnexpectedException($exception)) {
+            $this->logUnexpectedException($exception, $originClass, $originMethod, $error);
+        }
+
+        $this->logExpectedException($exception, $originClass, $originMethod, $error);
+    }
+
+    private function logUnexpectedException(
+        EncryptedResponseException $exception,
+        string $originClass,
+        string $originMethod,
+        Error $error
+    ): void {
+        $this->logger->error(
+            sprintf(
+                'Error %s / %s in %s::%s: %s (%s)',
+                $exception->getStatus()->name,
+                $exception->getErrorCode(),
+                $originClass,
+                $originMethod,
+                $error->message,
+                $error->code
+            ),
+            ['trace' => $exception->getTraceAsString()]
+        );
+
+        if ($exception->getPrevious() !== null) {
+            $this->logger->error(sprintf('Previous error: %s', $exception->getPrevious()
+                ->getMessage()), ['trace' => $exception->getPrevious()->getTraceAsString()]);
+        }
+    }
+
+    private function logExpectedException(
+        EncryptedResponseException $exception,
+        string $originClass,
+        string $originMethod,
+        Error $error
+    ): void {
+        $this->logger->info(sprintf(
+            'Error %s / %s in %s::%s: %s (%s)',
+            $exception->getStatus()->name,
+            $exception->getErrorCode(),
+            $originClass,
+            $originMethod,
+            $error->message,
+            $error->code
+        ));
+    }
+
+    private function isUnexpectedException(EncryptedResponseException $e): bool
+    {
+        return $e->getStatus() === EncryptedResponseStatus::INTERNAL_SERVER_ERROR;
     }
 }
