@@ -52,6 +52,11 @@ h3, h4 {
   font-size: 1rem;
 }
 
+ul {
+    margin-top: 0;
+    padding-left: 1rem;
+}
+
 $headerOffset: 3.5;
 
 header {
@@ -202,5 +207,5 @@ aside#right {
 
 footer {
   page-break-before: always;
-  width: 16cm;
+  width: 13.5cm;
 }

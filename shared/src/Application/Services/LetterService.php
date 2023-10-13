@@ -147,6 +147,33 @@ readonly class LetterService
             );
         }
 
+        // Add reference to every page except the first one
+        $pdfCanvas->page_script(
+            function (int $currentPage, int $totalPages, Canvas $canvas, FontMetrics $fontMetrics) use ($data) {
+                if ($currentPage > 1 && $totalPages > 1) {
+                    $fontNormal = $fontMetrics->getFont('RO Sans Web');
+                    $fontBold = $fontMetrics->getFont('RO Sans Web', 'bold');
+
+                    assert($fontBold !== null);
+                    assert($fontNormal !== null);
+
+                    $color = [0, 0, 0];
+                    $size = 7;
+                    $canvasWidth = $canvas->get_width();
+                    $canvasHeight = $canvas->get_height();
+
+                    $text = 'Ons kenmerk';
+                    $textWidth = $fontMetrics->getTextWidth($text, $fontBold, $size);
+
+                    $x = $canvas->get_width() - $textWidth - 90;
+                    $y = 98;
+
+                    $canvas->text($x, $y, $text, $fontBold, $size, $color);
+                    $canvas->text($x, $y + 10, $data->reference, $fontNormal, $size, $color);
+                }
+            }
+        );
+
         return $pdf->output();
     }
 
