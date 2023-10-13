@@ -8,12 +8,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
+use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;

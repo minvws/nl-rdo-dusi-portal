@@ -7,6 +7,7 @@ use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
+use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Services;
+namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Exception;
 use JsonException;
@@ -71,7 +71,7 @@ class ResponseEncryptionService
      *
      * @param class-string<T> $class
      *
-     * @return T
+     * @return Codable
      *
      * @throws JsonException
      * @throws CodableException

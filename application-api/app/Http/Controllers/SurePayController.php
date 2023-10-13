@@ -4,24 +4,31 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
-use Exception;
-use MinVWS\DUSi\Application\API\Services\ActionableService;
+use Illuminate\Http\Response;
+use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
+use MinVWS\DUSi\Application\API\Http\Requests\SurePayAccountCheckRequest;
 use MinVWS\DUSi\Application\API\Services\StateService;
-use MinVWS\DUSi\Shared\Serialisation\Http\Responses\EncodableResponse;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
+use MinVWS\DUSi\Application\API\Services\SurePayService;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckParams;
 
 class SurePayController extends Controller
 {
-    /**
-     * @throws Exception
-     */
-    public function accountCheck(
-        StateService $stateService,
-        ActionableService $actionableService
-    ): EncodableResponse {
-        // TODO: implement
-        $params = new ActionableCountsParams($stateService->getEncryptedIdentity());
-        $counts = $actionableService->getActionableCounts($params);
-        return new EncodableResponse($counts);
+    public function __construct(
+        private readonly ClientPublicKeyHelper $publicKeyHelper,
+        private readonly StateService $stateService,
+        private readonly SurePayService $surePayService)
+    {
+    }
+
+    public function accountCheck(SurePayAccountCheckRequest $request): Response
+    {
+        $params = new SurePayAccountCheckParams(
+            $this->stateService->getEncryptedIdentity(),
+            $this->publicKeyHelper->getClientPublicKey(),
+            $request->input('bankAccountHolder'),
+            $request->input('bankAccountNumber'),
+        );
+        $response = $this->surePayService->accountCheck($params);
+        return $this->encryptedResponse($response);
     }
 }

@@ -10,15 +10,16 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
 use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
+use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
+use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Validation\FileValidator;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;

@@ -9,6 +9,7 @@ use MinVWS\DUSi\Application\API\Http\Controllers\MessageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MockedResourceController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyController;
+use MinVWS\DUSi\Application\API\Http\Controllers\SurePayController;
 use MinVWS\DUSi\Application\API\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Application\API\Http\Middleware\RequireClientPublicKey;
@@ -62,7 +63,7 @@ Route::middleware('auth')->group(
         // TODO: route name not suitable for user messages
         Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters']);
 
-        Route::get('surepay/accountcheck', [SurePayController::class, 'accountCheck']);
+        Route::post('surepay/accountcheck', [SurePayController::class, 'accountCheck']);
     }
 );
 

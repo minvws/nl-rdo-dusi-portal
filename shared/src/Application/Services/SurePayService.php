@@ -5,16 +5,23 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Illuminate\Support\Facades\Log;
-use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
+use Illuminate\Validation\ValidationException;
+use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckResult;
+use RuntimeException;
+use Throwable;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SurePayService
 {
     private const SUBSIDY_PZCM_ID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
@@ -23,7 +30,8 @@ class SurePayService
         private readonly ?SurePayClient $surePayClient,
         private readonly ApplicationDataService $applicationDataService,
         private readonly ApplicationRepository $applicationRepository,
-        private EncryptedResponseExceptionHelper $exceptionHelper
+        private readonly EncryptedResponseExceptionHelper $exceptionHelper,
+        private readonly ResponseEncryptionService $responseEncryptionService,
     ) {
     }
 
@@ -77,29 +85,45 @@ class SurePayService
 
 
     public function accountCheck(SurePayAccountCheckParams $params): EncryptedResponse
-        {
-            try {
-                return $this->doAccountCheck($params);
-            } catch (Throwable $e) {
-                return $this->exceptionHelper->processException(
-                    $e,
-                    __CLASS__,
-                    __METHOD__,
-                    RPCMethods::GET_MESSAGE,
-                    $params->publicKey
-                );
-            }
+    {
+        try {
+            return $this->doAccountCheck($params);
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::SUREPAY_ACCOUNT_CHECK,
+                $params->publicKey
+            );
         }
+    }
 
+    /**
+     * @param SurePayAccountCheckParams $params
+     * @return EncryptedResponse
+     * @throws ValidationException
+     */
     private function doAccountCheck(SurePayAccountCheckParams $params): EncryptedResponse
     {
-        //todo
-//        $result = $this->surePayClient->checkOrganisationsAccount(
-//            $data->bankAccountHolder,
-//            $data->bankAccountNumber
-//        );
+        if ($this->surePayClient === null) {
+            throw new RuntimeException('surePayClient is not set');
+        }
 
+        $checkOrganisationsAccountResponse = $this->surePayClient->checkOrganisationsAccount(
+            $params->bankAccountHolder,
+            $params->bankAccountNumber
+        );
 
-//        return $response;
+        $surePayAccountCheckResult = new SurePayAccountCheckResult(
+            $checkOrganisationsAccountResponse->nameMatchResult,
+            $checkOrganisationsAccountResponse->nameSuggestion
+        );
+
+        return $this->responseEncryptionService->encryptCodable(
+            EncryptedResponseStatus::OK,
+            $surePayAccountCheckResult,
+            $params->publicKey
+        );
     }
 }

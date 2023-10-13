@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Helpers;
+namespace MinVWS\DUSi\Shared\Application\Helpers;
 
 use Illuminate\Contracts\Translation\Translator;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
@@ -13,7 +13,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-readonly class EncryptedResponseExceptionHelper
+class EncryptedResponseExceptionHelper
 {
     public function __construct(
         private ResponseEncryptionService $encryptionService,
