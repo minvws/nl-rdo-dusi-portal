@@ -20,10 +20,10 @@ use Latte\Engine as RenderEngine;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswer;
-use MinVWS\DUSi\Shared\Application\DTO\LetterStages;
 use MinVWS\DUSi\Shared\Application\DTO\DispositionMailData;
 use MinVWS\DUSi\Shared\Application\DTO\LetterData;
 use MinVWS\DUSi\Shared\Application\DTO\LetterStageData;
+use MinVWS\DUSi\Shared\Application\DTO\LetterStages;
 use MinVWS\DUSi\Shared\Application\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
@@ -32,6 +32,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
+use MinVWS\DUSi\Shared\Subsidy\Services\SubsidyFileManager;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -45,6 +46,7 @@ readonly class LetterService
         private ApplicationStageEncryptionService $encryptionService,
         private JSONDecoder $jsonDecoder,
         private RenderEngine $renderEngine,
+        private SubsidyFileManager $fileManager,
     ) {
     }
 
@@ -154,14 +156,16 @@ readonly class LetterService
         $data = $this->convertAnswersToTemplateData($answers);
         $submittedAt = $stage->application->submitted_at;
         $submittedAt = $submittedAt ?? CarbonImmutable::now(); // preview doesn't have a submit timestamp
+        $subsidy = $stage->subsidyStage->subsidyVersion->subsidy;
 
         return new LetterData(
-            subsidyTitle: $stage->subsidyStage->subsidyVersion->subsidy->title,
+            subsidy: $subsidy,
             stages: $data,
             createdAt: CarbonImmutable::now(),
             contactEmailAddress: $stage->subsidyStage->subsidyVersion->contact_mail_address,
             reference: $stage->application->reference,
-            submittedAt: CarbonImmutable::createFromInterface($submittedAt)
+            submittedAt: CarbonImmutable::createFromInterface($submittedAt),
+            fileManager: $this->fileManager,
         );
     }
 
@@ -245,7 +249,14 @@ readonly class LetterService
     public function generatePreview(SubsidyStageTransitionMessage $message, ApplicationStage $stage): string
     {
         $data = $this->collectGenericDataForTemplate($stage);
-        $html = $this->generateHTMLLetter($message->content_html, $data);
-        return $html;
+
+        return $this->generateHTMLLetter($message->content_html, $data);
+    }
+
+    public function generatePdfPreview(SubsidyStageTransitionMessage $message, ApplicationStage $stage): string
+    {
+        $data = $this->collectGenericDataForTemplate($stage);
+
+        return $this->generatePDFLetter($message->content_pdf, $data);
     }
 }

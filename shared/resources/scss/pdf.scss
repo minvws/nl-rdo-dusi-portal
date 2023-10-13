@@ -57,12 +57,34 @@ $headerOffset: 3.5;
 header {
   height: $headerOffset * 1cm;
 
-  img {
-    display: block;
-    margin: 0 auto;
-    position: absolute;
-    top: -2.5cm;
-    left: 7.5cm;
+  section#logo {
+    img {
+      position: absolute;
+      margin: 0 auto;
+      display: block;
+    }
+
+    img#ribbon {
+      width: 15mm;
+      top: -14.5mm;
+      left: 7.1cm
+    }
+
+    img#ministry {
+      width: 5.8cm;
+      top: 2mm;
+      left: 8.9cm
+    }
+
+    span#ministry {
+      font-family: "RO Serif Web", serif;
+      font-size: 13pt;
+      position: absolute;
+      width: 7cm;
+      top: 1mm;
+      left: 8.9cm;
+      line-height: 0.65;
+    }
   }
 }
 
@@ -160,6 +182,22 @@ aside#right {
   h3, h4 {
     font-size: 8pt;
   }
+}
+
+.reference {
+    position: fixed;
+    top: 89mm;
+    right: 18mm;
+
+    p, em {
+        font-size: 7pt;
+        line-height: 1;
+    }
+
+
+    h3, h4 {
+        font-size: 8pt;
+    }
 }
 
 footer {
