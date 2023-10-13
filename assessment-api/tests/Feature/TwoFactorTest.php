@@ -78,7 +78,7 @@ class TwoFactorTest extends TestCase
         ]); // check if message contains "The provided code was invalid."
 
         $this->assertContains(
-            "The provided two factor authentication code was invalid.",
+            "De opgegeven tweestapsverificatie was ongeldig.",
             json_decode($response->getContent(), true)
         );
 

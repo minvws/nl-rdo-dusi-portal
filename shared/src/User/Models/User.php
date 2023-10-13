@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\User\Models;
 
-use DateTimeInterface;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -13,9 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\User\Database\Factories\UserFactory;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
@@ -26,9 +24,11 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
  * @property string $email
  * @property string $password
  * @property string $organisation_id
- * @property DateTimeInterface $active_until
+ * @property CarbonImmutable $active_until
  * @property bool $active
- * @property ?int $password_updated_at
+ * @property ?CarbonImmutable $password_updated_at
+ * @property ?string $password_reset_token
+ * @property ?CarbonImmutable $password_reset_token_valid_until
  * @property Collection<int, Role> $roles
  * @property Organisation $organisation
  * @method bool can($abilities, $arguments = [])
@@ -72,8 +72,9 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'active_until' => 'datetime',
-        'password_updated_at' => 'timestamp',
+        'active_until' => 'immutable_datetime',
+        'password_updated_at' => 'immutable_datetime',
+        'password_reset_token_valid_until' => 'immutable_datetime',
     ];
 
     protected $with = [
@@ -153,7 +154,7 @@ class User extends Authenticatable
 
         return
             $this->getRolesForSubsidy($subsidyId)
-                ->filter(fn (Role $userRole) => in_array($userRole->name, $roles))
+                ->filter(fn (Role $userRole) => in_array($userRole->name, $roles, true))
                 ->isNotEmpty();
     }
 
@@ -163,7 +164,7 @@ class User extends Authenticatable
 
         return
             $this->roles
-                ->filter(fn (Role $userRole) => in_array($userRole->name, $roles))
+                ->filter(fn (Role $userRole) => in_array($userRole->name, $roles, true))
                 ->isNotEmpty();
     }
 
@@ -173,7 +174,7 @@ class User extends Authenticatable
             return true;
         }
 
-        if (!($this->active_until instanceof Carbon)) {
+        if (!($this->active_until instanceof CarbonImmutable)) {
             return false;
         }
 
@@ -186,8 +187,12 @@ class User extends Authenticatable
             return true;
         }
 
+        if (!($this->password_updated_at instanceof CarbonImmutable)) {
+            return true;
+        }
+
         // Check if password expires within x days of 180 days
-        return Carbon::createFromTimestamp($this->password_updated_at)
+        return $this->password_updated_at
             ->addDays(180)
             ->subDays($withinDays)
             ->isPast();
@@ -196,7 +201,7 @@ class User extends Authenticatable
     public function twoFactorQrCodeSvgWithAria(): string
     {
         $svgTag = $this->twoFactorQrCodeSvg();
-        return str_replace('<svg ', '<svg role="img"focusable="false" aria-label="QR-code" ', $svgTag);
+        return str_replace('<svg ', '<svg role="img" focusable="false" aria-label="QR-code" ', $svgTag);
     }
 
     public function scopeFilterByNameOrEmail(Builder $query, ?string $filter = null): void
