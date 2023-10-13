@@ -16,7 +16,7 @@ readonly class CheckOrganisationsAccountResponse implements Decodable
 
     public function __construct(
         public AccountInfo $account,
-        public NameMatchResult $nameMatchResult,
+        public ?NameMatchResult $nameMatchResult,
         public ?string $nameSuggestion
     ) {
     }
