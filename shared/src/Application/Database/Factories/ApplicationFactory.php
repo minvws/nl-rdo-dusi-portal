@@ -33,7 +33,7 @@ class ApplicationFactory extends Factory
                 $subsidyVersion->subsidy()->get()->first()->reference_prefix,
                 $this->faker->unique()->regexify('[0-9]{8}')
             ),
-            'created_at' => $this->faker->dateTimeBetween('-1 year'),
+            'created_at' => $this->faker->dateTimeBetween('-3 month'),
             'identity_id' => Identity::factory(),
             'application_title' => $this->faker->words(3, true),
             'final_review_deadline' => null,

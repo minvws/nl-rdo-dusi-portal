@@ -57,7 +57,7 @@ class ApplicationMapper
             $app->submitted_at,
             $app->final_review_deadline,
             $app->status,
-            $app->status->isEditableForApplicant(),
+            $app->is_editable_for_applicant,
             $form,
             $data
         );

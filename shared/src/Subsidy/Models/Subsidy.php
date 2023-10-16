@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
+use Carbon\CarbonImmutable;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,6 +26,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $description
  * @property DateTimeInterface $valid_from
  * @property DateTimeInterface|null $valid_to
+ * @property boolean $is_open_for_new_applications
  * @property Collection<SubsidyVersion> $subsidyVersions
  * @property SubsidyVersion $publishedVersion
  * @method static SubsidyVersion|Builder publishedVersion()
@@ -88,5 +91,14 @@ class Subsidy extends Model
     {
         //@phpstan-ignore-next-line
         return $query->whereRelation('subsidyVersions', fn (Builder $subQuery) => $subQuery->subjectRole($role));
+    }
+
+    protected function isOpenForNewApplications(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+                CarbonImmutable::instance($this->valid_from)->isPast() &&
+                ($this->valid_to === null || CarbonImmutable::instance($this->valid_to)->isFuture())
+        );
     }
 }

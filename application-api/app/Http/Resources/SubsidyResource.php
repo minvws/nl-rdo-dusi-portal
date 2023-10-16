@@ -30,8 +30,8 @@ class SubsidyResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'validFrom' => $this->valid_from->format('Y-m-d'),
-            'validTo' => $this->valid_to?->format('Y-m-d'),
+            'validFrom' => $this->valid_from->format('Y-m-d\TH:i:sp'),
+            'validTo' => $this->valid_to?->format('Y-m-d\TH:i:sp'),
             'subsidy_page_url' => $this->publishedVersion->subsidy_page_url,
         ];
 
