@@ -88,7 +88,7 @@ class Application extends Model
             get: fn () =>
                 $this->status->isEditableForApplicant() &&
                 (
-                    $this->status === ApplicationStatus::RequestForChanges ||
+                    $this->status->isEditableForApplicantAfterClosure() ||
                     $this->subsidyVersion->subsidy->is_open_for_new_applications
                 )
         );

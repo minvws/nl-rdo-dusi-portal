@@ -107,7 +107,7 @@ readonly class ApplicationMutationService
 
         if (
             !$subsidy->is_open_for_new_applications &&
-            $application?->status !== ApplicationStatus::RequestForChanges
+            !$application?->status?->isEditableForApplicantAfterClosure()
         ) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
@@ -191,7 +191,7 @@ readonly class ApplicationMutationService
         if (
             $body->submit &&
             !$application->subsidyVersion->subsidy->is_open_for_new_applications &&
-            $application->status !== ApplicationStatus::RequestForChanges
+            !$application->status->isEditableForApplicantAfterClosure()
         ) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
