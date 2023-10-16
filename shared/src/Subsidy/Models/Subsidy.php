@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 use Carbon\CarbonImmutable;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyFactory;
@@ -24,8 +23,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property string $reference_prefix
  * @property string $code
  * @property string $description
- * @property DateTimeInterface $valid_from
- * @property DateTimeInterface|null $valid_to
+ * @property CarbonImmutable $valid_from
+ * @property CarbonImmutable|null $valid_to
  * @property boolean $is_open_for_new_applications
  * @property Collection<SubsidyVersion> $subsidyVersions
  * @property SubsidyVersion $publishedVersion
@@ -55,8 +54,8 @@ class Subsidy extends Model
     protected $casts = [
         'id' => 'string',
         'status' => VersionStatus::class,
-        'valid_from' => 'date',
-        'valid_to' => 'date',
+        'valid_from' => 'immutable_datetime',
+        'valid_to' => 'immutable_datetime',
     ];
 
     public function subsidyVersions(): HasMany
@@ -96,9 +95,7 @@ class Subsidy extends Model
     protected function isOpenForNewApplications(): Attribute
     {
         return Attribute::make(
-            get: fn () =>
-                CarbonImmutable::instance($this->valid_from)->isPast() &&
-                ($this->valid_to === null || CarbonImmutable::instance($this->valid_to)->isFuture())
+            get: fn () => $this->valid_from->isPast() && ($this->valid_to === null || $this->valid_to->isFuture())
         );
     }
 }
