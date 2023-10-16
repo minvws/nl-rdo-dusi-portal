@@ -20,7 +20,7 @@ return [
     |
     */
 
-        'default' => ApplicationConnection::APPLICATION,
+    'default' => ApplicationConnection::APPLICATION,
 
     /*
     |--------------------------------------------------------------------------
@@ -73,20 +73,20 @@ return [
             'sslcert' => env('DB_APPLICATION_SSLCERT', null),
             'sslkey' => env('DB_APPLICATION_SSLKEY', null),
         ],
-        ],
-    //
-    //    /*
-    //    |--------------------------------------------------------------------------
-    //    | Migration Repository Table
-    //    |--------------------------------------------------------------------------
-    //    |
-    //    | This table keeps track of all the migrations that have already run for
-    //    | your application. Using this information, we can determine which of
-    //    | the migrations on disk haven't actually been run in the database.
-    //    |
-    //    */
-    //
-        'migrations' => 'migrations',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Migration Repository Table
+    |--------------------------------------------------------------------------
+    |
+    | This table keeps track of all the migrations that have already run for
+    | your application. Using this information, we can determine which of
+    | the migrations on disk haven't actually been run in the database.
+    |
+    */
+
+    'migrations' => 'migrations',
 
     /*
     |--------------------------------------------------------------------------
@@ -99,7 +99,7 @@ return [
     |
     */
 
-        'redis' => [
+    'redis' => [
 
         'client' => env('REDIS_CLIENT', 'predis'),
 
@@ -140,11 +140,11 @@ return [
                 'local_pk' => env('REDIS_TLS_LOCAL_PK', ''),
             ]
         ],
-        ],
+    ],
 
-        'dbal' => [
-            'types' => [
-                'timestamp' => TimestampType::class,
-            ],
+    'dbal' => [
+        'types' => [
+            'timestamp' => TimestampType::class,
         ],
+    ],
 ];

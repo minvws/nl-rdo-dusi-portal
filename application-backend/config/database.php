@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\DBAL\TimestampType;
 use MinVWS\DUSi\Shared\Application\Models\Connection;
+use MinVWS\DUSi\Shared\User\Models\Connection as UserConnection;
 
 return [
 
@@ -53,6 +54,23 @@ return [
             'sslrootcert' => env('DB_APPLICATION_SSLROOTCERT', null),
             'sslcert' => env('DB_APPLICATION_SSLCERT', null),
             'sslkey' => env('DB_APPLICATION_SSLKEY', null),
+        ],
+        UserConnection::USER => [
+            'driver' => 'pgsql',
+            'url' => env('USER_DATABASE_URL'),
+            'host' => env('DB_USER_HOST', '127.0.0.1'),
+            'port' => env('DB_USER_PORT', '5432'),
+            'database' => env('DB_USER_DATABASE', 'forge'),
+            'username' => env('DB_USER_USERNAME', 'forge'),
+            'password' => env('DB_USER_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => env('DB_USER_SSLMODE', 'prefer'),
+            'sslrootcert' => env('DB_USER_SSLROOTCERT', null),
+            'sslcert' => env('DB_USER_SSLCERT', null),
+            'sslkey' => env('DB_USER_SSLKEY', null),
         ],
     ],
     /*
