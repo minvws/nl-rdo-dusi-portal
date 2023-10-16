@@ -107,7 +107,7 @@ readonly class ApplicationMutationService
 
         if (
             !$subsidy->is_open_for_new_applications &&
-            ($application === null || $application->status !== ApplicationStatus::RequestForChanges)
+            $application?->status !== ApplicationStatus::RequestForChanges
         ) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
@@ -116,11 +116,11 @@ readonly class ApplicationMutationService
             );
         }
 
-        if ($application !== null && $application->status->isEditableForApplicant()) {
+        if ($application?->is_editable_for_applicant) {
             return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
         }
 
-        if ($application !== null && $application->status->isNewApplicationAllowed()) {
+        if ($application?->status?->isNewApplicationAllowed()) {
             // ignore existing and create a new one
             $application = null;
         }
