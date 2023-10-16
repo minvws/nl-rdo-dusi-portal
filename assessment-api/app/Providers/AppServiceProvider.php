@@ -17,6 +17,8 @@ use Laravel\Fortify\Fortify;
 use MinVWS\DUSi\Assessment\API\Services\FrontendRouteService;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
+use MinVWS\DUSi\Shared\Subsidy\Models\Disk as SubsidyDisk;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyFileRepository;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -49,6 +51,13 @@ class AppServiceProvider extends ServiceProvider
             ->give(function (Application $app) {
                 return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
             });
+
+        $this->app->when(SubsidyFileRepository::class)
+            ->needs(Filesystem::class)
+            ->give(function (Application $app) {
+                return $app->make(FilesystemManager::class)->disk(SubsidyDisk::SUBSIDY_FILES);
+            });
+
         if (Config::get('fortify.disable_2fa')) {
             Fortify::ignoreRoutes();
             $features = config('fortify.features');

@@ -18,6 +18,8 @@ use MinVWS\DUSi\Shared\Application\DTO\LetterStages;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationFileRepository;
 use MinVWS\DUSi\Shared\Application\Services\LatteLetterLoaderService;
+use MinVWS\DUSi\Shared\Subsidy\Models\Disk as SubsidyDisk;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyFileRepository;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -40,7 +42,7 @@ class LetterServiceProvider extends ServiceProvider
             $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include']);
             $policy->allowFilters([
                 'dataStream', 'date', 'join', 'spaceless', 'capitalize',
-                'firstUpper', 'lower', 'upper', 'round', 'breakLines'
+                'firstUpper', 'lower', 'upper', 'round', 'breakLines', 'nocheck'
             ]);
 
             $policy->allowProperties(LetterData::class, $policy::All);
@@ -48,6 +50,7 @@ class LetterServiceProvider extends ServiceProvider
             $policy->allowProperties(LetterStageData::class, $policy::All);
             $policy->allowProperties(ApplicationStageAnswer::class, $policy::All);
             $policy->allowMethods(CarbonImmutable::class, $policy::All);
+            $policy->allowMethods(LetterData::class, ['getSignature']);
 
             $latte->setPolicy($policy);
 
@@ -61,6 +64,12 @@ class LetterServiceProvider extends ServiceProvider
             ->needs(Filesystem::class)
             ->give(function (Application $app) {
                 return $app->make(FilesystemManager::class)->disk(Disk::APPLICATION_FILES);
+            });
+
+        $this->app->when(SubsidyFileRepository::class)
+            ->needs(Filesystem::class)
+            ->give(function (Application $app) {
+                return $app->make(FilesystemManager::class)->disk(SubsidyDisk::SUBSIDY_FILES);
             });
 
         $this->loadViewsFrom(self::VIEWS_BASE_PATH, 'dusi');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <title>{$content->subsidyTitle}</title>
     <meta charset="UTF-8">
@@ -11,7 +11,10 @@
 <body>
 
 <header>
-    <img src="{$content->logoStream|dataStream}"/>
+    <section id="logo">
+        <img id="ribbon" style="top: -14.5mm;" src="{$content->logoStream|dataStream}"/>
+        <span id="ministry">Ministerie van Volksgezondheid, Welzijn en Sport</span>
+    </section>
 </header>
 
 <aside id="right">
@@ -41,12 +44,12 @@
 </aside>
 
 <article>
-    <p class="small">&gt; Retouradres Postbus 16006 2500 BA Den Haag</p>
+    <p class="small"><span aria-hidden="true">&gt; </span>Retouradres Postbus 16006 2500 BA Den Haag</p>
 
     <p>
         {$content->stage1->firstName} {$content->stage1->infix} {$content->stage1->lastName}<br />
         {$content->stage1->street} {$content->stage1->houseNumber}{$content->stage1->houseNumberSuffix}<br />
-        {$content->stage1->postalCode} {$content->stage1->city}
+        {$content->stage1->postalCode}&nbsp;&nbsp;{$content->stage1->city}
     </p>
     <p>&nbsp;</p>
 
@@ -58,21 +61,23 @@
 
     {block content}{/block}
 
-    {block signature}
+    {block questions}
         <h2>Heeft u vragen?</h2>
-        <p>Mail dan naar <a href="mailto:{$content->contactEmailAddress}">{$content->contactEmailAddress}</a> of bel met
+        <p>Neem dan contact met ons op: <a href="mailto:{$content->contactEmailAddress}">{$content->contactEmailAddress}</a> of bel met
             <a href="tel:+31703405566">070-340 55 66</a>. Vermeld bij al uw correspondentie het
-            referentienummer {$content->reference}.</p>
+            referentienummer <em>{$content->reference}</em>.</p>
         <p>&nbsp;</p>
+    {/block}
 
+    {block signature}
         <p>
             Met vriendelijke groet,<br/>
             <br/>
-            de Minister van Volksgezondheid, Welzijn en Sport,<br/>
+            de Minister voor Langdurige Zorg en Sport,<br/>
             namens deze,<br/>
             het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
             <br/>
-            <img class="signature" src="{$content->signatureStream|dataStream}"/>
+            <img class="signature" alt="handtekening" src="{$content->getSignature('vws_dusi_signature.jpg')|dataStream}" />
             <br/>
             L. van der Weij
         </p>

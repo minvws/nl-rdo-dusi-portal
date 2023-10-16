@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MinVWS\DUSi\Shared\Application\Models\Disk;
+use MinVWS\DUSi\Shared\Subsidy\Models\Disk as SubsidyDisk;
 
 return [
 
@@ -63,6 +64,11 @@ return [
         Disk::APPLICATION_FILES => [
             'driver' => env('FILESYSTEM_APPLICATION_FILES_DRIVER', 'local'),
             'root' => env('FILESYSTEM_APPLICATION_FILES_ROOT', storage_path('application-files')),
+            'throw' => false,
+        ],
+        SubsidyDisk::SUBSIDY_FILES => [
+            'driver' => env('FILESYSTEM_SUBSIDY_FILES_DRIVER', 'local'),
+            'root' => env('FILESYSTEM_SUBSIDY_FILES_ROOT', storage_path('subsidy-files')),
             'throw' => false,
         ],
     ],
