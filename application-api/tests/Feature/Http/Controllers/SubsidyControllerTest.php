@@ -69,8 +69,8 @@ class SubsidyControllerTest extends TestCase
 
         // check metadata
         $response->assertJsonPath('1.description', $this->subsidy1->description);
-        $response->assertJsonPath('1.validFrom', $this->subsidy1->valid_from->format('Y-m-d'));
-        $response->assertJsonPath('1.validTo', $this->subsidy1->valid_to?->format('Y-m-d'));
+        $response->assertJsonPath('1.validFrom', $this->subsidy1->valid_from->format('Y-m-d\TH:i:sp'));
+        $response->assertJsonPath('1.validTo', $this->subsidy1->valid_to?->format('Y-m-d\TH:i:sp'));
 
         // check form link
         $this->assertEquals(
