@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\App;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 
@@ -28,6 +29,7 @@ class ApplicationMessageFactory extends Factory
         return [
             'id' => $this->faker->uuid,
             'application_id' => Application::factory(),
+            'application_stage_transition_id' => ApplicationStageTransition::factory(),
             'subject' => $this->faker->words(3, true),
             'is_new' => $this->faker->boolean,
             'sent_at' => $this->faker->dateTimeBetween('-1 year', '-1 month'),
