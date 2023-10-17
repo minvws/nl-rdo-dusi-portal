@@ -7,9 +7,10 @@ namespace MinVWS\DUSi\Shared\Application\Jobs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Attributes\WithoutRelations;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Services\LetterService;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 
@@ -21,13 +22,13 @@ class GenerateLetterJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public readonly SubsidyStageTransitionMessage $message,
-        public readonly ApplicationStage $applicationStage
+        #[WithoutRelations] public readonly SubsidyStageTransitionMessage $message,
+        #[WithoutRelations] public readonly ApplicationStageTransition $transition
     ) {
     }
 
     public function handle(LetterService $letterService): void
     {
-        $letterService->generateLetters($this->message, $this->applicationStage);
+        $letterService->generateLetters($this->message, $this->transition);
     }
 }

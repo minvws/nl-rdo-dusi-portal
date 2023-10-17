@@ -20,14 +20,14 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
  * @property string $application_id
  * @property string $subsidy_stage_transition_id
  * @property string $previous_application_stage_id
+ * @property ApplicationStatus $previous_application_status
  * @property ?string $new_application_stage_id
+ * @property ApplicationStatus $new_application_status
  * @property DateTimeInterface $created_at
  * @property-read Application $application
  * @property-read SubsidyStageTransition $subsidyStageTransition
  * @property-read ApplicationStage $previousApplicationStage
  * @property-read ?ApplicationStage $newApplicationStage
- * @property-read ApplicationStatus $previousApplicationStatus
- * @property-read ApplicationStatus $newApplicationStatus
  * @property-read ?ApplicationMessage $applicationMessage
  */
 class ApplicationStageTransition extends Model
