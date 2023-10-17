@@ -62,8 +62,6 @@ class ApplicationStageTransitionResource extends JsonResource
             $data['message'] = [
                 'id' => $this->applicationMessage->id,
                 'subject' => $this->applicationMessage->subject,
-                'pdf' => $this->applicationMessage->pdf_path,
-                'html' => $this->applicationMessage->html_path,
             ];
         }
 

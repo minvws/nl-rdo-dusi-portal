@@ -60,5 +60,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             '/ui/applications/all-cases-filter',
             [ApplicationController::class, 'getApplicationRequestFilterResource']
         );
+
+        Route::get('/messages/{message}/pdf', [ApplicationController::class, 'getLetterFromMessage']);
     });
 });
