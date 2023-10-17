@@ -12,3 +12,5 @@ Binnen een versie van een regeling zijn er een aantal belangrijke velden van toe
 
 Voor deze veldcodes is het ook mogelijk, indien de regeling uit meerdere stappen bestaat, om een afwijkende stap mee te
 geven: `stage1:email` of `stage2:firstName`.
+
+<div class="page-break"></div>
