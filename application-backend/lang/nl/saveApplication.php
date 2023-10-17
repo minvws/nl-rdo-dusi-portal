@@ -11,4 +11,6 @@ return [
     'application_readonly_message' => 'U heeft voor deze regeling reeds een lopende of goedgekeurde aanvraag.',
     'invalid_data_code' => 'invalid_data',
     'invalid_data_message' => 'Uw aanvraag bevat ongeldige invoer. Controleer uw aanvraag en probeer het opnieuw.',
+    'subsidy_closed_for_new_applications_code' => 'subsidy_closed_for_new_applications',
+    'subsidy_closed_for_new_applications_message' => 'Deze regeling is gesloten voor nieuwe aanvragen.',
 ];

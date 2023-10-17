@@ -13,7 +13,8 @@ class EncryptedResponseException extends Exception
     public function __construct(
         private readonly EncryptedResponseStatus $status,
         private readonly string $errorCode,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
+        private ?bool $logAsError = null
     ) {
         parent::__construct($status->value . ': ' . $this->errorCode, previous: $previous);
     }
@@ -39,5 +40,18 @@ class EncryptedResponseException extends Exception
             'internal_error',
             previous: $e
         );
+    }
+
+    public function logAsError(): bool
+    {
+        if ($this->logAsError !== null) {
+            return $this->logAsError;
+        }
+
+        return in_array($this->getStatus(), [
+            EncryptedResponseStatus::INTERNAL_SERVER_ERROR,
+            EncryptedResponseStatus::FORBIDDEN,
+            EncryptedResponseStatus::NOT_FOUND,
+        ]);
     }
 }

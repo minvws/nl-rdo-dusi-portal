@@ -33,8 +33,8 @@ class SubsidiesTableSeeder extends Seeder
             'reference_prefix' => 'PCZM23',
             'code' => 'PCZM',
             'description' => "De regeling Zorgmedewerkers met langdurige post-COVID klachten richt zich op zorgmedewerkers die tijdens de eerste golf van de COVID-19 pandemie besmet zijn geraakt met COVID-19 en sindsdien langdurige post-COVID klachten hebben. Deze klachten hebben grote invloed op het werk en het privéleven van deze zorgmedewerkers. Zij kunnen soms hun eigen werk als zorgmedewerker niet meer (volledig) doen. Voor deze specifieke groep zorgmedewerkers is een eenmalige financiële ondersteuning van €15.000 beschikbaar.",
-            'valid_from' => '2023-09-01',
-            'valid_to' => null
+            'valid_from' => '2023-09-25 09:00 CEST',
+            'valid_to' => '2023-10-23 12:00 CEST'
         ]);
 //        Subsidy::factory()->count(2)
 //            ->create()

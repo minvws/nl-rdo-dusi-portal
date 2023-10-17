@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
@@ -222,6 +224,69 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertEquals('application_already_exists', $error->code);
     }
 
+    public static function findOrCreateApplicationChecksIfSubsidyOpenForNewApplicationsProvider(): array
+    {
+        return [
+            'no_existing_application_should_return_error' => [
+                null,
+                EncryptedResponseStatus::FORBIDDEN,
+                'subsidy_closed_for_new_applications'
+            ],
+            'existing_draft_application_should_return_error' => [
+                ApplicationStatus::Draft,
+                EncryptedResponseStatus::FORBIDDEN,
+                'subsidy_closed_for_new_applications'
+            ],
+            'existing_request_for_changes_application_should_not_return_an_error' => [
+                ApplicationStatus::RequestForChanges,
+                EncryptedResponseStatus::OK,
+                null
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider findOrCreateApplicationChecksIfSubsidyOpenForNewApplicationsProvider
+     */
+    public function testFindOrCreateApplicationChecksIfSubsidyOpenForNewApplications(
+        ?ApplicationStatus $existingApplicationStatus,
+        EncryptedResponseStatus $expectedResponseStatus,
+        ?string $expectedErrorCode
+    ): void {
+        $now = CarbonImmutable::instance($this->subsidy->valid_to)->addDay();
+        Carbon::setTestNow($now);
+        CarbonImmutable::setTestNow($now);
+
+        if ($existingApplicationStatus) {
+            $application =
+                Application::factory()
+                    ->for($this->identity)
+                    ->for($this->subsidyVersion)
+                    ->create(['status' => $existingApplicationStatus]);
+            $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
+            Answer::factory()->for($applicationStage)->for($this->textField)->create();
+        }
+
+        $params = new ApplicationFindOrCreateParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
+            $this->publicKey,
+            $this->subsidy->code
+        );
+
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->findOrCreateApplication($params);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals($expectedResponseStatus, $encryptedResponse->status);
+
+        if ($expectedErrorCode) {
+            $error = $this->responseEncryptionService
+                ->decryptCodable($encryptedResponse, Error::class, $this->keyPair);
+            $this->assertEquals($expectedErrorCode, $error->code);
+        }
+    }
+
     public static function saveApplicationDataProvider(): array
     {
         return [
@@ -232,7 +297,6 @@ class ApplicationMutationServiceTest extends TestCase
 
     /**
      * @dataProvider saveApplicationDataProvider
-     * @group xyz
      */
     public function testSaveApplication(bool $submit, ApplicationStatus $expectedStatus): void
     {
@@ -316,6 +380,77 @@ class ApplicationMutationServiceTest extends TestCase
         $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($expectedResponseStatus, $encryptedResponse->status);
+    }
+
+    public static function saveApplicationChecksIfSubsidyOpenForNewApplicationsProvider(): array
+    {
+        return [
+            'draft_cannot_be_saved' => [
+                ApplicationStatus::Draft,
+                false,
+                EncryptedResponseStatus::FORBIDDEN,
+                'application_readonly'
+            ],
+            'draft_cannot_be_submitted' => [
+                ApplicationStatus::Draft,
+                true,
+                EncryptedResponseStatus::FORBIDDEN,
+                'subsidy_closed_for_new_applications'
+            ],
+            'request_for_changes_can_be_saved' =>
+                [ApplicationStatus::RequestForChanges, false, EncryptedResponseStatus::OK, null],
+            'request_for_changes_can_be_submitted' =>
+                [ApplicationStatus::RequestForChanges, true, EncryptedResponseStatus::OK, null]
+        ];
+    }
+
+    /**
+     * @dataProvider saveApplicationChecksIfSubsidyOpenForNewApplicationsProvider
+     */
+    public function testSaveApplicationChecksIfSubsidyOpenForNewApplications(
+        ApplicationStatus $status,
+        bool $submit,
+        EncryptedResponseStatus $expectedResponseStatus,
+        ?string $expectedErrorCode
+    ): void {
+        $now = CarbonImmutable::instance($this->subsidy->valid_to)->addDay();
+        Carbon::setTestNow($now);
+        CarbonImmutable::setTestNow($now);
+
+        $application =
+            Application::factory()
+                ->for($this->identity)
+                ->for($this->subsidyVersion)
+                ->create(['status' => $status]);
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
+        Answer::factory()->for($applicationStage)->for($this->textField)->create();
+
+        $body = new ApplicationSaveBody(
+            (object)[$this->textField->code => $this->faker->text],
+            $submit
+        );
+
+        $json = (new JSONEncoder())->encode($body);
+
+        $params = new EncryptedApplicationSaveParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
+            $this->publicKey,
+            $application->reference,
+            new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
+        );
+
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals($expectedResponseStatus, $encryptedResponse->status);
+
+        if ($expectedErrorCode) {
+            $error = $this->responseEncryptionService
+                ->decryptCodable($encryptedResponse, Error::class, $this->keyPair);
+            $this->assertEquals($expectedErrorCode, $error->code);
+        }
     }
 
 
