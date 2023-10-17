@@ -24,6 +24,7 @@ class SubsidyStageTransitionFactory extends Factory
     {
         return [
             'id' => $this->faker->uuid(),
+            'description' => $this->faker->words(3, true),
             'current_subsidy_stage_id' => SubsidyStage::factory(),
             'target_subsidy_stage_id' => null,
             'target_application_status' => null,

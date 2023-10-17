@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationStageTransitionFactory;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
@@ -27,6 +28,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
  * @property-read ?ApplicationStage $newApplicationStage
  * @property-read ApplicationStatus $previousApplicationStatus
  * @property-read ApplicationStatus $newApplicationStatus
+ * @property-read ?ApplicationMessage $applicationMessage
  */
 class ApplicationStageTransition extends Model
 {
@@ -58,6 +60,11 @@ class ApplicationStageTransition extends Model
     public function newApplicationStage(): BelongsTo
     {
         return $this->belongsTo(ApplicationStage::class, 'new_application_stage_id', 'id');
+    }
+
+    public function applicationMessage(): HasOne
+    {
+        return $this->hasOne(ApplicationMessage::class, 'application_stage_transition_id', 'id');
     }
 
     public function scopeOrdered(Builder $query): Builder
