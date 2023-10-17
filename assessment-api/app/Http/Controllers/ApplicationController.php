@@ -132,6 +132,11 @@ class ApplicationController extends Controller
         return JsonResource::make([]);
     }
 
+    public function getApplicationTransitions(Application $application): ResourceCollection
+    {
+        return $this->applicationService->getApplicationStageTransitions($application);
+    }
+
     public function saveAssessment(
         Application $application,
         Authenticatable $user,

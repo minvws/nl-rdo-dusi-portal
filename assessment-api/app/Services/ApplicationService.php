@@ -14,6 +14,7 @@ use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationRequestsFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationStageResource;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationStageTransitionResource;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSubmitException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
@@ -126,5 +127,10 @@ class ApplicationService
         $application->refresh();
 
         return $application;
+    }
+
+    public function getApplicationStageTransitions(Application $application): ResourceCollection
+    {
+        return ApplicationStageTransitionResource::collection($application->applicationStageTransitions);
     }
 }
