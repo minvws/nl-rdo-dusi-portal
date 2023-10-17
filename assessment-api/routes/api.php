@@ -30,6 +30,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::patch('{application}/submit', 'submitAssessment');
                 Route::get('{application}/history', 'getApplicationHistory');
                 Route::get('{application}/reviewer', 'getApplicationReviewer');
+                Route::get('{application}/transitions', 'getApplicationTransitions');
             });
 
         Route::prefix('applications')
