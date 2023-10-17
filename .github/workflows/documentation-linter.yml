@@ -1,8 +1,12 @@
 name: lint documentation
 on:
-  pull_request:
+  workflow_dispatch:
+  push:
     paths:
       - '**.md'
+  pull_request:
+    paths:
+      - '**.md' 
 jobs:
   mdlint:
     name: lint markDown file
