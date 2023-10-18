@@ -32,7 +32,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTime $locked_from
  * @property DateTimeInterface|null $final_review_deadline
  * @property DateTimeInterface $created_at
- * @property DateTimeInterface|null $submitted_at
+ * @property-read DateTimeInterface|null $submitted_at
+ * @property-read bool $is_editable_for_applicant
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read HasMany<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage|null $currentApplicationStage
@@ -79,6 +80,18 @@ class Application extends Model
                     ->first(['submitted_at'])
                     ?->submitted_at
         )->shouldCache();
+    }
+
+    protected function isEditableForApplicant(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+                $this->status->isEditableForApplicant() &&
+                (
+                    $this->status->isEditableForApplicantAfterClosure() ||
+                    $this->subsidyVersion->subsidy->is_open_for_new_applications
+                )
+        );
     }
 
     public function applicationSurePayResult(): HasOne

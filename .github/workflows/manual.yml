@@ -63,7 +63,7 @@ jobs:
           build_html: false
           table_of_contents: true
           template: .github/workflows/manual/pdf_template.html
-          theme: .github/workflows/manual/manon-sky-blue.css
+#          theme: .github/workflows/manual/manon-sky-blue.css
          
       - name: Upload manual documentation (pdf)
         if: steps.check_files.outputs.files_exists == 'true'

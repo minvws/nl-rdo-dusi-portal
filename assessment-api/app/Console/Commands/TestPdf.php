@@ -11,6 +11,8 @@ use MinVWS\DUSi\Shared\Application\DTO\LetterData;
 use MinVWS\DUSi\Shared\Application\DTO\LetterStageData;
 use MinVWS\DUSi\Shared\Application\DTO\LetterStages;
 use MinVWS\DUSi\Shared\Application\Services\LetterService;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Services\SubsidyFileManager;
 
 class TestPdf extends Command
 {
@@ -28,7 +30,7 @@ class TestPdf extends Command
      */
     protected $description = 'Command description';
 
-    public function __construct(protected LetterService $letterService)
+    public function __construct(protected LetterService $letterService, protected SubsidyFileManager $fileManager)
     {
         parent::__construct();
     }
@@ -69,13 +71,16 @@ EOF;
         $stages = new LetterStages();
         $stages->put('stage1', $dataStage1);
 
+        $subsidy = new Subsidy(['title' => 'Subsidie voor het testen van PDFs']);
+
         $letterData = new LetterData(
-            subsidyTitle: 'Subsidie voor het testen van PDFs',
+            subsidy: $subsidy,
             stages: $stages,
             createdAt: new DateTimeImmutable(),
             contactEmailAddress: 'tester@rdobeheer.nl',
             reference: '123456789',
             submittedAt: new DateTimeImmutable(),
+            fileManager: $this->fileManager
         );
 
         $pdfContent = $this->letterService->generatePDFLetter($template, $letterData);

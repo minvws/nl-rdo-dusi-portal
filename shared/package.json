@@ -10,7 +10,7 @@
         "vite-plugin-static-copy": "^0.17.0"
     },
     "dependencies": {
-        "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.14",
+        "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.16",
         "sass": "^1.69.0",
         "semver": "^7.5.4"
     }

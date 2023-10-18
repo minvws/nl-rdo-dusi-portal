@@ -14,6 +14,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationResponse;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Throwable;
 
 class EncryptedResponseExceptionHelper
@@ -32,7 +33,6 @@ class EncryptedResponseExceptionHelper
         string $translationNamespace,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
-
         if ($exceptionToProcess instanceof ValidationException) {
             return $this->encryptionService->encryptCodable(
                 EncryptedResponseStatus::BAD_REQUEST,
@@ -47,24 +47,10 @@ class EncryptedResponseExceptionHelper
 
         $error = $this->toError($exception, $translationNamespace);
 
-        if ($this->exceptionsNeedsLogging($exceptionToProcess)) {
+        if ($exception->logAsError()) {
             $this->logException($exception, $originClass, $originMethod, $error);
         }
 
-        return $this->encryptionService->encryptCodable(
-            $exception->getStatus(),
-            $error,
-            $publicKey
-        );
-    }
-
-
-    public function createResponse(
-        EncryptedResponseException $exception,
-        string $translationNamespace,
-        ClientPublicKey $publicKey
-    ): EncryptedResponse {
-        $error = $this->toError($exception, $translationNamespace);
         return $this->encryptionService->encryptCodable(
             $exception->getStatus(),
             $error,
@@ -92,40 +78,14 @@ class EncryptedResponseExceptionHelper
         return new Error($code, $message);
     }
 
-    private function exceptionsNeedsLogging(Throwable $e): bool
-    {
-        if ($e instanceof EncryptedResponseException) {
-            return in_array($e->getStatus(), [
-                EncryptedResponseStatus::INTERNAL_SERVER_ERROR,
-                EncryptedResponseStatus::FORBIDDEN,
-                EncryptedResponseStatus::NOT_FOUND,
-            ]);
-        }
-
-        return true;
-    }
-
     private function logException(
         EncryptedResponseException $exception,
         string $originClass,
         string $originMethod,
         Error $error
     ): void {
-
-        if ($this->isUnexpectedException($exception)) {
-            $this->logUnexpectedException($exception, $originClass, $originMethod, $error);
-        }
-
-        $this->logExpectedException($exception, $originClass, $originMethod, $error);
-    }
-
-    private function logUnexpectedException(
-        EncryptedResponseException $exception,
-        string $originClass,
-        string $originMethod,
-        Error $error
-    ): void {
-        $this->logger->error(
+        $this->logger->log(
+            $this->isUnexpectedException($exception) ? LogLevel::ERROR : LogLevel::INFO,
             sprintf(
                 'Error %s / %s in %s::%s: %s (%s)',
                 $exception->getStatus()->name,
@@ -138,27 +98,15 @@ class EncryptedResponseExceptionHelper
             ['trace' => $exception->getTraceAsString()]
         );
 
-        if ($exception->getPrevious() !== null) {
-            $this->logger->error(sprintf('Previous error: %s', $exception->getPrevious()
-                ->getMessage()), ['trace' => $exception->getPrevious()->getTraceAsString()]);
+        if ($this->isUnexpectedException($exception) && $exception->getPrevious() !== null) {
+            $this->logger->error(
+                sprintf(
+                    'Previous error: %s',
+                    $exception->getPrevious()->getMessage()
+                ),
+                ['trace' => $exception->getPrevious()->getTraceAsString()]
+            );
         }
-    }
-
-    private function logExpectedException(
-        EncryptedResponseException $exception,
-        string $originClass,
-        string $originMethod,
-        Error $error
-    ): void {
-        $this->logger->info(sprintf(
-            'Error %s / %s in %s::%s: %s (%s)',
-            $exception->getStatus()->name,
-            $exception->getErrorCode(),
-            $originClass,
-            $originMethod,
-            $error->message,
-            $error->code
-        ));
     }
 
     private function isUnexpectedException(EncryptedResponseException $e): bool

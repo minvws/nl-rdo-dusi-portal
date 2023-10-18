@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
@@ -19,6 +21,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as Applicati
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
@@ -131,6 +134,51 @@ class ApplicationRetrievalServiceTest extends TestCase
         $this->assertObjectHasProperty($this->answer->field->code, $app->data);
         $answerValue = $encrypter->decrypt($this->answer->encrypted_answer);
         $this->assertEquals($answerValue, $app->data->{$this->answer->field->code});
+    }
+
+    public static function getApplicationIsEditableWhenSubsidyIsNotOpenForNewApplicationsAnymoreProvider(): array
+    {
+        return [
+            'draft_should_not_be_editable' => [ApplicationStatus::Draft, false],
+            'request_for_changes_should_be_editable' => [ApplicationStatus::RequestForChanges, true],
+        ];
+    }
+
+    /**
+     * @dataProvider getApplicationIsEditableWhenSubsidyIsNotOpenForNewApplicationsAnymoreProvider
+     */
+    public function testGetApplicationIsEditableWhenSubsidyIsNotOpenForNewApplicationsAnymore(
+        ApplicationStatus $status,
+        bool $expectIsEditable
+    ): void {
+        $this->assertNotNull($this->application->subsidyVersion->subsidy->valid_to);
+        $this->application->status = $status;
+        $this->application->save();
+
+        $now = CarbonImmutable::instance($this->application->subsidyVersion->subsidy->valid_to)->addDay();
+        Carbon::setTestNow($now);
+        CarbonImmutable::setTestNow($now);
+
+        $params = new ApplicationParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
+            $this->publicKey,
+            $this->application->reference,
+            false,
+        );
+
+        $encryptedResponse = $this->app->get(ApplicationRetrievalService::class)->getApplication($params);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+
+        $app =
+            $this->responseEncryptionService
+                ->decryptCodable($encryptedResponse, ApplicationDTO::class, $this->keyPair);
+        $this->assertNotNull($app);
+
+        $this->assertEquals($expectIsEditable, $app->isEditable);
     }
 
     /**

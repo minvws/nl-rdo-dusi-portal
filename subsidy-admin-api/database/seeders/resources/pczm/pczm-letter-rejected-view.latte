@@ -1,13 +1,13 @@
 {block content}
     <p>Beste lezer,</p>
     <p>
-        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
+        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de 'Regeling {$content->subsidyTitle}' met referentienummer {$content->reference}.
         Met deze brief beslis ik op uw aanvraag.
     </p>
     <p>&nbsp;</p>
 
     <h2>Besluit</h2>
-    <p>Uw aanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
+    <p>Uw aanvraag voor financiële ondersteuning moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
     <p>&nbsp;</p>
 
     {if $content->stage2->firstAssessmentRejectedNote}

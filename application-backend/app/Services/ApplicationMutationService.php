@@ -22,8 +22,6 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
-use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
-use MinVWS\DUSi\Shared\Serialisation\Exceptions\ApplicationAlreadyExistsException;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -33,7 +31,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSave
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
@@ -88,7 +85,6 @@ readonly class ApplicationMutationService
     /**
      * @param ApplicationFindOrCreateParams $params
      * @return EncryptedResponse
-     * @throws ApplicationAlreadyExistsException
      * @throws EncryptedResponseException
      * @throws Exceptions\ApplicationReferenceException
      */
@@ -111,19 +107,32 @@ readonly class ApplicationMutationService
         $identity = $this->identityService->findOrCreateIdentity($params->identity);
 
         $application = $this->applicationRepository->findMyApplicationForSubsidy($identity, $subsidy);
-        if ($application !== null && $application->status->isEditableForApplicant()) {
+
+        if (
+            !$subsidy->is_open_for_new_applications &&
+            !$application?->status?->isEditableForApplicantAfterClosure()
+        ) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::FORBIDDEN,
+                'subsidy_closed_for_new_applications',
+                logAsError: false
+            );
+        }
+
+        if ($application?->is_editable_for_applicant) {
             return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
         }
 
-        if ($application !== null && $application->status->isNewApplicationAllowed()) {
+        if ($application?->status?->isNewApplicationAllowed()) {
             // ignore existing and create a new one
             $application = null;
         }
 
         if ($application !== null) {
-            throw new ApplicationAlreadyExistsException(
+            throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_already_exists'
+                'application_already_exists',
+                logAsError: false
             );
         }
 
@@ -160,12 +169,6 @@ readonly class ApplicationMutationService
                 fn () => $this->doFindOrCreateApplication($params),
                 self::CREATE_APPLICATION_ATTEMPTS
             );
-        } catch (ApplicationAlreadyExistsException $e) {
-            return $this->exceptionHelper->createResponse(
-                $e,
-                RPCMethods::FIND_OR_CREATE_APPLICATION,
-                $params->publicKey
-            );
         } catch (Throwable $e) {
             return $this->exceptionHelper->processException(
                 $e,
@@ -188,10 +191,21 @@ readonly class ApplicationMutationService
         $application = $this->loadApplication($identity, $params->applicationReference);
         $body = $this->frontendDecryptionService->decryptCodable($params->data, ApplicationSaveBody::class);
 
-        if (!$application->status->isEditableForApplicant()) {
+        if (
+            $body->submit &&
+            !$application->subsidyVersion->subsidy->is_open_for_new_applications &&
+            !$application->status->isEditableForApplicantAfterClosure()
+        ) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_readonly'
+                'subsidy_closed_for_new_applications',
+            );
+        }
+
+        if (!$application->is_editable_for_applicant) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::FORBIDDEN,
+                'application_readonly',
             );
         }
 
