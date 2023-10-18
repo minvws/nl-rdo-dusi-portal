@@ -41,6 +41,8 @@ class ApplicationStage extends Model
     use HasFactory;
     use HasUuids;
 
+    protected $connection = Connection::APPLICATION;
+
     protected $casts = [
         'assessor_decision' => ApplicationStageDecision::class,
         'encrypted_key' => HsmEncryptedData::class,

@@ -6,12 +6,12 @@
     },
     "devDependencies": {
         "laravel-vite-plugin": "^0.8.1",
-        "vite": "^4.4.11",
+        "vite": "^4.5.0",
         "vite-plugin-static-copy": "^0.17.0"
     },
     "dependencies": {
         "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.16",
-        "sass": "^1.69.0",
+        "sass": "^1.69.4",
         "semver": "^7.5.4"
     }
 }

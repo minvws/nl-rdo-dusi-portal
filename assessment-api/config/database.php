@@ -58,7 +58,7 @@ return [
         ],
         ApplicationConnection::APPLICATION => [
             'driver' => 'pgsql',
-            'url' => env('FORM_DATABASE_URL'),
+            'url' => env('APPLICATION_DATABASE_URL'),
             'host' => env('DB_APPLICATION_HOST', '127.0.0.1'),
             'port' => env('DB_APPLICATION_PORT', '5432'),
             'database' => env('DB_APPLICATION_DATABASE', 'forge'),

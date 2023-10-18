@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Queue;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
@@ -20,8 +19,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 class LetterGenerationTest extends TestCase
 {
-    use DatabaseTransactions;
-
     private SubsidyStageTransitionMessage $message;
     private ApplicationStageTransition $applicationStageTransition;
 

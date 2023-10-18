@@ -63,7 +63,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            'driver' => 'assessment-user-provider',
             'model' => \MinVWS\DUSi\Shared\User\Models\User::class,
         ],
 
