@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 
@@ -40,18 +41,35 @@ class ApplicationService
         return $this->bridgeClient->call(RPCMethods::GET_APPLICATION, $params, EncryptedResponse::class);
     }
 
+    /**
+     * @throws Exception
+     */
     public function findOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
     {
         return $this->bridgeClient->call(RPCMethods::FIND_OR_CREATE_APPLICATION, $params, EncryptedResponse::class);
     }
 
+    /**
+     * @throws Exception
+     */
     public function uploadApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
     {
         return $this->bridgeClient->call(RPCMethods::UPLOAD_APPLICATION_FILE, $params, EncryptedResponse::class);
     }
 
+    /**
+     * @throws Exception
+     */
     public function saveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse
     {
         return $this->bridgeClient->call(RPCMethods::SAVE_APPLICATION, $params, EncryptedResponse::class);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function validateFields(EncryptedFieldValidationParams $params): EncryptedResponse
+    {
+        return $this->bridgeClient->call(RPCMethods::VALIDATE_FIELD, $params, EncryptedResponse::class);
     }
 }

@@ -16,6 +16,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckResult;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use RuntimeException;
 use Throwable;
 
@@ -64,7 +65,7 @@ class SurePayService
             return null;
         }
 
-        $result = $this->surePayClient->checkOrganisationsAccount(
+        $result = $this->checkOrganisationsAccount(
             $data->bankAccountHolder,
             $data->bankAccountNumber
         );
@@ -83,6 +84,16 @@ class SurePayService
         return $model;
     }
 
+    public function checkOrganisationsAccount(
+        string $bankAccountHolder,
+        string $bankAccountNumber
+    ): CheckOrganisationsAccountResponse
+    {
+        return $this->surePayClient->checkOrganisationsAccount(
+            $bankAccountHolder,
+            $bankAccountNumber
+        );
+    }
 
     public function accountCheck(SurePayAccountCheckParams $params): EncryptedResponse
     {

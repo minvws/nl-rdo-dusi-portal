@@ -10,6 +10,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\FileUploadRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\RequiredConditionRule;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SurePayValidationRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Validator;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -19,6 +20,7 @@ class ValidationService
 {
     public function __construct(
         protected ValidatorFactory $validatorFactory,
+        protected SurePayService $surePayService,
     ) {
     }
 
@@ -41,7 +43,6 @@ class ValidationService
     protected function getFieldValidationRules(int $stage, Field $field, bool $submit): array
     {
         $rules = [];
-
         if ($submit && $field->is_required) {
             $rules[] = 'required';
         } else {
@@ -54,7 +55,7 @@ class ValidationService
 
         return [...$rules , ...match ($field->type) {
             FieldType::Checkbox => [...$this->getBooleanFieldRules($field, $submit)],
-            FieldType::CustomBankAccount => [],
+            FieldType::CustomBankAccount => [...$this->getCustomBankAccountFieldRules($field)],
             FieldType::CustomCountry => [],
             FieldType::CustomPostalCode => [],
             FieldType::Date => [],
@@ -76,7 +77,6 @@ class ValidationService
     protected function getFieldValuesData(array $fieldValues): array
     {
         $data = [];
-
         foreach ($fieldValues as $fieldValue) {
             $data[$fieldValue->field->code] = $fieldValue->value;
         }
@@ -180,5 +180,13 @@ class ValidationService
         }
 
         return $rules;
+    }
+
+    protected function getCustomBankAccountFieldRules(Field $field): array
+    {
+        if ($field->type !== FieldType::CustomBankAccount) {
+            return [];
+        }
+        return [ new SurePayValidationRule($this->surePayService) ];
     }
 }

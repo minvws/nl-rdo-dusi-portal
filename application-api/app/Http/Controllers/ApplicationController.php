@@ -74,6 +74,23 @@ class ApplicationController extends Controller
         return $this->encryptedResponse($response);
     }
 
+    public function validate(
+        string $reference,
+        Request $request,
+        StateService $stateService,
+        ClientPublicKeyHelper $publicKeyHelper,
+        ApplicationService $applicationService
+    ): Response {
+        $params = new EncryptedApplicationSaveParams(
+            $stateService->getEncryptedIdentity(),
+            $publicKeyHelper->getClientPublicKey(),
+            $reference,
+            new BinaryData($request->getContent())
+        );
+        $response = $applicationService->validateFields($params);
+        return $this->encryptedResponse($response);
+    }
+
     /**
      * @throws Exception
      */

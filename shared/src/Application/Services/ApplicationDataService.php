@@ -22,6 +22,8 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationResponse;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use stdClass;
 use Throwable;
@@ -92,6 +94,24 @@ readonly class ApplicationDataService
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);
         }
+    }
+
+    public function validateFieldValuesPub(
+        ApplicationStage $applicationStage,
+        object $data,
+        bool $submit
+    ): array
+    {
+        // Decode received form data
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
+        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
+        $errorMessages = [];
+        try {
+            $validator->validate();
+        } catch (ValidationException $e) {
+            $errorMessages = $e->errors();
+        }
+        return array_merge_recursive($errorMessages, $validator->successMessages);
     }
 
     /**

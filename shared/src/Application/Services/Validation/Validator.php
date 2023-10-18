@@ -13,9 +13,12 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ImplicitValidationRule;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SuccessMessageResultRule;
 
 class Validator extends BaseValidator
 {
+    public $successMessages = [];
+
     /**
      * @param array<int|string, FieldValue> $fieldValues
      */
@@ -77,5 +80,9 @@ class Validator extends BaseValidator
         }
 
         parent::validateUsingCustomRule($attribute, $value, $rule);
+
+        if ($invokableRule instanceof SuccessMessageResultRule) {
+            $this->successMessages[$attribute] = $invokableRule->getSuccessMessages();
+        }
     }
 }

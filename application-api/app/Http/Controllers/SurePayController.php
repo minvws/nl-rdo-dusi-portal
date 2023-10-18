@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Response;
 use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Http\Requests\SurePayAccountCheckRequest;
@@ -20,6 +21,9 @@ class SurePayController extends Controller
     {
     }
 
+    /**
+     * @throws AuthenticationException
+     */
     public function accountCheck(SurePayAccountCheckRequest $request): Response
     {
         $params = new SurePayAccountCheckParams(

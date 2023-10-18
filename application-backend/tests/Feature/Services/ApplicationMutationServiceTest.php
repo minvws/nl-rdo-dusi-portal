@@ -10,14 +10,20 @@ use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
+use MinVWS\DUSi\Application\Backend\Tests\SurePayServiceMock;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccountInfo;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -25,10 +31,12 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -39,6 +47,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Tests\Unit\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
+use Mockery;
 use Queue;
 use Ramsey\Uuid\Uuid;
 
@@ -417,5 +427,137 @@ class ApplicationMutationServiceTest extends TestCase
                 ->decryptCodable($encryptedResponse, Error::class, $this->keyPair);
         $this->assertNotNull($error);
         $this->assertEquals('invalid_data', $error->code);
+    }
+
+    public function testValidateFields(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+
+        $body = new FieldValidationParams(
+            (object)[
+                $this->textField->code => $this->faker->text,
+            ]
+        );
+
+        $json = (new JSONEncoder())->encode($body);
+
+        $params = new EncryptedFieldValidationParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
+            $this->publicKey,
+            $application->reference,
+            new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
+        );
+
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateField($params);
+
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+    }
+
+    public static function testValidateFieldsDataProvider(): array
+    {
+        return [
+            [
+                AccountNumberValidation::Valid,
+                NameMatchResult::Match,
+                EncryptedResponseStatus::OK,
+                '{"validationResult":{"bankAccountNumber":["icon-success"]}}',
+                true,
+            ], [
+                AccountNumberValidation::Invalid,
+                NameMatchResult::NoMatch,
+                EncryptedResponseStatus::OK,
+                '{"validationResult":{"bankAccountNumber":["icon-failed"]}}',
+                true,
+            ], [
+                AccountNumberValidation::Valid,
+                NameMatchResult::Match,
+                EncryptedResponseStatus::OK,
+                '{"validationResult":{"text":["validation.required"],"bankAccountNumber":["icon-success"]}}',
+                false,
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider testValidateFieldsDataProvider
+     */
+    public function testValidateFieldsWithBankAccount(
+        AccountNumberValidation $accountNumberValidation,
+        NameMatchResult $nameMatchResult,
+        EncryptedResponseStatus $encryptedResponseStatus,
+        string $errorMessage,
+        bool $withRequiredField
+    ): void {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $bankAccountField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'bankAccountNumber',
+                'type' => 'custom:bankaccount',
+            ]);
+        $bankAccountHolder = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'bankAccountHolder',
+                'type' => 'text',
+            ]);
+
+        $params = [
+            $bankAccountField->code => $this->faker->iban('NL'),
+            $bankAccountHolder->code => $this->faker->name,
+        ];
+
+        if ($withRequiredField) {
+            $params[$this->textField->code] = $this->faker->text;
+        }
+
+        $body = new FieldValidationParams(
+            (object)$params
+        );
+
+        $json = (new JSONEncoder())->encode($body);
+
+        $params = new EncryptedFieldValidationParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
+            $this->publicKey,
+            $application->reference,
+            new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
+        );
+        app()->bind(SurePayService::class, function () use ($accountNumberValidation, $nameMatchResult) {
+            return Mockery::mock(
+                SurePayService::class,
+                function ($mock) use ($accountNumberValidation, $nameMatchResult) {
+                    $mock->shouldReceive('checkOrganisationsAccount')->andReturn(
+                        new CheckOrganisationsAccountResponse(
+                            new AccountInfo(
+                                $accountNumberValidation,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null
+                            ),
+                            $nameMatchResult,
+                            null
+                        )
+                    );
+                }
+            );
+        });
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateField($params);
+
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals($encryptedResponseStatus, $encryptedResponse->status);
+        $this->assertEquals($errorMessage, $encryptedResponse->data);
     }
 }

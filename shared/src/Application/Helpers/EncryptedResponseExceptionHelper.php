@@ -11,6 +11,8 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
+use Illuminate\Validation\ValidationException;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationResponse;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -31,7 +33,18 @@ class EncryptedResponseExceptionHelper
         ClientPublicKey $publicKey
     ): EncryptedResponse {
 
+        if ($exceptionToProcess instanceof ValidationException) {
+            return $this->encryptionService->encryptCodable(
+                EncryptedResponseStatus::BAD_REQUEST,
+                new FieldValidationResponse(
+                    $exceptionToProcess->errors()
+                ),
+                $publicKey
+            );
+        }
+
         $exception = EncryptedResponseException::forThrowable($exceptionToProcess);
+
         $error = $this->toError($exception, $translationNamespace);
 
         if ($this->exceptionsNeedsLogging($exceptionToProcess)) {

@@ -30,8 +30,12 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Psr\Log\LoggerInterface;
@@ -237,6 +241,44 @@ readonly class ApplicationMutationService
                 __CLASS__,
                 __METHOD__,
                 RPCMethods::SAVE_APPLICATION,
+                $params->publicKey
+            );
+        }
+    }
+
+    public function validateField(EncryptedFieldValidationParams $params): EncryptedResponse
+    {
+        try {
+            $identity = $this->loadIdentity($params->identity);
+            $application = $this->loadApplication($identity, $params->applicationReference);
+            $applicationStage = $application->currentApplicationStage;
+            if ($applicationStage === null) {
+                throw new EncryptedResponseException(
+                    EncryptedResponseStatus::FORBIDDEN,
+                    'application_readonly'
+                );
+            }
+            $body = $this->frontendDecryptionService->decryptCodable($params->data, FieldValidationParams::class);
+
+            $validationMessages = $this->applicationDataService->validateFieldValuesPub(
+                $applicationStage,
+                $body->data,
+                true
+            );
+
+            return $this->responseEncryptionService->encryptCodable(
+                EncryptedResponseStatus::OK,
+                new FieldValidationResponse(
+                    $validationMessages
+                ),
+                $params->publicKey
+            );
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::VALIDATE_FIELD,
                 $params->publicKey
             );
         }

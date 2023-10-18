@@ -41,6 +41,11 @@ Route::middleware('auth')->group(
                 'applications/{applicationReference}/fields/{fieldCode}/files',
                 [ApplicationController::class, 'uploadFile']
             )->name('application-upload-file');
+            Route::post(
+                'applications/{reference}', [ApplicationController::class, 'validate']
+            )->name('application-validate');
+//            Route::post('surepay/accountcheck', [SurePayController::class, 'accountCheck']);
+
 
             Route::get('applications/{reference}', [ApplicationController::class, 'show']);
 
@@ -63,7 +68,6 @@ Route::middleware('auth')->group(
         // TODO: route name not suitable for user messages
         Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters']);
 
-        Route::post('surepay/accountcheck', [SurePayController::class, 'accountCheck']);
     }
 );
 
