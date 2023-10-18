@@ -26,14 +26,13 @@ class SurePayServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/surepay_api.php',
             'surepay_api'
         );
 
-        $this->app->when(SurePayService::class)
-            ->needs(SurePayClient::class)
-            ->give(fn () => $this->buildSurePayClient());
+        $this->app->singleton(SurePayClient::class, fn() => $this->buildSurePayClient());
     }
 
     private function buildSurePayClient(): ?SurePayClient
@@ -47,7 +46,6 @@ class SurePayServiceProvider extends ServiceProvider
                 'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
             );
         }
-
         $options = [
             'base_uri' => config('surepay_api.endpoint'),
             'verify' => config('surepay_api.verify_ssl', false),

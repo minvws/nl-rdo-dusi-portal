@@ -8,6 +8,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\FileUploadRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\RequiredConditionRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SurePayValidationRule;
@@ -20,7 +21,7 @@ class ValidationService
 {
     public function __construct(
         protected ValidatorFactory $validatorFactory,
-        protected SurePayService $surePayService,
+        protected ?SurePayClient $surePayClient,
     ) {
     }
 
@@ -63,7 +64,7 @@ class ValidationService
             FieldType::Select => ['string', ...$this->getSelectFieldRules($field)],
             FieldType::Text => [...$this->getTextFieldRules($field)],
             FieldType::TextArea => [...$this->getTextFieldRules($field)],
-            FieldType::TextEmail => ['email:strict', ...$this->getTextFieldRules($field)],
+            FieldType::TextEmail => ['email:strict,dns', ...$this->getTextFieldRules($field)],
             FieldType::TextTel => [...$this->getTextFieldRules($field)],
             FieldType::TextNumeric => [...$this->getNumericFieldRules($field)],
             FieldType::TextUrl => [],
@@ -187,6 +188,6 @@ class ValidationService
         if ($field->type !== FieldType::CustomBankAccount) {
             return [];
         }
-        return [ new SurePayValidationRule($this->surePayService) ];
+        return [ new SurePayValidationRule($this->surePayClient) ];
     }
 }

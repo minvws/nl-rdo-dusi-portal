@@ -6,15 +6,19 @@ namespace MinVWS\DUSi\Shared\Application\Services\Validation\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
+use RuntimeException;
 
 class SurePayValidationRule implements DataAwareRule, ImplicitValidationRule, SuccessMessageResultRule
 {
     public function __construct(
-        private readonly SurePayService $surePayService
+        private readonly ?SurePayClient $surePayClient
     ) {
     }
 
@@ -37,6 +41,22 @@ class SurePayValidationRule implements DataAwareRule, ImplicitValidationRule, Su
     }
 
     /**
+     * @throws ValidationException
+     */
+    public function checkOrganisationsAccount(
+        string $bankAccountHolder,
+        string $bankAccountNumber
+    ): CheckOrganisationsAccountResponse {
+        if (! isset($this->surePayClient)) {
+            throw new RuntimeException('surePayClient is not set');
+        }
+        return $this->surePayClient->checkOrganisationsAccount(
+            $bankAccountHolder,
+            $bankAccountNumber
+        );
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -44,7 +64,7 @@ class SurePayValidationRule implements DataAwareRule, ImplicitValidationRule, Su
         if (empty($this->data['bankAccountNumber'])) {
             $fail('validation.required');
         }
-        $result = $this->surePayService->checkOrganisationsAccount(
+        $result = $this->checkOrganisationsAccount(
             $this->data['bankAccountHolder'] ?? '',
             $this->data['bankAccountNumber']
         );

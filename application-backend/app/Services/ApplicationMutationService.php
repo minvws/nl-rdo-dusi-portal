@@ -275,7 +275,7 @@ readonly class ApplicationMutationService
             }
             $body = $this->frontendDecryptionService->decryptCodable($params->data, FieldValidationParams::class);
 
-            $validationMessages = $this->applicationDataService->validateFieldValuesPub(
+            $validationMessages = $this->applicationDataService->validateFieldValues(
                 $applicationStage,
                 $body->data,
                 false
@@ -283,9 +283,7 @@ readonly class ApplicationMutationService
 
             return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::OK,
-                new FieldValidationResponse(
-                    $validationMessages
-                ),
+                $validationMessages,
                 $params->publicKey
             );
         } catch (Throwable $e) {

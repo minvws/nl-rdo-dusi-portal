@@ -31,6 +31,7 @@ class TestCase extends BaseTestCase
         return [
             'MinVWS\DUSi\Shared\Providers\DatabaseServiceProvider',
             'MinVWS\DUSi\Shared\User\DatabaseServiceProvider',
+            'MinVWS\DUSi\Shared\Providers\SurePayServiceProvider',
         ];
     }
 

@@ -33,18 +33,7 @@ class EncryptedResponseExceptionHelper
         string $translationNamespace,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
-        if ($exceptionToProcess instanceof ValidationException) {
-            return $this->encryptionService->encryptCodable(
-                EncryptedResponseStatus::BAD_REQUEST,
-                new FieldValidationResponse(
-                    $exceptionToProcess->errors()
-                ),
-                $publicKey
-            );
-        }
-
         $exception = EncryptedResponseException::forThrowable($exceptionToProcess);
-
         $error = $this->toError($exception, $translationNamespace);
 
         if ($exception->logAsError()) {

@@ -96,11 +96,11 @@ readonly class ApplicationDataService
         }
     }
 
-    public function validateFieldValuesPub(
+    public function validateFieldValues(
         ApplicationStage $applicationStage,
         object $data,
         bool $submit
-    ): array {
+    ): FieldValidationResponse {
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
@@ -110,7 +110,10 @@ readonly class ApplicationDataService
         } catch (ValidationException $e) {
             $errorMessages = $e->errors();
         }
-        return array_merge_recursive($errorMessages, $validator->successMessages);
+        return new FieldValidationResponse(
+            error: $errorMessages,
+            success: $validator->successMessages
+        );
     }
 
     /**

@@ -22,6 +22,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccountInfo;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\SurePayService;
@@ -598,7 +599,7 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
-                '{"validationResult":{"bankAccountNumber":["icon-success"]}}',
+                '{"error":{"email":["validation.email"]},"success":{"bankAccountNumber":["icon-success"]}}',
                 true,
             ], [
                 AccountNumberValidation::Invalid,
@@ -610,7 +611,7 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
-                '{"validationResult":{"bankAccountNumber":["icon-success"]}}',
+                '{"error":{"email":["validation.email"]},"success":{"bankAccountNumber":["icon-success"]}}',
                 false,
             ]
         ];
@@ -632,18 +633,24 @@ class ApplicationMutationServiceTest extends TestCase
             ->for($this->subsidyStage1)
             ->create([
                 'code' => 'bankAccountNumber',
-                'type' => 'custom:bankaccount',
+                'type' => FieldType::CustomBankAccount,
             ]);
         $bankAccountHolder = Field::factory()
             ->for($this->subsidyStage1)
             ->create([
                 'code' => 'bankAccountHolder',
-                'type' => 'text',
+                'type' => FieldType::Text,
             ]);
-
+        $emailField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'email',
+                'type' => FieldType::TextEmail,
+            ]);
         $params = [
             $bankAccountField->code => $this->faker->iban('NL'),
             $bankAccountHolder->code => $this->faker->name,
+            $emailField->code => 'aa@bb.notexisting',
         ];
 
         if ($withRequiredField) {
@@ -665,9 +672,9 @@ class ApplicationMutationServiceTest extends TestCase
             $application->reference,
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
-        app()->bind(SurePayService::class, function () use ($accountNumberValidation, $nameMatchResult) {
+        app()->bind(SurePayClient::class, function () use ($accountNumberValidation, $nameMatchResult) {
             return Mockery::mock(
-                SurePayService::class,
+                SurePayClient::class,
                 function ($mock) use ($accountNumberValidation, $nameMatchResult) {
                     $mock->shouldReceive('checkOrganisationsAccount')->andReturn(
                         new CheckOrganisationsAccountResponse(
@@ -687,7 +694,7 @@ class ApplicationMutationServiceTest extends TestCase
                 }
             );
         });
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateField($params);
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplicationFields($params);
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($encryptedResponseStatus, $encryptedResponse->status);

@@ -12,7 +12,8 @@ class FieldValidationResponse implements Codable
     use CodableSupport;
 
     public function __construct(
-        public readonly array $validationResult,
+        public readonly array $error,
+        public readonly array $success,
     ) {
     }
 }

@@ -12,7 +12,7 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
-use MinVWS\DUSi\Shared\Application\Services\SurePayService;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Application\Services\ValidationService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
@@ -46,7 +46,7 @@ class ValidationServiceTest extends TestCase
 
         $applicationFileManager = Mockery::mock(ApplicationFileManager::class);
         $applicationRepository = Mockery::mock(ApplicationRepository::class);
-        $surepayService = Mockery::mock(SurePayService::class);
+        $surepayClient = Mockery::mock(SurePayClient::class);
 
         $factory = new ValidatorFactory(
             applicationFileManager: $applicationFileManager,
@@ -55,7 +55,7 @@ class ValidationServiceTest extends TestCase
 
         $validationService = new ValidationService(
             validatorFactory: $factory,
-            surePayService: $surepayService,
+            surePayClient: $surepayClient,
         );
 
         $fieldValue = new FieldValue(
@@ -311,7 +311,7 @@ class ValidationServiceTest extends TestCase
 
         $applicationFileManager = Mockery::mock(ApplicationFileManager::class);
         $applicationRepository = Mockery::mock(ApplicationRepository::class);
-        $surePayService = Mockery::mock(SurePayService::class);
+        $surePayClient = Mockery::mock(SurePayClient::class);
 
         $factory = new ValidatorFactory(
             applicationFileManager: $applicationFileManager,
@@ -320,7 +320,7 @@ class ValidationServiceTest extends TestCase
 
         $validationService = new ValidationService(
             validatorFactory: $factory,
-            surePayService: $surePayService,
+            surePayClient: $surePayClient,
         );
 
         $fieldValue1 = new FieldValue(

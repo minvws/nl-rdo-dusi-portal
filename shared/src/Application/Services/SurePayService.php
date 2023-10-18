@@ -30,7 +30,7 @@ class SurePayService
     public function __construct(
         private readonly ?SurePayClient $surePayClient,
         private readonly ApplicationDataService $applicationDataService,
-        private readonly ApplicationRepository $applicationRepository
+        private readonly ApplicationRepository $applicationRepository,
     ) {
     }
 
@@ -66,7 +66,7 @@ class SurePayService
             return null;
         }
 
-        $result = $this->checkOrganisationsAccount(
+        $result = $this->surePayClient->checkOrganisationsAccount(
             $data->bankAccountHolder,
             $data->bankAccountNumber
         );
@@ -83,21 +83,5 @@ class SurePayService
         $model->save();
 
         return $model;
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    public function checkOrganisationsAccount(
-        string $bankAccountHolder,
-        string $bankAccountNumber
-    ): CheckOrganisationsAccountResponse {
-        if (! isset($this->surePayClient)) {
-            throw new RuntimeException('surePayClient is not set');
-        }
-        return $this->surePayClient->checkOrganisationsAccount(
-            $bankAccountHolder,
-            $bankAccountNumber
-        );
     }
 }
