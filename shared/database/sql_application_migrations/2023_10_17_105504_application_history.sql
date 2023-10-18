@@ -38,4 +38,51 @@ UPDATE public.subsidy_stage_transitions SET description = 'Aanvraag goedgekeurd'
 
 ALTER TABLE "subsidy_stage_transitions" ALTER COLUMN "description" SET NOT NULL ;
 
+INSERT INTO application_stage_transitions (
+    id, application_id, subsidy_stage_transition_id, previous_application_stage_id,
+    new_application_stage_id, previous_application_status, new_application_status, created_at
+)
+SELECT
+    uuid_in(overlay(overlay(md5(random()::text || ':' || random()::text) placing '4' from 13) placing to_hex(floor(random()*(11-8+1) + 8)::int)::text from 17)::cstring),
+    s.application_id,
+    t.id,
+    ps.id,
+    s.id,
+    CASE
+        WHEN ps.sequence_number = 1 THEN 'draft'
+        WHEN ps.subsidy_stage_id = '7e5d64e9-35f0-4fee-b8d2-dca967b43183' THEN 'requestForChanges'
+        ELSE 'submitted'
+        END,
+    CASE
+        WHEN t.target_application_status IS NOT NULL THEN t.target_application_status
+        ELSE 'submitted'
+        END,
+    s.created_at
+FROM application_stages s, application_stages ps, subsidy_stage_transitions t
+WHERE ps.application_id = s.application_id
+  AND ps.sequence_number = s.sequence_number - 1
+  AND t.target_subsidy_stage_id = s.subsidy_stage_id
+  AND t.current_subsidy_stage_id = ps.subsidy_stage_id;
+
+
+UPDATE application_messages m
+SET application_stage_transition_id = (
+    SELECT t.id
+    FROM application_stage_transitions t
+    WHERE t.created_at <= m.sent_at
+      AND t.application_id = m.application_id
+    ORDER BY t.created_at DESC
+    LIMIT 1
+)
+WHERE m.application_stage_transition_id IS NULL;
+
+ALTER TABLE "application_messages" ALTER COLUMN "application_stage_transition_id" SET NOT NULL;
+
+ALTER TABLE "subsidy_stages" ADD COLUMN "internal_note_field_code" varchar(255) NULL;
+
+UPDATE subsidy_stages SET internal_note_field_code = 'firstAssessmentInternalNote' WHERE id = '8027c102-93ef-4735-ab66-97aa63b836eb';
+UPDATE subsidy_stages SET internal_note_field_code = 'secondAssessmentInternalNote' WHERE id = '61436439-e337-4986-bc18-57138e2fab65';
+UPDATE subsidy_stages SET internal_note_field_code = 'internalAssessmentInternalNote' WHERE id = '7ceb3c91-5c3b-4627-b9ef-a46d5fe2ed68';
+UPDATE subsidy_stages SET internal_note_field_code = 'coordinatorImplementationInternalNote' WHERE id = '85ed726e-cdbe-444e-8d12-c56f9bed2621';
+
 COMMIT;
