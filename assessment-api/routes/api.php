@@ -61,6 +61,6 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             [ApplicationController::class, 'getApplicationRequestFilterResource']
         );
 
-        Route::get('/messages/{message}/pdf', [ApplicationController::class, 'getLetterFromMessage']);
+        Route::get('/messages/{message}/download/pdf', [ApplicationController::class, 'getLetterFromMessage']);
     });
 });
