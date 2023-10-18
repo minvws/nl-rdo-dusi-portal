@@ -22,6 +22,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -260,7 +261,7 @@ readonly class ApplicationMutationService
         }
     }
 
-    public function validateField(EncryptedFieldValidationParams $params): EncryptedResponse
+    public function validateApplicationFields(EncryptedFieldValidationParams $params): EncryptedResponse
     {
         try {
             $identity = $this->loadIdentity($params->identity);
@@ -277,7 +278,7 @@ readonly class ApplicationMutationService
             $validationMessages = $this->applicationDataService->validateFieldValuesPub(
                 $applicationStage,
                 $body->data,
-                true
+                false
             );
 
             return $this->responseEncryptionService->encryptCodable(

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
-use MinVWS\DUSi\Application\Backend\Tests\SurePayServiceMock;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -49,7 +48,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use MinVWS\DUSi\Shared\Tests\Unit\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
 use Mockery;
 use Queue;
 use Ramsey\Uuid\Uuid;
@@ -593,7 +591,7 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
     }
 
-    public static function testValidateFieldsDataProvider(): array
+    public static function validateFieldsDataProvider(): array
     {
         return [
             [
@@ -612,14 +610,14 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
-                '{"validationResult":{"text":["validation.required"],"bankAccountNumber":["icon-success"]}}',
+                '{"validationResult":{"bankAccountNumber":["icon-success"]}}',
                 false,
             ]
         ];
     }
 
     /**
-     * @dataProvider testValidateFieldsDataProvider
+     * @dataProvider validateFieldsDataProvider
      */
     public function testValidateFieldsWithBankAccount(
         AccountNumberValidation $accountNumberValidation,

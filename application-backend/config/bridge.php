@@ -43,7 +43,7 @@ $bindings = [
     ],
     RPCMethods::VALIDATE_FIELD => [
         'paramsClass' => EncryptedFieldValidationParams::class,
-        'callback' => [ApplicationMutationService::class, 'validateField']
+        'callback' => [ApplicationMutationService::class, 'validateApplicationFields']
     ],
     RPCMethods::LIST_APPLICATIONS => [
         'paramsClass' => ApplicationListParams::class,
