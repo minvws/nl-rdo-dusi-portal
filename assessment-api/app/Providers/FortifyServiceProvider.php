@@ -7,8 +7,10 @@ namespace MinVWS\DUSi\Assessment\API\Providers;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -16,10 +18,9 @@ use Laravel\Fortify\Contracts\UpdatesUserPasswords as UpdatesUserPasswordContrac
 use Laravel\Fortify\Fortify;
 use MinVWS\DUSi\Assessment\API\Fortify\Actions\UpdateUserPassword;
 use MinVWS\DUSi\Assessment\API\Fortify\PasswordBrokerManager;
-use MinVWS\DUSi\Assessment\API\Models\Scopes\UserRoleScope;
+use MinVWS\DUSi\Assessment\API\Fortify\Providers\AssessmentUserProvider;
 use MinVWS\DUSi\Assessment\API\Services\FrontendRouteService;
 use MinVWS\DUSi\Shared\User\Enums\Role;
-use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -30,11 +31,15 @@ class FortifyServiceProvider extends ServiceProvider
     {
         // Scope all users to prevent login and requesting password reset links for not allowed users
         // Password resets for inactive users are still possible but could not login
-        User::addGlobalScope(new UserRoleScope([
+        $allowedRoles = [
             Role::Assessor,
             Role::ImplementationCoordinator,
             Role::InternalAuditor,
-        ]));
+        ];
+
+        Auth::provider('assessment-user-provider', function ($app, array $config) use ($allowedRoles) {
+            return new AssessmentUserProvider($app['hash'], $config['model'], $allowedRoles);
+        });
 
         $this->app->singleton(
             UpdatesUserPasswordContract::class,
@@ -50,12 +55,12 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::authenticateUsing(function (Request $request) {
-            $user = User::where('email', $request->email)->first();
-            if (
-                $user &&
-                $user->active &&
-                Hash::check($request->password, $user->password)
-            ) {
+            /** @var UserProvider $provider */
+            $provider = $this->app->make(StatefulGuard::class)->getProvider();
+
+            $user = $provider->retrieveByCredentials(['email' => $request->email]);
+
+            if ($user && $provider->validateCredentials($user, ['password' => $request->password])) {
                 return $user;
             }
         });

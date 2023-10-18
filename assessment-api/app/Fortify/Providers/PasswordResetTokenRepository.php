@@ -8,8 +8,6 @@ use Carbon\CarbonImmutable;
 use Illuminate\Auth\Passwords\TokenRepositoryInterface;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use MinVWS\DUSi\Shared\User\Models\User;
 use RuntimeException;
@@ -17,7 +15,6 @@ use RuntimeException;
 class PasswordResetTokenRepository implements TokenRepositoryInterface
 {
     public function __construct(
-        protected ConnectionInterface $connection,
         protected HasherContract $hasher,
         protected string $hashKey,
         protected int $expires = 60,
@@ -35,7 +32,7 @@ class PasswordResetTokenRepository implements TokenRepositoryInterface
         $token = $this->createNewToken();
 
         $user->password_reset_token = $this->hasher->make($token);
-        $user->password_reset_token_valid_until = Carbon::now()->addSeconds($this->expires)->toImmutable();
+        $user->password_reset_token_valid_until = CarbonImmutable::now()->addSeconds($this->expires);
         $user->update();
 
         return $token;
@@ -76,7 +73,7 @@ class PasswordResetTokenRepository implements TokenRepositoryInterface
 
     public function deleteExpired(): void
     {
-        $expiredAt = Carbon::now();
+        $expiredAt = CarbonImmutable::now();
 
         User::query()->where('password_reset_token_valid_until', '<', $expiredAt)->update([
             'password_reset_token' => null,
@@ -116,6 +113,6 @@ class PasswordResetTokenRepository implements TokenRepositoryInterface
      */
     protected function tokenExpired(CarbonImmutable $validUntil): bool
     {
-        return $validUntil->subSeconds($this->expires)->isPast();
+        return $validUntil->isPast();
     }
 }

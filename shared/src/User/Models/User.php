@@ -216,6 +216,27 @@ class User extends Authenticatable
         );
     }
 
+    public function scopeActive(Builder $query): void
+    {
+        $query->where(function (Builder $query) {
+            $query
+                ->where('active_until', '>', CarbonImmutable::now())
+                ->orWhere('active_until', '=', null);
+        });
+    }
+
+    /**
+     * @param Builder $query
+     * @param RoleEnum[] $roles
+     * @return void
+     */
+    public function scopeAnyRole(Builder $query, array $roles): void
+    {
+        $query->whereHas('roles', function (Builder $query) use ($roles) {
+            $query->whereIn('name', $roles);
+        });
+    }
+
     protected static function newFactory(): UserFactory
     {
         return new UserFactory();
