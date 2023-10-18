@@ -24,6 +24,8 @@ use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSubmitExcep
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\TransitionNotFoundException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\Logging\Laravel\LogService;
 
@@ -135,6 +137,11 @@ class ApplicationController extends Controller
     public function getApplicationTransitions(Application $application): ResourceCollection
     {
         return $this->applicationService->getApplicationStageTransitions($application);
+    }
+
+    public function getLetterFromMessage(ApplicationMessage $message): Response
+    {
+        return $this->applicationService->getLetterFromMessage($message, MessageDownloadFormat::PDF);
     }
 
     public function saveAssessment(

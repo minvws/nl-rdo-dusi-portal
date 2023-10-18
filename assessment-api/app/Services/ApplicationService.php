@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Services;
 use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
@@ -19,11 +20,13 @@ use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveExcepti
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSubmitException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Application\Services\ValidationService;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\DUSi\Shared\User\Models\User;
 
@@ -37,7 +40,8 @@ class ApplicationService
         private ApplicationFlowService $applicationFlowService,
         private ValidationService $validationService,
         private ApplicationRepository $applicationRepository,
-        private SubsidyRepository $subsidyRepository
+        private SubsidyRepository $subsidyRepository,
+        private ApplicationFileService $applicationFileService,
     ) {
     }
 
@@ -132,5 +136,13 @@ class ApplicationService
     public function getApplicationStageTransitions(Application $application): ResourceCollection
     {
         return ApplicationStageTransitionResource::collection($application->applicationStageTransitions);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getLetterFromMessage(ApplicationMessage $message, MessageDownloadFormat $format): Response
+    {
+        return $this->applicationFileService->getMessageFile($message, $format);
     }
 }
