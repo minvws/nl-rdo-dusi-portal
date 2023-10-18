@@ -24,20 +24,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', HomeController::class)->name('home');
     Route::get('/account', UserProfileController::class)->name('profile.show');
 
-//    Route::middleware([])->group(function() {
-        Route::resource('organisations', OrganisationController::class)
-            ->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
+    Route::resource('organisations', OrganisationController::class)
+        ->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
 
-        Route::get('/users/{user}/credentials', [UserController::class, 'credentials'])
-            ->name('users.credentials');
-        Route::post('/users/{user}/reset-credentials', [UserController::class, 'resetCredentials'])
-            ->name('users.reset-credentials');
-        Route::put('/users/{user}/active', [UserController::class, 'updateActive'])
-            ->name('users.update-active');
+    Route::get('/users/{user}/credentials', [UserController::class, 'credentials'])
+        ->name('users.credentials');
+    Route::post('/users/{user}/reset-credentials', [UserController::class, 'resetCredentials'])
+        ->name('users.reset-credentials');
+    Route::put('/users/{user}/active', [UserController::class, 'updateActive'])
+        ->name('users.update-active');
 
-        Route::resource('users', UserController::class)
-            ->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
-        Route::resource('users.roles', UserRolesController::class)
-            ->only(['index', 'store', 'destroy']);
-//    });
+    Route::resource('users', UserController::class)
+        ->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
+    Route::resource('users.roles', UserRolesController::class)
+        ->only(['index', 'store', 'destroy']);
 });

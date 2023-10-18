@@ -124,6 +124,8 @@ class UserController extends Controller
 
     public function updateActive(UserUpdateActiveRequest $updateActiveRequest, User $user): RedirectResponse
     {
+        $this->authorize('update', $user);
+
         $user->update($updateActiveRequest->validated());
 
         return redirect()
@@ -136,6 +138,8 @@ class UserController extends Controller
 
     public function resetCredentials(UserResetCredentialsRequest $resetCredentialsRequest, User $user): RedirectResponse
     {
+        $this->authorize('resetCredentials', $user);
+
         if (empty($resetCredentialsRequest->validated())) {
             return redirect()
                 ->route('users.show', $user->id);
@@ -152,7 +156,7 @@ class UserController extends Controller
             ->with(UserCredentialsData::SESSION_KEY, $credentialsData);
     }
 
-        /**
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(User $user): RedirectResponse
