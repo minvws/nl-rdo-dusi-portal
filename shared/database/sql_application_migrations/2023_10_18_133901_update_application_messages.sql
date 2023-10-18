@@ -11,4 +11,6 @@ SET application_stage_transition_id = (
 )
 WHERE m.application_stage_transition_id IS NULL;
 
+ALTER TABLE "application_messages" ALTER COLUMN "application_stage_transition_id" SET NOT NULL ;
+
 COMMIT;

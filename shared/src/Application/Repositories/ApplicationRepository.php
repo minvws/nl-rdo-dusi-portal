@@ -401,4 +401,11 @@ class ApplicationRepository
         $transition->save();
         return $transition;
     }
+
+    public function getApplicationStageAnswerForField(ApplicationStage $applicationStage, Field $field): Answer|null
+    {
+        $answer = $applicationStage->answers()->firstWhere('field_id', $field->id);
+
+        return $answer ?? null;
+    }
 }
