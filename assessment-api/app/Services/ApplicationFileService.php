@@ -42,7 +42,7 @@ class ApplicationFileService
         $encrypter = $this->applicationStageEncryptionService->getEncrypter($applicationStage);
         $decrypted = json_decode($encrypter->decrypt($answer->encrypted_answer));
 
-        $response = response(
+        return new Response(
             $file,
             200,
             [
@@ -50,8 +50,6 @@ class ApplicationFileService
                 'Content-Disposition' => 'inline; filename="' . $decrypted[0]->name . '"',
             ]
         );
-        assert($response instanceof Response);
-        return $response;
     }
 
     public function getMessageFile(ApplicationMessage $message, MessageDownloadFormat $format): Response
@@ -77,8 +75,7 @@ class ApplicationFileService
 
         $fileName = strtolower(str_replace(' ', '-', $message->subject));
 
-
-        $response = response(
+        return new Response(
             $content,
             200,
             [
@@ -86,8 +83,5 @@ class ApplicationFileService
                 'Content-Disposition' => sprintf('inline; filename="%s.%s"', $fileName, $fileExtension),
             ]
         );
-
-        assert($response instanceof Response);
-        return $response;
     }
 }
