@@ -30,9 +30,7 @@ class SurePayService
     public function __construct(
         private readonly ?SurePayClient $surePayClient,
         private readonly ApplicationDataService $applicationDataService,
-        private readonly ApplicationRepository $applicationRepository,
-        private readonly EncryptedResponseExceptionHelper $exceptionHelper,
-        private readonly ResponseEncryptionService $responseEncryptionService,
+        private readonly ApplicationRepository $applicationRepository
     ) {
     }
 
@@ -42,6 +40,9 @@ class SurePayService
         return $this->surePayClient !== null && $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function checkSurePayForApplication(Application $application): ?ApplicationSurePayResult
     {
         if (!$this->shouldCheckSurePayForApplication($application) || $this->surePayClient === null) {
@@ -84,57 +85,19 @@ class SurePayService
         return $model;
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function checkOrganisationsAccount(
         string $bankAccountHolder,
         string $bankAccountNumber
-    ): CheckOrganisationsAccountResponse
-    {
+    ): CheckOrganisationsAccountResponse {
+        if (! isset($this->surePayClient)) {
+            throw new RuntimeException('surePayClient is not set');
+        }
         return $this->surePayClient->checkOrganisationsAccount(
             $bankAccountHolder,
             $bankAccountNumber
-        );
-    }
-
-    public function accountCheck(SurePayAccountCheckParams $params): EncryptedResponse
-    {
-        try {
-            return $this->doAccountCheck($params);
-        } catch (Throwable $e) {
-            return $this->exceptionHelper->processException(
-                $e,
-                __CLASS__,
-                __METHOD__,
-                RPCMethods::SUREPAY_ACCOUNT_CHECK,
-                $params->publicKey
-            );
-        }
-    }
-
-    /**
-     * @param SurePayAccountCheckParams $params
-     * @return EncryptedResponse
-     * @throws ValidationException
-     */
-    private function doAccountCheck(SurePayAccountCheckParams $params): EncryptedResponse
-    {
-        if ($this->surePayClient === null) {
-            throw new RuntimeException('surePayClient is not set');
-        }
-
-        $checkOrganisationsAccountResponse = $this->surePayClient->checkOrganisationsAccount(
-            $params->bankAccountHolder,
-            $params->bankAccountNumber
-        );
-
-        $surePayAccountCheckResult = new SurePayAccountCheckResult(
-            $checkOrganisationsAccountResponse->nameMatchResult,
-            $checkOrganisationsAccountResponse->nameSuggestion
-        );
-
-        return $this->responseEncryptionService->encryptCodable(
-            EncryptedResponseStatus::OK,
-            $surePayAccountCheckResult,
-            $params->publicKey
         );
     }
 }

@@ -17,7 +17,10 @@ use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SuccessMessageResul
 
 class Validator extends BaseValidator
 {
-    public $successMessages = [];
+    /**
+     * @var array<string, array<string>>
+     */
+    public array $successMessages = [];
 
     /**
      * @param array<int|string, FieldValue> $fieldValues

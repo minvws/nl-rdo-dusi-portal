@@ -28,6 +28,9 @@ class SurePayValidationRule implements DataAwareRule, ImplicitValidationRule, Su
         return $this;
     }
 
+    /**
+     * @returns array<string>
+     */
     public function getSuccessMessages(): array
     {
         return $this->successMessages;
@@ -38,16 +41,14 @@ class SurePayValidationRule implements DataAwareRule, ImplicitValidationRule, Su
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if(empty($this->data['bankAccountHolder']) || empty($this->data['bankAccountNumber'])) {
-            //todo split and communicate to frontend
-            $fail('validation.required', ['attribute' => 'bankAccountHolder']);
+        if (empty($this->data['bankAccountNumber'])) {
+            $fail('validation.required');
         }
         $result = $this->surePayService->checkOrganisationsAccount(
-            $this->data['bankAccountHolder'],
+            $this->data['bankAccountHolder'] ?? '',
             $this->data['bankAccountNumber']
         );
-        if($result->nameMatchResult === NameMatchResult::NoMatch) {
-            //todo split and communicate to frontend
+        if ($result->nameMatchResult === NameMatchResult::NoMatch) {
             $fail('icon-failed');
         } else {
             array_push($this->successMessages, 'icon-success');
