@@ -136,11 +136,15 @@ class ApplicationController extends Controller
 
     public function getApplicationTransitions(Application $application): ResourceCollection
     {
+        $this->authorize('getTransitionHistory', $application);
+
         return $this->applicationService->getApplicationStageTransitions($application);
     }
 
-    public function getLetterFromMessage(ApplicationMessage $message): Response
+    public function getLetterForMessage(ApplicationMessage $message): Response
     {
+        $this->authorize('getLetterFromMessage', $message->application);
+
         return $this->applicationService->getLetterFromMessage($message, MessageDownloadFormat::PDF);
     }
 

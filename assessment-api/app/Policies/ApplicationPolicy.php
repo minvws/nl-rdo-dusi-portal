@@ -133,4 +133,14 @@ class ApplicationPolicy
 
         return true;
     }
+
+    public function getTransitionHistory(User $user, Application $application) : bool
+    {
+        return $this->show($user, $application);
+    }
+
+    public function getLetterFromMessage(User $user, Application $application) : bool
+    {
+        return $this->show($user, $application);
+    }
 }
