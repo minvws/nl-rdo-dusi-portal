@@ -10,6 +10,7 @@ use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
 use MinVWS\DUSi\Shared\Application\Jobs\GenerateLetterJob;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
@@ -19,7 +20,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 class LetterGenerationTest extends TestCase
 {
     private SubsidyStageTransitionMessage $message;
-    private ApplicationStage $applicationStage;
+    private ApplicationStageTransition $applicationStageTransition;
 
     protected function setUp(): void
     {
@@ -37,13 +38,29 @@ class LetterGenerationTest extends TestCase
         $this->subsidyStageMessage = SubsidyStageTransitionMessage::factory()->for($subsidyStageTransition)->create();
 
         $application = Application::factory()->for($subsidyVersion)->create();
-        $this->applicationStage = ApplicationStage::factory()->for($application)->for($subsidyStage1)->create();
+        $applicationStage1 =
+            ApplicationStage::factory()
+                ->for($application)
+                ->for($subsidyStage1)
+                ->create(['sequence_number' => 1]);
+        $applicationStage2 =
+            ApplicationStage::factory()
+                ->for($application)
+                ->for($subsidyStage2)
+                ->create(['sequence_number' => 2]);
+        $this->applicationStageTransition =
+            ApplicationStageTransition::factory()
+                ->for($application)
+                ->for($subsidyStageTransition)
+                ->for($applicationStage1, 'previousApplicationStage')
+                ->for($applicationStage2, 'newApplicationStage')
+                ->create();
     }
 
     public function testApplicationDecidedEventTriggerGenerateLetterJob(): void
     {
         Queue::fake();
-        ApplicationMessageEvent::dispatch($this->subsidyStageMessage, $this->applicationStage);
+        ApplicationMessageEvent::dispatch($this->subsidyStageMessage, $this->applicationStageTransition);
         Queue::assertPushed(GenerateLetterJob::class);
     }
 }

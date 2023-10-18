@@ -13,8 +13,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationMessageFactory;
 
 /**
- * @property-read string $id
- * @property-read string $application_id
+ * @property string $id
+ * @property string $application_id
+ * @property string $application_stage_transition_id
  * @property string $subject
  * @property boolean $is_new
  * @property string $html_path
@@ -22,6 +23,7 @@ use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationMessageFactory;
  * @property DateTime $seen_at
  * @property DateTime $sent_at
  * @property-read Application $application
+ * @property-read ApplicationStageTransition $applicationStageTransition
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -50,6 +52,15 @@ class ApplicationMessage extends Model
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
+    }
+
+    public function applicationStageTransition(): BelongsTo
+    {
+        return $this->belongsTo(
+            ApplicationStageTransition::class,
+            'application_stage_transition_id',
+            'id'
+        );
     }
 
     protected function scopeForIdentity(Builder $builder, Identity $identity): void

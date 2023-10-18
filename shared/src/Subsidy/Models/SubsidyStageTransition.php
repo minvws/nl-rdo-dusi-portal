@@ -17,6 +17,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 
 /**
  * @property string $id
+ * @property string $description
  * @property string $current_subsidy_stage_id
  * @property-read SubsidyStage $currentSubsidyStage
  * @property string|null $target_subsidy_stage_id

@@ -36,6 +36,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // (of herbeoordeling na aanvulling)
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_1_TO_2,
+            'description' => 'Aanvraag ingediend',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             'target_application_status' => ApplicationStatus::Submitted,
@@ -48,6 +49,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // Eerste beoordeling = Aanvulling nodig; aanvraag wordt teruggezet naar de aanvrager om te laten aanvullen
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_2_TO_1,
+            'description' => 'Aanvulling gevraagd',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             'target_application_status' => ApplicationStatus::RequestForChanges->value,
@@ -66,6 +68,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_2_TO_3,
+            'description' => 'Eerste beoordeling voltooid',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
             'condition' => $encoder->encode(
@@ -82,6 +85,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // volledig beoordeeld worden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_3_TO_2,
+            'description' => 'Tweede beoordeling oneens met eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
             'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             'condition' => $encoder->encode(
@@ -101,6 +105,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // - Eerste beoordeling = afgekeurd; aanvraag wordt afgekeurd en er wordt een afwijzingsbrief verzonden.
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_3_TO_REJECTED,
+            'description' => 'Tweede beoordeling eens met afkeuring eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Rejected->value,
@@ -127,6 +132,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // - Eerste beoordeling = goedgekeurd; aanvraag gaat naar de derde beoordelaar
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_3_TO_4,
+            'description' => 'Tweede beoordeling eens met goedkeuring eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
             'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
             'condition' => $encoder->encode(
@@ -154,6 +160,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // moet de aanvraag volledig opnieuw beoordeeld worden.
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_4_TO_2,
+            'description' => 'Interne controle oneens met beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
             'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
             'condition' => $encoder->encode(
@@ -196,6 +203,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // wordt de aanvraag doorgezet naar de vierde beoordeling
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_4_TO_5,
+            'description' => 'Interne controle eens met beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
             'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
             'condition' => $encoder->encode(
@@ -221,6 +229,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // invoeren en wordt vervolgens een afwijzingsbrief verzonden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_5_TO_REJECTED,
+            'description' => 'Aanvraag afgekeurd',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Rejected->value,
@@ -239,6 +248,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         // toekenningsbrief verzonden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_5_TO_APPROVED,
+            'description' => 'Aanvraag goedgekeurd',
             'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Approved->value,

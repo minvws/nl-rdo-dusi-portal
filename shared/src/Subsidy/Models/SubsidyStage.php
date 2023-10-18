@@ -26,8 +26,10 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
  * @property int $stage
  * @property SubjectRole $subject_role
  * @property Role|null $assessor_user_role
+ * @property string|null $internal_note_field_code
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read Collection<int, SubsidyStageTransition> $subsidyStageTransitions
+ * @property-read Field|null $internalNoteField
  */
 class SubsidyStage extends Model
 {
@@ -84,6 +86,11 @@ class SubsidyStage extends Model
     public function scopeSubjectRole(Builder $query, SubjectRole $subjectRole): Builder
     {
         return $query->whereIn('subject_role', [$subjectRole]);
+    }
+
+    public function internalNoteField(): HasOne
+    {
+        return $this->hasOne(Field::class, 'code', 'internal_note_field_code');
     }
 
     protected static function newFactory(): SubsidyStageFactory
