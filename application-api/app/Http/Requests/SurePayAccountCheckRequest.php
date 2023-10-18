@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Application\API\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;

@@ -68,7 +68,7 @@ class ApplicationService
     /**
      * @throws Exception
      */
-    public function validateFields(EncryptedFieldValidationParams $params): EncryptedResponse
+    public function validateApplicationFields(EncryptedFieldValidationParams $params): EncryptedResponse
     {
         return $this->bridgeClient->call(RPCMethods::VALIDATE_FIELD, $params, EncryptedResponse::class);
     }

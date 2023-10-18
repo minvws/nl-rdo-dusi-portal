@@ -17,8 +17,8 @@ class SurePayController extends Controller
     public function __construct(
         private readonly ClientPublicKeyHelper $publicKeyHelper,
         private readonly StateService $stateService,
-        private readonly SurePayService $surePayService)
-    {
+        private readonly SurePayService $surePayService
+    ) {
     }
 
     /**
