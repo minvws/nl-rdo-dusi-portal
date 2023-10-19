@@ -14,9 +14,9 @@ use Illuminate\Filesystem\Filesystem;
 
 class SqlOutputMigrator extends Migrator
 {
-    private string $migrationsDir =  __DIR__ . '/../../../vendor/minvws/dusi-shared/database/migrations';
+    private string $migrationsDir =  __DIR__ . '/../../../../dusi-shared/database/migrations';
     private string $sqlMigrationsDir
-        = __DIR__ . '/../../../vendor/minvws/dusi-shared/database/sql_application_migrations';
+        = __DIR__ . '/../../../../dusi-shared/database/sql/dusi_app_db';
 
     public function __construct(
         MigrationRepositoryInterface $repository,
@@ -124,11 +124,9 @@ class SqlOutputMigrator extends Migrator
             $this->write(Error::class, "Could not open file {$filePath}");
             throw new \Exception("Could not open file {$filePath}");
         }
-        fwrite($migrationFile, "BEGIN;\n\n");
         foreach ($queries as $query) {
             fwrite($migrationFile, $query['raw_query'] . ";\n\n");
         }
-        fwrite($migrationFile, "COMMIT;\n");
         fclose($migrationFile);
 
         $this->write(Info::class, "Written " . count($queries) . " queries to {$filePath}");

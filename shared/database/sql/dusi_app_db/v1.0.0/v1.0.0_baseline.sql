@@ -1,4 +1,3 @@
-BEGIN;
 --
 -- PostgreSQL database dump
 --
@@ -1482,5 +1481,3 @@ ALTER TABLE ONLY public.subsidy_versions
 --
 -- PostgreSQL database dump complete
 --
-
-COMMIT;
