@@ -1,6 +1,6 @@
 BEGIN;
 
-# https://github.com/minvws/nl-rdo-dusi-portal/issues/525
+# https://github.com/minvws/nl-rdo-dusi-portal/issues/547
 
 # Wanneer de aanvraag wordt aangevuld door de aanvrager
 UPDATE public.subsidy_stage_transitions
