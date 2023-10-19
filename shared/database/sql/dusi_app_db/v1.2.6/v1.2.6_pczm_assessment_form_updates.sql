@@ -1,5 +1,10 @@
 -- # https://github.com/minvws/nl-rdo-dusi-portal/issues/504
 
+-- First delete data from answers table, due to constraint. No data present on prod yet.
+DELETE FROM answers WHERE field_id IN (select id FROM "fields"
+WHERE "subsidy_stage_id" = '8027c102-93ef-4735-ab66-97aa63b836eb' AND
+      "code" = 'firstSickDayWithinExpiryDate');
+
 DELETE
 FROM "fields"
 WHERE "subsidy_stage_id" = '8027c102-93ef-4735-ab66-97aa63b836eb' AND
