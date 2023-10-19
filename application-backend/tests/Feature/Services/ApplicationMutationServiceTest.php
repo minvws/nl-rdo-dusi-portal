@@ -585,7 +585,7 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateField($params);
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplicationFields($params);
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
@@ -604,7 +604,7 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Invalid,
                 NameMatchResult::NoMatch,
                 EncryptedResponseStatus::OK,
-                '{"validationResult":{"bankAccountNumber":["icon-failed"]}}',
+                '{"error":{"bankAccountNumber":["icon-failed"],"email":["validation.email"]},"success":[]}',
                 true,
             ], [
                 AccountNumberValidation::Valid,

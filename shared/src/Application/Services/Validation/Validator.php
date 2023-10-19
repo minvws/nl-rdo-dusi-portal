@@ -85,7 +85,10 @@ class Validator extends BaseValidator
         parent::validateUsingCustomRule($attribute, $value, $rule);
 
         if ($invokableRule instanceof SuccessMessageResultRule) {
-            $this->successMessages[$attribute] = $invokableRule->getSuccessMessages();
+            $successMessages = $invokableRule->getSuccessMessages();
+            if (!empty($successMessages)) {
+                $this->successMessages[$attribute] = $successMessages;
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
-use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
@@ -22,7 +21,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckParams;
 
 $bindings = [
     'ping' => [
@@ -72,10 +70,6 @@ $bindings = [
     RPCMethods::GET_ACTIONABLE_COUNTS => [
         'paramsClass' => ActionableCountsParams::class,
         'callback' => [ActionableService::class, 'getActionableCounts']
-    ],
-    RPCMethods::SUREPAY_ACCOUNT_CHECK => [
-        'paramsClass' => SurePayAccountCheckParams::class,
-        'callback' => [SurePayService::class, 'accountCheck']
     ]
 ];
 

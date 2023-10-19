@@ -19,6 +19,4 @@ class RPCMethods
     public const GET_APPLICATION_FILE = 'getApplicationFile';
 
     public const GET_ACTIONABLE_COUNTS = 'getActionableCounts';
-
-    public const SUREPAY_ACCOUNT_CHECK = 'surePayAccountCheck';
 }

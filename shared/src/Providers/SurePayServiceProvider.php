@@ -26,7 +26,6 @@ class SurePayServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/surepay_api.php',
             'surepay_api'
