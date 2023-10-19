@@ -42,7 +42,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
             'target_application_status' => ApplicationStatus::Submitted,
             'condition' => null,
             'send_message' => false,
-            'assign_to_previous_assessor' => true
+            'assign_to_previous_assessor' => true,
+            'clone_data' => true
         ]);
 
 
@@ -97,7 +98,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
                 )
             ),
             'send_message' => false,
-            'assign_to_previous_assessor' => true
+            'assign_to_previous_assessor' => true,
+            'clone_data' => true
         ]);
 
 
@@ -196,7 +198,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
                 ])
             ),
             'send_message' => false,
-            'assign_to_previous_assessor' => true
+            'assign_to_previous_assessor' => true,
+            'clone_data' => true
         ]);
 
         // Bij een beoordeeloptie 'Goedgekeurd' door de eerste beoordelaar en 'Goedgekeurd' door de IC,
