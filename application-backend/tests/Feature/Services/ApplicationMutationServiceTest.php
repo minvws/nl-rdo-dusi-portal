@@ -25,7 +25,6 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResul
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
-use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;

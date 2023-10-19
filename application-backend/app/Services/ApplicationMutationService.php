@@ -33,7 +33,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidation
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Psr\Log\LoggerInterface;
