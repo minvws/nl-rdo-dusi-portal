@@ -14,8 +14,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Actions\CompletePasswordReset as FortifyCompletePasswordReset;
+use Laravel\Fortify\Contracts\ResetsUserPasswords;
 use Laravel\Fortify\Contracts\UpdatesUserPasswords as UpdatesUserPasswordContract;
 use Laravel\Fortify\Fortify;
+use MinVWS\DUSi\Assessment\API\Fortify\Actions\CompletePasswordReset;
+use MinVWS\DUSi\Assessment\API\Fortify\Actions\ResetUserPassword;
 use MinVWS\DUSi\Assessment\API\Fortify\Actions\UpdateUserPassword;
 use MinVWS\DUSi\Assessment\API\Fortify\PasswordBrokerManager;
 use MinVWS\DUSi\Assessment\API\Fortify\Providers\AssessmentUserProvider;
@@ -44,6 +48,16 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->singleton(
             UpdatesUserPasswordContract::class,
             UpdateUserPassword::class
+        );
+
+        $this->app->singleton(
+            ResetsUserPasswords::class,
+            ResetUserPassword::class
+        );
+
+        $this->app->singleton(
+            FortifyCompletePasswordReset::class,
+            CompletePasswordReset::class
         );
 
         $this->app->singleton('auth.password', function ($app) {

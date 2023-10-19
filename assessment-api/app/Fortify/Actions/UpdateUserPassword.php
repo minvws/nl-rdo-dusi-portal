@@ -8,11 +8,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserPasswords;
-use Laravel\Fortify\Rules\Password;
+use MinVWS\DUSi\Assessment\API\Fortify\Traits\PasswordValidationRules;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 class UpdateUserPassword implements UpdatesUserPasswords
 {
+    use PasswordValidationRules;
+
     /**
      * Validate and update the user's password.
      *
@@ -45,22 +47,5 @@ class UpdateUserPassword implements UpdatesUserPasswords
                 'password_hash_web' => $passwordHash,
             ]);
         }
-    }
-
-    private function passwordRules(): array
-    {
-        $passwordRule = new Password();
-        $passwordRule
-            ->requireUppercase()
-            ->requireNumeric()
-            ->requireSpecialCharacter()
-            ->length(12);
-
-        return [
-            'required',
-            'string',
-            $passwordRule,
-            'confirmed',
-        ];
     }
 }
