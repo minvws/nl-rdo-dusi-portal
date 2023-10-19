@@ -40,12 +40,14 @@ class SurePayServiceProvider extends ServiceProvider
         if (!config('surepay_api.enabled')) {
             return null;
         }
+        dd(getenv());
 
         if (empty(config('surepay_api.endpoint'))) {
             throw new RuntimeException(
                 'Please set the env SUREPAY_ENDPOINT to the SurePay API endpoint URL.'
             );
         }
+
         $options = [
             'base_uri' => config('surepay_api.endpoint'),
             'verify' => config('surepay_api.verify_ssl', false),
