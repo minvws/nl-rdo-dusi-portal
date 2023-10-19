@@ -1,5 +1,3 @@
-BEGIN;
-
 -- https://github.com/minvws/nl-rdo-dusi-portal/issues/547
 
 -- Wanneer de aanvraag wordt aangevuld door de aanvrager
@@ -16,5 +14,3 @@ WHERE id = 'c33b8459-3a98-4906-9ce0-c6f9c0ae7a49';
 UPDATE public.subsidy_stage_transitions
 SET clone_data = true
 WHERE id = '005a5acb-a908-44d2-8b69-a50d5ef43870';
-
-COMMIT;
