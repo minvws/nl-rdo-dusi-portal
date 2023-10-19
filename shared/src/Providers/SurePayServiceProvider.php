@@ -40,7 +40,6 @@ class SurePayServiceProvider extends ServiceProvider
         if (!config('surepay_api.enabled')) {
             return null;
         }
-        dd(getenv());
 
         if (empty(config('surepay_api.endpoint'))) {
             throw new RuntimeException(
