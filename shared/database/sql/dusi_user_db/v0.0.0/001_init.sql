@@ -25,6 +25,6 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to "assessment-web-dusi";
 
 GRANT ALL PRIVILEGES ON DATABASE dusi_user_db to "user-admin-dusi";
 
-insert into deploy_releases(version) values ('0.0.0');
+insert into deploy_releases(version) values ('v0.0.0');
 
 -- GRANT ALL PRIVILEGES ON DATABASE dusi_user_db to "user-admin-dusi";
