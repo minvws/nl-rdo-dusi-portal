@@ -41,7 +41,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read Collection<ApplicationStage> $applicationStages
  * @property-read Collection<ApplicationStageTransition> $applicationStageTransitions
  * @property-read ApplicationSurePayResult|null $applicationSurePayResult
- * @property-read Collection<ApplicationStageTransition> $applicationStageTransitions
  * @method static Builder<self> forIdentity(Identity $identity)
  * @method Builder<self> forIdentity(Identity $identity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -118,7 +117,8 @@ class Application extends Model
 
     public function applicationStageTransitions(): HasMany
     {
-        return $this->hasMany(ApplicationStageTransition::class, 'application_id', 'id');
+        return $this->hasMany(ApplicationStageTransition::class, 'application_id', 'id')
+            ->oldest();
     }
 
     public function currentApplicationStage(): HasOne
