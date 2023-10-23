@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -14,7 +15,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberV
 use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use Throwable;
 
-class CheckSurePayJob implements ShouldQueue
+class CheckSurePayJob implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use Queueable;
