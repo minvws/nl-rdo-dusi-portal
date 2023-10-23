@@ -213,7 +213,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'hasBeenWorkingAtJudicialInstitution',
-            title: 'Bent u werkzaamh geweest bij een justitiële inrichting?',
+            title: 'Bent u werkzaam geweest bij een justitiële inrichting?',
             options: ['Ja', 'Nee']
         );
 
