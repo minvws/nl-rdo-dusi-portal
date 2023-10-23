@@ -71,7 +71,11 @@ EOF;
         $stages = new LetterStages();
         $stages->put('stage1', $dataStage1);
 
-        $subsidy = new Subsidy(['title' => 'Subsidie voor het testen van PDFs']);
+        $subsidy = Subsidy::find('06a6b91c-d59b-401e-a5bf-4bf9262d85f8');
+        if ($subsidy === null) {
+            $this->error('Could not find fixed subsidy `06a6b91c-d59b-401e-a5bf-4bf9262d85f8` to create PDF');
+            return;
+        }
 
         $letterData = new LetterData(
             subsidy: $subsidy,

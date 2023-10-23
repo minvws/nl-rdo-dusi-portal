@@ -14,6 +14,7 @@ use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
@@ -597,5 +598,19 @@ class ApplicationFlowServiceTest extends TestCase
         $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_DISAGREES);
         $nextStage = $this->flowService->submitApplicationStage($stage3);
         $this->assertNull($nextStage->assessor_user_id);
+    }
+
+    public function testCreationOfApplicationStageTransition(): void
+    {
+        $this->assertEquals(0, $this->application->applicationStageTransitions->count());
+        $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->application->refresh();
+        $this->assertEquals(1, $this->application->applicationStageTransitions->count());
+        $transition = $this->application->applicationStageTransitions[0];
+        $this->assertInstanceOf(ApplicationStageTransition::class, $transition);
+        $this->assertEquals($this->applicationStage1->id, $transition->previousApplicationStage->id);
+        $this->assertEquals(ApplicationStatus::Draft, $transition->previous_application_status);
+        $this->assertEquals($stage2->id, $transition->newApplicationStage->id);
+        $this->assertEquals(ApplicationStatus::Submitted, $transition->new_application_status);
     }
 }

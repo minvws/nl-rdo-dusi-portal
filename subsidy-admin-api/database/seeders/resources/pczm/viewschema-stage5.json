@@ -14,7 +14,7 @@
         },
         {
             "type": "CustomControl",
-            "scope": "#/properties/implementationCoordinatorInternalNote",
+            "scope": "#/properties/coordinatorImplementationInternalNote",
             "options": {
                 "readonly": true,
                 "format": "textarea"

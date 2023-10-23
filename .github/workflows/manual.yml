@@ -51,6 +51,11 @@ jobs:
           srcDir: ${{ matrix.directory }}/doc/manual
           destFile: "${{ matrix.directory }}/doc/${{ matrix.name }} ${{ env.RELEASE_VERSION }}.md"
 
+      - name: Update template
+        run: sed -i "s/{{{version}}}/$RELEASE_VERSION/g" .github/workflows/manual/pdf_template.html
+        env:
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+
       - name: Publish document
         if: steps.check_files.outputs.files_exists == 'true'
         uses: baileyjm02/markdown-to-pdf@v1

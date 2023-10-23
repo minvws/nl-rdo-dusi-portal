@@ -9,7 +9,6 @@ use Illuminate\Auth\Passwords\TokenRepositoryInterface;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Database\DatabaseManager;
 use MinVWS\DUSi\Assessment\API\Fortify\Providers\PasswordResetTokenRepository;
 
 class PasswordBrokerManager extends LaravelPasswordBrokerManager
@@ -30,11 +29,8 @@ class PasswordBrokerManager extends LaravelPasswordBrokerManager
             $key = base64_decode(substr($key, 7));
         }
 
-        $connection = $config['connection'] ?? null;
-
         // Use our repository
         return new PasswordResetTokenRepository(
-            connection: $this->app->make(DatabaseManager::class)->connection($connection),
             hasher: $this->app->make(Hasher::class),
             hashKey: $key,
             expires: $config['expire'],

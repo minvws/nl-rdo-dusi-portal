@@ -25,6 +25,7 @@ use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryp
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationResponse;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use stdClass;
 use Throwable;
 
@@ -142,6 +143,24 @@ readonly class ApplicationDataService
         }
 
         return $result;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getApplicationStageDataForField(
+        ApplicationStage $applicationStage,
+        Field $field
+    ): FileList|string|int|bool|float|array|null {
+        $answer = $this->applicationRepository->getApplicationStageAnswerForField($applicationStage, $field);
+
+        if ($answer === null) {
+            return null;
+        }
+
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+
+        return $this->mapAnswerToValue($answer, $encrypter);
     }
 
     /**

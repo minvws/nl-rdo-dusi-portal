@@ -13,7 +13,6 @@ class GenerateLetter
     public function handle(ApplicationMessageEvent $event): void
     {
         Log::debug('Dispatch letter generation job');
-
-        GenerateLetterJob::dispatch($event->message, $event->applicationStage);
+        GenerateLetterJob::dispatch($event->message, $event->transition);
     }
 }

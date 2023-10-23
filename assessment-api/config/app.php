@@ -205,6 +205,7 @@ return [
         MinVWS\DUSi\Shared\Providers\HsmEncryptionServiceProvider::class,
         MinVWS\DUSi\Shared\User\DatabaseServiceProvider::class,
         MinVWS\DUSi\Shared\Providers\SurePayServiceProvider::class,
+        MinVWS\DUSi\Shared\Providers\LetterServiceProvider::class,
     ],
 
     /*

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\TwoFactorAuthenticationProvider;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
@@ -16,14 +15,9 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\Organisation;
 use MinVWS\DUSi\Shared\User\Models\User;
 use PragmaRX\Google2FA\Google2FA;
-use MinVWS\DUSi\Shared\Application\Models\Connection as ApplicationConnection;
-use MinVWS\DUSi\Shared\User\Models\Connection as UserConnection;
 
 class TwoFactorTest extends TestCase
 {
-    use DatabaseTransactions;
-
-    protected array $connectionsToTransact = [ApplicationConnection::APPLICATION, UserConnection::USER];
     private Application $application;
     private ApplicationStage $applicationStage;
 

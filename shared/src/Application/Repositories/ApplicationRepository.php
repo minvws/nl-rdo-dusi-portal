@@ -16,13 +16,17 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\User\Models\User;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -376,5 +380,32 @@ class ApplicationRepository
                 ->where('application_stages.assessor_user_id', $user->id)
                 ->where('applications.id', $application->id)
                 ->count() > 0;
+    }
+
+    public function createApplicationStageTransition(
+        SubsidyStageTransition $subsidyStageTransition,
+        Application $application,
+        ApplicationStage $previousApplicationStage,
+        ApplicationStatus $previousApplicationStatus,
+        ?ApplicationStage $newApplicationStage,
+        ApplicationStatus $newApplicationStatus
+    ): ApplicationStageTransition {
+        $transition = new ApplicationStageTransition();
+        $transition->id = Uuid::uuid4()->toString();
+        $transition->subsidyStageTransition()->associate($subsidyStageTransition);
+        $transition->application()->associate($application);
+        $transition->previousApplicationStage()->associate($previousApplicationStage);
+        $transition->previous_application_status = $previousApplicationStatus;
+        $transition->newApplicationStage()->associate($newApplicationStage);
+        $transition->new_application_status = $newApplicationStatus;
+        $transition->save();
+        return $transition;
+    }
+
+    public function getApplicationStageAnswerForField(ApplicationStage $applicationStage, Field $field): Answer|null
+    {
+        $answer = $applicationStage->answers()->firstWhere('field_id', $field->id);
+
+        return $answer ?? null;
     }
 }
