@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\DTO;
 
 use DateTime;
+use Exception;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
- * @throws \Exception
+ * @throws Exception
  */
 function createDateTimeOrNull(array $inputArray, mixed $key): ?DateTime
 {
@@ -68,7 +68,7 @@ class ApplicationsFilter
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public static function fromArray(array $inputArray): ApplicationsFilter

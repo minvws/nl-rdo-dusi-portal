@@ -6,7 +6,6 @@ namespace Feature\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Testing\TestResponse;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
@@ -25,7 +24,6 @@ use MinVWS\DUSi\Shared\User\Models\User;
  */
 class ApplicationControllerTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithoutMiddleware;
 
     protected array $connectionsToTransact = [Connection::APPLICATION];

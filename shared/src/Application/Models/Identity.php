@@ -48,7 +48,7 @@ class Identity extends Model
             'application_id',
             'id',
             'id'
-        );
+        )->latest('sent_at');
     }
 
     protected static function newFactory(): IdentityFactory

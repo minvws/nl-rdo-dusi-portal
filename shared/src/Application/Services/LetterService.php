@@ -26,6 +26,7 @@ use MinVWS\DUSi\Shared\Application\DTO\LetterStageData;
 use MinVWS\DUSi\Shared\Application\DTO\LetterStages;
 use MinVWS\DUSi\Shared\Application\Events\LetterGeneratedEvent;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationMessageRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
@@ -246,14 +247,18 @@ readonly class LetterService
     /**
      * @throws Exception
      */
-    public function generateLetters(SubsidyStageTransitionMessage $message, ApplicationStage $stage): void
-    {
+    public function generateLetters(
+        SubsidyStageTransitionMessage $message,
+        ApplicationStageTransition $transition
+    ): void {
+        $stage = $transition->previousApplicationStage;
+
         $data = $this->collectGenericDataForTemplate($stage);
 
         $pdf = $this->generatePDFLetter($message->content_pdf, $data);
         $pdfPath = sprintf(
             'applications/%s/letters/%d/%s',
-            $stage->application->id,
+            $transition->application->id,
             $stage->sequence_number,
             Str::uuid(),
         );
@@ -268,7 +273,7 @@ readonly class LetterService
         );
         $this->applicationFileManager->writeEncryptedFile($htmlPath, $html);
 
-        $this->messageRepository->createMessage($stage, $message->subject, $htmlPath, $pdfPath);
+        $this->messageRepository->createMessage($transition, $message->subject, $htmlPath, $pdfPath);
 
         $this->triggerMailNotification($stage, $data);
     }

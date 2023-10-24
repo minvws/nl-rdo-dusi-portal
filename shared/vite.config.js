@@ -15,7 +15,6 @@ export default defineConfig({
         laravel({
             input: ["resources/scss/pdf.scss"],
             refresh: false,
-
         }),
     ]
 });

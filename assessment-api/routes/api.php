@@ -30,6 +30,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::patch('{application}/submit', 'submitAssessment');
                 Route::get('{application}/history', 'getApplicationHistory');
                 Route::get('{application}/reviewer', 'getApplicationReviewer');
+                Route::get('{application}/transitions', 'getApplicationTransitions');
             });
 
         Route::prefix('applications')
@@ -59,5 +60,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             '/ui/applications/all-cases-filter',
             [ApplicationController::class, 'getApplicationRequestFilterResource']
         );
+
+        Route::get('/messages/{message}/download/pdf', [ApplicationController::class, 'getLetterForMessage']);
     });
 });

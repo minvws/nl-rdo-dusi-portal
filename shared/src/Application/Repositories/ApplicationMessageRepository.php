@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 
 class ApplicationMessageRepository
@@ -29,13 +28,19 @@ class ApplicationMessageRepository
         return $result;
     }
 
-    public function createMessage(ApplicationStage $stage, string $subject, string $htmlPath, string $pdfPath): void
-    {
-        $stage->application->applicationMessages()->create([
-            'subject' => $subject,
-            'html_path' => $htmlPath,
-            'pdf_path' => $pdfPath,
-            'is_new' => true,
-        ]);
+    public function createMessage(
+        ApplicationStageTransition $transition,
+        string $subject,
+        string $htmlPath,
+        string $pdfPath
+    ): ApplicationMessage {
+        $message = $transition->application->applicationMessages()->make();
+        $message->applicationStageTransition()->associate($transition);
+        $message->subject = $subject;
+        $message->html_path = $htmlPath;
+        $message->pdf_path = $pdfPath;
+        $message->is_new = true;
+        $message->save();
+        return $message;
     }
 }

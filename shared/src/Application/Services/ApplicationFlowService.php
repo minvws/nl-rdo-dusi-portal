@@ -11,9 +11,11 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 
@@ -104,12 +106,24 @@ class ApplicationFlowService
     }
 
     private function performTransitionForApplicationStage(
-        SubsidyStageTransition $transition,
+        SubsidyStageTransition $subsidyStageTransition,
         ApplicationStage $currentStage
     ): ?ApplicationStage {
-        $this->performTransitionForApplication($transition, $currentStage->application);
-        $this->scheduleMessageForClosedApplicationStage($transition, $currentStage);
-        return $this->createNextApplicationStageForTransition($transition, $currentStage);
+        $application = $currentStage->application;
+        $currentApplicationStatus = $application->status;
+        $this->performTransitionForApplication($subsidyStageTransition, $application);
+        $newApplicationStatus = $application->status;
+        $newStage = $this->createNextApplicationStageForTransition($subsidyStageTransition, $currentStage);
+        $transition = $this->createApplicationStageTransition(
+            $subsidyStageTransition,
+            $application,
+            $currentStage,
+            $currentApplicationStatus,
+            $newStage,
+            $newApplicationStatus
+        );
+        $this->scheduleMessageForApplicationStageTransition($transition);
+        return $newStage;
     }
 
     private function performTransitionForApplication(SubsidyStageTransition $transition, Application $application): void
@@ -181,19 +195,19 @@ class ApplicationFlowService
         return true;
     }
 
-    private function scheduleMessageForClosedApplicationStage(
-        SubsidyStageTransition $transition,
-        ApplicationStage $closedStage
-    ): void {
-        if (!$transition->send_message || $transition->publishedSubsidyStageTransitionMessage === null) {
+    private function scheduleMessageForApplicationStageTransition(ApplicationStageTransition $transition): void
+    {
+        if (
+            !$transition->subsidyStageTransition->send_message ||
+            $transition->subsidyStageTransition->publishedSubsidyStageTransitionMessage === null
+        ) {
             return;
         }
 
-        DB::afterCommit(function () use ($transition, $closedStage) {
-            ApplicationMessageEvent::dispatch(
-                $transition->publishedSubsidyStageTransitionMessage,
-                $closedStage
-            );
+        $message = $transition->subsidyStageTransition->publishedSubsidyStageTransitionMessage;
+
+        DB::afterCommit(function () use ($message, $transition) {
+            ApplicationMessageEvent::dispatch($message, $transition);
         });
     }
 
@@ -268,5 +282,23 @@ class ApplicationFlowService
         $this->applicationRepository->saveApplicationStage($stage);
 
         return $stage;
+    }
+
+    private function createApplicationStageTransition(
+        SubsidyStageTransition $subsidyStageTransition,
+        Application $application,
+        ApplicationStage $previousApplicationStage,
+        ApplicationStatus $previousApplicationStatus,
+        ?ApplicationStage $newApplicationStage,
+        ApplicationStatus $newApplicationStatus
+    ): ApplicationStageTransition {
+        return $this->applicationRepository->createApplicationStageTransition(
+            $subsidyStageTransition,
+            $application,
+            $previousApplicationStage,
+            $previousApplicationStatus,
+            $newApplicationStage,
+            $newApplicationStatus
+        );
     }
 }

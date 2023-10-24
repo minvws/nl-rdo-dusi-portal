@@ -41,8 +41,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider",
-                "MinVWS\\DUSi\\Shared\\Providers\\LetterServiceProvider"
+                "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider"
             ]
         }
     },

@@ -52,6 +52,7 @@ class SubsidyStagesTableSeeder extends Seeder
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::Assessor->value,
             'stage' => 2,
+            'internal_note_field_code' => 'firstAssessmentInternalNote'
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_3_UUID,
@@ -60,6 +61,7 @@ class SubsidyStagesTableSeeder extends Seeder
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::Assessor->value,
             'stage' => 3,
+            'internal_note_field_code' => 'secondAssessmentInternalNote'
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_4_UUID,
@@ -68,6 +70,7 @@ class SubsidyStagesTableSeeder extends Seeder
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::InternalAuditor->value,
             'stage' => 4,
+            'internal_note_field_code' => 'internalAssessmentInternalNote'
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::PCZM_STAGE_5_UUID,
@@ -76,6 +79,7 @@ class SubsidyStagesTableSeeder extends Seeder
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::ImplementationCoordinator->value,
             'stage' => 5,
+            'internal_note_field_code' => 'coordinatorImplementationInternalNote'
         ]);
     }
 }

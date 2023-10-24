@@ -4,24 +4,37 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Tests;
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\Artisan;
+use MinVWS\DUSi\Shared\User\Models\Connection as UserConnection;
+use MinVWS\DUSi\Shared\Application\Models\Connection as ApplicationConnection;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    use DatabaseMigrations;
+    use DatabaseTransactions;
 
-    protected function setUp(): void
+    protected array $connectionsToTransact = [
+        UserConnection::USER,
+        ApplicationConnection::APPLICATION,
+    ];
+
+    public function runDatabaseMigrations(): void
     {
-        parent::setUp();
-        $this->loadCustomMigrations();
-    }
+        if (! RefreshDatabaseState::$migrated) {
+            $this->artisan('migrate:fresh', [
+                '--database' => UserConnection::USER,
+                '--path' => 'vendor/minvws/dusi-shared/database/user_migrations',
+            ]);
+            $this->artisan('migrate:fresh', [
+                '--database' => ApplicationConnection::APPLICATION,
+                '--path' => 'vendor/minvws/dusi-shared/database/migrations',
+            ]);
 
-    protected function loadCustomMigrations(): void
-    {
-        Artisan::call('db:wipe', ['--database' => 'pgsql_application']);
-        Artisan::call('db:wipe', ['--database' => 'pgsql_user']);
-
-        Artisan::call('migrate:fresh');
+            RefreshDatabaseState::$migrated = true;
+        }
     }
 }

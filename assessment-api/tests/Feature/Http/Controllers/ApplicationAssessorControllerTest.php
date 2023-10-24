@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Feature\Http\Controllers;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -27,7 +26,6 @@ use MinVWS\DUSi\Shared\User\Models\User;
  */
 class ApplicationAssessorControllerTest extends TestCase
 {
-    use DatabaseTransactions;
     use MocksEncryption;
 
     private Subsidy $subsidy;
