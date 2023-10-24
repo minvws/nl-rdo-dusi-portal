@@ -608,7 +608,7 @@ class ApplicationMutationServiceTest extends TestCase
                 NameMatchResult::NoMatch,
                 EncryptedResponseStatus::OK,
                 '{"error":{"bankAccountNumber":[{"message":"Bankrekening naam komt niet overeen!",'
-                . '"icon":"icon_no_match"}], "email":["The email field must be a valid email address."]},'
+                . '"icon":"icon_no_match"}],"email":["The email field must be a valid email address."]},'
                 . '"success":[]}',
                 true,
                 'aa@bb.notexisting',
