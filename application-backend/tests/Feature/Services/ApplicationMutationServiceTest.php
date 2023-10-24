@@ -594,37 +594,61 @@ class ApplicationMutationServiceTest extends TestCase
     public static function validateFieldsDataProvider(): array
     {
         return [
-            [
+            "valid email, surepay match" => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
-                '{"error":{"email":["validation.email"]},"success":{"bankAccountNumber":["icon-success"]}}',
+                '{"error":[],'
+                . '"success":{"bankAccountNumber":[{"message":"Bankrekening naam komt overeen.",'
+                . '"icon":"icon_match"}]}}',
                 true,
-            ], [
+            ],
+            "valid email, surepay no_match" => [
                 AccountNumberValidation::Invalid,
                 NameMatchResult::NoMatch,
                 EncryptedResponseStatus::OK,
-                '{"error":{"bankAccountNumber":["icon-failed"],"email":["validation.email"]},"success":[]}',
+                '{"error":{"bankAccountNumber":[{"message":"Bankrekening naam komt niet overeen!",'
+                . '"icon":"icon_no_match"}], "email":["The email field must be a valid email address."]},'
+                . '"success":[]}',
                 true,
-            ], [
+                'aa@bb.notexisting',
+            ],
+            "invalid email, surepay match" => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
-                '{"error":{"email":["validation.email"]},"success":{"bankAccountNumber":["icon-success"]}}',
+                '{"error":{"email":["The email field must be a valid email address."]},'
+                . '"success":{"bankAccountNumber":[{"message":"Bankrekening naam komt overeen.",'
+                . '"icon":"icon_match"}]}}',
                 false,
+                'aa@bb.notexisting',
+            ],
+            "invalid email, surepay close match" => [
+                AccountNumberValidation::Valid,
+                NameMatchResult::CloseMatch,
+                EncryptedResponseStatus::OK,
+                '{"error":{"email":["The email field must be a valid email address."]},'
+                . '"success":{"bankAccountNumber":[{"message":"Bankrekening naam komt niet volledig overeen!",'
+                . '"icon":"icon_close_match","suggestion":"suggestion"}]}}',
+                false,
+                'aa@bb.notexisting',
+                'suggestion'
             ]
         ];
     }
 
     /**
      * @dataProvider validateFieldsDataProvider
+     * @group validate-surepay
      */
     public function testValidateFieldsWithBankAccount(
         AccountNumberValidation $accountNumberValidation,
         NameMatchResult $nameMatchResult,
         EncryptedResponseStatus $encryptedResponseStatus,
         string $errorMessage,
-        bool $withRequiredField
+        bool $withRequiredField,
+        string $email = null,
+        string $suggestion = null,
     ): void {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
         ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
@@ -649,7 +673,7 @@ class ApplicationMutationServiceTest extends TestCase
         $params = [
             $bankAccountField->code => $this->faker->iban('NL'),
             $bankAccountHolder->code => $this->faker->name,
-            $emailField->code => 'aa@bb.notexisting',
+            $emailField->code => $email ?? $this->faker->freeEmail(),
         ];
 
         if ($withRequiredField) {
@@ -671,13 +695,13 @@ class ApplicationMutationServiceTest extends TestCase
             $application->reference,
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
-        app()->bind(SurePayClient::class, function () use ($accountNumberValidation, $nameMatchResult) {
+        app()->bind(SurePayClient::class, function () use ($accountNumberValidation, $nameMatchResult, $suggestion) {
             return Mockery::mock(
                 SurePayClient::class,
-                function ($mock) use ($accountNumberValidation, $nameMatchResult) {
+                function ($mock) use ($accountNumberValidation, $nameMatchResult, $suggestion) {
                     $mock->shouldReceive('checkOrganisationsAccount')->andReturn(
                         new CheckOrganisationsAccountResponse(
-                            new AccountInfo(
+                            account: new AccountInfo(
                                 $accountNumberValidation,
                                 null,
                                 null,
@@ -686,8 +710,8 @@ class ApplicationMutationServiceTest extends TestCase
                                 null,
                                 null
                             ),
-                            $nameMatchResult,
-                            null
+                            nameMatchResult: $nameMatchResult,
+                            nameSuggestion: $nameMatchResult === NameMatchResult::CloseMatch ? $suggestion : null
                         )
                     );
                 }

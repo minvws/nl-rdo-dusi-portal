@@ -12,6 +12,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ErrorMessageResultRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ImplicitValidationRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SuccessMessageResultRule;
 
@@ -21,6 +22,11 @@ class Validator extends BaseValidator
      * @var array<string, array<string>>
      */
     public array $successMessages = [];
+
+    /**
+     * @var array<string, array<string>>
+     */
+    public array $errorMessages = [];
 
     /**
      * @param array<int|string, FieldValue> $fieldValues
@@ -35,6 +41,23 @@ class Validator extends BaseValidator
         private readonly ApplicationRepository $applicationRepository
     ) {
         parent::__construct($translator, $data, $rules);
+    }
+
+    public function collectErrorAndSuccessMessages(mixed $invokableRule, string $attribute): void
+    {
+        if ($invokableRule instanceof SuccessMessageResultRule) {
+            $successMessages = $invokableRule->getSuccessMessages();
+            if (!empty($successMessages)) {
+                $this->successMessages[$attribute] = $successMessages;
+            }
+        }
+
+        if ($invokableRule instanceof ErrorMessageResultRule) {
+            $errorMessages = $invokableRule->getErrorMessages();
+            if (!empty($errorMessages)) {
+                $this->errorMessages[$attribute] = $errorMessages;
+            }
+        }
     }
 
     protected function isImplicit($rule)
@@ -84,11 +107,6 @@ class Validator extends BaseValidator
 
         parent::validateUsingCustomRule($attribute, $value, $rule);
 
-        if ($invokableRule instanceof SuccessMessageResultRule) {
-            $successMessages = $invokableRule->getSuccessMessages();
-            if (!empty($successMessages)) {
-                $this->successMessages[$attribute] = $successMessages;
-            }
-        }
+        $this->collectErrorAndSuccessMessages($invokableRule, $attribute);
     }
 }

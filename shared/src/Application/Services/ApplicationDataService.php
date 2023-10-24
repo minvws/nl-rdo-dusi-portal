@@ -110,6 +110,10 @@ readonly class ApplicationDataService
         } catch (ValidationException $e) {
             $errorMessages = $e->errors();
         }
+
+        //Append/overwrite custom error messages
+        $errorMessages = array_merge($errorMessages, $validator->errorMessages);
+
         return new FieldValidationResponse(
             error: $errorMessages,
             success: $validator->successMessages

@@ -6,6 +6,8 @@ namespace MinVWS\DUSi\Shared\Application\Services\Validation\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Support\Str;
+use Illuminate\Translation\Translator;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
@@ -15,16 +17,23 @@ use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 use RuntimeException;
 
-class SurePayValidationRule implements DataAwareRule, ImplicitValidationRule, SuccessMessageResultRule
+class SurePayValidationRule implements
+    DataAwareRule,
+    ImplicitValidationRule,
+    SuccessMessageResultRule,
+    ErrorMessageResultRule
 {
     public function __construct(
-        private readonly ?SurePayClient $surePayClient
+        private readonly ?SurePayClient $surePayClient,
+        private readonly Translator $translator,
     ) {
     }
 
     private array $data = [];
 
     private array $successMessages = [];
+
+    private array $errorMessages = [];
 
     public function setData(array $data): self
     {
@@ -38,6 +47,14 @@ class SurePayValidationRule implements DataAwareRule, ImplicitValidationRule, Su
     public function getSuccessMessages(): array
     {
         return $this->successMessages;
+    }
+
+    /**
+     * @returns array<string>
+     */
+    public function getErrorMessages(): array
+    {
+        return $this->errorMessages;
     }
 
     /**
@@ -64,14 +81,35 @@ class SurePayValidationRule implements DataAwareRule, ImplicitValidationRule, Su
         if (empty($this->data['bankAccountNumber'])) {
             $fail('validation.required');
         }
-        $result = $this->checkOrganisationsAccount(
+        $checkResult = $this->checkOrganisationsAccount(
             $this->data['bankAccountHolder'] ?? '',
             $this->data['bankAccountNumber']
         );
-        if ($result->nameMatchResult === NameMatchResult::NoMatch) {
-            $fail('icon-failed');
+
+        $lowerNameMatchResult = Str::lower($checkResult->nameMatchResult->value);
+        $validationResponse = [
+            'message' => $this->getTranslation($lowerNameMatchResult),
+            'icon' => sprintf('icon_%s', $lowerNameMatchResult),
+        ];
+
+        if ($checkResult->nameMatchResult === NameMatchResult::NoMatch) {
+            array_push($this->errorMessages, $validationResponse);
+            $fail($validationResponse['message']);
+        } elseif ($checkResult->nameMatchResult === NameMatchResult::CloseMatch) {
+            $validationResponse['suggestion'] = $checkResult->nameSuggestion;
+            array_push($this->successMessages, $validationResponse);
+        } elseif ($checkResult->nameMatchResult === NameMatchResult::Match) {
+            array_push($this->successMessages, $validationResponse);
         } else {
-            array_push($this->successMessages, 'icon-success');
+            //Other results need no response in Application portal
         }
+    }
+
+    public function getTranslation(string $lowerNameMatchResult): string|array|null
+    {
+        return $this->translator->get(
+            sprintf('validateFields.validation_surepay_%s', $lowerNameMatchResult),
+            locale: 'nl'
+        );
     }
 }

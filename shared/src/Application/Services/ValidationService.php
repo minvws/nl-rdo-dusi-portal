@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\Translator;
 use Illuminate\Validation\Rule;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
@@ -22,6 +23,7 @@ class ValidationService
     public function __construct(
         protected ValidatorFactory $validatorFactory,
         protected ?SurePayClient $surePayClient,
+        protected Translator $translator,
     ) {
     }
 
@@ -188,6 +190,6 @@ class ValidationService
         if ($field->type !== FieldType::CustomBankAccount) {
             return [];
         }
-        return [ new SurePayValidationRule($this->surePayClient) ];
+        return [ new SurePayValidationRule($this->surePayClient, $this->translator) ];
     }
 }

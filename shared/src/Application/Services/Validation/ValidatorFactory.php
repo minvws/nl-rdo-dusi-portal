@@ -16,6 +16,7 @@ class ValidatorFactory
     public function __construct(
         private readonly ApplicationFileManager $applicationFileManager,
         private readonly ApplicationRepository $applicationRepository,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -33,7 +34,7 @@ class ValidatorFactory
         array $rules,
     ): Validator {
         return new Validator(
-            translator: new Translator(new ArrayLoader(), 'nl'),
+            translator: $this->translator,
             data: $data,
             rules: $rules,
             applicationStage: $applicationStage,
