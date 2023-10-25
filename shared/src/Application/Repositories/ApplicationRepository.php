@@ -75,8 +75,11 @@ class ApplicationRepository
         $query->whereRaw($sql, $bindings);
     }
 
-    public function filterApplications(User $user, bool $onlyMyApplications, ApplicationsFilter $filter): array|Collection
-    {
+    public function filterApplications(
+        User $user,
+        bool $onlyMyApplications,
+        ApplicationsFilter $filter
+    ): array|Collection {
         if ($user->roles->isEmpty()) {
             return [];
         }
