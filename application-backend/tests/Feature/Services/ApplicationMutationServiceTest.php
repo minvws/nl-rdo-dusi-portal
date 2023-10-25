@@ -79,7 +79,6 @@ class ApplicationMutationServiceTest extends TestCase
 
         Queue::fake();
 
-        $this->loadCustomMigrations();
         $this->withoutFrontendEncryption();
 
         $this->subsidy = Subsidy::factory()->create();
@@ -608,7 +607,7 @@ class ApplicationMutationServiceTest extends TestCase
                 NameMatchResult::NoMatch,
                 EncryptedResponseStatus::OK,
                 '{"error":{"bankAccountNumber":[{"message":"Bankrekening naam komt niet overeen!",'
-                . '"icon":"icon_no_match"}],"email":["The email field must be a valid email address."]},'
+                . '"icon":"icon_no_match"}],"email":["E-mailadres is geen geldig e-mailadres."]},'
                 . '"success":[]}',
                 true,
                 'aa@bb.notexisting',
@@ -617,7 +616,7 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
-                '{"error":{"email":["The email field must be a valid email address."]},'
+                '{"error":{"email":["E-mailadres is geen geldig e-mailadres."]},'
                 . '"success":{"bankAccountNumber":[{"message":"Bankrekening naam komt overeen.",'
                 . '"icon":"icon_match"}]}}',
                 false,
@@ -627,7 +626,7 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Valid,
                 NameMatchResult::CloseMatch,
                 EncryptedResponseStatus::OK,
-                '{"error":{"email":["The email field must be a valid email address."]},'
+                '{"error":{"email":["E-mailadres is geen geldig e-mailadres."]},'
                 . '"success":{"bankAccountNumber":[{"message":"Bankrekening naam komt niet volledig overeen!",'
                 . '"icon":"icon_close_match","suggestion":"suggestion"}]}}',
                 false,

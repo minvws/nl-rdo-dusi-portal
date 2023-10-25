@@ -133,8 +133,7 @@ class SurePayValidationRule implements
     public function getTranslation(string $lowerNameMatchResult): string|array|null
     {
         return $this->translator->get(
-            sprintf('validateFields.validation_surepay_%s', $lowerNameMatchResult),
-            locale: 'nl'
+            sprintf('validateFields.validation_surepay_%s', $lowerNameMatchResult)
         );
     }
 }
