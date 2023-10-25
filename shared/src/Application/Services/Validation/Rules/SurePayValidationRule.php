@@ -78,20 +78,46 @@ class SurePayValidationRule implements
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        $this->validateBankAccountData($fail);
+        $checkResult = $this->checkOrganisationAccountData();
+
+        $lowerNameMatchResult = Str::lower($checkResult->nameMatchResult->value);
+        $validationResponse = $this->prepareValidationResponse($lowerNameMatchResult);
+
+        $this->processMatchResults($checkResult, $validationResponse, $fail);
+    }
+
+    protected function validateBankAccountData(Closure $fail): void
+    {
         if (empty($this->data['bankAccountNumber'])) {
             $fail('validation.required');
         }
-        $checkResult = $this->checkOrganisationsAccount(
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    protected function checkOrganisationAccountData(): CheckOrganisationsAccountResponse
+    {
+        return $this->checkOrganisationsAccount(
             $this->data['bankAccountHolder'] ?? '',
             $this->data['bankAccountNumber']
         );
+    }
 
-        $lowerNameMatchResult = Str::lower($checkResult->nameMatchResult->value);
-        $validationResponse = [
-            'message' => $this->getTranslation($lowerNameMatchResult),
-            'icon' => sprintf('icon_%s', $lowerNameMatchResult),
+    protected function prepareValidationResponse(string $result): array
+    {
+        return [
+            'message' => $this->getTranslation($result),
+            'icon' => sprintf('icon_%s', $result),
         ];
+    }
 
+    protected function processMatchResults(
+        CheckOrganisationsAccountResponse $checkResult,
+        array &$validationResponse,
+        Closure $fail
+    ): void {
         if ($checkResult->nameMatchResult === NameMatchResult::NoMatch) {
             array_push($this->errorMessages, $validationResponse);
             $fail($validationResponse['message']);
@@ -100,9 +126,8 @@ class SurePayValidationRule implements
             array_push($this->successMessages, $validationResponse);
         } elseif ($checkResult->nameMatchResult === NameMatchResult::Match) {
             array_push($this->successMessages, $validationResponse);
-        } else {
-            //Other results need no response in Application portal
         }
+        //Other results need no response in Application portal
     }
 
     public function getTranslation(string $lowerNameMatchResult): string|array|null
