@@ -6,23 +6,39 @@ namespace MinVWS\DUSi\Shared\Tests;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\DBAL\TimestampType;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use MinVWS\DUSi\Shared\User\Models\Connection as UserConnection;
+use MinVWS\DUSi\Shared\Application\Models\Connection as ApplicationConnection;
 
 class TestCase extends BaseTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->loadCustomMigrations();
-    }
+    use DatabaseMigrations;
+    use DatabaseTransactions;
 
-    protected function loadCustomMigrations(): void
-    {
-        Artisan::call('db:wipe', ['--database' => 'pgsql_application']);
-        Artisan::call('db:wipe', ['--database' => 'pgsql_user']);
+    protected array $connectionsToTransact = [
+        UserConnection::USER,
+        ApplicationConnection::APPLICATION,
+    ];
 
-        Artisan::call('migrate:fresh');
+    public function runDatabaseMigrations(): void
+    {
+        if (! RefreshDatabaseState::$migrated) {
+            $this->artisan('migrate:fresh', [
+                '--database' => UserConnection::USER,
+                '--path' => 'database/user_migrations',
+                '--realpath' => true,
+            ]);
+            $this->artisan('migrate:fresh', [
+                '--database' => ApplicationConnection::APPLICATION,
+                '--path' => 'database/migrations',
+                '--realpath' => true,
+            ]);
+
+            RefreshDatabaseState::$migrated = true;
+        }
     }
 
 
@@ -37,8 +53,8 @@ class TestCase extends BaseTestCase
     public function defineEnvironment($app): void
     {
         tap($app->make('config'), function (Repository $config) {
-            $config->set('database.default', 'pgsql_application');
-            $config->set('database.connections.pgsql_application', [
+            $config->set('database.default', ApplicationConnection::APPLICATION);
+            $config->set('database.connections.' . ApplicationConnection::APPLICATION, [
                 'driver' => 'pgsql',
                 'host' => env('DB_APPLICATION_HOST'),
                 'port' => env('DB_APPLICATION_PORT'),
@@ -52,7 +68,7 @@ class TestCase extends BaseTestCase
                 'sslmode' => 'prefer',
             ]);
 
-            $config->set('database.connections.pgsql_user', [
+            $config->set('database.connections.' . UserConnection::USER, [
                 'driver' => 'pgsql',
                 'host' => env('DB_USER_HOST'),
                 'port' => env('DB_USER_PORT'),
