@@ -8,10 +8,6 @@ use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Validation\InvokableValidationRule;
 use Illuminate\Validation\Validator as BaseValidator;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ErrorMessageResultRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ImplicitValidationRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SuccessMessageResultRule;
@@ -28,22 +24,16 @@ class Validator extends BaseValidator
      */
     public array $errorMessages = [];
 
-    /**
-     * @param array<int|string, FieldValue> $fieldValues
-     */
     public function __construct(
         Translator $translator,
         array $data,
         array $rules,
-        private readonly ApplicationStage $applicationStage,
-        private readonly array $fieldValues,
-        private readonly ApplicationFileManager $applicationFileManager,
-        private readonly ApplicationRepository $applicationRepository
+        private readonly ValidatorServicesContainer $servicesContainer
     ) {
         parent::__construct($translator, $data, $rules);
     }
 
-    public function collectErrorAndSuccessMessages(mixed $invokableRule, string $attribute): void
+    private function collectErrorAndSuccessMessages(mixed $invokableRule, string $attribute): void
     {
         if ($invokableRule instanceof SuccessMessageResultRule) {
             $successMessages = $invokableRule->getSuccessMessages();
@@ -89,20 +79,24 @@ class Validator extends BaseValidator
         }
 
         $invokableRule = $rule->invokable();
+
+        // Access services from container
+        $services = $this->servicesContainer;
+
         if ($invokableRule instanceof FieldValuesAwareRule) {
-            $invokableRule->setFieldValues($this->fieldValues);
+            $invokableRule->setFieldValues($services->getFieldValues());
         }
 
         if ($invokableRule instanceof ApplicationStageAwareRule) {
-            $invokableRule->setApplicationStage($this->applicationStage);
+            $invokableRule->setApplicationStage($services->getApplicationStage());
         }
 
         if ($invokableRule instanceof ApplicationFileManagerAwareRule) {
-            $invokableRule->setApplicationFileManager($this->applicationFileManager);
+            $invokableRule->setApplicationFileManager($services->getApplicationFileManager());
         }
 
         if ($invokableRule instanceof ApplicationRepositoryAwareRule) {
-            $invokableRule->setApplicationRepository($this->applicationRepository);
+            $invokableRule->setApplicationRepository($services->getApplicationRepository());
         }
 
         parent::validateUsingCustomRule($attribute, $value, $rule);

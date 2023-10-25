@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Services\Validation;
 
-use Illuminate\Translation\ArrayLoader;
 use Illuminate\Translation\Translator;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
@@ -33,14 +32,18 @@ class ValidatorFactory
         array $data,
         array $rules,
     ): Validator {
-        return new Validator(
-            translator: $this->translator,
-            data: $data,
-            rules: $rules,
+        $validatorServicesContainer = new ValidatorServicesContainer(
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
             applicationFileManager: $this->applicationFileManager,
             applicationRepository: $this->applicationRepository,
+        );
+
+        return new Validator(
+            translator: $this->translator,
+            data: $data,
+            rules: $rules,
+            servicesContainer: $validatorServicesContainer,
         );
     }
 }
