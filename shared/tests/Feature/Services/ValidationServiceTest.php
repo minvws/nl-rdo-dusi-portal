@@ -51,11 +51,13 @@ class ValidationServiceTest extends TestCase
         $factory = new ValidatorFactory(
             applicationFileManager: $applicationFileManager,
             applicationRepository: $applicationRepository,
+            translator: app('translator'),
         );
 
         $validationService = new ValidationService(
             validatorFactory: $factory,
             surePayClient: $surepayClient,
+            translator: app('translator'),
         );
 
         $fieldValue = new FieldValue(
@@ -316,11 +318,13 @@ class ValidationServiceTest extends TestCase
         $factory = new ValidatorFactory(
             applicationFileManager: $applicationFileManager,
             applicationRepository: $applicationRepository,
+            translator: app('translator'),
         );
 
         $validationService = new ValidationService(
             validatorFactory: $factory,
             surePayClient: $surePayClient,
+            translator: app('translator'),
         );
 
         $fieldValue1 = new FieldValue(
