@@ -75,7 +75,7 @@ class ApplicationRepository
         $query->whereRaw($sql, $bindings);
     }
 
-    public function filterApplications(User $user, bool $onlyAssignedToMe, ApplicationsFilter $filter): array|Collection
+    public function filterApplications(User $user, bool $onlyMyApplications, ApplicationsFilter $filter): array|Collection
     {
         if ($user->roles->isEmpty()) {
             return [];
@@ -84,14 +84,9 @@ class ApplicationRepository
         $query = Application::query();
         $this->filterForUser($query, $user);
 
-        $query->when(
-            $onlyAssignedToMe,
-            fn() => $query->whereRelation(
-                'currentApplicationStage',
-                'assessor_user_id',
-                $user->id
-            )
-        );
+        if ($onlyMyApplications) {
+            $this->selectAssignedAndHandledApplications($query, $user);
+        }
         $query->when(
             isset($filter->applicationTitle),
             fn() => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
@@ -407,5 +402,14 @@ class ApplicationRepository
         $answer = $applicationStage->answers()->firstWhere('field_id', $field->id);
 
         return $answer ?? null;
+    }
+
+    public function selectAssignedAndHandledApplications(Builder $query, User $user): void
+    {
+        $query->whereRelation(
+            'applicationStages',
+            'assessor_user_id',
+            $user->id
+        );
     }
 }
