@@ -10,6 +10,7 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
@@ -66,8 +67,11 @@ class ApplicationRepository
                 JOIN subsidy_versions sv ON (sv.id = ss.subsidy_version_id)
                 WHERE s.application_id = applications.id
                 AND s.is_current = true
-                AND (
-                    (" . implode(") OR (", $clauses) . ")
+                AND  (
+                    NOT (ss.stage = 1 AND s.is_submitted = false AND applications.status != 'requestForChanges')
+                    OR (
+                        (" . implode(") OR (", $clauses) . ")
+                    )
                 )
             )
         ";
