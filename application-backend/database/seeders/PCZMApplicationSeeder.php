@@ -21,7 +21,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use Throwable;
 
-class PZCMApplicationSeeder extends Seeder
+class PCZMApplicationSeeder extends Seeder
 {
     public const PCZM_VERSION_UUID = '513011cd-789b-4628-ba5c-2fee231f8959';
     public const PCZM_STAGE_1_UUID = '7e5d64e9-35f0-4fee-b8d2-dca967b43183';
