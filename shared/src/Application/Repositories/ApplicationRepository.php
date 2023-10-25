@@ -59,7 +59,7 @@ class ApplicationRepository
             }
         }
 
-        $sql = "
+        $sql = sprintf("
             EXISTS (
                 SELECT 1
                 FROM application_stages s
@@ -68,13 +68,13 @@ class ApplicationRepository
                 WHERE s.application_id = applications.id
                 AND s.is_current = true
                 AND  (
-                    NOT (ss.stage = 1 AND s.is_submitted = false AND applications.status != 'requestForChanges')
+                    NOT (ss.stage = 1 AND s.is_submitted = false AND applications.status != '%s')
                     OR (
                         (" . implode(") OR (", $clauses) . ")
                     )
                 )
             )
-        ";
+        ", ApplicationStatus::RequestForChanges->value);
 
         $query->whereRaw($sql, $bindings);
     }
