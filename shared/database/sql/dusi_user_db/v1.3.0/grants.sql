@@ -44,7 +44,7 @@ GRANT SELECT ON TABLE public.roles TO "backend_dusi";
 
 GRANT SELECT,INSERT,UPDATE ON TABLE public.users TO "user_admin_dusi";
 GRANT SELECT ON TABLE public.users TO "assessment_web_dusi";
-GRANT UPDATE (password) ON TABLE public.users TO "assessment_web_dusi";
+GRANT UPDATE (password, password_updated_at) ON TABLE public.users TO "assessment_web_dusi";
 GRANT SELECT ON TABLE public.users TO "backend_dusi";
 
 
