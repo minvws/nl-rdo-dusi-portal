@@ -597,18 +597,35 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
-                '{"error":[],'
-                . '"success":{"bankAccountNumber":[{"message":"Bankrekening naam komt overeen.",'
-                . '"icon":"icon_match"}]}}',
+                [
+                    "error" => [],
+                    "success" => [
+                        "bankAccountNumber" => [
+                            [
+                                "message" => "Bankrekening naam komt overeen.",
+                                "icon" => "icon_match"
+                            ]
+                        ]
+                    ]
+                ],
                 true,
             ],
             "valid email, surepay no_match" => [
                 AccountNumberValidation::Invalid,
                 NameMatchResult::NoMatch,
                 EncryptedResponseStatus::OK,
-                '{"error":{"bankAccountNumber":[{"message":"Bankrekening naam komt niet overeen!",'
-                . '"icon":"icon_no_match"}],"email":["E-mailadres is geen geldig e-mailadres."]},'
-                . '"success":[]}',
+                [
+                    "error" => [
+                        "bankAccountNumber" => [
+                            [
+                                "message" => "Bankrekening naam komt niet overeen!",
+                                "icon" => "icon_no_match"
+                            ]
+                        ],
+                        "email" => ["E-mailadres is geen geldig e-mailadres."]
+                    ],
+                    "success" => []
+                ],
                 true,
                 'aa@bb.notexisting',
             ],
@@ -616,9 +633,17 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
-                '{"error":{"email":["E-mailadres is geen geldig e-mailadres."]},'
-                . '"success":{"bankAccountNumber":[{"message":"Bankrekening naam komt overeen.",'
-                . '"icon":"icon_match"}]}}',
+                [
+                    "error" => ["email" => ["E-mailadres is geen geldig e-mailadres."]],
+                    "success" => [
+                        "bankAccountNumber" => [
+                            [
+                                "message" => "Bankrekening naam komt overeen.",
+                                "icon" => "icon_match"
+                            ]
+                        ]
+                    ]
+                ],
                 false,
                 'aa@bb.notexisting',
             ],
@@ -626,9 +651,18 @@ class ApplicationMutationServiceTest extends TestCase
                 AccountNumberValidation::Valid,
                 NameMatchResult::CloseMatch,
                 EncryptedResponseStatus::OK,
-                '{"error":{"email":["E-mailadres is geen geldig e-mailadres."]},'
-                . '"success":{"bankAccountNumber":[{"message":"Bankrekening naam komt niet volledig overeen!",'
-                . '"icon":"icon_close_match","suggestion":"suggestion"}]}}',
+                [
+                    "error" => ["email" => ["E-mailadres is geen geldig e-mailadres."]],
+                    "success" => [
+                        "bankAccountNumber" => [
+                            [
+                                "message" => "Bankrekening naam komt niet volledig overeen!",
+                                "icon" => "icon_close_match",
+                                "suggestion" => "suggestion"
+                            ]
+                        ]
+                    ]
+                ],
                 false,
                 'aa@bb.notexisting',
                 'suggestion'
@@ -644,7 +678,7 @@ class ApplicationMutationServiceTest extends TestCase
         AccountNumberValidation $accountNumberValidation,
         NameMatchResult $nameMatchResult,
         EncryptedResponseStatus $encryptedResponseStatus,
-        string $errorMessage,
+        array $responseBody,
         bool $withRequiredField,
         string $email = null,
         string $suggestion = null,
@@ -720,6 +754,6 @@ class ApplicationMutationServiceTest extends TestCase
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($encryptedResponseStatus, $encryptedResponse->status);
-        $this->assertEquals($errorMessage, $encryptedResponse->data);
+        $this->assertEquals(json_encode($responseBody), $encryptedResponse->data);
     }
 }
