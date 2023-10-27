@@ -75,6 +75,13 @@ readonly class ApplicationDataService
         object $data,
         bool $submit
     ): void {
+        // Decode received form data
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
+
+        // Validate, throws a ValidationException on error
+        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
+        $validator->validate();
+
         // Remove all answers for this stage because we received new data
         $this->applicationRepository->deleteAnswersByStage($applicationStage);
 
@@ -82,13 +89,6 @@ readonly class ApplicationDataService
         [$encryptedKey, $encrypter] = $this->encryptionService->generateEncryptionKey();
         $applicationStage->encrypted_key = $encryptedKey;
         $applicationStage->save();
-
-        // Decode received form data
-        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
-
-        // Validate, throws a ValidationException on error
-        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
-        $validator->validate();
 
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);
