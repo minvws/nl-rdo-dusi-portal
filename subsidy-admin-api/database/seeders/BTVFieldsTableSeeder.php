@@ -121,7 +121,7 @@ class BTVFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'bankStatement',
             title: 'Kopie bankafschrift',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 5242880
         );
 
@@ -129,7 +129,7 @@ class BTVFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'extractPersonalRecordsDatabase',
             title: 'Uittreksel bevolkingsregister niet ouder dan 3 maanden',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 5242880
         );
 
@@ -137,7 +137,7 @@ class BTVFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'proofOfMedicalTreatment',
             title: 'Verklaring behandeltraject',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 5242880
         );
 
@@ -145,7 +145,7 @@ class BTVFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
             code: 'proofOfTypeOfMedicalTreatment',
             title: 'Verklaring type behandeling',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 5242880
         );
 
