@@ -38,7 +38,8 @@ class ApplicationRepository
     private function filterForUser(Builder $query, User $user): void
     {
         $clauses = [];
-        $bindings = [];
+        $bindings = [ApplicationStatus::RequestForChanges->value];
+
         foreach ($user->roles as $role) {
             if ($role->view_all_stages && $role->pivot->subsidy_id === null) {
                 $clauses[] = '(1 = 1)';
@@ -59,7 +60,7 @@ class ApplicationRepository
             }
         }
 
-        $sql = sprintf("
+        $sql = "
             EXISTS (
                 SELECT 1
                 FROM application_stages s
@@ -68,13 +69,13 @@ class ApplicationRepository
                 WHERE s.application_id = applications.id
                 AND s.is_current = true
                 AND  (
-                    NOT (ss.stage = 1 AND s.is_submitted = false AND applications.status != '%s')
+                    NOT (ss.stage = 1 AND s.is_submitted = false AND applications.status != ?)
                     OR (
                         (" . implode(") OR (", $clauses) . ")
                     )
                 )
             )
-        ", ApplicationStatus::RequestForChanges->value);
+        ";
 
         $query->whereRaw($sql, $bindings);
     }
