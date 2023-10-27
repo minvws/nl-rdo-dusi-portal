@@ -5,10 +5,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Services\Validation;
 
+use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Translation\ArrayLoader;
-use Illuminate\Translation\Translator;
 use Illuminate\Validation\Validator as LaravelValidator;
 use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ClamAv;
@@ -20,6 +19,7 @@ readonly class FileValidator
     public function __construct(
         private ClamAvService $clamAvService,
         private LoggerInterface $logger,
+        private Translator $translator,
     ) {
     }
 
@@ -44,7 +44,7 @@ readonly class FileValidator
         $rules[] = new ClamAv($this->clamAvService, $this->logger);
 
         return new LaravelValidator(
-            translator: new Translator(new ArrayLoader(), 'nl'),
+            translator: $this->translator,
             data: [
                 'file' => $file,
             ],
