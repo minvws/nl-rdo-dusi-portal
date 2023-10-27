@@ -95,7 +95,7 @@ class ApplicationRepository
         return $query->get();
     }
 
-    private function applyFilters($query, $filter): void
+    private function applyFilters(Builder $query, ApplicationsFilter $filter): void
     {
         $filterValues = [
             'applicationTitle' => 'title',
