@@ -65,7 +65,6 @@ class ApplicationRepository
                 JOIN subsidy_stages ss ON (ss.id = s.subsidy_stage_id)
                 JOIN subsidy_versions sv ON (sv.id = ss.subsidy_version_id)
                 WHERE s.application_id = applications.id
-                AND s.is_current = true
                 AND (
                     (" . implode(") OR (", $clauses) . ")
                 )
@@ -90,60 +89,34 @@ class ApplicationRepository
         if ($onlyMyApplications) {
             $this->selectAssignedAndHandledApplications($query, $user);
         }
-        $query->when(
-            isset($filter->applicationTitle),
-            fn() => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->reference),
-            fn() => $query->reference($filter->reference)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateFrom),
-            fn() => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateTo),
-            fn() => $query->createdAtTo($filter->dateTo)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateLastModifiedFrom),
-            fn() => $query->updatedAtFrom(
-                $filter->dateLastModifiedFrom // @phpstan-ignore-line
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateLastModifiedTo),
-            fn() => $query->updatedAtTo(
-                $filter->dateLastModifiedTo // @phpstan-ignore-line
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateFinalReviewDeadlineFrom),
-            fn() => $query->finalReviewDeadlineFrom(
-                $filter->dateFinalReviewDeadlineFrom // @phpstan-ignore-line
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateFinalReviewDeadlineTo),
-            fn() => $query->finalReviewDeadlineTo(
-                $filter->dateFinalReviewDeadlineTo // @phpstan-ignore-line
-            )->get()
-        );
-        $query->when(
-            (isset($filter->status) && count($filter->status) > 0),
-            fn() => $query->status($filter->status)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            (isset($filter->subsidy) && count($filter->subsidy) > 0),
-            fn() => $query->subsidyCode($filter->subsidy)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            (isset($filter->phase) && count($filter->phase) > 0),
-            fn() => $query->phase($filter->phase)->get() // @phpstan-ignore-line
-        );
+
+        $this->applyFilters($query, $filter);
 
         return $query->get();
+    }
+
+    private function applyFilters($query, $filter): void
+    {
+        $filterValues = [
+            'applicationTitle' => 'title',
+            'reference' => 'reference',
+            'dateFrom' => 'createdAtFrom',
+            'dateTo' => 'createdAtTo',
+            'dateLastModifiedFrom' => 'updatedAtFrom',
+            'dateLastModifiedTo' => 'updatedAtTo',
+            'dateFinalReviewDeadlineFrom' => 'finalReviewDeadlineFrom',
+            'dateFinalReviewDeadlineTo' => 'finalReviewDeadlineTo',
+            'status' => 'status',
+            'subsidy' => 'subsidyCode',
+            'phase' => 'phase'
+        ];
+
+        foreach ($filterValues as $filterKey => $method) {
+            $query->when(
+                isset($filter->$filterKey) || is_array($filter->$filterKey),
+                fn() => $query->$method($filter->$filterKey)->get()
+            );
+        }
     }
 
     public function getApplication(string $appId): ?Application
