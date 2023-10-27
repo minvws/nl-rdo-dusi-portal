@@ -124,7 +124,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'certifiedEmploymentDocument',
             title: 'Gewaarmerkt verzekeringsbericht',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520
         );
 
@@ -132,7 +132,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'wiaDecisionDocument',
             title: 'WIA-Beslissing',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520
         );
 
@@ -148,7 +148,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'wiaDecisionPostponedLetter',
             title: 'Toekenningsbrief',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
             requiredCondition: new ComparisonCondition(
                 1, 'isWiaDecisionPostponed', Operator::Identical, 'Ja'
@@ -159,7 +159,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'employmentContract',
             title: 'Bewijs dienstverband',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520
         );
 
@@ -203,7 +203,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'otherEmployerDeclarationFile',
             title: 'Verklaring zorgaanbieder',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
             requiredCondition: new OrCondition([
                 new ComparisonCondition(1, 'employmentFunction', Operator::Identical, 'Anders'),
@@ -229,7 +229,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'socialMedicalAssessment',
             title: 'Medisch onderzoeksverslag',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520
         );
 
@@ -244,7 +244,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'doctorsCertificate',
             title: 'Verklaring arts',
-            mimeTypes: ['image/*', 'application/pdf'],
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
             requiredCondition: new ComparisonCondition(1, 'hasPostCovidDiagnose', Operator::Identical, 'Nee'),
         );

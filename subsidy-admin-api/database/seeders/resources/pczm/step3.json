@@ -16,8 +16,9 @@
                             "scope": "#/properties/certifiedEmploymentDocument",
                             "label": "Gewaarmerkt verzekeringsbericht",
                             "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 20971520
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
                     ]
@@ -36,8 +37,9 @@
                             "scope": "#/properties/wiaDecisionDocument",
                             "label": "WIA-Beslissing",
                             "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 20971520
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         },
                         {
@@ -53,8 +55,9 @@
                             "scope": "#/properties/wiaDecisionPostponedLetter",
                             "label": "Toekenningsbrief",
                             "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 20971520
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -80,8 +83,9 @@
                             "scope": "#/properties/employmentContract",
                             "label": "Bewijs van uw dienstverband",
                             "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 20971520
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
                     ]
@@ -136,8 +140,9 @@
                             "scope": "#/properties/otherEmployerDeclarationFile",
                             "label": "Verklaring zorgaanbieder",
                             "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 20971520
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -218,8 +223,9 @@
                             "scope": "#/properties/socialMedicalAssessment",
                             "label": "Medisch onderzoeksverslag (medische rapportage)",
                             "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 20971520
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
                     ]
@@ -245,8 +251,9 @@
                             "scope": "#/properties/doctorsCertificate",
                             "label": "Verklaring arts",
                             "options": {
-                                "accept": "image/*,.pdf",
-                                "maxFileSize": 20971520
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             },
                             "rule": {
                                 "effect": "SHOW",
