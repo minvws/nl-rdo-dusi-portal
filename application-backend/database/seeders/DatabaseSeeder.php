@@ -10,6 +10,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(PZCMApplicationSeeder::class, false, ['count' => 50]);
+        $this->call(PCZMApplicationSeeder::class, false, ['count' => 50]);
     }
 }

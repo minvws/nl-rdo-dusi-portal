@@ -10,6 +10,7 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
@@ -37,7 +38,8 @@ class ApplicationRepository
     private function filterForUser(Builder $query, User $user): void
     {
         $clauses = [];
-        $bindings = [];
+        $bindings = [ApplicationStatus::RequestForChanges->value];
+
         foreach ($user->roles as $role) {
             if ($role->view_all_stages && $role->pivot->subsidy_id === null) {
                 $clauses[] = '(1 = 1)';
@@ -65,8 +67,11 @@ class ApplicationRepository
                 JOIN subsidy_stages ss ON (ss.id = s.subsidy_stage_id)
                 JOIN subsidy_versions sv ON (sv.id = ss.subsidy_version_id)
                 WHERE s.application_id = applications.id
-                AND (
-                    (" . implode(") OR (", $clauses) . ")
+                AND  (
+                    NOT (ss.stage = 1 AND s.is_submitted = false AND applications.status != ?)
+                    OR (
+                        (" . implode(") OR (", $clauses) . ")
+                    )
                 )
             )
         ";

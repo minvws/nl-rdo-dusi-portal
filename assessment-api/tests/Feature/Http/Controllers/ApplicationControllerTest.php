@@ -291,6 +291,46 @@ class ApplicationControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * @group dont-list-unsubmitted
+     */
+    public function testListAsAnyUserShouldNotListUnsubmittedApplications(): void
+    {
+        $user = User::factory()->create();
+
+        $values = RoleEnum::cases();
+        $randomRole = $values[array_rand($values)];
+        $user->attachRole($randomRole, $this->subsidy->id);
+
+        $unsubmittedApplication = Application::factory()->create(
+            [
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+            ]
+        );
+
+        ApplicationStage::factory()
+            ->for($unsubmittedApplication)
+            ->create(
+                [
+                    'sequence_number' => 1,
+                ]
+            );
+
+
+        $response = $this
+            ->be($this->implementationCoordinatorUser)
+            ->json('GET', '/api/applications');
+
+        $response->assertStatus(200);
+
+        $response->assertJsonMissing([
+            'application_title' => $unsubmittedApplication->application_title,
+        ]);
+    }
+
     public function testMyListAsAssessor(): void
     {
         $response = $this
