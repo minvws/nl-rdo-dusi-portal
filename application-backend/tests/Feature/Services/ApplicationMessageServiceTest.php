@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
@@ -30,7 +30,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
-use Queue;
 
 /**
  * @group application
@@ -38,7 +37,6 @@ use Queue;
  */
 class ApplicationMessageServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use MocksEncryptionAndHashing;
     use WithFaker;
 

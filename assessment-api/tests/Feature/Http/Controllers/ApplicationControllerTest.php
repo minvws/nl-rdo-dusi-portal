@@ -11,7 +11,6 @@ use Illuminate\Testing\TestResponse;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -27,7 +26,6 @@ class ApplicationControllerTest extends TestCase
 {
     use WithoutMiddleware;
 
-    protected array $connectionsToTransact = [Connection::APPLICATION];
     private Application $application1;
     private ApplicationStage $application1Stage1;
 
