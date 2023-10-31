@@ -105,19 +105,11 @@ readonly class ApplicationDataService
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
-        $errorMessages = [];
-        try {
-            $validator->validate();
-        } catch (ValidationException $e) {
-            $errorMessages = $e->errors();
-        }
 
-        //Append/overwrite custom error messages
-        $errorMessages = array_merge($errorMessages, $validator->errorMessages);
+        $validationResult = $validator->validate();
 
         return new FieldValidationResponse(
-            error: $errorMessages,
-            success: $validator->successMessages
+            validationResult: $validationResult,
         );
     }
 

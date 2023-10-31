@@ -13,7 +13,8 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\FileUploadRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\RequiredConditionRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SurePayValidationRule;
-use MinVWS\DUSi\Shared\Application\Services\Validation\Validator;
+use MinVWS\DUSi\Shared\Application\Services\Validation\CustomRuleValidator;
+use MinVWS\DUSi\Shared\Application\Services\Validation\SubsidyStageValidator;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -30,9 +31,12 @@ class ValidationService
     /**
      * @param array<int|string, FieldValue> $fieldValues
      */
-    public function getValidator(ApplicationStage $applicationStage, array $fieldValues, bool $submit): Validator
-    {
-        return $this->validatorFactory->getValidator(
+    public function getValidator(
+        ApplicationStage $applicationStage,
+        array $fieldValues,
+        bool $submit
+    ): SubsidyStageValidator {
+        return $this->validatorFactory->getSubsidyStageValidator(
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
             data: $this->getFieldValuesData($fieldValues),

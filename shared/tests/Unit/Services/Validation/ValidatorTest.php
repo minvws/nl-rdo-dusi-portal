@@ -17,7 +17,7 @@ use MinVWS\DUSi\Shared\Application\Services\Validation\ApplicationFileManagerAwa
 use MinVWS\DUSi\Shared\Application\Services\Validation\ApplicationRepositoryAwareRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ApplicationStageAwareRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\FieldValuesAwareRule;
-use MinVWS\DUSi\Shared\Application\Services\Validation\Validator;
+use MinVWS\DUSi\Shared\Application\Services\Validation\CustomRuleValidator;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorServicesContainer;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Mockery;
@@ -72,7 +72,7 @@ class ValidatorTest extends TestCase
             applicationRepository: $this->mockApplicationRepository,
         );
 
-        $validator = new Validator(
+        $validator = new CustomRuleValidator(
             translator: new Translator(new ArrayLoader(), 'nl'),
             data: [
                 'someField' => 'some value',
@@ -115,7 +115,7 @@ class ValidatorTest extends TestCase
             applicationRepository: $this->mockApplicationRepository,
         );
 
-        $validator = new Validator(
+        $validator = new CustomRuleValidator(
             translator: new Translator(new ArrayLoader(), 'nl'),
             data: [
                 'someField' => 'some value',
@@ -156,7 +156,7 @@ class ValidatorTest extends TestCase
             applicationRepository: $this->mockApplicationRepository,
         );
 
-        $validator = new Validator(
+        $validator = new CustomRuleValidator(
             translator: new Translator(new ArrayLoader(), 'nl'),
             data: [
                 'someField' => 'some value',
@@ -197,7 +197,7 @@ class ValidatorTest extends TestCase
             applicationRepository: $this->mockApplicationRepository,
         );
 
-        $validator = new Validator(
+        $validator = new CustomRuleValidator(
             translator: new Translator(new ArrayLoader(), 'nl'),
             data: [
                 'someField' => 'some value',
@@ -231,7 +231,7 @@ class ValidatorTest extends TestCase
             applicationRepository: $this->mockApplicationRepository,
         );
 
-        $validator = new Validator(
+        $validator = new CustomRuleValidator(
             translator: new Translator(new ArrayLoader(), 'nl'),
             data: [
                 'someField' => 'some value',

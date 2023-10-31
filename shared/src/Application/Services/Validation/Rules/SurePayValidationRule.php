@@ -11,29 +11,34 @@ use Illuminate\Translation\Translator;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\SurePayService;
+use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResult;
+use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResultFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 use RuntimeException;
+use Illuminate\Support\Collection;
 
 class SurePayValidationRule implements
     DataAwareRule,
     ImplicitValidationRule,
-    SuccessMessageResultRule,
-    ErrorMessageResultRule
+    ValidationResultRule
 {
     public function __construct(
         private readonly ?SurePayClient $surePayClient,
         private readonly Translator $translator,
     ) {
+        $this->validationResults = collect();
     }
 
     private array $data = [];
 
-    private array $successMessages = [];
-
-    private array $errorMessages = [];
+    /**
+     * @var Collection <ValidationResult>
+     */
+    private Collection $validationResults;
 
     public function setData(array $data): self
     {
@@ -42,25 +47,46 @@ class SurePayValidationRule implements
     }
 
     /**
-     * @returns array<string>
+     * @returns Collection<ValidationResult>
      */
-    public function getSuccessMessages(): array
+    public function getValidationResults(): Collection
     {
-        return $this->successMessages;
+        return $this->validationResults;
     }
 
     /**
-     * @returns array<string>
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getErrorMessages(): array
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return $this->errorMessages;
+        $checkResult = $this->executeSurePayCheck();
+
+        $this->validateBankAccountNumber($checkResult, $fail);
+        $this->processNameMatchResults($checkResult, $fail);
+    }
+
+    private function validateBankAccountNumber(CheckOrganisationsAccountResponse $checkResult, Closure $fail): void
+    {
+        if ($checkResult->account->accountNumberValidation === AccountNumberValidation::Invalid) {
+            $fail($this->translator->get('validateFields.iban_not_valid'));
+        }
     }
 
     /**
      * @throws ValidationException
      */
-    public function checkOrganisationsAccount(
+    private function executeSurePayCheck(): CheckOrganisationsAccountResponse
+    {
+        return $this->checkOrganisationsAccount(
+            $this->data['bankAccountHolder'] ?? '',
+            $this->data['bankAccountNumber']
+        );
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function checkOrganisationsAccount(
         string $bankAccountHolder,
         string $bankAccountNumber
     ): CheckOrganisationsAccountResponse {
@@ -73,64 +99,39 @@ class SurePayValidationRule implements
         );
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function validate(string $attribute, mixed $value, Closure $fail): void
-    {
-        $this->validateBankAccountData($fail);
-        $checkResult = $this->checkOrganisationAccountData();
-
-        $lowerNameMatchResult = Str::lower($checkResult->nameMatchResult->value);
-        $validationResponse = $this->prepareValidationResponse($lowerNameMatchResult);
-
-        $this->processMatchResults($checkResult, $validationResponse, $fail);
-    }
-
-    protected function validateBankAccountData(Closure $fail): void
-    {
-        if (empty($this->data['bankAccountNumber'])) {
-            $fail('validation.required');
-        }
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    protected function checkOrganisationAccountData(): CheckOrganisationsAccountResponse
-    {
-        return $this->checkOrganisationsAccount(
-            $this->data['bankAccountHolder'] ?? '',
-            $this->data['bankAccountNumber']
-        );
-    }
-
-    protected function prepareValidationResponse(string $result): array
-    {
-        return [
-            'message' => $this->getTranslation($result),
-            'icon' => sprintf('icon_%s', $result),
-        ];
-    }
-
-    protected function processMatchResults(
+    protected function processNameMatchResults(
         CheckOrganisationsAccountResponse $checkResult,
-        array &$validationResponse,
         Closure $fail
     ): void {
+        $message = $this->getTranslatedMessageFromNameMatchResult($checkResult);
+
         if ($checkResult->nameMatchResult === NameMatchResult::NoMatch) {
-            array_push($this->errorMessages, $validationResponse);
-            $fail($validationResponse['message']);
+            $this->validationResults->push(ValidationResultFactory::createError(
+                message: $message
+            ));
+            $fail($message);
         } elseif ($checkResult->nameMatchResult === NameMatchResult::CloseMatch) {
-            $validationResponse['suggestion'] = $checkResult->nameSuggestion;
-            array_push($this->successMessages, $validationResponse);
+            $validationResult = ValidationResultFactory::createWarning(message: $message);
+            $validationResult->addParam('suggestion', $checkResult->nameSuggestion);
+            $this->validationResults->push($validationResult);
         } elseif ($checkResult->nameMatchResult === NameMatchResult::Match) {
-            array_push($this->successMessages, $validationResponse);
+            $this->validationResults->push(ValidationResultFactory::createConfirmation(
+                message: $message
+            ));
         }
         //Other results need no response in Application portal
     }
 
-    public function getTranslation(string $lowerNameMatchResult): string|array|null
+    private function getTranslatedMessageFromNameMatchResult(
+        CheckOrganisationsAccountResponse $checkResult
+    ): string|array|null {
+        $lowerNameMatchResult = Str::lower($checkResult->nameMatchResult->value);
+        $message = $this->getSurePayValidationTranslation($lowerNameMatchResult);
+
+        return $message;
+    }
+
+    public function getSurePayValidationTranslation(string $lowerNameMatchResult): string|array|null
     {
         return $this->translator->get(
             sprintf('validateFields.validation_surepay_%s', $lowerNameMatchResult)

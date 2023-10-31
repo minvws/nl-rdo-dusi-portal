@@ -40,8 +40,8 @@ Route::middleware('auth')->group(
                 'applications/{applicationReference}/fields/{fieldCode}/files',
                 [ApplicationController::class, 'uploadFile']
             )->name('application-upload-file');
-            Route::post(
-                'applications/{reference}',
+            Route::patch(
+                'applications/{reference}/validate',
                 [ApplicationController::class, 'validateApplication']
             )->name('application-validate');
 

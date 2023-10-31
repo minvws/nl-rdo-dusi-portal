@@ -24,14 +24,14 @@ class ValidatorFactory
      * @param array<int|string, FieldValue> $fieldValues
      * @param array<string, mixed> $data
      * @param array<string, mixed> $rules
-     * @return Validator
+     * @return CustomRuleValidator
      */
     public function getValidator(
         ApplicationStage $applicationStage,
         array $fieldValues,
         array $data,
         array $rules,
-    ): Validator {
+    ): CustomRuleValidator {
         $validatorServicesContainer = new ValidatorServicesContainer(
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
@@ -39,11 +39,27 @@ class ValidatorFactory
             applicationRepository: $this->applicationRepository,
         );
 
-        return new Validator(
+        return new CustomRuleValidator(
             translator: $this->translator,
             data: $data,
             rules: $rules,
             servicesContainer: $validatorServicesContainer,
         );
+    }
+
+    public function getSubsidyStageValidator(
+        ApplicationStage $applicationStage,
+        array $fieldValues,
+        array $data,
+        array $rules,
+    ): SubsidyStageValidator {
+        $validator = $this->getValidator(
+            $applicationStage,
+            $fieldValues,
+            $data,
+            $rules
+        );
+
+        return new SubsidyStageValidator($validator);
     }
 }

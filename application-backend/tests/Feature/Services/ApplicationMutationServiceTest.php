@@ -304,6 +304,7 @@ class ApplicationMutationServiceTest extends TestCase
 
     /**
      * @dataProvider saveApplicationDataProvider
+     * @group validation
      */
     public function testSaveApplication(bool $submit, ApplicationStatus $expectedStatus): void
     {
@@ -354,6 +355,7 @@ class ApplicationMutationServiceTest extends TestCase
 
     /**
      * @dataProvider saveApplicationOnlyAllowedForEditableStatusesProvider
+     * @group validation
      */
     public function testSaveApplicationOnlyAllowedForEditableStatuses(
         ApplicationStatus $status,
@@ -561,6 +563,9 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertEquals('invalid_data', $error->code);
     }
 
+    /**
+     * @group validation
+     */
     public function testValidateFields(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
@@ -598,48 +603,53 @@ class ApplicationMutationServiceTest extends TestCase
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
                 [
-                    "error" => [],
-                    "success" => [
+                    "validationResult" => [
                         "bankAccountNumber" => [
                             [
+                                "validationResultType" => "confirmation",
                                 "message" => "Bankrekening naam komt overeen.",
-                                "icon" => "icon_match"
+                                "params" => []
                             ]
                         ]
                     ]
                 ],
                 true,
             ],
-            "valid email, surepay no_match" => [
+            "valid email, invalid iban" => [
                 AccountNumberValidation::Invalid,
                 NameMatchResult::NoMatch,
                 EncryptedResponseStatus::OK,
                 [
-                    "error" => [
+                    "validationResult" => [
                         "bankAccountNumber" => [
                             [
+                                "validationResultType" => "error",
                                 "message" => "Bankrekening naam komt niet overeen!",
-                                "icon" => "icon_no_match"
+                                "params" => []
                             ]
-                        ],
-                        "email" => ["E-mailadres is geen geldig e-mailadres."]
-                    ],
-                    "success" => []
+                        ]
+                    ]
                 ],
                 true,
-                'aa@bb.notexisting',
             ],
             "invalid email, surepay match" => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
                 [
-                    "error" => ["email" => ["E-mailadres is geen geldig e-mailadres."]],
-                    "success" => [
+                    "validationResult" => [
+                        "email" => [
+                            [
+                                "validationResultType" => "error",
+                                "message" => "E-mailadres is geen geldig e-mailadres.",
+                                "params" => []
+                            ]
+                        ],
                         "bankAccountNumber" => [
                             [
+                                "validationResultType" => "confirmation",
                                 "message" => "Bankrekening naam komt overeen.",
-                                "icon" => "icon_match"
+                                "params" => []
                             ]
                         ]
                     ]
@@ -652,13 +662,21 @@ class ApplicationMutationServiceTest extends TestCase
                 NameMatchResult::CloseMatch,
                 EncryptedResponseStatus::OK,
                 [
-                    "error" => ["email" => ["E-mailadres is geen geldig e-mailadres."]],
-                    "success" => [
+                    "validationResult" => [
+                        "email" => [
+                            [
+                                "validationResultType" => "error",
+                                "message" => "E-mailadres is geen geldig e-mailadres.",
+                                "params" => []
+                            ]
+                        ],
                         "bankAccountNumber" => [
                             [
+                                "validationResultType" => "warning",
                                 "message" => "Bankrekening naam komt niet volledig overeen!",
-                                "icon" => "icon_close_match",
-                                "suggestion" => "suggestion"
+                                "params" => [
+                                    "suggestion" => "suggestion"
+                                ]
                             ]
                         ]
                     ]
@@ -673,6 +691,7 @@ class ApplicationMutationServiceTest extends TestCase
     /**
      * @dataProvider validateFieldsDataProvider
      * @group validate-surepay
+     * @group validation
      */
     public function testValidateFieldsWithBankAccount(
         AccountNumberValidation $accountNumberValidation,

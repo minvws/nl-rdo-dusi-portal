@@ -6,23 +6,18 @@ namespace MinVWS\DUSi\Shared\Application\Services\Validation;
 
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\InvokableValidationRule;
 use Illuminate\Validation\Validator as BaseValidator;
-use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ErrorMessageResultRule;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ValidationResultRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ImplicitValidationRule;
-use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SuccessMessageResultRule;
 
-class Validator extends BaseValidator
+class CustomRuleValidator extends BaseValidator
 {
     /**
-     * @var array<string, array<string>>
+     * @var Collection<ValidationResult>
      */
-    public array $successMessages = [];
-
-    /**
-     * @var array<string, array<string>>
-     */
-    public array $errorMessages = [];
+    public Collection $validationResults;
 
     public function __construct(
         Translator $translator,
@@ -31,21 +26,16 @@ class Validator extends BaseValidator
         private readonly ValidatorServicesContainer $servicesContainer
     ) {
         parent::__construct($translator, $data, $rules);
+
+        $this->validationResults = collect();
     }
 
-    private function collectErrorAndSuccessMessages(mixed $invokableRule, string $attribute): void
+    private function collectRuleValidationResults(mixed $invokableRule, string $attribute): void
     {
-        if ($invokableRule instanceof SuccessMessageResultRule) {
-            $successMessages = $invokableRule->getSuccessMessages();
-            if (!empty($successMessages)) {
-                $this->successMessages[$attribute] = $successMessages;
-            }
-        }
-
-        if ($invokableRule instanceof ErrorMessageResultRule) {
-            $errorMessages = $invokableRule->getErrorMessages();
-            if (!empty($errorMessages)) {
-                $this->errorMessages[$attribute] = $errorMessages;
+        if ($invokableRule instanceof ValidationResultRule) {
+            $ruleValidationResults = $invokableRule->getValidationResults();
+            if (!$ruleValidationResults->isEmpty()) {
+                $this->validationResults->put($attribute, $ruleValidationResults->toArray());
             }
         }
     }
@@ -101,6 +91,6 @@ class Validator extends BaseValidator
 
         parent::validateUsingCustomRule($attribute, $value, $rule);
 
-        $this->collectErrorAndSuccessMessages($invokableRule, $attribute);
+        $this->collectRuleValidationResults($invokableRule, $attribute);
     }
 }
