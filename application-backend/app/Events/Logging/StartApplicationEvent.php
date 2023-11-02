@@ -8,8 +8,8 @@ use MinVWS\Logging\Laravel\Events\Logging\GeneralLogEvent;
 
 class StartApplicationEvent extends GeneralLogEvent
 {
-    public const EVENT_CODE = '1001';
-    public const EVENT_KEY = 'login';
+    public const EVENT_CODE = '1011';
+    public const EVENT_KEY = 'start_application';
     public function __construct()
     {
         parent::__construct();
