@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 use MinVWS\DUSi\User\Admin\API\Components\FlashNotification;
 use MinVWS\DUSi\User\Admin\API\Enums\FlashNotificationTypeEnum;
+use MinVWS\DUSi\User\Admin\API\Events\Logging\CreateUserEvent;
+use MinVWS\DUSi\User\Admin\API\Events\Logging\UpdateUserEvent;
+use MinVWS\DUSi\User\Admin\API\Events\Logging\ViewUserEvent;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserCreateRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserFilterRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserResetCredentialsRequest;
@@ -18,6 +21,7 @@ use MinVWS\DUSi\Shared\User\Models\Organisation;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\Services\UserService;
 use MinVWS\DUSi\User\Admin\API\View\Data\UserCredentialsData;
+use MinVWS\Logging\Laravel\LogService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -26,6 +30,7 @@ class UserController extends Controller
 {
     public function __construct(
         protected UserService $userService,
+        protected readonly LogService $logger,
     ) {
         $this->authorizeResource(User::class, 'user');
     }
@@ -70,6 +75,11 @@ class UserController extends Controller
             organisationId: $request->validated('organisation_id'),
         );
 
+        $this->logger->log((new CreateUserEvent())
+           ->withData([
+                'userId' => $user->id,
+            ]));
+
         return redirect()
             ->route('users.credentials', $user->id)
             ->with(UserCredentialsData::SESSION_KEY, new UserCredentialsData(
@@ -101,6 +111,11 @@ class UserController extends Controller
      */
     public function show(User $user): View
     {
+        $this->logger->log((new ViewUserEvent())
+            ->withData([
+                'userId' => $user->id,
+            ]));
+
         return view('users.show', [
             'user' => $user,
             'organisations' => Organisation::query()->pluck('name', 'id')
@@ -113,6 +128,11 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
         $user->update($request->validated());
+
+        $this->logger->log((new UpdateUserEvent())
+            ->withData([
+                'userId' => $user->id,
+            ]));
 
         return redirect()
             ->route('users.show', $user->id)
@@ -127,6 +147,11 @@ class UserController extends Controller
         $this->authorize('update', $user);
 
         $user->update($updateActiveRequest->validated());
+
+        $this->logger->log((new UpdateUserEvent())
+            ->withData([
+                'userId' => $user->id,
+            ]));
 
         return redirect()
             ->route('users.show', $user->id)

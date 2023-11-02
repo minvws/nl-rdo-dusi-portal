@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
+use MinVWS\DUSi\Assessment\API\Events\Logging\ClaimAssessmentEvent;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationAssessorService;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
@@ -15,12 +16,17 @@ use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidAssignmentException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidReleaseException;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\User\Models\User;
+use MinVWS\Logging\Laravel\LogService;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ApplicationAssessorController extends Controller
 {
     public function __construct(
         private ApplicationAssessorService $assessorService,
-        private ApplicationSubsidyService $applicationSubsidyService
+        private ApplicationSubsidyService $applicationSubsidyService,
+        private readonly LogService $logger,
     ) {
     }
 
@@ -30,6 +36,17 @@ class ApplicationAssessorController extends Controller
         try {
             assert($user instanceof User);
             $this->assessorService->assignApplication($application, $user);
+
+            $this->logger->log(
+                (new ClaimAssessmentEvent())
+                    ->withData(
+                        [
+                            'applicationId' => $application->id,
+                            'userId' => $user->getAuthIdentifier(),
+                        ]
+                    )
+            );
+
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, false);
         } catch (InvalidAssignmentException) {
             abort(Response::HTTP_BAD_REQUEST);

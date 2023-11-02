@@ -10,6 +10,9 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use MinVWS\DUSi\Application\Backend\Events\Logging\SaveApplicationEvent;
+use MinVWS\DUSi\Application\Backend\Events\Logging\StartApplicationEvent;
+use MinVWS\DUSi\Application\Backend\Events\Logging\SubmitApplicationEvent;
 use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
@@ -32,6 +35,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use MinVWS\Logging\Laravel\LogService;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Throwable;
@@ -59,7 +63,8 @@ readonly class ApplicationMutationService
         private ApplicationReferenceService $applicationReferenceService,
         private FrontendDecryption $frontendDecryptionService,
         private EncryptedResponseExceptionHelper $exceptionHelper,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private LogService $logService,
     ) {
     }
 
@@ -148,6 +153,12 @@ readonly class ApplicationMutationService
         );
         $this->applicationRepository->saveApplication($application);
 
+        $this->logService->log((new StartApplicationEvent())
+            ->withData([
+                'reference' => $application->reference,
+                'userId' => $identity->id,
+            ]));
+
         [$encryptedKey] = $this->applicationEncryptionService->generateEncryptionKey();
 
         $appStage = $this->applicationRepository->makeApplicationStage($application, $subsidyStage);
@@ -216,6 +227,12 @@ readonly class ApplicationMutationService
 
         try {
             $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data, $body->submit);
+
+            $this->logService->log((new SaveApplicationEvent())
+                ->withData([
+                    'reference' => $application->reference,
+                    'userId' => $identity->id,
+                ]));
         } catch (ValidationException $e) {
             $this->logger->debug('Data validation failed', [
                 'errors' => $e->errors(),
@@ -230,6 +247,12 @@ readonly class ApplicationMutationService
 
         if ($body->submit) {
             $this->applicationFlowService->submitApplicationStage($applicationStage);
+
+            $this->logService->log((new SubmitApplicationEvent())
+                ->withData([
+                    'reference' => $application->reference,
+                    'userId' => $identity->id,
+                ]));
 
             // TODO: this should be generalized
             DB::afterCommit(fn () => CheckSurePayJob::dispatch($application->id));

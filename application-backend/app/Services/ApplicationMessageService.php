@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Exception;
+use MinVWS\DUSi\Application\Backend\Events\Logging\ListMessagesEvent;
+use MinVWS\DUSi\Application\Backend\Events\Logging\ViewMessageEvent;
 use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
@@ -23,6 +25,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\Logging\Laravel\LogService;
 use Throwable;
 
 /**
@@ -38,7 +41,8 @@ readonly class ApplicationMessageService
         private ApplicationMessageRepository $messageRepository,
         private IdentityService $identityService,
         private ApplicationMapper $applicationMapper,
-        private EncryptedResponseExceptionHelper $exceptionHelper
+        private EncryptedResponseExceptionHelper $exceptionHelper,
+        private LogService $logService
     ) {
     }
 
@@ -71,6 +75,11 @@ readonly class ApplicationMessageService
 
         $applicationMessages = $this->messageRepository->getMyMessages($identity);
         $list = $this->applicationMapper->mapApplicationMessageArrayToMessageListDTO($applicationMessages);
+
+        $this->logService->log((new ListMessagesEvent())
+            ->withData([
+                'userId' => $identity->id,
+            ]));
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,
@@ -123,6 +132,13 @@ readonly class ApplicationMessageService
         }
 
         $dto = $this->applicationMapper->mapApplicationMessageToMessageDTO($message, $body);
+
+        $this->logService->log((new ViewMessageEvent())
+            ->withData([
+                'messageId' => $message->id,
+                'userId' => $identity->id,
+            ]));
+
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,

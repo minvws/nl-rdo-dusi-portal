@@ -10,6 +10,7 @@ use MinVWS\Codable\Decoding\Decoder;
 use MinVWS\DUSi\Application\API\Http\Responses\OidcLoginResponseHandler;
 use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use MinVWS\DUSi\Application\API\Tests\TestCase;
+use MinVWS\Logging\Laravel\LogService;
 
 class OidcLoginResponseHandlerTest extends TestCase
 {
@@ -26,6 +27,7 @@ class OidcLoginResponseHandlerTest extends TestCase
             frontendBaseUrl: 'https://example.com',
             decoder: new Decoder(),
             minimumLoa: $minimumLoa,
+            logger: new LogService(),
         );
 
         $redirectResponse = $responseHandler->handleLoginResponse((object) [
@@ -69,7 +71,8 @@ class OidcLoginResponseHandlerTest extends TestCase
         $responseHandler = new OidcLoginResponseHandler(
             frontendBaseUrl: 'https://example.com',
             decoder: new Decoder(),
-            minimumLoa: OidcUserLoa::SUBSTANTIAL
+            minimumLoa: OidcUserLoa::SUBSTANTIAL,
+            logger: new LogService(),
         );
 
         $this->expectException(AuthorizationException::class);

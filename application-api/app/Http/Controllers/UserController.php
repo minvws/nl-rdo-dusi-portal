@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use MinVWS\DUSi\Application\API\Events\Logging\LogoutEvent;
 
 class UserController extends Controller
 {
@@ -24,7 +25,15 @@ class UserController extends Controller
 
     public function logout(): JsonResponse
     {
+        $user = Auth::user();
+
+        $this->logger->log((new LogoutEvent())
+            ->withData([
+                'userId' => $user?->getAuthIdentifier(),
+            ]));
+
         Auth::logout();
+
         return $this->info();
     }
 }
