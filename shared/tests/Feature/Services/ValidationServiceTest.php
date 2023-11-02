@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\SurePayRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
@@ -46,7 +47,7 @@ class ValidationServiceTest extends TestCase
 
         $applicationFileManager = Mockery::mock(ApplicationFileManager::class);
         $applicationRepository = Mockery::mock(ApplicationRepository::class);
-        $surepayClient = Mockery::mock(SurePayClient::class);
+        $bankAccountRepository = Mockery::mock(SurePayRepository::class);
 
         $factory = new ValidatorFactory(
             applicationFileManager: $applicationFileManager,
@@ -56,7 +57,7 @@ class ValidationServiceTest extends TestCase
 
         $validationService = new ValidationService(
             validatorFactory: $factory,
-            surePayClient: $surepayClient,
+            bankAccountRepository: $bankAccountRepository,
             translator: app('translator'),
         );
 
@@ -80,7 +81,7 @@ class ValidationServiceTest extends TestCase
             submit: true
         );
 
-        $this->assertEquals($passes, $validator->passes());
+        $this->assertCount($passes ? 0 : 1, $validator->validate());
     }
 
     public static function dataProviderTestFieldRules(): array
@@ -313,7 +314,7 @@ class ValidationServiceTest extends TestCase
 
         $applicationFileManager = Mockery::mock(ApplicationFileManager::class);
         $applicationRepository = Mockery::mock(ApplicationRepository::class);
-        $surePayClient = Mockery::mock(SurePayClient::class);
+        $bankAccountRepository = Mockery::mock(SurePayRepository::class);
 
         $factory = new ValidatorFactory(
             applicationFileManager: $applicationFileManager,
@@ -323,7 +324,7 @@ class ValidationServiceTest extends TestCase
 
         $validationService = new ValidationService(
             validatorFactory: $factory,
-            surePayClient: $surePayClient,
+            bankAccountRepository: $bankAccountRepository,
             translator: app('translator'),
         );
 
@@ -364,7 +365,7 @@ class ValidationServiceTest extends TestCase
             submit: true
         );
 
-        $this->assertEquals($passes, $validator->passes());
+        $this->assertCount($passes ? 0 : 1, $validator->validate());
     }
 
     public static function requiredConditionRuleProvider(): array

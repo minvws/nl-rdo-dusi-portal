@@ -6,19 +6,16 @@ namespace MinVWS\DUSi\Shared\Application\Services\Validation\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Translation\Translator;
 use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
-use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResult;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResultFactory;
-use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
-use RuntimeException;
 use Illuminate\Support\Collection;
 
 class SurePayValidationRule implements
@@ -27,7 +24,7 @@ class SurePayValidationRule implements
     ValidationResultRule
 {
     public function __construct(
-        private readonly ?SurePayClient $surePayClient,
+        private readonly BankAccountRepository $bankAccountRepository,
         private readonly Translator $translator,
     ) {
         $this->validationResults = collect();
@@ -59,6 +56,10 @@ class SurePayValidationRule implements
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        if (empty($this->data['bankAccountNumber'])) {
+            return;
+        }
+
         $checkResult = $this->executeSurePayCheck();
 
         $this->validateBankAccountNumber($checkResult, $fail);
@@ -78,7 +79,7 @@ class SurePayValidationRule implements
     private function executeSurePayCheck(): CheckOrganisationsAccountResponse
     {
         return $this->checkOrganisationsAccount(
-            $this->data['bankAccountHolder'] ?? '',
+            trim($this->data['bankAccountHolder']) ?? '',
             $this->data['bankAccountNumber']
         );
     }
@@ -90,10 +91,7 @@ class SurePayValidationRule implements
         string $bankAccountHolder,
         string $bankAccountNumber
     ): CheckOrganisationsAccountResponse {
-        if (! isset($this->surePayClient)) {
-            throw new RuntimeException('surePayClient is not set');
-        }
-        return $this->surePayClient->checkOrganisationsAccount(
+        return $this->bankAccountRepository->checkOrganisationsAccount(
             $bankAccountHolder,
             $bankAccountNumber
         );

@@ -266,12 +266,12 @@ readonly class ApplicationMutationService
             $identity = $this->loadIdentity($params->identity);
             $application = $this->loadApplication($identity, $params->applicationReference);
             $applicationStage = $application->currentApplicationStage;
-            if ($applicationStage === null) {
-                throw new EncryptedResponseException(
-                    EncryptedResponseStatus::FORBIDDEN,
-                    'application_readonly'
-                );
-            }
+        if ($applicationStage === null) {
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::FORBIDDEN,
+                'application_readonly'
+            );
+        }
             $body = $this->frontendDecryptionService->decryptCodable($params->data, FieldValidationParams::class);
 
             $validationMessages = $this->applicationDataService->validateFieldValues(

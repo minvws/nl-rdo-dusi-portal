@@ -9,11 +9,10 @@ use Illuminate\Translation\Translator;
 use Illuminate\Validation\Rule;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\FileUploadRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\RequiredConditionRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SurePayValidationRule;
-use MinVWS\DUSi\Shared\Application\Services\Validation\CustomRuleValidator;
 use MinVWS\DUSi\Shared\Application\Services\Validation\SubsidyStageValidator;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -23,7 +22,7 @@ class ValidationService
 {
     public function __construct(
         protected ValidatorFactory $validatorFactory,
-        protected ?SurePayClient $surePayClient,
+        protected BankAccountRepository $bankAccountRepository,
         protected Translator $translator,
     ) {
     }
@@ -194,6 +193,6 @@ class ValidationService
         if ($field->type !== FieldType::CustomBankAccount) {
             return [];
         }
-        return [ new SurePayValidationRule($this->surePayClient, $this->translator) ];
+        return [ new SurePayValidationRule($this->bankAccountRepository, $this->translator) ];
     }
 }

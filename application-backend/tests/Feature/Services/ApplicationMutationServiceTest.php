@@ -684,6 +684,18 @@ class ApplicationMutationServiceTest extends TestCase
                 false,
                 'aa@bb.notexisting',
                 'suggestion'
+            ],
+            "empty email, empty bankaccount number" => [
+                AccountNumberValidation::Valid,
+                NameMatchResult::CloseMatch,
+                EncryptedResponseStatus::OK,
+                [
+                    "validationResult" => []
+                ],
+                false,
+                '',
+                'suggestion',
+                ''
             ]
         ];
     }
@@ -701,6 +713,7 @@ class ApplicationMutationServiceTest extends TestCase
         bool $withRequiredField,
         string $email = null,
         string $suggestion = null,
+        string $iban = null,
     ): void {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
         ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
@@ -723,7 +736,7 @@ class ApplicationMutationServiceTest extends TestCase
                 'type' => FieldType::TextEmail,
             ]);
         $params = [
-            $bankAccountField->code => $this->faker->iban('NL'),
+            $bankAccountField->code => $iban ?? $this->faker->iban('NL'),
             $bankAccountHolder->code => $this->faker->name,
             $emailField->code => $email ?? $this->faker->freeEmail(),
         ];
