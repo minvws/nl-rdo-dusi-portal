@@ -2245,16 +2245,16 @@
         },
         {
             "name": "laravel-lang/lang",
-            "version": "13.2.5",
+            "version": "13.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/lang.git",
-                "reference": "774e63475ab955c5e858b554faff5d96a6631681"
+                "reference": "f0a31ba2bca33483717c0cd98e6a049bdd14956a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/774e63475ab955c5e858b554faff5d96a6631681",
-                "reference": "774e63475ab955c5e858b554faff5d96a6631681",
+                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/f0a31ba2bca33483717c0cd98e6a049bdd14956a",
+                "reference": "f0a31ba2bca33483717c0cd98e6a049bdd14956a",
                 "shasum": ""
             },
             "require": {
@@ -2307,20 +2307,20 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2023-10-04T02:11:02+00:00"
+            "time": "2023-10-27T14:43:32+00:00"
         },
         {
             "name": "laravel-lang/publisher",
-            "version": "v14.7.0",
+            "version": "14.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/publisher.git",
-                "reference": "4e6fa2d8c446282b832ffb16b9b3c33aa4296a5b"
+                "reference": "946405e3d8c7105b0ae8cf8de34a3e6e98a70a84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/publisher/zipball/4e6fa2d8c446282b832ffb16b9b3c33aa4296a5b",
-                "reference": "4e6fa2d8c446282b832ffb16b9b3c33aa4296a5b",
+                "url": "https://api.github.com/repos/Laravel-Lang/publisher/zipball/946405e3d8c7105b0ae8cf8de34a3e6e98a70a84",
+                "reference": "946405e3d8c7105b0ae8cf8de34a3e6e98a70a84",
                 "shasum": ""
             },
             "require": {
@@ -2414,7 +2414,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2023-08-09T09:09:57+00:00"
+            "time": "2023-10-29T21:03:27+00:00"
         },
         {
             "name": "laravel/fortify",
