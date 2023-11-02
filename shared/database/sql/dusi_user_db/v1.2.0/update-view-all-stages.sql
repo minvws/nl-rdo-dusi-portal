@@ -1,1 +1,1 @@
-UPDATE "roles" set "view_all_stages" = true WHERE "name" = 'implementationCoordinator';
+UPDATE public.roles set "view_all_stages" = true WHERE "name" = 'implementationCoordinator';

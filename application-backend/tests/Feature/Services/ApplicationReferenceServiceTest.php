@@ -9,7 +9,6 @@ use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationReferenceGenerator;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationReferenceService;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationReferenceException;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
@@ -36,7 +35,6 @@ use MinVWS\DUSi\Application\Backend\Tests\TestCase;
  */
 class ApplicationReferenceServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
     use MocksEncryptionAndHashing;
 

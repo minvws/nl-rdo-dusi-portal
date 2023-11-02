@@ -102,7 +102,7 @@ CREATE TABLE public.applications (
     updated_at timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     application_title character varying(255) NOT NULL,
     final_review_deadline timestamp(0) without time zone,
-    reference character varying(15) NOT NULL,
+    "reference" character varying(15) NOT NULL,
     status character varying(255) DEFAULT 'draft'::character varying NOT NULL,
     identity_id uuid NOT NULL,
     submitted_at timestamp(0) without time zone,
@@ -1481,3 +1481,10 @@ ALTER TABLE ONLY public.subsidy_versions
 --
 -- PostgreSQL database dump complete
 --
+
+CREATE ROLE dusi_dba;
+
+CREATE ROLE "dpw-dusi" WITH LOGIN;
+CREATE ROLE "backend-dusi" WITH LOGIN;
+CREATE ROLE "user-admin-dusi" WITH LOGIN;
+CREATE ROLE "assessment-web-dusi" WITH LOGIN;

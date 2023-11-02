@@ -6,8 +6,6 @@ on:
     tags:
       - v*
 
-env:
-  GITHUB_TOKEN: ${{ github.token }}
 
 jobs:
   publish:

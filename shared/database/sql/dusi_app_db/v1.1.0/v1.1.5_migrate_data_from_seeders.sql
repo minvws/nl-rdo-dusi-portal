@@ -189,64 +189,64 @@ DELETE FROM public.subsidy_versions WHERE id = 'f5eeeca5-1f23-4a19-a31c-55e6b958
 -- Creating constraints for "public"."fields"
 --
 ALTER TABLE public.fields
-    ADD constraint fields_subsidy_stage_id_foreign foreign key (subsidy_stage_id) references subsidy_stages (id);
+    ADD constraint fields_subsidy_stage_id_foreign foreign key (subsidy_stage_id) references public.subsidy_stages (id);
 
 --
 -- Creating constraints for "public"."subsidy_stage_transition_messages"
 --
 ALTER TABLE public.subsidy_stage_transition_messages
-    ADD constraint subsidy_stage_transition_messages_subsidy_stage_transition_id_f foreign key (subsidy_stage_transition_id) references subsidy_stage_transitions (id);
+    ADD constraint subsidy_stage_transition_messages_subsidy_stage_transition_id_f foreign key (subsidy_stage_transition_id) references public.subsidy_stage_transitions (id);
 
 --
 -- Creating constraints for "public"."subsidy_stage_uis"
 --
 ALTER TABLE public.subsidy_stage_uis
-    ADD constraint form_uis_form_id_foreign foreign key (subsidy_stage_id) references subsidy_stages (id);
+    ADD constraint form_uis_form_id_foreign foreign key (subsidy_stage_id) references public.subsidy_stages (id);
 
 --
 -- Creating constraints for "public"."subsidy_stages"
 --
 ALTER TABLE public.subsidy_stages
-    ADD constraint subsidy_stages_subsidy_version_id_foreign foreign key (subsidy_version_id) references subsidy_versions (id);
+    ADD constraint subsidy_stages_subsidy_version_id_foreign foreign key (subsidy_version_id) references public.subsidy_versions (id);
 
 --
 -- Creating constraints for "public"."subsidy_versions"
 --
 ALTER TABLE public.subsidy_versions
-    ADD constraint subsidy_versions_subsidy_id_foreign foreign key (subsidy_id) references subsidies (id);
+    ADD constraint subsidy_versions_subsidy_id_foreign foreign key (subsidy_id) references public.subsidies (id);
 
 --
 -- Creating constraints for "public"."answers"
 --
 ALTER TABLE public.answers
-    ADD constraint answers_field_id_foreign foreign key (field_id) references fields (id);
+    ADD constraint answers_field_id_foreign foreign key (field_id) references public.fields (id);
 
 --
 -- Creating constraints for "public"."subsidy_stage_hash_fields"
 --
 ALTER TABLE public.subsidy_stage_hash_fields
-    ADD constraint form_hash_fields_field_id_foreign foreign key (field_id) references fields (id);
+    ADD constraint form_hash_fields_field_id_foreign foreign key (field_id) references public.fields (id);
 
 --
 -- Creating constraints for "public"."application_stages"
 --
 ALTER TABLE public.application_stages
-    ADD constraint application_stages_subsidy_stage_id_foreign foreign key (subsidy_stage_id) references subsidy_stages (id);
+    ADD constraint application_stages_subsidy_stage_id_foreign foreign key (subsidy_stage_id) references public.subsidy_stages (id);
 
 --
 -- Creating constraints for "public"."subsidy_stage_hashes"
 --
 ALTER TABLE public.subsidy_stage_hashes
-    ADD constraint form_hashes_form_id_foreign foreign key (subsidy_stage_id) references subsidy_stages (id);
+    ADD constraint form_hashes_form_id_foreign foreign key (subsidy_stage_id) references public.subsidy_stages (id);
 
 --
 -- Creating constraints for "public"."subsidy_stage_transitions"
 --
 ALTER TABLE public.subsidy_stage_transitions
-    ADD constraint subsidy_stage_transitions_current_subsidy_stage_id_foreign foreign key (current_subsidy_stage_id) references subsidy_stages (id);
+    ADD constraint subsidy_stage_transitions_current_subsidy_stage_id_foreign foreign key (current_subsidy_stage_id) references public.subsidy_stages (id);
 
 --
 -- Creating constraints for "public"."applications"
 --
 ALTER TABLE public.applications
-    ADD constraint applications_subsidy_version_id_foreign foreign key (subsidy_version_id) references subsidy_versions (id);
+    ADD constraint applications_subsidy_version_id_foreign foreign key (subsidy_version_id) references public.subsidy_versions (id);

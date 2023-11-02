@@ -2910,11 +2910,11 @@
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-include-fortify-shared-package",
+            "version": "dev-update-redis-config",
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "883ab803ebe19699997930d7fe71e82f8ba3dbbb"
+                "reference": "e11a0cdd70b59e383dbbd15cf62f62410a0ef9ac"
             },
             "require": {
                 "barryvdh/laravel-dompdf": "^2.0",
@@ -2943,8 +2943,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider",
-                        "MinVWS\\DUSi\\Shared\\Providers\\LetterServiceProvider"
+                        "MinVWS\\DUSi\\Shared\\Providers\\DatabaseServiceProvider"
                     ]
                 }
             },
@@ -3059,7 +3058,7 @@
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
-            "version": "dev-include-fortify-shared-package",
+            "version": "dev-update-redis-config",
             "dist": {
                 "type": "path",
                 "url": "../bridge",

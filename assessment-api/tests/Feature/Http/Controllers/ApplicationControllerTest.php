@@ -11,7 +11,6 @@ use Illuminate\Testing\TestResponse;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\Connection;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -27,7 +26,6 @@ class ApplicationControllerTest extends TestCase
 {
     use WithoutMiddleware;
 
-    protected array $connectionsToTransact = [Connection::APPLICATION];
     private Application $application1;
     private ApplicationStage $application1Stage1;
 
@@ -288,6 +286,46 @@ class ApplicationControllerTest extends TestCase
             'final_review_deadline' => $this->application2->final_review_deadline,
             'updated_at' => $this->application2->updated_at,
             'actions' => ['release', 'show'],
+        ]);
+    }
+
+    /**
+     * @group dont-list-unsubmitted
+     */
+    public function testListAsAnyUserShouldNotListUnsubmittedApplications(): void
+    {
+        $user = User::factory()->create();
+
+        $values = RoleEnum::cases();
+        $randomRole = $values[array_rand($values)];
+        $user->attachRole($randomRole, $this->subsidy->id);
+
+        $unsubmittedApplication = Application::factory()->create(
+            [
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+            ]
+        );
+
+        ApplicationStage::factory()
+            ->for($unsubmittedApplication)
+            ->create(
+                [
+                    'sequence_number' => 1,
+                ]
+            );
+
+
+        $response = $this
+            ->be($this->implementationCoordinatorUser)
+            ->json('GET', '/api/applications');
+
+        $response->assertStatus(200);
+
+        $response->assertJsonMissing([
+            'application_title' => $unsubmittedApplication->application_title,
         ]);
     }
 
