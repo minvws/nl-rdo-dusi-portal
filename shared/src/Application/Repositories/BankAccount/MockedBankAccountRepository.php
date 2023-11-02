@@ -21,7 +21,7 @@ class MockedBankAccountRepository implements BankAccountRepository
         return $this->createCheckOrganisationsAccountResponse($accountNumberValidation, $nameMatchResult, $suggestion);
     }
 
-    public function createCheckOrganisationsAccountResponse(
+    private function createCheckOrganisationsAccountResponse(
         AccountNumberValidation $accountNumberValidation,
         ?NameMatchResult $nameMatchResult,
         ?string $suggestion

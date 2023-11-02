@@ -11,7 +11,7 @@ class ValidationResultFactory
     public static function createError(string $message)
     {
         return new ValidationResult(
-            validationResultType: ValidationResultType::Error,
+            type: ValidationResultType::Error,
             message: $message,
         );
     }
@@ -19,7 +19,7 @@ class ValidationResultFactory
     public static function createConfirmation(string $message)
     {
         return new ValidationResult(
-            validationResultType: ValidationResultType::Success,
+            type: ValidationResultType::Success,
             message: $message,
         );
     }
@@ -27,7 +27,7 @@ class ValidationResultFactory
     public static function createExplanation(string $message)
     {
         return new ValidationResult(
-            validationResultType: ValidationResultType::Explanation,
+            type: ValidationResultType::Explanation,
             message: $message,
         );
     }
@@ -35,7 +35,7 @@ class ValidationResultFactory
     public static function createWarning(string $message)
     {
         return new ValidationResult(
-            validationResultType: ValidationResultType::Warning,
+            type: ValidationResultType::Warning,
             message: $message,
         );
     }

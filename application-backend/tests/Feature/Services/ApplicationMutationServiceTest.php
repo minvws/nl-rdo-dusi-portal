@@ -606,7 +606,7 @@ class ApplicationMutationServiceTest extends TestCase
                     "validationResult" => [
                         "bankAccountNumber" => [
                             [
-                                "validationResultType" => "confirmation",
+                                "type" => "confirmation",
                                 "message" => "Bankrekening naam komt overeen.",
                                 "params" => []
                             ]
@@ -623,7 +623,7 @@ class ApplicationMutationServiceTest extends TestCase
                     "validationResult" => [
                         "bankAccountNumber" => [
                             [
-                                "validationResultType" => "error",
+                                "type" => "error",
                                 "message" => "Bankrekening naam komt niet overeen!",
                                 "params" => []
                             ]
@@ -640,14 +640,14 @@ class ApplicationMutationServiceTest extends TestCase
                     "validationResult" => [
                         "email" => [
                             [
-                                "validationResultType" => "error",
+                                "type" => "error",
                                 "message" => "E-mailadres is geen geldig e-mailadres.",
                                 "params" => []
                             ]
                         ],
                         "bankAccountNumber" => [
                             [
-                                "validationResultType" => "confirmation",
+                                "type" => "confirmation",
                                 "message" => "Bankrekening naam komt overeen.",
                                 "params" => []
                             ]
@@ -665,14 +665,14 @@ class ApplicationMutationServiceTest extends TestCase
                     "validationResult" => [
                         "email" => [
                             [
-                                "validationResultType" => "error",
+                                "type" => "error",
                                 "message" => "E-mailadres is geen geldig e-mailadres.",
                                 "params" => []
                             ]
                         ],
                         "bankAccountNumber" => [
                             [
-                                "validationResultType" => "warning",
+                                "type" => "warning",
                                 "message" => "Bankrekening naam komt niet volledig overeen!",
                                 "params" => [
                                     "suggestion" => "suggestion"

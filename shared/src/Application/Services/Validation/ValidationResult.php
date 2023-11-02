@@ -13,7 +13,7 @@ class ValidationResult implements Codable
     use CodableSupport;
 
     public function __construct(
-        private readonly ValidationResultType $validationResultType,
+        private readonly ValidationResultType $type,
         private readonly string $message,
         private ?array $params = [],
     ) {
