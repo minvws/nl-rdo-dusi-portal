@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Application\Backend\Events\Logging\ListApplicationsEvent;
 use MinVWS\DUSi\Application\Backend\Events\Logging\ViewApplicationEvent;
 use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
@@ -115,7 +114,6 @@ readonly class ApplicationRetrievalService
 
         $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data);
 
-        Log::debug('get application details');
         $this->logService->log((new ViewApplicationEvent())
             ->withData([
                 'reference' => $params->reference,
