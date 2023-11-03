@@ -17,12 +17,17 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResul
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResult;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResultFactory;
 use Illuminate\Support\Collection;
+use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResultParam;
 
 class SurePayValidationRule implements
     DataAwareRule,
     ImplicitValidationRule,
     ValidationResultRule
 {
+    private const BANK_ACCOUNT_HOLDER = 'bankAccountHolder';
+    private const BANK_ACCOUNT_NUMBER = 'bankAccountNumber';
+    private const CLOSE_MATCH_SUGGESTION = 'suggestion';
+
     public function __construct(
         private readonly BankAccountRepository $bankAccountRepository,
         private readonly Translator $translator,
@@ -56,7 +61,7 @@ class SurePayValidationRule implements
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (empty($this->data['bankAccountNumber']) || empty($this->data['bankAccountHolder'])) {
+        if (empty($this->data[self::BANK_ACCOUNT_NUMBER]) || empty($this->data[self::BANK_ACCOUNT_HOLDER])) {
             return;
         }
 
@@ -79,8 +84,8 @@ class SurePayValidationRule implements
     private function executeSurePayCheck(): CheckOrganisationsAccountResponse
     {
         return $this->checkOrganisationsAccount(
-            $this->data['bankAccountHolder'] ?? '',
-            $this->data['bankAccountNumber']
+            $this->data[self::BANK_ACCOUNT_HOLDER] ?? '',
+            $this->data[self::BANK_ACCOUNT_NUMBER]
         );
     }
 
@@ -97,27 +102,49 @@ class SurePayValidationRule implements
         );
     }
 
-    protected function processNameMatchResults(
-        CheckOrganisationsAccountResponse $checkResult,
-        Closure $fail
-    ): void {
+    protected function processNameMatchResults(CheckOrganisationsAccountResponse $checkResult, Closure $fail): void
+    {
         $message = $this->getTranslatedMessageFromNameMatchResult($checkResult);
+        $nameMatchResult = $checkResult->nameMatchResult;
 
-        if ($checkResult->nameMatchResult === NameMatchResult::NoMatch) {
-            $this->validationResults->push(ValidationResultFactory::createError(
-                message: $message
-            ));
-            $fail($message);
-        } elseif ($checkResult->nameMatchResult === NameMatchResult::CloseMatch) {
-            $validationResult = ValidationResultFactory::createWarning(message: $message);
-            $validationResult->addParam('suggestion', $checkResult->nameSuggestion);
-            $this->validationResults->push($validationResult);
-        } elseif ($checkResult->nameMatchResult === NameMatchResult::Match) {
-            $this->validationResults->push(ValidationResultFactory::createConfirmation(
-                message: $message
-            ));
+        if ($nameMatchResult === NameMatchResult::NoMatch) {
+            $this->handleNoMatch($message, $fail);
         }
+
+        if ($nameMatchResult === NameMatchResult::CloseMatch) {
+            $this->handleCloseMatch($checkResult, $message);
+        }
+
+        if ($nameMatchResult === NameMatchResult::Match) {
+            $this->handleMatch($message);
+        }
+
         //Other results need no response in Application portal
+    }
+
+    private function handleNoMatch(string $message, Closure $fail): void
+    {
+        $this->validationResults->push(ValidationResultFactory::createError(message: $message));
+        $fail($message);
+    }
+
+    private function handleCloseMatch(CheckOrganisationsAccountResponse $checkResult, string $message): void
+    {
+        $validationResult = ValidationResultFactory::createWarning(message: $message);
+
+        if ($checkResult->nameSuggestion) {
+            $validationResult->addParam(
+                self::CLOSE_MATCH_SUGGESTION,
+                new ValidationResultParam(self::BANK_ACCOUNT_HOLDER, $checkResult->nameSuggestion)
+            );
+        }
+
+        $this->validationResults->push($validationResult);
+    }
+
+    private function handleMatch(string $message): void
+    {
+        $this->validationResults->push(ValidationResultFactory::createConfirmation(message: $message));
     }
 
     private function getTranslatedMessageFromNameMatchResult(

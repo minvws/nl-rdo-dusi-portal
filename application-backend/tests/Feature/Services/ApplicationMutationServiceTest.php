@@ -678,9 +678,13 @@ class ApplicationMutationServiceTest extends TestCase
                         "bankAccountNumber" => [
                             [
                                 "type" => "warning",
-                                "message" => "Naam rekeninghouder lijkt niet volledig te kloppen! Bedoelde u {suggestion}?",
+                                "message" =>
+                                    "Naam rekeninghouder lijkt niet volledig te kloppen! Bedoelde u {suggestion}?",
                                 "params" => [
-                                    "suggestion" => MockedBankAccountRepository::BANK_HOLDER_SUGGESTION
+                                    "suggestion" => [
+                                        "code" => "bankAccountHolder",
+                                        "value" => MockedBankAccountRepository::BANK_HOLDER_SUGGESTION
+                                    ]
                                 ]
                             ]
                         ]
