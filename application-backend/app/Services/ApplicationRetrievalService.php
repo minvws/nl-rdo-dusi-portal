@@ -104,7 +104,7 @@ readonly class ApplicationRetrievalService
             $data = $appStage !== null ? $this->applicationDataService->getApplicationStageData($appStage) : null;
         }
 
-        $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data);
+        $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data, null);
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,

@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
 
-class FieldValidationResponse implements Codable
+class ValidationResultDTO implements Codable
 {
     use CodableSupport;
 

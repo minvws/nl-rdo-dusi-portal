@@ -46,8 +46,11 @@ class ApplicationMapper
         return new ApplicationListDTO($apps);
     }
 
-    public function mapApplicationToApplicationDTO(Application $app, ?object $data): ApplicationDTO
-    {
+    public function mapApplicationToApplicationDTO(
+        Application $app,
+        ?object $data,
+        ?object $validationResult
+    ): ApplicationDTO {
         $subsidy = $this->subsidyMapper->mapSubsidyVersionToSubsidyDTO($app->subsidyVersion);
         $form = $this->subsidyMapper->mapSubsidyVersionToFormDTO($app->subsidyVersion);
 
@@ -59,7 +62,8 @@ class ApplicationMapper
             $app->status,
             $app->is_editable_for_applicant,
             $form,
-            $data
+            $data,
+            $validationResult
         );
     }
 

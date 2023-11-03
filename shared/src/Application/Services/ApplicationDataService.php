@@ -25,7 +25,7 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use stdClass;
@@ -78,7 +78,7 @@ readonly class ApplicationDataService
         ApplicationStage $applicationStage,
         object $data,
         bool $submit
-    ): void {
+    ): array {
         // Remove all answers for this stage because we received new data
         $this->applicationRepository->deleteAnswersByStage($applicationStage);
 
@@ -92,27 +92,26 @@ readonly class ApplicationDataService
 
         // Validate, throws a ValidationException on error
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
-        $validator->validate();
+
+        $validationResult = $validator->validate();
 
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);
         }
+
+        return $validationResult;
     }
 
     public function validateFieldValues(
         ApplicationStage $applicationStage,
         object $data,
         bool $submit
-    ): FieldValidationResponse {
+    ): array {
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
 
-        $validationResult = $validator->validate();
-
-        return new FieldValidationResponse(
-            validationResult: $validationResult,
-        );
+        return $validator->validate();
     }
 
     /**

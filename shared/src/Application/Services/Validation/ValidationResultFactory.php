@@ -8,7 +8,7 @@ use MinVWS\DUSi\Shared\Application\Services\Validation\Enums\ValidationResultTyp
 
 class ValidationResultFactory
 {
-    public static function createError(string $message)
+    public static function createError(string $message): ValidationResult
     {
         return new ValidationResult(
             type: ValidationResultType::Error,
@@ -16,7 +16,7 @@ class ValidationResultFactory
         );
     }
 
-    public static function createConfirmation(string $message)
+    public static function createConfirmation(string $message): ValidationResult
     {
         return new ValidationResult(
             type: ValidationResultType::Success,
@@ -24,7 +24,7 @@ class ValidationResultFactory
         );
     }
 
-    public static function createExplanation(string $message)
+    public static function createExplanation(string $message): ValidationResult
     {
         return new ValidationResult(
             type: ValidationResultType::Explanation,
@@ -32,7 +32,7 @@ class ValidationResultFactory
         );
     }
 
-    public static function createWarning(string $message)
+    public static function createWarning(string $message): ValidationResult
     {
         return new ValidationResult(
             type: ValidationResultType::Warning,

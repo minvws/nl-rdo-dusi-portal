@@ -14,6 +14,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\SurePayRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Application\Services\ValidationService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
@@ -40,6 +41,10 @@ class ValidationServiceTest extends TestCase
         string|int|bool|float|FileList|array|null $value,
         bool $passes
     ): void {
+        if (!$passes) {
+            $this->expectException(ValidationErrorException::class);
+        }
+
         $application = Application::factory()->create();
         $applicationStage = ApplicationStage::factory()->create([
             'application_id' => $application->id,
@@ -81,7 +86,8 @@ class ValidationServiceTest extends TestCase
             submit: true
         );
 
-        $this->assertCount($passes ? 0 : 1, $validator->validate());
+        $validationResults = $validator->validate();
+        $this->assertCount(0, $validationResults);
     }
 
     public static function dataProviderTestFieldRules(): array
@@ -307,6 +313,10 @@ class ValidationServiceTest extends TestCase
         ?string $value2,
         bool $passes
     ): void {
+        if (!$passes) {
+            $this->expectException(ValidationErrorException::class);
+        }
+
         $application = Application::factory()->create();
         $applicationStage = ApplicationStage::factory()->create([
             'application_id' => $application->id,
@@ -365,7 +375,8 @@ class ValidationServiceTest extends TestCase
             submit: true
         );
 
-        $this->assertCount($passes ? 0 : 1, $validator->validate());
+        $validationResult = $validator->validate();
+        $this->assertCount(0, $validationResult);
     }
 
     public static function requiredConditionRuleProvider(): array

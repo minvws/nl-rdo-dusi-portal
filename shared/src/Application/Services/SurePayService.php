@@ -6,21 +6,11 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayRepository;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\BankAccountRepository;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\SurePayAccountCheckResult;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
-use RuntimeException;
-use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -30,7 +20,7 @@ class SurePayService
     private const SUBSIDY_PZCM_ID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
 
     public function __construct(
-        private readonly BankAccountRepository $surePayRepository,
+        private readonly BankAccountRepository $bankAccountRepository,
         private readonly ApplicationDataService $applicationDataService,
         private readonly ApplicationRepository $applicationRepository,
     ) {
@@ -39,7 +29,7 @@ class SurePayService
     public function shouldCheckSurePayForApplication(Application $application): bool
     {
         // temporary until we have generalized this
-        return $this->surePayRepository !== null && $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
+        return $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
     }
 
     /**
@@ -47,7 +37,7 @@ class SurePayService
      */
     public function checkSurePayForApplication(Application $application): ?ApplicationSurePayResult
     {
-        if (!$this->shouldCheckSurePayForApplication($application) || $this->surePayRepository === null) {
+        if (!$this->shouldCheckSurePayForApplication($application)) {
             return null;
         }
 
@@ -68,7 +58,7 @@ class SurePayService
             return null;
         }
 
-        $result = $this->surePayRepository->checkOrganisationsAccount(
+        $result = $this->bankAccountRepository->checkOrganisationsAccount(
             $data->bankAccountHolder,
             $data->bankAccountNumber
         );
@@ -96,6 +86,6 @@ class SurePayService
         string $accountType = 'IBAN'
     ): CheckOrganisationsAccountResponse {
 
-        return $this->surePayRepository->checkOrganisationsAccount($accountOwner, $accountNumber, $accountType);
+        return $this->bankAccountRepository->checkOrganisationsAccount($accountOwner, $accountNumber, $accountType);
     }
 }

@@ -56,7 +56,7 @@ class SurePayValidationRule implements
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (empty($this->data['bankAccountNumber'])) {
+        if (empty($this->data['bankAccountNumber']) || empty($this->data['bankAccountHolder'])) {
             return;
         }
 
@@ -79,7 +79,7 @@ class SurePayValidationRule implements
     private function executeSurePayCheck(): CheckOrganisationsAccountResponse
     {
         return $this->checkOrganisationsAccount(
-            trim($this->data['bankAccountHolder']) ?? '',
+            $this->data['bankAccountHolder'] ?? '',
             $this->data['bankAccountNumber']
         );
     }
@@ -122,16 +122,16 @@ class SurePayValidationRule implements
 
     private function getTranslatedMessageFromNameMatchResult(
         CheckOrganisationsAccountResponse $checkResult
-    ): string|array|null {
+    ): string {
         $lowerNameMatchResult = Str::lower($checkResult->nameMatchResult->value);
         $message = $this->getSurePayValidationTranslation($lowerNameMatchResult);
 
         return $message;
     }
 
-    public function getSurePayValidationTranslation(string $lowerNameMatchResult): string|array|null
+    public function getSurePayValidationTranslation(string $lowerNameMatchResult): string
     {
-        return $this->translator->get(
+        return (string) $this->translator->get(
             sprintf('validateFields.validation_surepay_%s', $lowerNameMatchResult)
         );
     }

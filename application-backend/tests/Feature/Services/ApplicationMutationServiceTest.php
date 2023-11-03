@@ -18,11 +18,9 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccountInfo;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
@@ -40,6 +38,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -48,7 +47,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use Mockery;
 use Queue;
 use Ramsey\Uuid\Uuid;
 
@@ -555,12 +553,14 @@ class ApplicationMutationServiceTest extends TestCase
 
         $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
-        $this->assertEquals(EncryptedResponseStatus::BAD_REQUEST, $encryptedResponse->status);
-        $error =
+        $this->assertEquals(EncryptedResponseStatus::UNPROCESSABLE_ENTITY, $encryptedResponse->status);
+        /** @var ValidationResultDTO $validationResultDTO */
+        $validationResultDTO =
             $this->responseEncryptionService
-                ->decryptCodable($encryptedResponse, Error::class, $this->keyPair);
-        $this->assertNotNull($error);
-        $this->assertEquals('invalid_data', $error->code);
+                ->decryptCodable($encryptedResponse, ValidationResultDTO::class, $this->keyPair);
+        $this->assertNotNull($validationResultDTO);
+        $this->assertEquals('error', $validationResultDTO->validationResult['file'][0]->type);
+        $this->assertEquals('File not found!', $validationResultDTO->validationResult['file'][0]->message);
     }
 
     /**
@@ -599,6 +599,8 @@ class ApplicationMutationServiceTest extends TestCase
     {
         return [
             "valid email, surepay match" => [
+                'NL62ABNA9999841479',
+                null,
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 EncryptedResponseStatus::OK,
@@ -616,9 +618,11 @@ class ApplicationMutationServiceTest extends TestCase
                 true,
             ],
             "valid email, invalid iban" => [
-                AccountNumberValidation::Invalid,
+                'NL12ABNA9999876523',
+                null,
+                AccountNumberValidation::Valid,
                 NameMatchResult::NoMatch,
-                EncryptedResponseStatus::OK,
+                EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
                 [
                     "validationResult" => [
                         "bankAccountNumber" => [
@@ -633,9 +637,11 @@ class ApplicationMutationServiceTest extends TestCase
                 true,
             ],
             "invalid email, surepay match" => [
+                'NL62ABNA9999841479',
+                'aa@bb.notexisting',
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
-                EncryptedResponseStatus::OK,
+                EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
                 [
                     "validationResult" => [
                         "email" => [
@@ -655,12 +661,13 @@ class ApplicationMutationServiceTest extends TestCase
                     ]
                 ],
                 false,
-                'aa@bb.notexisting',
             ],
             "invalid email, surepay close match" => [
+                'NL58ABNA9999142181',
+                'aa@bb.notexisting',
                 AccountNumberValidation::Valid,
                 NameMatchResult::CloseMatch,
-                EncryptedResponseStatus::OK,
+                EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
                 [
                     "validationResult" => [
                         "email" => [
@@ -675,17 +682,17 @@ class ApplicationMutationServiceTest extends TestCase
                                 "type" => "warning",
                                 "message" => "Bankrekening naam komt niet volledig overeen!",
                                 "params" => [
-                                    "suggestion" => "suggestion"
+                                    "suggestion" => MockedBankAccountRepository::BANK_HOLDER_SUGGESTION
                                 ]
                             ]
                         ]
                     ]
                 ],
                 false,
-                'aa@bb.notexisting',
-                'suggestion'
             ],
             "empty email, empty bankaccount number" => [
+                '',
+                '',
                 AccountNumberValidation::Valid,
                 NameMatchResult::CloseMatch,
                 EncryptedResponseStatus::OK,
@@ -693,9 +700,6 @@ class ApplicationMutationServiceTest extends TestCase
                     "validationResult" => []
                 ],
                 false,
-                '',
-                'suggestion',
-                ''
             ]
         ];
     }
@@ -706,14 +710,13 @@ class ApplicationMutationServiceTest extends TestCase
      * @group validation
      */
     public function testValidateFieldsWithBankAccount(
+        ?string $iban,
+        ?string $email,
         AccountNumberValidation $accountNumberValidation,
         NameMatchResult $nameMatchResult,
         EncryptedResponseStatus $encryptedResponseStatus,
         array $responseBody,
         bool $withRequiredField,
-        string $email = null,
-        string $suggestion = null,
-        string $iban = null,
     ): void {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
         ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
@@ -760,28 +763,7 @@ class ApplicationMutationServiceTest extends TestCase
             $application->reference,
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
-        app()->bind(SurePayClient::class, function () use ($accountNumberValidation, $nameMatchResult, $suggestion) {
-            return Mockery::mock(
-                SurePayClient::class,
-                function ($mock) use ($accountNumberValidation, $nameMatchResult, $suggestion) {
-                    $mock->shouldReceive('checkOrganisationsAccount')->andReturn(
-                        new CheckOrganisationsAccountResponse(
-                            account: new AccountInfo(
-                                $accountNumberValidation,
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                null
-                            ),
-                            nameMatchResult: $nameMatchResult,
-                            nameSuggestion: $nameMatchResult === NameMatchResult::CloseMatch ? $suggestion : null
-                        )
-                    );
-                }
-            );
-        });
+
         $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplicationFields($params);
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
