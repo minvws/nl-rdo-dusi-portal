@@ -598,7 +598,7 @@ class ApplicationMutationServiceTest extends TestCase
     public static function validateFieldsDataProvider(): array
     {
         return [
-            "valid email, surepay match" => [
+            "valid email, Surepay Match" => [
                 'NL62ABNA9999841479',
                 null,
                 AccountNumberValidation::Valid,
@@ -617,7 +617,7 @@ class ApplicationMutationServiceTest extends TestCase
                 ],
                 true,
             ],
-            "valid email, invalid iban" => [
+            "valid email, Surepay NomMatch" => [
                 'NL12ABNA9999876523',
                 null,
                 AccountNumberValidation::Valid,
@@ -636,7 +636,7 @@ class ApplicationMutationServiceTest extends TestCase
                 ],
                 true,
             ],
-            "invalid email, surepay match" => [
+            "invalid email, Surepay Match" => [
                 'NL62ABNA9999841479',
                 'aa@bb.notexisting',
                 AccountNumberValidation::Valid,
