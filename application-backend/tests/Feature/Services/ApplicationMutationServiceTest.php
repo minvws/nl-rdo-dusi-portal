@@ -6,8 +6,8 @@ namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
@@ -47,7 +47,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use Queue;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -56,7 +55,6 @@ use Ramsey\Uuid\Uuid;
  */
 class ApplicationMutationServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
     use MocksEncryptionAndHashing;
 
@@ -609,7 +607,7 @@ class ApplicationMutationServiceTest extends TestCase
                         "bankAccountNumber" => [
                             [
                                 "type" => "confirmation",
-                                "message" => "Bankrekening naam komt overeen.",
+                                "message" => "Naam rekeninghouder komt overeen.",
                                 "params" => []
                             ]
                         ]
@@ -628,7 +626,7 @@ class ApplicationMutationServiceTest extends TestCase
                         "bankAccountNumber" => [
                             [
                                 "type" => "error",
-                                "message" => "Bankrekening naam komt niet overeen!",
+                                "message" => "Naam rekeninghouder komt niet overeen!",
                                 "params" => []
                             ]
                         ]
@@ -654,7 +652,7 @@ class ApplicationMutationServiceTest extends TestCase
                         "bankAccountNumber" => [
                             [
                                 "type" => "confirmation",
-                                "message" => "Bankrekening naam komt overeen.",
+                                "message" => "Naam rekeninghouder komt overeen.",
                                 "params" => []
                             ]
                         ]
@@ -680,7 +678,7 @@ class ApplicationMutationServiceTest extends TestCase
                         "bankAccountNumber" => [
                             [
                                 "type" => "warning",
-                                "message" => "Bankrekening naam komt niet volledig overeen!",
+                                "message" => "Naam rekeninghouder lijkt niet volledig te kloppen! Bedoelde u {suggestion}?",
                                 "params" => [
                                     "suggestion" => MockedBankAccountRepository::BANK_HOLDER_SUGGESTION
                                 ]

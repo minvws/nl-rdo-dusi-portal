@@ -87,8 +87,6 @@ return [
 
     'migrations' => 'migrations',
 
-
-
     /*
     |--------------------------------------------------------------------------
     | Redis Databases
@@ -108,6 +106,7 @@ return [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
             'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
             'context' => [
+                // TLS Config for phpredis
                 'stream' => [
                     'peer_name' => env('REDIS_TLS_PEER_NAME', ''),
                     'verify_peer' => env('REDIS_TLS_VERIFY_PEER', true),
@@ -126,6 +125,7 @@ return [
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '0'),
+            // TLS Config for predis
             'ssl' => [
                 'peer_name' => env('REDIS_TLS_PEER_NAME', ''),
                 'verify_peer' => env('REDIS_TLS_VERIFY_PEER', true),
@@ -142,6 +142,7 @@ return [
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '1'),
+            // TLS Config for predis
             'ssl' => [
                 'peer_name' => env('REDIS_TLS_PEER_NAME', ''),
                 'verify_peer' => env('REDIS_TLS_VERIFY_PEER', true),
@@ -153,6 +154,5 @@ return [
         ],
 
     ],
-
 
 ];

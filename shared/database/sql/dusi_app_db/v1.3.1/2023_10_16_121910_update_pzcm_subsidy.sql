@@ -1,4 +1,4 @@
-UPDATE subsidies
+UPDATE public.subsidies
 SET
     valid_from = '2023-09-25 09:00 CEST',
     valid_to = '2023-10-23 12:00 CEST'

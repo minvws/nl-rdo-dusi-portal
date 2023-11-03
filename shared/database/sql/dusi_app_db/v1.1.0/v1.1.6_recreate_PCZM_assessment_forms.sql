@@ -1,6 +1,5 @@
-delete
-from "fields"
-where "subsidy_stage_id" in ('8027c102-93ef-4735-ab66-97aa63b836eb', '61436439-E337-4986-BC18-57138E2FAB65',
+DELETE FROM public.fields
+WHERE subsidy_stage_id IN ('8027c102-93ef-4735-ab66-97aa63b836eb', '61436439-E337-4986-BC18-57138E2FAB65',
                              '7CEB3C91-5C3B-4627-B9EF-A46D5FE2ED68', '85ED726E-CDBE-444E-8D12-C56F9BED2621');
 
 INSERT INTO public.fields (id, title, description, type, params, is_required, code, source, subsidy_stage_id,
@@ -174,9 +173,8 @@ VALUES ('fd88bdd9-1884-4cf7-b913-c4da0e6faca6', 'Extra informatie over de gedane
         '85ed726e-cdbe-444e-8d12-c56f9bed2621', null);
 
 
-delete
-from "subsidy_stage_uis"
-where "id" in ('71F71916-C0ED-45BC-8186-1B4F5DFB69E8', '44914BC7-9E4F-4B79-9498-01ADBE5C4CFE',
+DELETE FROM public.subsidy_stage_uis
+WHERE id IN ('71F71916-C0ED-45BC-8186-1B4F5DFB69E8', '44914BC7-9E4F-4B79-9498-01ADBE5C4CFE',
                'E819DF05-03B7-4F37-B315-7F62339FD067', 'C51302F6-E131-45FF-8D4B-F4FF4A39B52F');
 
 INSERT INTO public.subsidy_stage_uis (id, subsidy_stage_id, version, status, input_ui, created_at, updated_at, view_ui)

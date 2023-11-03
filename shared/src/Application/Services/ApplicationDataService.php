@@ -11,10 +11,7 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use MinVWS\Codable\Encoding\EncodingContainer;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
@@ -24,8 +21,6 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use stdClass;
@@ -79,6 +74,13 @@ readonly class ApplicationDataService
         object $data,
         bool $submit
     ): array {
+        // Decode received form data
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
+
+        // Validate, throws a ValidationException on error
+        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
+        $validationResult = $validator->validate();
+
         // Remove all answers for this stage because we received new data
         $this->applicationRepository->deleteAnswersByStage($applicationStage);
 
@@ -86,14 +88,6 @@ readonly class ApplicationDataService
         [$encryptedKey, $encrypter] = $this->encryptionService->generateEncryptionKey();
         $applicationStage->encrypted_key = $encryptedKey;
         $applicationStage->save();
-
-        // Decode received form data
-        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
-
-        // Validate, throws a ValidationException on error
-        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
-
-        $validationResult = $validator->validate();
 
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);

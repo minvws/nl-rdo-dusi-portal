@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationReferenceGenerator;
@@ -36,7 +35,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  */
 class ApplicationReferenceServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
     use MocksEncryptionAndHashing;
 

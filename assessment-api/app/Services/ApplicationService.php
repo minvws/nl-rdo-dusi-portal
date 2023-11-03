@@ -51,11 +51,11 @@ class ApplicationService
      */
     public function getApplications(
         User $user,
-        bool $onlyAssignedToMe,
+        bool $onlyMyApplications,
         ApplicationsFilter $applicationsFilter
     ): AnonymousResourceCollection {
         $applications = $this->applicationRepository
-            ->filterApplications($user, $onlyAssignedToMe, $applicationsFilter);
+            ->filterApplications($user, $onlyMyApplications, $applicationsFilter);
 
         return ApplicationFilterResource::Collection($applications);
     }

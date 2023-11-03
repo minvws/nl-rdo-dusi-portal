@@ -155,19 +155,4 @@ class UserController extends Controller
             ->route('users.credentials', $user->id)
             ->with(UserCredentialsData::SESSION_KEY, $credentialsData);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user): RedirectResponse
-    {
-        $user->delete();
-
-        return redirect()
-            ->route('users.index')
-            ->with(FlashNotification::SESSION_KEY, new FlashNotification(
-                type: FlashNotificationTypeEnum::CONFIRMATION,
-                message: __('User deleted.'),
-            ));
-    }
 }

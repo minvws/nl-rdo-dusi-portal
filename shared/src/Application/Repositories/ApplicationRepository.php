@@ -10,6 +10,7 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
@@ -37,7 +38,8 @@ class ApplicationRepository
     private function filterForUser(Builder $query, User $user): void
     {
         $clauses = [];
-        $bindings = [];
+        $bindings = [ApplicationStatus::RequestForChanges->value];
+
         foreach ($user->roles as $role) {
             if ($role->view_all_stages && $role->pivot->subsidy_id === null) {
                 $clauses[] = '(1 = 1)';
@@ -65,9 +67,11 @@ class ApplicationRepository
                 JOIN subsidy_stages ss ON (ss.id = s.subsidy_stage_id)
                 JOIN subsidy_versions sv ON (sv.id = ss.subsidy_version_id)
                 WHERE s.application_id = applications.id
-                AND s.is_current = true
-                AND (
-                    (" . implode(") OR (", $clauses) . ")
+                AND  (
+                    NOT (ss.stage = 1 AND s.is_submitted = false AND applications.status != ?)
+                    OR (
+                        (" . implode(") OR (", $clauses) . ")
+                    )
                 )
             )
         ";
@@ -75,8 +79,11 @@ class ApplicationRepository
         $query->whereRaw($sql, $bindings);
     }
 
-    public function filterApplications(User $user, bool $onlyAssignedToMe, ApplicationsFilter $filter): array|Collection
-    {
+    public function filterApplications(
+        User $user,
+        bool $onlyMyApplications,
+        ApplicationsFilter $filter
+    ): array|Collection {
         if ($user->roles->isEmpty()) {
             return [];
         }
@@ -84,68 +91,37 @@ class ApplicationRepository
         $query = Application::query();
         $this->filterForUser($query, $user);
 
-        $query->when(
-            $onlyAssignedToMe,
-            fn() => $query->whereRelation(
-                'currentApplicationStage',
-                'assessor_user_id',
-                $user->id
-            )
-        );
-        $query->when(
-            isset($filter->applicationTitle),
-            fn() => $query->title($filter->applicationTitle)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->reference),
-            fn() => $query->reference($filter->reference)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateFrom),
-            fn() => $query->createdAtFrom($filter->dateFrom)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateTo),
-            fn() => $query->createdAtTo($filter->dateTo)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            isset($filter->dateLastModifiedFrom),
-            fn() => $query->updatedAtFrom(
-                $filter->dateLastModifiedFrom // @phpstan-ignore-line
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateLastModifiedTo),
-            fn() => $query->updatedAtTo(
-                $filter->dateLastModifiedTo // @phpstan-ignore-line
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateFinalReviewDeadlineFrom),
-            fn() => $query->finalReviewDeadlineFrom(
-                $filter->dateFinalReviewDeadlineFrom // @phpstan-ignore-line
-            )->get()
-        );
-        $query->when(
-            isset($filter->dateFinalReviewDeadlineTo),
-            fn() => $query->finalReviewDeadlineTo(
-                $filter->dateFinalReviewDeadlineTo // @phpstan-ignore-line
-            )->get()
-        );
-        $query->when(
-            (isset($filter->status) && count($filter->status) > 0),
-            fn() => $query->status($filter->status)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            (isset($filter->subsidy) && count($filter->subsidy) > 0),
-            fn() => $query->subsidyCode($filter->subsidy)->get() // @phpstan-ignore-line
-        );
-        $query->when(
-            (isset($filter->phase) && count($filter->phase) > 0),
-            fn() => $query->phase($filter->phase)->get() // @phpstan-ignore-line
-        );
+        if ($onlyMyApplications) {
+            $this->selectAssignedAndHandledApplications($query, $user);
+        }
+
+        $this->applyFilters($query, $filter);
 
         return $query->get();
+    }
+
+    private function applyFilters(Builder $query, ApplicationsFilter $filter): void
+    {
+        $filterValues = [
+            'applicationTitle' => 'title',
+            'reference' => 'reference',
+            'dateFrom' => 'createdAtFrom',
+            'dateTo' => 'createdAtTo',
+            'dateLastModifiedFrom' => 'updatedAtFrom',
+            'dateLastModifiedTo' => 'updatedAtTo',
+            'dateFinalReviewDeadlineFrom' => 'finalReviewDeadlineFrom',
+            'dateFinalReviewDeadlineTo' => 'finalReviewDeadlineTo',
+            'status' => 'status',
+            'subsidy' => 'subsidyCode',
+            'phase' => 'phase'
+        ];
+
+        foreach ($filterValues as $filterKey => $method) {
+            $query->when(
+                isset($filter->$filterKey) || is_array($filter->$filterKey),
+                fn() => $query->$method($filter->$filterKey)->get()
+            );
+        }
     }
 
     public function getApplication(string $appId): ?Application
@@ -407,5 +383,14 @@ class ApplicationRepository
         $answer = $applicationStage->answers()->firstWhere('field_id', $field->id);
 
         return $answer ?? null;
+    }
+
+    public function selectAssignedAndHandledApplications(Builder $query, User $user): void
+    {
+        $query->whereRelation(
+            'applicationStages',
+            'assessor_user_id',
+            $user->id
+        );
     }
 }

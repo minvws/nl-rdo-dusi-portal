@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
@@ -41,7 +40,6 @@ use Ramsey\Uuid\Uuid;
  */
 class ApplicationFileServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
     use MocksEncryptionAndHashing;
 
@@ -60,7 +58,6 @@ class ApplicationFileServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadCustomMigrations();
         $this->withoutFrontendEncryption();
 
         $this->subsidy = Subsidy::factory()->create();

@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
@@ -40,7 +39,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  */
 class ApplicationRetrievalServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
     use MocksEncryptionAndHashing;
 
@@ -55,7 +53,6 @@ class ApplicationRetrievalServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadCustomMigrations();
 
         $subsidy = Subsidy::factory()->create();
         $subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create();

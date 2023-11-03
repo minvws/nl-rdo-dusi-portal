@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewApplicationEvent;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
@@ -166,7 +167,13 @@ class ApplicationController extends Controller
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
-        } catch (ValidationException) {
+        } catch (ValidationException $exception) {
+            Log::error('ValidationException while saveAssessment', [
+                'userId' => $user->id,
+                'applicationId' => $application->id,
+                'submitAssessment' => $submit,
+                'validationErrors' => $exception->errors(),
+            ]);
             abort(Response::HTTP_BAD_REQUEST);
         }
     }

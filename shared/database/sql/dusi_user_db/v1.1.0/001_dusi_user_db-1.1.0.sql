@@ -87,8 +87,7 @@ ALTER TABLE public.role_user OWNER TO postgres;
 --
 
 CREATE TABLE public.roles (
-    name character varying(255) NOT NULL,
-    view_all_stages boolean DEFAULT false NOT NULL
+    name character varying(255) NOT NULL
 );
 
 
@@ -153,17 +152,20 @@ INSERT INTO public.organisations VALUES ('9a39e57d-6051-4da2-9f0e-64720a567ce8',
 -- Data for Name: role_user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.role_user VALUES ('9a39e5a3-81b3-4afa-b966-1e7a8c2434e8', 'userAdmin', NULL);
+INSERT INTO public.role_user VALUES ('9a39e5a3-81b3-4afa-b966-1e7a8c2434e8', 'admin', NULL);
+INSERT INTO public.role_user VALUES ('9a39e5a5-9c8d-44a9-9a63-863f52d9a430', 'practitioner', NULL);
+INSERT INTO public.role_user VALUES ('9a39e5a7-abcd-480f-b4ec-acafb26a54d7', 'implementationCoordinator', NULL);
+INSERT INTO public.role_user VALUES ('9a39e5a9-bbe0-4e63-a950-9288f5d68252', 'internalAuditor', NULL);
 
 
 --
 -- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.roles VALUES ('userAdmin', false);
-INSERT INTO public.roles VALUES ('assessor', false);
-INSERT INTO public.roles VALUES ('implementationCoordinator', true);
-INSERT INTO public.roles VALUES ('internalAuditor', false);
+INSERT INTO public.roles VALUES ('admin');
+INSERT INTO public.roles VALUES ('practitioner');
+INSERT INTO public.roles VALUES ('implementationCoordinator');
+INSERT INTO public.roles VALUES ('internalAuditor');
 
 
 --

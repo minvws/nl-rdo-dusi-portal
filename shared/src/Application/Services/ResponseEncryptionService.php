@@ -61,7 +61,6 @@ class ResponseEncryptionService
         ClientPublicKey $publicKey
     ): EncryptedResponse {
         $json = $this->encoder->encode($payload);
-//        dump($json);
         return $this->encrypt($status, $json, 'application/json', $publicKey);
     }
 
