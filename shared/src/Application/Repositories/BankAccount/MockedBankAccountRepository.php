@@ -18,7 +18,8 @@ class MockedBankAccountRepository implements BankAccountRepository
         string $accountNumber,
         string $accountType = 'IBAN'
     ): CheckOrganisationsAccountResponse {
-        [$accountNumberValidation, $nameMatchResult, $suggestion] = $this->bankAccountCheckMockValues($accountNumber);
+        [$accountNumberValidation, $nameMatchResult, $suggestion] =
+            $this->bankAccountCheckMockValues($accountNumber, $accountOwner);
 
         return $this->createCheckOrganisationsAccountResponse($accountNumberValidation, $nameMatchResult, $suggestion);
     }
@@ -35,34 +36,42 @@ class MockedBankAccountRepository implements BankAccountRepository
         );
     }
 
-    private function bankAccountCheckMockValues(string $accountNumber): array
+    private function bankAccountCheckMockValues(string $accountNumber, string $accountHolder): array
     {
+        if ($this->hasAccountHolderMatchWithSuggestion($accountNumber, $accountHolder)) {
+            return [
+                AccountNumberValidation::Valid,
+                NameMatchResult::Match,
+                null
+            ];
+        }
+
         $bankAccountMockData = [
-            //Valid Iban, Valid NameMatchResult
+            //Valid Iban, NameMatchResult::Match
             'NL62ABNA9999841479' => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 null
             ],
-            //Valid Iban, Nomatch NameMatchResult
+            //NameMatchResult::NoMatch
             'NL12ABNA9999876523' => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::NoMatch,
                 null
             ],
-            //Valid Iban, CloseMatch NameMatchResult
+            //NameMatchResult::CloseMatch
             'NL58ABNA9999142181' => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::CloseMatch,
                 self::BANK_HOLDER_SUGGESTION
             ],
-            //Valid Iban, NameToShort NameMatchResult
+            //NameMatchResult::NameTooShort
             'NL76ABNA9999161548' => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::NameTooShort,
                 null
             ],
-            //Valid Iban but unknown
+            //NameMatchResult::CouldNotMatch
             'NL04RABO8731326943' => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::CouldNotMatch,
@@ -71,5 +80,10 @@ class MockedBankAccountRepository implements BankAccountRepository
         ];
 
         return $bankAccountMockData[$accountNumber] ?? [AccountNumberValidation::Valid, NameMatchResult::NoMatch, null];
+    }
+
+    public function hasAccountHolderMatchWithSuggestion(string $accountNumber, string $accountHolder): bool
+    {
+        return $accountNumber === 'NL58ABNA9999142181' && $accountHolder === self::BANK_HOLDER_SUGGESTION;
     }
 }
