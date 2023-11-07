@@ -18,7 +18,7 @@ use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
@@ -131,7 +131,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
 
         $json = (new JSONEncoder())->encode($body);
 
-        $params = new EncryptedFieldValidationParams(
+        $params = new EncryptedApplicationValidationParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -141,7 +141,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplicationFields($params);
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplication($params);
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
@@ -286,7 +286,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
 
         $json = (new JSONEncoder())->encode($body);
 
-        $params = new EncryptedFieldValidationParams(
+        $params = new EncryptedApplicationValidationParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -296,7 +296,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplicationFields($params);
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplication($params);
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($encryptedResponseStatus, $encryptedResponse->status);
@@ -381,7 +381,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
 
         $json = (new JSONEncoder())->encode($body);
 
-        $params = new EncryptedFieldValidationParams(
+        $params = new EncryptedApplicationValidationParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -391,7 +391,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplicationFields($params);
+        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplication($params);
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($encryptedResponseStatus, $encryptedResponse->status);

@@ -18,7 +18,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationValidationParams;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -91,7 +91,7 @@ class ApplicationController extends Controller
         ClientPublicKeyHelper $publicKeyHelper,
         ApplicationService $applicationService
     ): Response {
-        $params = new EncryptedFieldValidationParams(
+        $params = new EncryptedApplicationValidationParams(
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $reference,

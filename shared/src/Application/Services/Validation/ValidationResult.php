@@ -19,7 +19,7 @@ class ValidationResult implements Codable
     ) {
     }
 
-    public function addParam(string $key, mixed $value): self
+    public function setParam(string $key, mixed $value): self
     {
         $this->params[$key] = $value;
         return $this;

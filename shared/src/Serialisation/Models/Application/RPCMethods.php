@@ -13,7 +13,7 @@ class RPCMethods
     public const FIND_OR_CREATE_APPLICATION = 'findOrCreateApplication';
     public const UPLOAD_APPLICATION_FILE = 'uploadApplicationFile';
     public const SAVE_APPLICATION = 'saveApplication';
-    public const VALIDATE_FIELD = 'validateField';
+    public const VALIDATE_APPLICATION = 'validateApplication';
     public const LIST_APPLICATIONS = 'listApplications';
     public const GET_APPLICATION = 'getApplication';
     public const GET_APPLICATION_FILE = 'getApplicationFile';

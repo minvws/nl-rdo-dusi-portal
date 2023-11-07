@@ -16,7 +16,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
@@ -39,9 +39,9 @@ $bindings = [
         'paramsClass' => EncryptedApplicationSaveParams::class,
         'callback' => [ApplicationMutationService::class, 'saveApplication']
     ],
-    RPCMethods::VALIDATE_FIELD => [
-        'paramsClass' => EncryptedFieldValidationParams::class,
-        'callback' => [ApplicationMutationService::class, 'validateApplicationFields']
+    RPCMethods::VALIDATE_APPLICATION => [
+        'paramsClass' => EncryptedApplicationValidationParams::class,
+        'callback' => [ApplicationMutationService::class, 'validateApplication']
     ],
     RPCMethods::LIST_APPLICATIONS => [
         'paramsClass' => ApplicationListParams::class,

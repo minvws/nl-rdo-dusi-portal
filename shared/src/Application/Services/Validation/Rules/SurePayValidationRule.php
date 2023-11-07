@@ -133,7 +133,7 @@ class SurePayValidationRule implements
         $validationResult = ValidationResultFactory::createWarning(message: $message);
 
         if ($checkResult->nameSuggestion) {
-            $validationResult->addParam(
+            $validationResult->setParam(
                 self::CLOSE_MATCH_SUGGESTION,
                 new ValidationResultParam(self::BANK_ACCOUNT_HOLDER, $checkResult->nameSuggestion)
             );

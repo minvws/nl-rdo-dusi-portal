@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
 
-class EncryptedFieldValidationParams implements Codable
+class EncryptedApplicationValidationParams implements Codable
 {
     use CodableSupport;
 

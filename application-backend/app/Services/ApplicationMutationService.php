@@ -29,7 +29,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedFieldValidationParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
@@ -232,7 +232,7 @@ readonly class ApplicationMutationService
                 $body->submit
             );
         } catch (ValidationErrorException $e) {
-            $this->logger->debug('Validation contains errors', [
+            $this->logger->debug('Validation returns errors', [
                 'validationResult' => $e->getValidationResults(),
             ]);
 
@@ -273,7 +273,7 @@ readonly class ApplicationMutationService
         }
     }
 
-    public function validateApplicationFields(EncryptedFieldValidationParams $params): EncryptedResponse
+    public function validateApplication(EncryptedApplicationValidationParams $params): EncryptedResponse
     {
         try {
             $identity = $this->loadIdentity($params->identity);
@@ -312,7 +312,7 @@ readonly class ApplicationMutationService
                 $e,
                 __CLASS__,
                 __METHOD__,
-                RPCMethods::VALIDATE_FIELD,
+                RPCMethods::VALIDATE_APPLICATION,
                 $params->publicKey
             );
         }
