@@ -12,6 +12,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListApplicati
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Message as MessageDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageList as MessageListDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListMessage as MessageListMessageDTO;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 
 class ApplicationMapper
 {
@@ -49,7 +50,7 @@ class ApplicationMapper
     public function mapApplicationToApplicationDTO(
         Application $app,
         ?object $data,
-        ?object $validationResult
+        ?ValidationResultDTO $validationResult
     ): ApplicationDTO {
         $subsidy = $this->subsidyMapper->mapSubsidyVersionToSubsidyDTO($app->subsidyVersion);
         $form = $this->subsidyMapper->mapSubsidyVersionToFormDTO($app->subsidyVersion);
