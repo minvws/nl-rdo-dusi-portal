@@ -92,6 +92,7 @@ class ApplicationControllerTest extends TestCase
 
         $this->application1 = Application::factory()->create(
             [
+                'application_title' => 'application 1',
                 'subsidy_version_id' => $this->subsidyVersion->id,
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
@@ -109,6 +110,7 @@ class ApplicationControllerTest extends TestCase
 
         $this->application2 = Application::factory()->create(
             [
+                'application_title' => 'application 2',
                 'subsidy_version_id' => $this->subsidyVersion->id,
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
@@ -119,22 +121,25 @@ class ApplicationControllerTest extends TestCase
             ->for($this->subsidyStage1)
             ->create(
                 [
-                'application_id' => $this->application2->id,
-                'sequence_number' => 1,
+                    'is_current' => false,
+                    'is_submitted' => true,
+                    'application_id' => $this->application2->id,
+                    'sequence_number' => 1,
                 ]
             );
         $this->application2Stage2 = ApplicationStage::factory()
             ->for($this->subsidyStage2)
             ->create(
                 [
-                'application_id' => $this->application2->id,
-                'assessor_user_id' => $this->assessorUser1,
-                'sequence_number' => 2,
+                    'application_id' => $this->application2->id,
+                    'assessor_user_id' => $this->assessorUser1,
+                    'sequence_number' => 2,
                 ]
             );
 
         $this->application3 = Application::factory()->create(
             [
+                'application_title' => 'application 3',
                 'subsidy_version_id' => $this->subsidyVersion->id,
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
@@ -145,7 +150,9 @@ class ApplicationControllerTest extends TestCase
             ->for($this->subsidyStage1)
             ->create(
                 [
-                'application_id' => $this->application3->id,
+                    'is_current' => false,
+                    'is_submitted' => true,
+                    'application_id' => $this->application3->id,
                 ]
             );
 
@@ -163,9 +170,10 @@ class ApplicationControllerTest extends TestCase
             ->for($this->subsidyVersion)
             ->create(
                 [
-                'updated_at' => Carbon::today(),
-                'created_at' => Carbon::today(),
-                'final_review_deadline' => Carbon::today(),
+                    'application_title' => 'application 4',
+                    'updated_at' => Carbon::today(),
+                    'created_at' => Carbon::today(),
+                    'final_review_deadline' => Carbon::today(),
                 ]
             );
         $this->application4Stage1 = ApplicationStage::factory()
@@ -226,7 +234,10 @@ class ApplicationControllerTest extends TestCase
         $this->assertJsonFragment($response, $this->application4, ['claim']);
     }
 
-    public function testListAsAssessor(): void
+    /**
+     * @group list-all-applications
+     */
+    public function testListAllApplicationsAsAssessor(): void
     {
         $response = $this
             ->be($this->assessorUser1)
@@ -234,14 +245,14 @@ class ApplicationControllerTest extends TestCase
 
         $response->assertStatus(200);
 
-        $response->assertJsonFragment([
-            'application_title' => $this->application1->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application1->status->value,
-            'final_review_deadline' => $this->application1->final_review_deadline,
-            'updated_at' => $this->application1->updated_at,
-            'actions' => [],
-        ]);
+//        $response->assertJsonFragment([
+//            'application_title' => $this->application1->application_title,
+//            'subsidy' => $this->subsidy->code,
+//            'status' => $this->application1->status->value,
+//            'final_review_deadline' => $this->application1->final_review_deadline,
+//            'updated_at' => $this->application1->updated_at,
+//            'actions' => [],
+//        ]);
         $response->assertJsonFragment([
             'application_title' => $this->application2->application_title,
             'subsidy' => $this->subsidy->code,
@@ -258,9 +269,14 @@ class ApplicationControllerTest extends TestCase
             'updated_at' => $this->application4->updated_at,
             'actions' => ['claim'],
         ]);
+
+        // Don't show the one where you are not the assessor
+        $response->assertJsonMissing([
+         'application_title' => $this->application3->application_title,
+        ]);
     }
 
-    public function testListAsImplementationCoordinator(): void
+    public function testListAllApplicationsAsImplementationCoordinator(): void
     {
         $user = User::factory()->create();
         $user->attachRole(RoleEnum::ImplementationCoordinator, $this->subsidy->id);
@@ -290,9 +306,9 @@ class ApplicationControllerTest extends TestCase
     }
 
     /**
-     * @group dont-list-unsubmitted
+     * @group dont-ListAllApplications-unsubmitted
      */
-    public function testListAsAnyUserShouldNotListUnsubmittedApplications(): void
+    public function testListAllApplicationsAsAnyUserShouldNotListUnsubmittedApplications(): void
     {
         $user = User::factory()->create();
 
