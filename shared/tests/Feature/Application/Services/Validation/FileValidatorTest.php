@@ -17,6 +17,9 @@ use MinVWS\DUSi\Shared\Tests\TestCase;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @group validation
+ */
 class FileValidatorTest extends TestCase
 {
     protected TranslatorContract $translator;

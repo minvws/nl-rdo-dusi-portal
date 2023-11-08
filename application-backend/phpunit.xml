@@ -34,6 +34,7 @@
     <env name="SESSION_DRIVER" value="array"/>
     <env name="TELESCOPE_ENABLED" value="false"/>
       <ini name="display_errors" value="true"/>
+      <env name="SUREPAY_ENABLED" value="false"/>
   </php>
   <source>
     <include>

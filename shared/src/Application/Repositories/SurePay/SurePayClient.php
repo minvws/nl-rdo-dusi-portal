@@ -8,11 +8,11 @@ use Carbon\Carbon;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccesstokenResponse;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccountInfo;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsRequest;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
@@ -130,7 +130,7 @@ class SurePayClient
 
             return CheckOrganisationsAccountResponse::fromJson($response->getBody()->getContents());
         } catch (GuzzleException $e) {
-            throw new SurePayRepositoryException('Unable to get accesstoken', 0, $e);
+            throw new SurePayRepositoryException('Bad SurePay request', 400, $e);
         }
     }
 

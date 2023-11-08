@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\Translator;
 use Illuminate\Validation\Rule;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\FileUploadRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\RequiredConditionRule;
-use MinVWS\DUSi\Shared\Application\Services\Validation\Validator;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SurePayValidationRule;
+use MinVWS\DUSi\Shared\Application\Services\Validation\SubsidyStageValidator;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -19,15 +22,20 @@ class ValidationService
 {
     public function __construct(
         protected ValidatorFactory $validatorFactory,
+        protected BankAccountRepository $bankAccountRepository,
+        protected Translator $translator,
     ) {
     }
 
     /**
      * @param array<int|string, FieldValue> $fieldValues
      */
-    public function getValidator(ApplicationStage $applicationStage, array $fieldValues, bool $submit): Validator
-    {
-        return $this->validatorFactory->getValidator(
+    public function getValidator(
+        ApplicationStage $applicationStage,
+        array $fieldValues,
+        bool $submit
+    ): SubsidyStageValidator {
+        return $this->validatorFactory->getSubsidyStageValidator(
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
             data: $this->getFieldValuesData($fieldValues),
@@ -41,7 +49,6 @@ class ValidationService
     protected function getFieldValidationRules(int $stage, Field $field, bool $submit): array
     {
         $rules = [];
-
         if ($submit && $field->is_required) {
             $rules[] = 'required';
         } else {
@@ -54,7 +61,7 @@ class ValidationService
 
         return [...$rules , ...match ($field->type) {
             FieldType::Checkbox => [...$this->getBooleanFieldRules($field, $submit)],
-            FieldType::CustomBankAccount => [],
+            FieldType::CustomBankAccount => [...$this->getCustomBankAccountFieldRules($field)],
             FieldType::CustomCountry => [],
             FieldType::CustomPostalCode => [],
             FieldType::Date => [],
@@ -62,7 +69,7 @@ class ValidationService
             FieldType::Select => ['string', ...$this->getSelectFieldRules($field)],
             FieldType::Text => [...$this->getTextFieldRules($field)],
             FieldType::TextArea => [...$this->getTextFieldRules($field)],
-            FieldType::TextEmail => ['email:strict', ...$this->getTextFieldRules($field)],
+            FieldType::TextEmail => ['email:strict,dns', ...$this->getTextFieldRules($field)],
             FieldType::TextTel => [...$this->getTextFieldRules($field)],
             FieldType::TextNumeric => [...$this->getNumericFieldRules($field)],
             FieldType::TextUrl => [],
@@ -76,7 +83,6 @@ class ValidationService
     protected function getFieldValuesData(array $fieldValues): array
     {
         $data = [];
-
         foreach ($fieldValues as $fieldValue) {
             $data[$fieldValue->field->code] = $fieldValue->value;
         }
@@ -180,5 +186,13 @@ class ValidationService
         }
 
         return $rules;
+    }
+
+    protected function getCustomBankAccountFieldRules(Field $field): array
+    {
+        if ($field->type !== FieldType::CustomBankAccount) {
+            return [];
+        }
+        return [ new SurePayValidationRule($this->bankAccountRepository, $this->translator) ];
     }
 }
