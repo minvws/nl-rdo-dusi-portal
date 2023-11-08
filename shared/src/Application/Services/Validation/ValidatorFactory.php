@@ -32,9 +32,12 @@ class ValidatorFactory
         array $data,
         array $rules,
     ): CustomRuleValidator {
-        $validatorServicesContainer = new ValidatorServicesContainer(
+        $validationContext = new ValidationContext(
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
+        );
+
+        $serviceContainer = new ValidationServiceContainer(
             applicationFileManager: $this->applicationFileManager,
             applicationRepository: $this->applicationRepository,
         );
@@ -43,7 +46,8 @@ class ValidatorFactory
             translator: $this->translator,
             data: $data,
             rules: $rules,
-            servicesContainer: $validatorServicesContainer,
+            validationContext: $validationContext,
+            serviceContainer: $serviceContainer,
         );
     }
 

@@ -23,7 +23,8 @@ class CustomRuleValidator extends BaseValidator
         Translator $translator,
         array $data,
         array $rules,
-        private readonly ValidatorServicesContainer $servicesContainer
+        private readonly ValidationContext $validationContext,
+        private readonly ValidationServiceContainer $serviceContainer
     ) {
         parent::__construct($translator, $data, $rules);
 
@@ -70,23 +71,20 @@ class CustomRuleValidator extends BaseValidator
 
         $invokableRule = $rule->invokable();
 
-        // Access services from container
-        $services = $this->servicesContainer;
-
         if ($invokableRule instanceof FieldValuesAwareRule) {
-            $invokableRule->setFieldValues($services->getFieldValues());
+            $invokableRule->setFieldValues($this->validationContext->getFieldValues());
         }
 
         if ($invokableRule instanceof ApplicationStageAwareRule) {
-            $invokableRule->setApplicationStage($services->getApplicationStage());
+            $invokableRule->setApplicationStage($this->validationContext->getApplicationStage());
         }
 
         if ($invokableRule instanceof ApplicationFileManagerAwareRule) {
-            $invokableRule->setApplicationFileManager($services->getApplicationFileManager());
+            $invokableRule->setApplicationFileManager($this->serviceContainer->getApplicationFileManager());
         }
 
         if ($invokableRule instanceof ApplicationRepositoryAwareRule) {
-            $invokableRule->setApplicationRepository($services->getApplicationRepository());
+            $invokableRule->setApplicationRepository($this->serviceContainer->getApplicationRepository());
         }
 
         parent::validateUsingCustomRule($attribute, $value, $rule);

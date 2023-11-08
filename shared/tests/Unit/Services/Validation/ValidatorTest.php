@@ -18,7 +18,8 @@ use MinVWS\DUSi\Shared\Application\Services\Validation\ApplicationRepositoryAwar
 use MinVWS\DUSi\Shared\Application\Services\Validation\ApplicationStageAwareRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\FieldValuesAwareRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\CustomRuleValidator;
-use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorServicesContainer;
+use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationContext;
+use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationServiceContainer;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -65,9 +66,12 @@ class ValidatorTest extends TestCase
 
         $applicationStage = new ApplicationStage();
 
-        $validatorServiceContainer = new ValidatorServicesContainer(
+        $validationContext = new ValidationContext(
             applicationStage: $applicationStage,
             fieldValues: $fieldValues,
+        );
+
+        $serviceContainer = new ValidationServiceContainer(
             applicationFileManager: $this->mockApplicationFileManager,
             applicationRepository: $this->mockApplicationRepository,
         );
@@ -80,7 +84,8 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => [$mockRule],
             ],
-            servicesContainer: $validatorServiceContainer
+            validationContext: $validationContext,
+            serviceContainer: $serviceContainer
         );
 
         self::assertTrue($validator->passes());
@@ -105,12 +110,16 @@ class ValidatorTest extends TestCase
             ->with('someField', 'some value', Mockery::type(Closure::class))
             ->once();
 
-        $validatorServiceContainer = new ValidatorServicesContainer(
+
+        $validationContext = new ValidationContext(
             applicationStage: $applicationStage,
             fieldValues: [
                 'someField' => new FieldValue(new Field(), 'some value'),
                 'anotherField' => new FieldValue(new Field(), 'another value'),
             ],
+        );
+
+        $validatorServiceContainer = new ValidationServiceContainer(
             applicationFileManager: $this->mockApplicationFileManager,
             applicationRepository: $this->mockApplicationRepository,
         );
@@ -123,7 +132,8 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => $mockRule,
             ],
-            servicesContainer: $validatorServiceContainer
+            validationContext: $validationContext,
+            serviceContainer: $validatorServiceContainer
         );
 
         self::assertTrue($validator->passes());
@@ -146,12 +156,15 @@ class ValidatorTest extends TestCase
             ->with('someField', 'some value', Mockery::type(Closure::class))
             ->once();
 
-        $validatorServiceContainer = new ValidatorServicesContainer(
+        $validationContext = new ValidationContext(
             applicationStage: new ApplicationStage(),
             fieldValues: [
-                'someField' => new FieldValue(new Field(), 'some value'),
-                'anotherField' => new FieldValue(new Field(), 'another value'),
-            ],
+                  'someField' => new FieldValue(new Field(), 'some value'),
+                  'anotherField' => new FieldValue(new Field(), 'another value'),
+              ],
+        );
+
+        $validatorServiceContainer = new ValidationServiceContainer(
             applicationFileManager: $this->mockApplicationFileManager,
             applicationRepository: $this->mockApplicationRepository,
         );
@@ -164,7 +177,8 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => $mockRule,
             ],
-            servicesContainer: $validatorServiceContainer
+            validationContext: $validationContext,
+            serviceContainer: $validatorServiceContainer
         );
 
         self::assertTrue($validator->passes());
@@ -187,12 +201,15 @@ class ValidatorTest extends TestCase
             ->with('someField', 'some value', Mockery::type(Closure::class))
             ->once();
 
-        $validatorServiceContainer = new ValidatorServicesContainer(
+        $validationContext = new ValidationContext(
             applicationStage: new ApplicationStage(),
             fieldValues: [
                 'someField' => new FieldValue(new Field(), 'some value'),
                 'anotherField' => new FieldValue(new Field(), 'another value'),
             ],
+        );
+
+        $validatorServiceContainer = new ValidationServiceContainer(
             applicationFileManager: $this->mockApplicationFileManager,
             applicationRepository: $this->mockApplicationRepository,
         );
@@ -205,7 +222,8 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => $mockRule,
             ],
-            servicesContainer: $validatorServiceContainer
+            validationContext: $validationContext,
+            serviceContainer: $validatorServiceContainer
         );
 
         self::assertTrue($validator->passes());
@@ -221,12 +239,15 @@ class ValidatorTest extends TestCase
         $mockRule->shouldReceive('passes')
             ->andReturn(true);
 
-        $validatorServiceContainer = new ValidatorServicesContainer(
+        $validationContext = new ValidationContext(
             applicationStage: new ApplicationStage(),
             fieldValues: [
-                'someField' => new FieldValue(new Field(), 'some value'),
-                'anotherField' => new FieldValue(new Field(), 'another value'),
-            ],
+                                  'someField' => new FieldValue(new Field(), 'some value'),
+                                  'anotherField' => new FieldValue(new Field(), 'another value'),
+                              ],
+        );
+
+        $validatorServiceContainer = new ValidationServiceContainer(
             applicationFileManager: $this->mockApplicationFileManager,
             applicationRepository: $this->mockApplicationRepository,
         );
@@ -239,7 +260,8 @@ class ValidatorTest extends TestCase
             rules: [
                 'someField' => [$mockRule],
             ],
-            servicesContainer: $validatorServiceContainer
+            validationContext: $validationContext,
+            serviceContainer: $validatorServiceContainer
         );
 
         self::assertTrue($validator->passes());
