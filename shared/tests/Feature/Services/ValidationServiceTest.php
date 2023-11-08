@@ -11,7 +11,10 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\SurePayRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidatorFactory;
 use MinVWS\DUSi\Shared\Application\Services\ValidationService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
@@ -38,6 +41,10 @@ class ValidationServiceTest extends TestCase
         string|int|bool|float|FileList|array|null $value,
         bool $passes
     ): void {
+        if (!$passes) {
+            $this->expectException(ValidationErrorException::class);
+        }
+
         $application = Application::factory()->create();
         $applicationStage = ApplicationStage::factory()->create([
             'application_id' => $application->id,
@@ -45,14 +52,18 @@ class ValidationServiceTest extends TestCase
 
         $applicationFileManager = Mockery::mock(ApplicationFileManager::class);
         $applicationRepository = Mockery::mock(ApplicationRepository::class);
+        $bankAccountRepository = Mockery::mock(SurePayRepository::class);
 
         $factory = new ValidatorFactory(
             applicationFileManager: $applicationFileManager,
             applicationRepository: $applicationRepository,
+            translator: app('translator'),
         );
 
         $validationService = new ValidationService(
             validatorFactory: $factory,
+            bankAccountRepository: $bankAccountRepository,
+            translator: app('translator'),
         );
 
         $fieldValue = new FieldValue(
@@ -75,7 +86,8 @@ class ValidationServiceTest extends TestCase
             submit: true
         );
 
-        $this->assertEquals($passes, $validator->passes());
+        $validationResults = $validator->validate();
+        $this->assertCount(0, $validationResults);
     }
 
     public static function dataProviderTestFieldRules(): array
@@ -301,6 +313,10 @@ class ValidationServiceTest extends TestCase
         ?string $value2,
         bool $passes
     ): void {
+        if (!$passes) {
+            $this->expectException(ValidationErrorException::class);
+        }
+
         $application = Application::factory()->create();
         $applicationStage = ApplicationStage::factory()->create([
             'application_id' => $application->id,
@@ -308,14 +324,18 @@ class ValidationServiceTest extends TestCase
 
         $applicationFileManager = Mockery::mock(ApplicationFileManager::class);
         $applicationRepository = Mockery::mock(ApplicationRepository::class);
+        $bankAccountRepository = Mockery::mock(SurePayRepository::class);
 
         $factory = new ValidatorFactory(
             applicationFileManager: $applicationFileManager,
             applicationRepository: $applicationRepository,
+            translator: app('translator'),
         );
 
         $validationService = new ValidationService(
             validatorFactory: $factory,
+            bankAccountRepository: $bankAccountRepository,
+            translator: app('translator'),
         );
 
         $fieldValue1 = new FieldValue(
@@ -355,7 +375,8 @@ class ValidationServiceTest extends TestCase
             submit: true
         );
 
-        $this->assertEquals($passes, $validator->passes());
+        $validationResult = $validator->validate();
+        $this->assertCount(0, $validationResult);
     }
 
     public static function requiredConditionRuleProvider(): array

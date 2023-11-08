@@ -11,7 +11,6 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
@@ -74,13 +73,13 @@ readonly class ApplicationDataService
         ApplicationStage $applicationStage,
         object $data,
         bool $submit
-    ): void {
+    ): array {
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
 
         // Validate, throws a ValidationException on error
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
-        $validator->validate();
+        $validationResult = $validator->validate();
 
         // Remove all answers for this stage because we received new data
         $this->applicationRepository->deleteAnswersByStage($applicationStage);
@@ -93,6 +92,20 @@ readonly class ApplicationDataService
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);
         }
+
+        return $validationResult;
+    }
+
+    public function validateFieldValues(
+        ApplicationStage $applicationStage,
+        object $data,
+        bool $submit
+    ): array {
+        // Decode received form data
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
+        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
+
+        return $validator->validate();
     }
 
     /**

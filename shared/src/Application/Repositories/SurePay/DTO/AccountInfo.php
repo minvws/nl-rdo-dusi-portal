@@ -18,12 +18,12 @@ readonly class AccountInfo implements Decodable
 
     public function __construct(
         public AccountNumberValidation $accountNumberValidation,
-        public ?PaymentPreValidation $paymentPreValidation,
-        public ?AccountStatus $status,
-        public ?AccountType $accountType,
-        public ?bool $jointAccount,
-        public ?int $numberOfAccountHolders,
-        public ?string $countryCode
+        public ?PaymentPreValidation $paymentPreValidation = null,
+        public ?AccountStatus $status = null,
+        public ?AccountType $accountType = null,
+        public ?bool $jointAccount = null,
+        public ?int $numberOfAccountHolders = null,
+        public ?string $countryCode = null
     ) {
     }
 }

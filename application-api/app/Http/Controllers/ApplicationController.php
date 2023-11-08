@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Services\ApplicationService;
@@ -17,6 +18,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationValidationParams;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -57,6 +59,10 @@ class ApplicationController extends Controller
         return $this->encryptedResponse($response);
     }
 
+    /**
+     * @throws AuthenticationException
+     * @throws Exception
+     */
     public function save(
         string $reference,
         Request $request,
@@ -71,6 +77,27 @@ class ApplicationController extends Controller
             new BinaryData($request->getContent())
         );
         $response = $applicationService->saveApplication($params);
+        return $this->encryptedResponse($response);
+    }
+
+    /**
+     * @throws AuthenticationException
+     * @throws Exception
+     */
+    public function validateApplication(
+        string $reference,
+        Request $request,
+        StateService $stateService,
+        ClientPublicKeyHelper $publicKeyHelper,
+        ApplicationService $applicationService
+    ): Response {
+        $params = new EncryptedApplicationValidationParams(
+            $stateService->getEncryptedIdentity(),
+            $publicKeyHelper->getClientPublicKey(),
+            $reference,
+            new BinaryData($request->getContent())
+        );
+        $response = $applicationService->validateApplicationFields($params);
         return $this->encryptedResponse($response);
     }
 
