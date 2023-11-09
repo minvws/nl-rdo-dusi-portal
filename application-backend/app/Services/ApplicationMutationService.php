@@ -9,11 +9,9 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Application\Backend\Events\Logging\SaveApplicationEvent;
 use MinVWS\DUSi\Application\Backend\Events\Logging\StartApplicationEvent;
 use MinVWS\DUSi\Application\Backend\Events\Logging\SubmitApplicationEvent;
-use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
@@ -165,6 +163,8 @@ readonly class ApplicationMutationService
             ->withData([
                 'reference' => $application->reference,
                 'userId' => $identity->id,
+                'type' => 'applications',
+                'typeId' => 1,
             ]));
 
         [$encryptedKey] = $this->applicationEncryptionService->generateEncryptionKey();
@@ -249,10 +249,12 @@ readonly class ApplicationMutationService
                 ->withData([
                     'reference' => $application->reference,
                     'userId' => $identity->id,
+                    'type' => 'applications',
+                    'typeId' => 1,
                 ]));
-        } catch (ValidationException $e) {
-            $this->logger->debug('Data validation failed', [
-                'errors' => $e->errors(),
+        } catch (ValidationErrorException $e) {
+            $this->logger->debug('Validation returns errors', [
+                'validationResult' => $e->getValidationResults(),
             ]);
 
             return $this->responseEncryptionService->encryptCodable(
@@ -269,6 +271,8 @@ readonly class ApplicationMutationService
                 ->withData([
                     'reference' => $application->reference,
                     'userId' => $identity->id,
+                    'type' => 'applications',
+                    'typeId' => 1,
                 ]));
 
             // TODO: this should be generalized

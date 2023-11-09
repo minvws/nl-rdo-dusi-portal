@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Events\Logging;
 
-use MinVWS\Logging\Laravel\Events\Logging\GeneralLogEvent;
-
-class SaveApplicationEvent extends GeneralLogEvent
+class SaveApplicationEvent extends ApplicationBackendLogEvent
 {
     public const EVENT_CODE = '1012';
     public const EVENT_KEY = 'save_application';

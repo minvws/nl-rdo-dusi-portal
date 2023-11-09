@@ -80,9 +80,12 @@ class ApplicationController extends Controller
         $this->authorize('show', $application);
         assert($user instanceof User);
         $this->logger->log((new ViewApplicationEvent())
+            ->withActor($user)
             ->withData([
                 'applicationId' => $application->id,
                 'userId' => $user->id,
+                'type' => 'application-details',
+                'typeId' => 2,
             ]));
 
         $readOnly =
@@ -168,9 +171,12 @@ class ApplicationController extends Controller
 
             if ($submit) {
                 $this->logger->log((new SubmitAssessmentEvent())
+                    ->withActor($user)
                     ->withData([
                         'applicationId' => $application->id,
                         'userId' => $user->getAuthIdentifier(),
+                        'type' => 'application-details',
+                        'typeId' => 2,
                     ]));
             }
 
@@ -203,7 +209,7 @@ class ApplicationController extends Controller
         }
     }
 
-    public function submitAssessment(Application $application, Authenticatable $user): ApplicationSubsidyVersionResource
+    public function submitAssessment(Application $application, User $user): ApplicationSubsidyVersionResource
     {
         $this->authorize('submit', $application);
 
@@ -211,9 +217,12 @@ class ApplicationController extends Controller
             $application = $this->applicationService->submitAssessment($application);
 
             $this->logger->log((new SubmitAssessmentEvent())
+                ->withActor($user)
                 ->withData([
                     'applicationId' => $application->id,
                     'userId' => $user->getAuthIdentifier(),
+                    'type' => 'application-details',
+                    'typeId' => 2,
                 ]));
 
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);

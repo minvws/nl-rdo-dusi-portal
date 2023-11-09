@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Events\Logging;
 
-use MinVWS\Logging\Laravel\Events\Logging\GeneralLogEvent;
-
-class DeleteApplicationEvent extends GeneralLogEvent
+class DeleteApplicationEvent extends ApplicationBackendLogEvent
 {
     public const EVENT_CODE = '1014';
     public const EVENT_KEY = 'delete_application';

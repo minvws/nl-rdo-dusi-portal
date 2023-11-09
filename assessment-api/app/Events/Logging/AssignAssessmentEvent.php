@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Events\Logging;
 
-use MinVWS\Logging\Laravel\Events\Logging\GeneralLogEvent;
-
-class AssignAssessmentEvent extends GeneralLogEvent
+class AssignAssessmentEvent extends AssessmentApiLogEvent
 {
     public const EVENT_CODE = '2014';
     public const EVENT_KEY = 'assign_assessment';

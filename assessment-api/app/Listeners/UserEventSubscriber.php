@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use MinVWS\DUSi\Assessment\API\Events\Logging\LoginEvent;
 use MinVWS\DUSi\Assessment\API\Events\Logging\LogoutEvent;
+use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\Logging\Laravel\LogService;
 
 readonly class UserEventSubscriber
@@ -31,17 +32,29 @@ readonly class UserEventSubscriber
 
     public function handleUserLogin(Login $event): void
     {
+        $user = $event->user;
+        assert($user instanceof User);
+
         $this->logger->log((new LoginEvent())
+            ->withActor($user)
             ->withData([
-                'userId' => $event->user->getAuthIdentifier(),
+                'userId' => $user->getAuthIdentifier(),
+                'type' => 'user',
+                'typeId' => 4,
             ]));
     }
 
     public function handleUserLogout(Logout $event): void
     {
+        $user = $event->user;
+        assert($user instanceof User);
+
         $this->logger->log((new LogoutEvent())
-           ->withData([
-              'userId' => $event->user->getAuthIdentifier(),
-          ]));
+            ->withActor($user)
+            ->withData([
+                'userId' => $event->user->getAuthIdentifier(),
+                'type' => 'user',
+                'typeId' => 4,
+            ]));
     }
 }

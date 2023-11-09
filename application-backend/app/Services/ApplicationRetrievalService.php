@@ -10,7 +10,6 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use MinVWS\DUSi\Application\Backend\Events\Logging\ListApplicationsEvent;
 use MinVWS\DUSi\Application\Backend\Events\Logging\ViewApplicationEvent;
-use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
@@ -79,6 +78,8 @@ readonly class ApplicationRetrievalService
         $this->logService->log((new ListApplicationsEvent())
             ->withData([
                 'userId' => $identity->id,
+                'type' => 'applications',
+                'typeId' => 1,
             ]));
 
         return $this->responseEncryptionService->encryptCodable(
@@ -120,6 +121,8 @@ readonly class ApplicationRetrievalService
             ->withData([
                 'reference' => $params->reference,
                 'userId' => $identity->id,
+                'type' => 'applications',
+                'typeId' => 1,
             ]));
 
         return $this->responseEncryptionService->encryptCodable(

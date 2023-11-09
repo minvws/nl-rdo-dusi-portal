@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Events\Logging;
 
-use MinVWS\Logging\Laravel\Events\Logging\GeneralLogEvent;
-
-class ViewUserEvent extends GeneralLogEvent
+class ViewUserEvent extends UserAdminLogEvent
 {
     public const EVENT_CODE = '2042';
     public const EVENT_KEY = 'view_user';

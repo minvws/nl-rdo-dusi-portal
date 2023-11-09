@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\User\Admin\API\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 use MinVWS\DUSi\User\Admin\API\Components\FlashNotification;
@@ -76,8 +77,11 @@ class UserController extends Controller
         );
 
         $this->logger->log((new CreateUserEvent())
-           ->withData([
+            ->withActor($request->user())
+            ->withData([
                 'userId' => $user->id,
+                'type' => 'user',
+                'typeId' => 4,
             ]));
 
         return redirect()
@@ -109,11 +113,14 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user): View
+    public function show(Request $request, User $user): View
     {
         $this->logger->log((new ViewUserEvent())
-            ->withData([
+           ->withActor($request->user())
+           ->withData([
                 'userId' => $user->id,
+                'type' => 'user',
+                'typeId' => 4,
             ]));
 
         return view('users.show', [
@@ -130,8 +137,11 @@ class UserController extends Controller
         $user->update($request->validated());
 
         $this->logger->log((new UpdateUserEvent())
+            ->withActor($request->user())
             ->withData([
                 'userId' => $user->id,
+                'type' => 'user',
+                'typeId' => 4,
             ]));
 
         return redirect()
@@ -149,8 +159,11 @@ class UserController extends Controller
         $user->update($updateActiveRequest->validated());
 
         $this->logger->log((new UpdateUserEvent())
+            ->withActor($updateActiveRequest->user())
             ->withData([
                 'userId' => $user->id,
+                'type' => 'user',
+                'typeId' => 4,
             ]));
 
         return redirect()

@@ -25,11 +25,14 @@ class UserController extends Controller
 
     public function logout(): JsonResponse
     {
-        $user = Auth::user();
+        //TODO: re-instate this when we have something other then bsn
+//        $user = Auth::user();
 
         $this->logger->log((new LogoutEvent())
             ->withData([
-                'userId' => $user?->getAuthIdentifier(),
+//                'userId' => $user?->getAuthIdentifier(), //TODO: re-instate this when we have something other then bsn
+                'type' => 'user',
+                'typeId' => 4,
             ]));
 
         Auth::logout();

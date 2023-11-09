@@ -49,8 +49,11 @@ class UserRolesController extends Controller
         );
 
         $this->logger->log((new AddUserAuthorizationEvent())
+            ->withActor($request->user())
             ->withData([
                 'userId' => $user->id,
+                'type' => 'user',
+                'typeId' => 4,
             ]));
 
         return redirect()
@@ -72,8 +75,11 @@ class UserRolesController extends Controller
         );
 
         $this->logger->log((new DeleteUserAuthorizationEvent())
+            ->withActor($request->user())
             ->withData([
                 'userId' => $user->id,
+                'type' => 'user',
+                'typeId' => 4,
             ]));
 
         return redirect()

@@ -39,10 +39,13 @@ class ApplicationAssessorController extends Controller
 
             $this->logger->log(
                 (new ClaimAssessmentEvent())
+                    ->withActor($user)
                     ->withData(
                         [
                             'applicationId' => $application->id,
                             'userId' => $user->getAuthIdentifier(),
+                            'type' => 'application',
+                            'typeId' => 1,
                         ]
                     )
             );

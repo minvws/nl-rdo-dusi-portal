@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Events\Logging;
 
-use MinVWS\Logging\Laravel\Events\Logging\GeneralLogEvent;
-
-class PasswordResetEvent extends GeneralLogEvent
+class PasswordResetEvent extends AssessmentApiLogEvent
 {
     public const EVENT_CODE = '2004';
     public const EVENT_KEY = 'reset_password';

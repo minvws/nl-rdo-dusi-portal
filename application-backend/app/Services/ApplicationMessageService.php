@@ -11,7 +11,6 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 use Exception;
 use MinVWS\DUSi\Application\Backend\Events\Logging\ListMessagesEvent;
 use MinVWS\DUSi\Application\Backend\Events\Logging\ViewMessageEvent;
-use MinVWS\DUSi\Application\Backend\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
@@ -81,6 +80,8 @@ readonly class ApplicationMessageService
         $this->logService->log((new ListMessagesEvent())
             ->withData([
                 'userId' => $identity->id,
+                'type' => 'messages',
+                'typeId' => 3,
             ]));
 
         return $this->responseEncryptionService->encryptCodable(
@@ -139,6 +140,8 @@ readonly class ApplicationMessageService
             ->withData([
                 'messageId' => $message->id,
                 'userId' => $identity->id,
+                'type' => 'messages',
+                'typeId' => 3,
             ]));
 
 
