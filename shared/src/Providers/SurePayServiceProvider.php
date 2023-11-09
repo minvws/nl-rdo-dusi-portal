@@ -7,8 +7,10 @@ namespace MinVWS\DUSi\Shared\Providers;
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Shared\Application\Console\Commands\CheckSurePay;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\SurePayRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
-use MinVWS\DUSi\Shared\Application\Services\SurePayService;
 use RuntimeException;
 
 class SurePayServiceProvider extends ServiceProvider
@@ -31,9 +33,13 @@ class SurePayServiceProvider extends ServiceProvider
             'surepay_api'
         );
 
-        $this->app->when(SurePayService::class)
-            ->needs(SurePayClient::class)
-            ->give(fn () => $this->buildSurePayClient());
+
+        if (config('surepay_api.enabled')) {
+            $this->app->singleton(SurePayClient::class, fn() => $this->buildSurePayClient());
+            $this->app->bind(BankAccountRepository::class, SurePayRepository::class);
+        } else {
+            $this->app->bind(BankAccountRepository::class, MockedBankAccountRepository::class);
+        }
     }
 
     private function buildSurePayClient(): ?SurePayClient

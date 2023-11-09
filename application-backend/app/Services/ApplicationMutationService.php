@@ -19,21 +19,27 @@ use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
+use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Jobs\CheckSurePayJob;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
+use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationSaveParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\Logging\Laravel\LogService;
 use Psr\Log\LoggerInterface;
@@ -71,6 +77,7 @@ readonly class ApplicationMutationService
     private function applicationResponse(
         EncryptedResponseStatus $status,
         Application $application,
+        ?ValidationResultDTO $validationResult,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
         $stage = $this->applicationRepository->getApplicantApplicationStage($application, true);
@@ -78,7 +85,8 @@ readonly class ApplicationMutationService
 
         $dto = $this->applicationMapper->mapApplicationToApplicationDTO(
             $application,
-            $data
+            $data,
+            $validationResult
         );
 
         return $this->responseEncryptionService->encryptCodable($status, $dto, $publicKey);
@@ -122,7 +130,7 @@ readonly class ApplicationMutationService
         }
 
         if ($application?->is_editable_for_applicant) {
-            return $this->applicationResponse(EncryptedResponseStatus::OK, $application, $params->publicKey);
+            return $this->applicationResponse(EncryptedResponseStatus::OK, $application, null, $params->publicKey);
         }
 
         if ($application?->status?->isNewApplicationAllowed()) {
@@ -167,7 +175,12 @@ readonly class ApplicationMutationService
         $appStage->is_current = true;
         $this->applicationRepository->saveApplicationStage($appStage);
 
-        return $this->applicationResponse(EncryptedResponseStatus::CREATED, $application, $params->publicKey);
+        return $this->applicationResponse(
+            EncryptedResponseStatus::CREATED,
+            $application,
+            null,
+            $params->publicKey
+        );
     }
 
     public function findOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
@@ -226,7 +239,11 @@ readonly class ApplicationMutationService
         }
 
         try {
-            $this->applicationDataService->saveApplicationStageData($applicationStage, $body->data, $body->submit);
+            $validationResult = $this->applicationDataService->saveApplicationStageData(
+                $applicationStage,
+                $body->data,
+                $body->submit
+            );
 
             $this->logService->log((new SaveApplicationEvent())
                 ->withData([
@@ -238,10 +255,10 @@ readonly class ApplicationMutationService
                 'errors' => $e->errors(),
             ]);
 
-            throw new EncryptedResponseException(
-                EncryptedResponseStatus::BAD_REQUEST,
-                'invalid_data',
-                previous: $e
+            return $this->responseEncryptionService->encryptCodable(
+                EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
+                new ValidationResultDTO($e->getValidationResults()),
+                $params->publicKey
             );
         }
 
@@ -261,6 +278,7 @@ readonly class ApplicationMutationService
         return $this->applicationResponse(
             EncryptedResponseStatus::OK,
             $applicationStage->application,
+            new ValidationResultDTO($validationResult),
             $params->publicKey
         );
     }
@@ -278,5 +296,57 @@ readonly class ApplicationMutationService
                 $params->publicKey
             );
         }
+    }
+
+    public function validateApplication(EncryptedApplicationValidationParams $params): EncryptedResponse
+    {
+        try {
+            $identity = $this->loadIdentity($params->identity);
+            $application = $this->loadApplication($identity, $params->applicationReference);
+            $applicationStage = $application->currentApplicationStage;
+            if ($applicationStage === null) {
+                throw new EncryptedResponseException(
+                    EncryptedResponseStatus::FORBIDDEN,
+                    'application_readonly'
+                );
+            }
+            $body = $this->frontendDecryptionService->decryptCodable($params->data, FieldValidationParams::class);
+
+            $validationResult = [];
+            try {
+                $validationResult = $this->applicationDataService->validateFieldValues(
+                    $applicationStage,
+                    $body->data,
+                    false
+                );
+            } catch (ValidationErrorException $e) {
+                return $this->responseEncryptionService->encryptCodable(
+                    EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
+                    $this->createValidationResultDTO($e->getValidationResults()),
+                    $params->publicKey
+                );
+            }
+
+            return $this->responseEncryptionService->encryptCodable(
+                EncryptedResponseStatus::OK,
+                $this->createValidationResultDTO($validationResult),
+                $params->publicKey
+            );
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::VALIDATE_APPLICATION,
+                $params->publicKey
+            );
+        }
+    }
+
+    public function createValidationResultDTO(array $validationResults): ValidationResultDTO
+    {
+        return new ValidationResultDTO(
+            validationResult: $validationResults,
+        );
     }
 }

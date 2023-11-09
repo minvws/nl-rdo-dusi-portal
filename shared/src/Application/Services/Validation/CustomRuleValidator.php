@@ -6,29 +6,39 @@ namespace MinVWS\DUSi\Shared\Application\Services\Validation;
 
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\InvokableValidationRule;
 use Illuminate\Validation\Validator as BaseValidator;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ValidationResultRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ImplicitValidationRule;
 
-class Validator extends BaseValidator
+class CustomRuleValidator extends BaseValidator
 {
     /**
-     * @param array<int|string, FieldValue> $fieldValues
+     * @var Collection<string, array>
      */
+    public Collection $validationResults;
+
     public function __construct(
         Translator $translator,
         array $data,
         array $rules,
-        private readonly ApplicationStage $applicationStage,
-        private readonly array $fieldValues,
-        private readonly ApplicationFileManager $applicationFileManager,
-        private readonly ApplicationRepository $applicationRepository
+        private readonly ValidationContext $validationContext,
+        private readonly ValidationServiceContainer $serviceContainer
     ) {
         parent::__construct($translator, $data, $rules);
+
+        $this->validationResults = collect();
+    }
+
+    private function collectRuleValidationResults(mixed $invokableRule, string $attribute): void
+    {
+        if ($invokableRule instanceof ValidationResultRule) {
+            $ruleValidationResults = $invokableRule->getValidationResults();
+            if (!$ruleValidationResults->isEmpty()) {
+                $this->validationResults->put($attribute, $ruleValidationResults->toArray());
+            }
+        }
     }
 
     protected function isImplicit($rule)
@@ -60,22 +70,25 @@ class Validator extends BaseValidator
         }
 
         $invokableRule = $rule->invokable();
+
         if ($invokableRule instanceof FieldValuesAwareRule) {
-            $invokableRule->setFieldValues($this->fieldValues);
+            $invokableRule->setFieldValues($this->validationContext->getFieldValues());
         }
 
         if ($invokableRule instanceof ApplicationStageAwareRule) {
-            $invokableRule->setApplicationStage($this->applicationStage);
+            $invokableRule->setApplicationStage($this->validationContext->getApplicationStage());
         }
 
         if ($invokableRule instanceof ApplicationFileManagerAwareRule) {
-            $invokableRule->setApplicationFileManager($this->applicationFileManager);
+            $invokableRule->setApplicationFileManager($this->serviceContainer->getApplicationFileManager());
         }
 
         if ($invokableRule instanceof ApplicationRepositoryAwareRule) {
-            $invokableRule->setApplicationRepository($this->applicationRepository);
+            $invokableRule->setApplicationRepository($this->serviceContainer->getApplicationRepository());
         }
 
         parent::validateUsingCustomRule($attribute, $value, $rule);
+
+        $this->collectRuleValidationResults($invokableRule, $attribute);
     }
 }

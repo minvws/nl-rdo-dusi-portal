@@ -159,7 +159,8 @@
                             "scope": "#/properties/bankAccountHolder",
                             "label": "Naam rekeninghouder",
                             "options": {
-                                "placeholder": ""
+                                "placeholder": "",
+                                "validation": ["onBlur"]
                             }
                         },
                         {
@@ -168,7 +169,8 @@
                             "label": "IBAN",
                             "options": {
                                 "placeholder": "",
-                                "tip": "Staat u onder bewind? Vermeld dan het IBAN van uw beheerrekening."
+                                "tip": "Staat u onder bewind? Vermeld dan het IBAN van uw beheerrekening.",
+                                "validation": ["onValid"]
                             }
                         }
                     ]

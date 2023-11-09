@@ -30,5 +30,6 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="DISABLE_2FA" value="false"/>
+        <env name="SUREPAY_ENABLED" value="false"/>
     </php>
 </phpunit>

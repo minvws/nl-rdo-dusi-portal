@@ -35,7 +35,6 @@ readonly class FormDecodingService
             FieldType::Multiselect => 'array',
             default => 'string'
         };
-
         $value = $container->decodeIfPresent($type);
         return new FieldValue($field, $value);
     }
@@ -50,6 +49,7 @@ readonly class FormDecodingService
 
         $values = [];
         $fields = $this->subsidyRepository->getFields($subsidyStage);
+
         foreach ($fields as $field) {
             $fieldContainer = $container->nestedContainer($field->code);
             $values[$field->code] = $this->decodeFieldValue($field, $fieldContainer);
