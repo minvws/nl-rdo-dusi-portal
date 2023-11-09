@@ -9,8 +9,10 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
@@ -35,48 +37,45 @@ use Ramsey\Uuid\Uuid;
  */
 class ApplicationRepository
 {
-    private function filterForUser(Builder $query, User $user): void
+    private function getFilteredQueryForUser(User $user): QueryBuilder
     {
-        $clauses = [];
-        $bindings = [ApplicationStatus::RequestForChanges->value];
+        return DB::table('application_stages', 's')
+            ->join('subsidy_stages as ss', function (JoinClause $join) {
+                $join->on('ss.id', '=', 's.subsidy_stage_id');
+            })
+            ->join('subsidy_versions as sv', function (JoinClause $join) {
+                $join->on('sv.id', '=', 'ss.subsidy_version_id');
+            })
+            ->where('s.application_id', '=', DB::raw('applications.id'))
+            ->where(function (QueryBuilder $query) use ($user) {
+                $query->where(function (QueryBuilder $query) {
+                    $query->where('ss.stage', '=', 1)
+                        ->where('s.is_submitted', '=', false)
+                        ->where('applications.status', '=', ApplicationStatus::RequestForChanges->value);
+                });
 
-        foreach ($user->roles as $role) {
-            if ($role->view_all_stages && $role->pivot->subsidy_id === null) {
-                $clauses[] = '(1 = 1)';
-            } elseif ($role->view_all_stages) {
-                $clauses[] = '(sv.subsidy_id = ?)';
-                $bindings[] = $role->pivot->subsidy_id;
-            } else {
-                $clause = '((s.assessor_user_id IS NULL OR s.assessor_user_id = ?) AND ss.assessor_user_role = ?)';
-                $bindings[] = $user->id;
-                $bindings[] = $role->name->value;
-
-                if ($role->pivot->subsidy_id !== null) {
-                    $clause = '(' . $clause . ' AND sv.subsidy_id = ?)';
-                    $bindings[] = $role->pivot->subsidy_id;
+                foreach ($user->roles as $role) {
+                    $query->orWhere(function (QueryBuilder $query) use ($role, $user) {
+                        if ($role->view_all_stages && $role->pivot->subsidy_id === null) {
+                            $query->whereRaw('1 = 1');
+                        } elseif ($role->view_all_stages) {
+                            $query->where('sv.subsidy_id', '=', $role->pivot->subsidy_id);
+                        } else {
+                            $query->where(function (QueryBuilder $query) use ($role, $user) {
+                                $query->where(function (QueryBuilder $query) use ($user) {
+                                    $query
+                                        ->whereNull('s.assessor_user_id')
+                                        ->orWhere('s.assessor_user_id', '=', $user->id);
+                                });
+                                $query->where('ss.assessor_user_role', '=', $role->name->value);
+                                if ($role->pivot->subsidy_id !== null) {
+                                    $query->where('sv.subsidy_id', '=', $role->pivot->subsidy_id);
+                                }
+                            });
+                        }
+                    });
                 }
-
-                $clauses[] = $clause;
-            }
-        }
-
-        $sql = "
-            EXISTS (
-                SELECT 1
-                FROM application_stages s
-                JOIN subsidy_stages ss ON (ss.id = s.subsidy_stage_id)
-                JOIN subsidy_versions sv ON (sv.id = ss.subsidy_version_id)
-                WHERE s.application_id = applications.id
-                AND  (
-                    NOT (ss.stage = 1 AND s.is_submitted = false AND applications.status != ?)
-                    OR (
-                        (" . implode(") OR (", $clauses) . ")
-                    )
-                )
-            )
-        ";
-
-        $query->whereRaw($sql, $bindings);
+            });
     }
 
     public function filterApplications(
@@ -89,11 +88,16 @@ class ApplicationRepository
         }
 
         $query = Application::query();
-        $this->filterForUser($query, $user);
+
+        $filteredQuery = $this->getFilteredQueryForUser($user);
 
         if ($onlyMyApplications) {
             $this->selectAssignedAndHandledApplications($query, $user);
+        } else {
+            $filteredQuery->where('s.is_current', true);
         }
+
+        $query->whereExists($filteredQuery);
 
         $this->applyFilters($query, $filter);
 
