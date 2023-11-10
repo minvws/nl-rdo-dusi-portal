@@ -21,7 +21,8 @@ class Application implements Codable
         public readonly ApplicationStatus $status,
         public readonly bool $isEditable,
         public readonly Form $form,
-        public readonly ?object $data
+        public readonly ?object $data,
+        public readonly ?object $validationResult
     ) {
     }
 }

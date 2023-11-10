@@ -6,12 +6,11 @@ namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
-use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
@@ -20,6 +19,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
+use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -33,6 +33,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -41,7 +42,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use Queue;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -50,7 +50,6 @@ use Ramsey\Uuid\Uuid;
  */
 class ApplicationMutationServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
     use MocksEncryptionAndHashing;
 
@@ -71,7 +70,6 @@ class ApplicationMutationServiceTest extends TestCase
 
         Queue::fake();
 
-        $this->loadCustomMigrations();
         $this->withoutFrontendEncryption();
 
         $this->subsidy = Subsidy::factory()->create();
@@ -297,6 +295,7 @@ class ApplicationMutationServiceTest extends TestCase
 
     /**
      * @dataProvider saveApplicationDataProvider
+     * @group validation
      */
     public function testSaveApplication(bool $submit, ApplicationStatus $expectedStatus): void
     {
@@ -347,6 +346,7 @@ class ApplicationMutationServiceTest extends TestCase
 
     /**
      * @dataProvider saveApplicationOnlyAllowedForEditableStatusesProvider
+     * @group validation
      */
     public function testSaveApplicationOnlyAllowedForEditableStatuses(
         ApplicationStatus $status,
@@ -546,11 +546,13 @@ class ApplicationMutationServiceTest extends TestCase
 
         $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
-        $this->assertEquals(EncryptedResponseStatus::BAD_REQUEST, $encryptedResponse->status);
-        $error =
+        $this->assertEquals(EncryptedResponseStatus::UNPROCESSABLE_ENTITY, $encryptedResponse->status);
+        /** @var ValidationResultDTO $validationResultDTO */
+        $validationResultDTO =
             $this->responseEncryptionService
-                ->decryptCodable($encryptedResponse, Error::class, $this->keyPair);
-        $this->assertNotNull($error);
-        $this->assertEquals('invalid_data', $error->code);
+                ->decryptCodable($encryptedResponse, ValidationResultDTO::class, $this->keyPair);
+        $this->assertNotNull($validationResultDTO);
+        $this->assertEquals('error', $validationResultDTO->validationResult['file'][0]->type);
+        $this->assertEquals('File not found!', $validationResultDTO->validationResult['file'][0]->message);
     }
 }

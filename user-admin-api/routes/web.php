@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('users.update-active');
 
     Route::resource('users', UserController::class)
-        ->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
+        ->only(['index', 'create', 'store', 'show', 'update']);
     Route::resource('users.roles', UserRolesController::class)
         ->only(['index', 'store', 'destroy']);
 });

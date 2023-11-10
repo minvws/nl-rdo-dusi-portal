@@ -1,0 +1,68 @@
+name: Lint, combine and import dusi database
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - shared/database/sql/dusi_user_db/**
+      - shared/database/sql/dusi_app_db/**
+  pull_request:
+    branches: [ main ]
+    paths:
+      - shared/database/sql/dusi_user_db/**
+      - shared/database/sql/dusi_app_db/**
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dusi_database:
+    runs-on: ubuntu-20.04
+
+    strategy:
+        fail-fast: false
+        matrix:
+          database: [ "dusi_user_db", "dusi_app_db" ]
+
+    services:
+      postgres:
+        image: postgres:12.5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ${{ matrix.database }}
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install libecpg-dev postgresql-client
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pgsanity
+      - name: Run tests SQL scripts
+        run: find ./shared/database/sql/${{ matrix.database }}/v* -type f -name '*.sql' | sort -V | xargs -I % sh -c "echo %; sed -e 's/\\\\c */-- \\\\c /g' % | pgsanity"
+      - name: Combine all SQL
+        run: find ./shared/database/sql/${{ matrix.database }}/v* -type f -name '*.sql' | sort -V | xargs cat > database.merged.sql
+      - name: Import database.merged.sql
+        run: PGPASSWORD=postgres psql -U postgres -d ${{ matrix.database }} -h 127.0.0.1 < database.merged.sql 2>&1 | tee ${{ matrix.database }}.log
+      - name: Show and count ERRORs
+        run: |
+          if [ `grep -c ERROR ${{ matrix.database }}.log` -ne 0 ]; then grep ERROR ${{ matrix.database }}.log; fi
+          exit `grep -c ERROR ${{ matrix.database }}.log`
+      - name: Upload manual documentation (pdf)
+        uses: actions/upload-artifact@v3
+        if: success() || failure()
+        with:
+          name: logs
+          path: ${{ matrix.database }}.log

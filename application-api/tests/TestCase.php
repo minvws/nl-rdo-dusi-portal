@@ -4,21 +4,31 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Tests;
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\Artisan;
+use MinVWS\DUSi\Shared\Application\Models\Connection as ApplicationConnection;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    use DatabaseMigrations;
+    use DatabaseTransactions;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->loadCustomMigrations();
-    }
+    protected array $connectionsToTransact = [
+        ApplicationConnection::APPLICATION,
+    ];
 
-    protected function loadCustomMigrations(): void
+    public function runDatabaseMigrations(): void
     {
-        Artisan::call('migrate:fresh', ['--path' => 'vendor/minvws/dusi-shared/database/migrations']);
+        if (! RefreshDatabaseState::$migrated) {
+            $this->artisan('migrate:fresh', [
+                '--database' => ApplicationConnection::APPLICATION,
+                '--path' => 'vendor/minvws/dusi-shared/database/migrations',
+            ]);
+
+            RefreshDatabaseState::$migrated = true;
+        }
     }
 }

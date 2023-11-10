@@ -13,7 +13,6 @@
         "minvws/dusi-shared": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.6",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "predis/predis": "^2.2",
         "ext-openssl": "*"
     },
     "require-dev": {

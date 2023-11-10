@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
-use MinVWS\DUSi\Application\Backend\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -17,6 +15,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
+use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
@@ -41,7 +40,6 @@ use Ramsey\Uuid\Uuid;
  */
 class ApplicationFileServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
     use MocksEncryptionAndHashing;
 
@@ -60,7 +58,6 @@ class ApplicationFileServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadCustomMigrations();
         $this->withoutFrontendEncryption();
 
         $this->subsidy = Subsidy::factory()->create();

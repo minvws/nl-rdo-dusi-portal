@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\API\Tests\Feature\Http\Controllers;
 
 use MinVWS\DUSi\Application\API\Services\CacheService;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -13,7 +12,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\DUSi\Application\API\Tests\TestCase;
-use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
 /**
  * @group subsidy
@@ -21,10 +19,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
  */
 class SubsidyControllerTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
-
-    protected array $connectionsToTransact = [Connection::APPLICATION];
 
     private Subsidy $subsidy1;
     private Subsidy $subsidy2;
@@ -32,7 +27,6 @@ class SubsidyControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadCustomMigrations();
 
         $this->subsidy1 = Subsidy::factory()->create(['title' => 'B']);
         $this->subsidyVersion1 = SubsidyVersion::factory()->create([

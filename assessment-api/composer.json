@@ -12,8 +12,7 @@
         "laravel/framework": "^10.17",
         "laravel/sanctum": "^3.3",
         "minvws/codable": "dev-main as 1.0.x-dev",
-        "minvws/dusi-shared": "@dev",
-        "predis/predis": "^2.2"
+        "minvws/dusi-shared": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
