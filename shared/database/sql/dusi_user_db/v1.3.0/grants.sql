@@ -58,7 +58,7 @@ ALTER TABLE public.roles OWNER TO dusi_dba;
 ALTER TABLE public.users OWNER TO dusi_dba;
 ALTER TABLE public.deploy_releases OWNER TO dusi_dba;
 
-GRANT SELECT ON TABLE public.deploy_releases TO "user-admin-dusi";
+GRANT SELECT ON TABLE public.deploy_releases TO "user_admin_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "assessment_web_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "backend_dusi";
 
