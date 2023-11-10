@@ -1,8 +1,9 @@
 
 -- Handle with care, execute manually:
--- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM user_admin_dusi;
--- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM assessment_web_dusi;
--- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM backend_dusi;
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "dpw-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "user-admin-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "assessment-web-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "backend-dusi";
 
 -- Cleanup alternate from with dashes
 -- DROP ROLE IF EXISTS "dpw-dusi";
