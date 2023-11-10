@@ -11,6 +11,47 @@
 -- DROP ROLE IF EXISTS "user-admin-dusi";
 -- DROP ROLE IF EXISTS "assessment-web-dusi";
 
+do $$
+<<first_block>>
+declare
+  ln_count integer := 0;
+begin
+   -- Check if rol exists before creating.
+   select count(*)
+   into ln_count
+   from pg_roles
+   where rolname = 'dpw_dusi';
+
+   if ln_count = 0 then
+     CREATE role dpw_dusi;
+   end if;
+   select count(*)
+   into ln_count
+   from pg_roles
+   where rolname = 'backend_dusi';
+
+   if ln_count = 0 then
+     CREATE role backend_dusi;
+   end if;
+   select count(*)
+   into ln_count
+   from pg_roles
+   where rolname = 'user_admin_dusi';
+
+   if ln_count = 0 then
+     CREATE role user_admin_dusi;
+   end if;
+   select count(*)
+   into ln_count
+   from pg_roles
+   where rolname = 'assessment_web_dusi';
+
+   if ln_count = 0 then
+     CREATE role assessment_web_dusi;
+   end if;
+end first_block $$;
+
+
 GRANT ALL ON TABLE public.deploy_releases TO "user_admin_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "dpw_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "assessment_web_dusi";
