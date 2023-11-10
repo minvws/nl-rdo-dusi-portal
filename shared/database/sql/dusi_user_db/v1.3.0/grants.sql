@@ -22,7 +22,7 @@ begin
    where rolname = 'dpw_dusi';
 
    if ln_count = 0 then
-     CREATE role viep_dba ;
+     CREATE role dpw_dusi;
    end if;
    select count(*)
    into ln_count
@@ -30,7 +30,7 @@ begin
    where rolname = 'backend_dusi';
 
    if ln_count = 0 then
-     CREATE role viep_dba ;
+     CREATE role backend_dusi;
    end if;
    select count(*)
    into ln_count
@@ -38,7 +38,7 @@ begin
    where rolname = 'user_admin_dusi';
 
    if ln_count = 0 then
-     CREATE role viep_dba ;
+     CREATE role user_admin_dusi;
    end if;
    select count(*)
    into ln_count
@@ -46,7 +46,7 @@ begin
    where rolname = 'assessment_web_dusi';
 
    if ln_count = 0 then
-     CREATE role viep_dba ;
+     CREATE role assessment_web_dusi;
    end if;
 end first_block $$;
 
