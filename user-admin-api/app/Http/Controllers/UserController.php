@@ -76,8 +76,11 @@ class UserController extends Controller
             organisationId: $request->validated('organisation_id'),
         );
 
+        $requestUser = $request->user();
+        assert($requestUser instanceof User);
+
         $this->logger->log((new CreateUserEvent())
-            ->withActor($request->user())
+            ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
                 'type' => 'user',
