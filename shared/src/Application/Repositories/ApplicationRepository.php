@@ -48,26 +48,31 @@ class ApplicationRepository
             })
             ->where('s.application_id', '=', DB::raw('applications.id'))
             ->where(function (QueryBuilder $query) use ($user) {
-                $query->where(function (QueryBuilder $query) {
-                    $query->where('ss.stage', '=', 1)
-                        ->where('s.is_submitted', '=', false)
-                        ->where('applications.status', '=', ApplicationStatus::RequestForChanges->value);
-                });
-
                 foreach ($user->roles as $role) {
                     $query->orWhere(function (QueryBuilder $query) use ($role, $user) {
-                        if ($role->view_all_stages && $role->pivot->subsidy_id === null) {
-                            $query->whereRaw('1 = 1');
-                        } elseif ($role->view_all_stages) {
-                            $query->where('sv.subsidy_id', '=', $role->pivot->subsidy_id);
+                        $query->where('applications.status', '<>', ApplicationStatus::Draft->value);
+
+                        // When you are implementationCoordinator, and you have the right to view all subsidies
+                        if ($role->view_all_stages) {
+                            // When you are implementationCoordinator, and you only have access to a specific subsidy
+                            if ($role->pivot->subsidy_id !== null) {
+                                $query->where('sv.subsidy_id', '=', $role->pivot->subsidy_id);
+                            }
                         } else {
+                            // When you have another role
                             $query->where(function (QueryBuilder $query) use ($role, $user) {
+                                // Filter on the stage where there isn't an assessor yet OR where the given user did the
+                                // assessment
                                 $query->where(function (QueryBuilder $query) use ($user) {
                                     $query
                                         ->whereNull('s.assessor_user_id')
                                         ->orWhere('s.assessor_user_id', '=', $user->id);
                                 });
+
+                                // Check if the user role matches the required subsidy stage role
                                 $query->where('ss.assessor_user_role', '=', $role->name->value);
+
+                                // Check if the role is linked to a specific subsidy
                                 if ($role->pivot->subsidy_id !== null) {
                                     $query->where('sv.subsidy_id', '=', $role->pivot->subsidy_id);
                                 }
@@ -92,9 +97,12 @@ class ApplicationRepository
         $filteredQuery = $this->getFilteredQueryForUser($user);
 
         if ($onlyMyApplications) {
-            $this->selectAssignedAndHandledApplications($query, $user);
+            $filteredQuery->where('s.assessor_user_id', '=', $user->id);
         } else {
-            $filteredQuery->where('s.is_current', true);
+            $filteredQuery->where(function (QueryBuilder $query) use ($user) {
+                $query->where('s.is_current', true);
+                $query->orWhere('s.assessor_user_id', '=', $user->id);
+            });
         }
 
         $query->whereExists($filteredQuery);
@@ -387,14 +395,5 @@ class ApplicationRepository
         $answer = $applicationStage->answers()->firstWhere('field_id', $field->id);
 
         return $answer ?? null;
-    }
-
-    public function selectAssignedAndHandledApplications(Builder $query, User $user): void
-    {
-        $query->whereRelation(
-            'applicationStages',
-            'assessor_user_id',
-            $user->id
-        );
     }
 }
