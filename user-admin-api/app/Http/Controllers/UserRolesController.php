@@ -48,8 +48,11 @@ class UserRolesController extends Controller
             subsidyId: $request->validated('subsidy_id'),
         );
 
+        $requestUser = $request->user();
+        assert($requestUser instanceof User);
+
         $this->logger->log((new AddUserAuthorizationEvent())
-            ->withActor($request->user())
+            ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
                 'type' => 'user',
@@ -74,8 +77,11 @@ class UserRolesController extends Controller
             subsidyId: $request->validated('subsidy_id'),
         );
 
+        $requestUser = $request->user();
+        assert($requestUser instanceof User);
+
         $this->logger->log((new DeleteUserAuthorizationEvent())
-            ->withActor($request->user())
+            ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
                 'type' => 'user',

@@ -118,8 +118,11 @@ class UserController extends Controller
      */
     public function show(Request $request, User $user): View
     {
+        $requestUser = $request->user();
+        assert($requestUser instanceof User);
+
         $this->logger->log((new ViewUserEvent())
-           ->withActor($request->user())
+           ->withActor($requestUser)
            ->withData([
                 'userId' => $user->id,
                 'type' => 'user',
@@ -139,8 +142,11 @@ class UserController extends Controller
     {
         $user->update($request->validated());
 
+        $requestUser = $request->user();
+        assert($requestUser instanceof User);
+
         $this->logger->log((new UpdateUserEvent())
-            ->withActor($request->user())
+            ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
                 'type' => 'user',
@@ -161,8 +167,11 @@ class UserController extends Controller
 
         $user->update($updateActiveRequest->validated());
 
+        $requestUser = $updateActiveRequest->user();
+        assert($requestUser instanceof User);
+
         $this->logger->log((new UpdateUserEvent())
-            ->withActor($updateActiveRequest->user())
+            ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
                 'type' => 'user',
