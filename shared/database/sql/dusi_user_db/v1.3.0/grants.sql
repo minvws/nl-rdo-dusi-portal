@@ -9,11 +9,46 @@
 -- DROP ROLE IF EXISTS "backend-dusi";
 -- DROP ROLE IF EXISTS "user-admin-dusi";
 -- DROP ROLE IF EXISTS "assessment-web-dusi";
--- 
--- CREATE ROLE "dpw_dusi" WITH LOGIN;
--- CREATE ROLE "backend_dusi" WITH LOGIN;
--- CREATE ROLE "user_admin_dusi" WITH LOGIN;
--- CREATE ROLE "assessment_web_dusi" WITH LOGIN;
+
+do $$
+<<first_block>>
+declare
+  ln_count integer := 0;
+begin
+   -- Check if rol exists before creating.
+   select count(*)
+   into ln_count
+   from pg_roles
+   where rolname = 'dpw_dusi';
+
+   if ln_count = 0 then
+     CREATE role viep_dba ;
+   end if;
+   select count(*)
+   into ln_count
+   from pg_roles
+   where rolname = 'backend_dusi';
+
+   if ln_count = 0 then
+     CREATE role viep_dba ;
+   end if;
+   select count(*)
+   into ln_count
+   from pg_roles
+   where rolname = 'user_admin_dusi';
+
+   if ln_count = 0 then
+     CREATE role viep_dba ;
+   end if;
+   select count(*)
+   into ln_count
+   from pg_roles
+   where rolname = 'assessment_web_dusi';
+
+   if ln_count = 0 then
+     CREATE role viep_dba ;
+   end if;
+end first_block $$;
 
 ALTER TABLE public.migrations OWNER TO dusi_dba;
 ALTER TABLE public.organisations OWNER TO dusi_dba;
