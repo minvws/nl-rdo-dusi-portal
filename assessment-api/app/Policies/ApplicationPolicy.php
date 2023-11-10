@@ -134,6 +134,11 @@ class ApplicationPolicy
         return true;
     }
 
+    public function getApplicationHistory(User $user, Application $application): bool
+    {
+        return $this->show($user, $application);
+    }
+
     public function getTransitionHistory(User $user, Application $application): bool
     {
         return $this->show($user, $application);

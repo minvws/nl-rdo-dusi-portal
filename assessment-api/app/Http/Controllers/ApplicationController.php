@@ -126,6 +126,8 @@ class ApplicationController extends Controller
 
     public function getApplicationHistory(Application $application): ResourceCollection
     {
+        $this->authorize('getApplicationHistory', $application);
+
         return $this->applicationService->getApplicationStagesResource($application);
     }
 
