@@ -100,7 +100,7 @@ GRANT SELECT ON TABLE public.subsidy_versions TO "assessment_web_dusi";
 
 GRANT USAGE ON SEQUENCE public.failed_jobs_id_seq TO "assessment_web_dusi";
 
-GRANT SELECT,INSERT,UPDATE ON TABLE public.answers TO "backend_dusi";
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.answers TO "backend_dusi";
 GRANT SELECT,INSERT,UPDATE ON TABLE public.application_hashes TO "backend_dusi";
 GRANT SELECT,INSERT,UPDATE ON TABLE public.application_messages TO "backend_dusi";
 GRANT SELECT,INSERT,UPDATE ON TABLE public.application_stage_transitions TO "backend_dusi";
