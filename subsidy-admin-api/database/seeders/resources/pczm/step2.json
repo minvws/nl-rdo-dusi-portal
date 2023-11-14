@@ -141,7 +141,8 @@
                             "label": "E-mailadres",
                             "options": {
                                 "placeholder": "",
-                                "tip": "U wordt via dit e-mailadres geïnformeerd over de status van uw aanvraag. Geef daarom alleen uw eigen e-mailadres door."
+                                "tip": "U wordt via dit e-mailadres geïnformeerd over de status van uw aanvraag. Geef daarom alleen uw eigen e-mailadres door.",
+                                "validation": ["onBlur"]
                             }
                         }
                     ]
