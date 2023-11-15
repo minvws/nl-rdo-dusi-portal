@@ -209,4 +209,82 @@ class ApplicationAssessorControllerTest extends TestCase
             ->json('DELETE', '/api/applications/' . $this->application->id . '/assessor');
         $response->assertForbidden();
     }
+
+    public function testGetAssessorPool(): void
+    {
+        $this->assertNotNull($this->application->currentApplicationStage);
+
+        $assessor1 = User::factory()->create([
+            'name' => 'assessor 1'
+        ]);
+        $assessor1->roles()->attach(RoleEnum::Assessor, [
+            'role_name' => RoleEnum::Assessor,
+        ]);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::ImplementationCoordinator);
+
+        $response = $this
+            ->be($user)
+            ->get('/api/applications/' . $this->application->id . '/assessorpool');
+        $response->assertOk();
+        $response->assertExactJson([
+            'data' => [
+                [
+                    "id" => $assessor1->id,
+                    "name" => "assessor 1",
+                ]
+            ]
+        ]);
+    }
+
+    public function testGetAssessorPoolWhenForbidden(): void
+    {
+        $this->assertNotNull($this->application->currentApplicationStage);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor);
+
+        $response = $this
+            ->be($user)
+            ->get('/api/applications/' . $this->application->id . '/assessorpool');
+        $response->assertForbidden();
+    }
+
+    public function testAssignWhenForbidden(): void
+    {
+        $this->assertNotNull($this->application->currentApplicationStage);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::Assessor);
+
+        $response = $this
+            ->be($user)
+            ->json('PUT', '/api/applications/' . $this->application->id . '/assign', [
+                'id' => User::factory()->create()->id
+            ]);
+        $response->assertForbidden();
+    }
+
+    public function testAssignWithValidUser(): void
+    {
+        $this->assertNotNull($this->application->currentApplicationStage);
+
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::ImplementationCoordinator);
+
+        $assessor1 = User::factory()->create([
+            'name' => 'assessor 1'
+        ]);
+        $assessor1->roles()->attach(RoleEnum::Assessor, [
+            'role_name' => RoleEnum::Assessor,
+        ]);
+
+        $response = $this
+            ->be($user)
+            ->json('PUT', '/api/applications/' . $this->application->id . '/assign', [
+                'id' => $assessor1->id
+            ]);
+        $response->assertOk();
+    }
 }

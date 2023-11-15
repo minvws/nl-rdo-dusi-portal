@@ -19,7 +19,6 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
 
 /**
  * @property string $id
- * @property string $subsidy_id
  * @property int $version
  * @property string $title
  * @property VersionStatus $status

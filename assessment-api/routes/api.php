@@ -46,6 +46,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::put('', 'claim');
                 Route::delete('', 'release');
             });
+        Route::get('applications/{application}/assessorpool', [
+            ApplicationAssessorController::class, 'getAssessorPool'
+        ]);
+        Route::put('applications/{application}/assign', [ApplicationAssessorController::class, 'assign']);
+
 
         Route::get('/ui/applications/count', [ApplicationController::class, 'getApplicationsCount']);
         Route::get(

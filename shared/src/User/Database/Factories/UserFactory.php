@@ -30,7 +30,7 @@ class UserFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'email' => $this->faker->unique()->email,
+            'email' => $this->faker->unique()->safeEmail(),
             'password' => $this->faker->password,
             'password_updated_at' => now()->addDays(180),
             'active_until' => null,
