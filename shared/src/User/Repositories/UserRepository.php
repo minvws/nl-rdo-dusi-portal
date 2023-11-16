@@ -34,7 +34,8 @@ class UserRepository
         $subsidyId = $subsidyStage->subsidyVersion->subsidy_id;
         $assessorRole = $subsidyStage->assessor_user_role;
 
-        return User::whereNotIn('id', $previousAssessors)
+        return User::active()
+            ->whereNotIn('id', $previousAssessors)
             ->whereHas('roles', function ($query) use ($subsidyId, $assessorRole) {
                 $query
                     ->where(function ($query) use ($subsidyId) {
