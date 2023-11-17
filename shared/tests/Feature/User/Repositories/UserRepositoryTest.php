@@ -61,7 +61,7 @@ class UserRepositoryTest extends TestCase
             'role_name' => Role::Assessor,
         ]);
         $assessor2 = User::factory()->create([
-            'name' => 'found assessor 2'
+            'name' => 'Found assessor 2'
         ]);
         $assessor2->roles()->attach(Role::Assessor, [
             'subsidy_id' => $this->subsidy->id,

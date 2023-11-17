@@ -45,7 +45,7 @@ class UserRepository
                     })
                     ->where('name', $assessorRole);
             })
-            ->where('name', 'like', '%' . $search . '%')
+            ->where('name', 'ilike', '%' . $search . '%')
             ->orderBy('name')
             ->limit(config('user.limit_user_query'))
             ->get();
