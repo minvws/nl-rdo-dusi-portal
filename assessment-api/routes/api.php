@@ -15,7 +15,7 @@ use MinVWS\DUSi\Assessment\API\Http\Middleware\EnsurePasswordUpdated;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'auth.session'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'show']);
 
     Route::middleware(EnsurePasswordUpdated::class)->group(function () {
