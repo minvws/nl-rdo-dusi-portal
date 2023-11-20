@@ -49,6 +49,8 @@ class Subsidy extends Model
         'valid_to',
         'created_at',
         'updated_at',
+        'short_retention_period',
+        'long_retention_period',
     ];
 
     protected $casts = [
@@ -56,6 +58,8 @@ class Subsidy extends Model
         'status' => VersionStatus::class,
         'valid_from' => 'immutable_datetime',
         'valid_to' => 'immutable_datetime',
+        'short_retention_period' => 'integer',
+        'long_retention_period' => 'integer',
     ];
 
     public function subsidyVersions(): HasMany
