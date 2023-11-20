@@ -5,15 +5,11 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Latte\Loaders\FileLoader;
-use Latte\Strict;
 
 class LatteLetterLoaderService extends FileLoader
 {
-    use Strict;
-
     /** @var string[]  [name => content] */
     protected ?array $templates;
-
 
     public function __construct(string $baseDir = null, ?array $templates = [])
     {
