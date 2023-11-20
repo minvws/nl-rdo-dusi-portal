@@ -1089,16 +1089,16 @@
         },
         {
             "name": "dragon-code/contracts",
-            "version": "v2.20.0",
+            "version": "v2.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TheDragonCode/contracts.git",
-                "reference": "410d35bec404f465a126bb1e672f3abe1150f5d7"
+                "reference": "c69d7183a4ec35892ca208b2863d3ccad9465d7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TheDragonCode/contracts/zipball/410d35bec404f465a126bb1e672f3abe1150f5d7",
-                "reference": "410d35bec404f465a126bb1e672f3abe1150f5d7",
+                "url": "https://api.github.com/repos/TheDragonCode/contracts/zipball/c69d7183a4ec35892ca208b2863d3ccad9465d7b",
+                "reference": "c69d7183a4ec35892ca208b2863d3ccad9465d7b",
                 "shasum": ""
             },
             "require": {
@@ -1145,6 +1145,10 @@
                     "type": "boosty"
                 },
                 {
+                    "url": "https://www.donationalerts.com/r/dragon_code",
+                    "type": "donationalerts"
+                },
+                {
                     "url": "https://github.com/sponsors/TheDragonCode",
                     "type": "github"
                 },
@@ -1157,7 +1161,7 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2023-06-02T11:06:31+00:00"
+            "time": "2023-11-14T20:01:25+00:00"
         },
         {
             "name": "dragon-code/pretty-array",
@@ -2245,16 +2249,16 @@
         },
         {
             "name": "laravel-lang/lang",
-            "version": "13.6.0",
+            "version": "13.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/lang.git",
-                "reference": "43a14c88b408f5b7c24e8c95740719abeeea6632"
+                "reference": "48520e0d0c757dcd7df8e3cee43de7759646126c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/43a14c88b408f5b7c24e8c95740719abeeea6632",
-                "reference": "43a14c88b408f5b7c24e8c95740719abeeea6632",
+                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/48520e0d0c757dcd7df8e3cee43de7759646126c",
+                "reference": "48520e0d0c757dcd7df8e3cee43de7759646126c",
                 "shasum": ""
             },
             "require": {
@@ -2301,20 +2305,20 @@
                 "issues": "https://github.com/Laravel-Lang/lang/issues",
                 "source": "https://github.com/Laravel-Lang/lang"
             },
-            "time": "2023-11-10T08:32:42+00:00"
+            "time": "2023-11-15T07:54:40+00:00"
         },
         {
             "name": "laravel-lang/locales",
-            "version": "1.8.0",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/locales.git",
-                "reference": "9489ddbc3833108ae81099c9fe506e484aeaeb65"
+                "reference": "0935f76c51c17333cae57dc9a7bac289de7d3687"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/locales/zipball/9489ddbc3833108ae81099c9fe506e484aeaeb65",
-                "reference": "9489ddbc3833108ae81099c9fe506e484aeaeb65",
+                "url": "https://api.github.com/repos/Laravel-Lang/locales/zipball/0935f76c51c17333cae57dc9a7bac289de7d3687",
+                "reference": "0935f76c51c17333cae57dc9a7bac289de7d3687",
                 "shasum": ""
             },
             "require": {
@@ -2322,7 +2326,7 @@
                 "dragon-code/support": "^6.11.3",
                 "ext-json": "*",
                 "illuminate/collections": "^10.0",
-                "laravel-lang/native-locale-names": "^1.2.2",
+                "laravel-lang/native-locale-names": "^1.4.0",
                 "php": "^8.1"
             },
             "require-dev": {
@@ -2370,7 +2374,7 @@
                 "issues": "https://github.com/Laravel-Lang/locales/issues",
                 "source": "https://github.com/Laravel-Lang/locales"
             },
-            "time": "2023-11-11T10:28:47+00:00"
+            "time": "2023-11-13T23:15:06+00:00"
         },
         {
             "name": "laravel-lang/native-locale-names",
@@ -2441,16 +2445,16 @@
         },
         {
             "name": "laravel-lang/publisher",
-            "version": "15.0.1",
+            "version": "15.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/publisher.git",
-                "reference": "a404d77116501a1640c823f7868583b1af301352"
+                "reference": "391086a01f21ec0004b9edddba54cb6bf762f52e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/publisher/zipball/a404d77116501a1640c823f7868583b1af301352",
-                "reference": "a404d77116501a1640c823f7868583b1af301352",
+                "url": "https://api.github.com/repos/Laravel-Lang/publisher/zipball/391086a01f21ec0004b9edddba54cb6bf762f52e",
+                "reference": "391086a01f21ec0004b9edddba54cb6bf762f52e",
                 "shasum": ""
             },
             "require": {
@@ -2534,7 +2538,7 @@
                 "issues": "https://github.com/Laravel-Lang/publisher/issues",
                 "source": "https://github.com/Laravel-Lang/publisher"
             },
-            "time": "2023-11-02T09:00:39+00:00"
+            "time": "2023-11-18T12:16:27+00:00"
         },
         {
             "name": "laravel/fortify",
