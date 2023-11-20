@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Queue;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
@@ -23,6 +25,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHashField;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Faker\Factory as Faker;
@@ -313,5 +317,48 @@ class ApplicationDataServiceTest extends TestCase
                 );
             }
         }
+    }
+
+    /**
+     * @group field-hash
+     */
+    public function testFieldHashCreationAfterSave(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $bankAccountField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'bankAccountNumber',
+                'type' => FieldType::CustomBankAccount,
+            ]);
+
+        $subsidyStageHash = SubsidyStageHash::factory()
+            ->for($this->subsidyStage1)
+            ->create();
+
+        SubsidyStageHashField::factory()
+            ->for($subsidyStageHash)
+            ->for($bankAccountField)
+            ->create();
+
+        $params = [
+            $bankAccountField->code => MockedBankAccountRepository::BANK_ACCCOUNT_NUMBER_MATCH,
+        ];
+
+        $body = new FieldValidationParams(
+            (object) $params
+        );
+
+        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+            $applicationStage,
+            $body->data,
+            submit: true,
+        );
+
+        $this->assertDatabaseHas(ApplicationHash::class, [
+            'subsidy_stage_hash_id' => $subsidyStageHash->id,
+            'application_id' => $application->id
+        ]);
     }
 }

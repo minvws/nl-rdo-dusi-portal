@@ -17,7 +17,7 @@ class ApplicationHash extends Model
 
     protected $connection = Connection::APPLICATION;
 
-    protected $primaryKey = ['subsidy_stage_id', 'application_id']; // @phpstan-ignore-line
+    protected $primaryKey = ['subsidy_stage_hash_id', 'application_id']; // @phpstan-ignore-line
 
     public $timestamps = false;
 
@@ -27,7 +27,7 @@ class ApplicationHash extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'subsidy_stage_id',
+        'subsidy_stage_hash_id',
         'application_id',
         'hash'
     ];

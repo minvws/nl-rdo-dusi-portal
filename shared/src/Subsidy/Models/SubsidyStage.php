@@ -77,6 +77,11 @@ class SubsidyStage extends Model
         return $this->hasMany(SubsidyStageTransition::class, 'current_subsidy_stage_id', 'id');
     }
 
+    public function subsidyStageHashes(): HasMany
+    {
+        return $this->hasMany(SubsidyStageHash::class, 'subsidy_stage_id', 'id');
+    }
+
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('stage');

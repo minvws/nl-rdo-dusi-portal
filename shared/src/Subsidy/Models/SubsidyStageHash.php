@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageHashFactory;
 
 class SubsidyStageHash extends Model
 {
@@ -37,5 +38,10 @@ class SubsidyStageHash extends Model
     public function subsidyStageHashFields(): HasMany
     {
         return $this->HasMany(SubsidyStageHashField::class, 'subsidy_stage_hash_id', 'id');
+    }
+
+    protected static function newFactory(): SubsidyStageHashFactory
+    {
+        return new SubsidyStageHashFactory();
     }
 }
