@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
+use _PHPStan_adbc35a1c\Nette\Neon\Exception;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
@@ -12,10 +13,12 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\SubsidyStashFieldHasher;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
@@ -322,7 +325,7 @@ class ApplicationDataServiceTest extends TestCase
     /**
      * @group field-hash
      */
-    public function testFieldHashCreationAfterSave(): void
+    public function testSingleFieldHashCreationAfterSave(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
         $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
@@ -360,5 +363,85 @@ class ApplicationDataServiceTest extends TestCase
             'subsidy_stage_hash_id' => $subsidyStageHash->id,
             'application_id' => $application->id
         ]);
+    }
+
+    /**
+     * @group field-hash
+     */
+    public function testMultiFieldHashCreationAfterSave(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $postalCodeField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'postalCode',
+                'type' => FieldType::CustomPostalCode,
+            ]);
+
+        $houseNumberField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'houseNumber',
+                'type' => FieldType::TextNumeric,
+            ]);
+
+        $houseNumberAdditionField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'houseNumberAddition',
+                'type' => FieldType::Text,
+            ]);
+
+        $subsidyStageHash = SubsidyStageHash::factory()
+            ->for($this->subsidyStage1)
+            ->create();
+
+        SubsidyStageHashField::factory()
+            ->for($subsidyStageHash)
+            ->for($postalCodeField)
+            ->create();
+
+        SubsidyStageHashField::factory()
+            ->for($subsidyStageHash)
+            ->for($houseNumberField)
+            ->create();
+
+        SubsidyStageHashField::factory()
+            ->for($subsidyStageHash)
+            ->for($houseNumberAdditionField)
+            ->create();
+
+        $params = [
+            $postalCodeField->code => $this->faker->postcode(),
+            $houseNumberField->code => $this->faker->randomNumber(),
+            $houseNumberAdditionField->code => $this->faker->randomElement(['A', 'B', 'C', '', '1', '2', '3']),
+        ];
+
+        $fieldValuesCollection = collect([
+            $postalCodeField->code => new FieldValue($postalCodeField, $params[$postalCodeField->code]),
+            $houseNumberField->code => new FieldValue($houseNumberField, (string)$params[$houseNumberField->code]),
+            $houseNumberAdditionField->code => new FieldValue($houseNumberAdditionField, $params[$houseNumberAdditionField->code]),
+        ])->sort(fn(FieldValue $fieldValue) => $fieldValue->field->id);
+
+        $body = new FieldValidationParams(
+            (object) $params
+        );
+
+        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+            $applicationStage,
+            $body->data,
+            submit: true,
+        );
+
+        /** @var SubsidyStashFieldHasher $hasher */
+        $hasher = $this->app->make(SubsidyStashFieldHasher::class);
+
+        $this->assertDatabaseHas(ApplicationHash::class, [
+            'subsidy_stage_hash_id' => $subsidyStageHash->id,
+            'application_id' => $application->id,
+            'hash' => $hasher->makeApplicationFieldHash($subsidyStageHash, $fieldValuesCollection->toArray(), $applicationStage),
+        ]);
+
     }
 }

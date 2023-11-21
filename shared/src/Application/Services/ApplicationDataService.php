@@ -42,6 +42,7 @@ readonly class ApplicationDataService
         private ApplicationFileManager $applicationFileManager,
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
+        private readonly SubsidyStashFieldHasher $subsidyStashFieldHasher,
     ) {
     }
 
@@ -215,7 +216,9 @@ readonly class ApplicationDataService
 
     private function updateSubsidyStageHashFields(array $fieldValues, ApplicationStage $applicationStage): void
     {
+//        dump($fieldValues);
         $fieldValues = array_filter($fieldValues, fn($fieldValue) => !empty($fieldValue->value));
+//        dump(array_map(fn($fieldValue) => $fieldValue->value, $fieldValues));
         foreach ($applicationStage->subsidyStage->subsidyStageHashes as $subsidyStageHash) {
             $this->updateSubsidyStageHash($fieldValues, $subsidyStageHash, $applicationStage);
         }
@@ -235,8 +238,11 @@ readonly class ApplicationDataService
                 $this->updateOrNewApplicationStageFieldHash(
                     $subsidyStageHash,
                     $applicationStage,
-                    $fieldValue->value
+                    $fieldValues
                 );
+
+                //Prevent updating the same hash multiple times
+                break;
             }
         }
     }
@@ -244,9 +250,9 @@ readonly class ApplicationDataService
     private function updateOrNewApplicationStageFieldHash(
         SubsidyStageHash $subsidyStageHash,
         ApplicationStage $applicationStage,
-        string $fieldValue
+        array $fieldValues
     ): void {
-        $hash = $this->makeApplicationFieldHash($applicationStage, $fieldValue);
+        $hash = $this->makeApplicationFieldHash($subsidyStageHash, $fieldValues, $applicationStage);
         $this->applicationRepository->updateOrNewApplicationStageFieldHash(
             $subsidyStageHash,
             $applicationStage->application,
@@ -254,8 +260,15 @@ readonly class ApplicationDataService
         );
     }
 
-    private function makeApplicationFieldHash(ApplicationStage $applicationStage, string $fieldValue): string
-    {
-        return Hash::make($fieldValue, ['salt' => $applicationStage->subsidyStage->id]);
+    private function makeApplicationFieldHash(
+        SubsidyStageHash $subsidyStageHash,
+        array $fieldValues,
+        ApplicationStage $applicationStage
+    ): string {
+        return $this->subsidyStashFieldHasher->makeApplicationFieldHash(
+            $subsidyStageHash,
+            $fieldValues,
+            $applicationStage
+        );
     }
 }
