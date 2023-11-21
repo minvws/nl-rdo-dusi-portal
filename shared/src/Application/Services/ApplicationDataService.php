@@ -11,6 +11,7 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use MinVWS\Codable\JSON\JSONDecoder;
@@ -216,9 +217,7 @@ readonly class ApplicationDataService
 
     private function updateSubsidyStageHashFields(array $fieldValues, ApplicationStage $applicationStage): void
     {
-//        dump($fieldValues);
         $fieldValues = array_filter($fieldValues, fn($fieldValue) => !empty($fieldValue->value));
-//        dump(array_map(fn($fieldValue) => $fieldValue->value, $fieldValues));
         foreach ($applicationStage->subsidyStage->subsidyStageHashes as $subsidyStageHash) {
             $this->updateSubsidyStageHash($fieldValues, $subsidyStageHash, $applicationStage);
         }
@@ -229,12 +228,20 @@ readonly class ApplicationDataService
         SubsidyStageHash $subsidyStageHash,
         ApplicationStage $applicationStage
     ): void {
-        $map = $subsidyStageHash->subsidyStageHashFields()->get()->map(
-            fn(SubsidyStageHashField $field) => $field->field->code
+        /**
+         * @var Collection|SubsidyStageHashField[] $subsidyStageHashFields
+         */
+        $subsidyStageHashFields = $subsidyStageHash->subsidyStageHashFields()->get();
+
+        /**
+         * @var Collection $hashFieldCodesMap
+         */
+        $hashFieldCodesMap = $subsidyStageHashFields->map(
+            fn(SubsidyStageHashField $field) => $field->field?->code
         );
 
         foreach ($fieldValues as $fieldValue) {
-            if ($map->contains($fieldValue->field->code)) {
+            if ($hashFieldCodesMap->contains($fieldValue->field->code)) {
                 $this->updateOrNewApplicationStageFieldHash(
                     $subsidyStageHash,
                     $applicationStage,

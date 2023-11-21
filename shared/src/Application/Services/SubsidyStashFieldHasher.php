@@ -17,18 +17,20 @@ class SubsidyStashFieldHasher
         array $fieldValues,
         ApplicationStage $applicationStage
     ): string {
-        /** @var Collection $fieldValueCollection<FieldValue> */
         $fieldValueCollection = collect($fieldValues);
-        $fieldValueSearch = $fieldValueCollection->map(fn(FieldValue $fieldValue) =>  $fieldValue->value);
+        $fieldValueSearch = $fieldValueCollection->map(fn(FieldValue $fieldValue) =>  $fieldValue->valueToString());
 
         $concattedValues = $subsidyStageHash->subsidyStageHashFields()
             ->orderBy('field_id')
             ->get()
             ->map(
                 function (SubsidyStageHashField $subsidyStageHashField) use ($fieldValueSearch): string {
-                    return (string)$fieldValueSearch->get($subsidyStageHashField->field->code) ?? '';
+
+                    return (string) ($subsidyStageHashField->field ?
+                        $fieldValueSearch->get($subsidyStageHashField->field->code) :
+                        '');
                 }
-            )->reduce(function ($carry, string $value) {
+            )->reduce(function (null|string $carry, string $value) {
                 return $carry . $value;
             });
 
