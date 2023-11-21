@@ -9,6 +9,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 use function Amp\Iterator\toArray;
 
@@ -33,6 +34,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'firstName',
             title: 'Voornaam',
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
@@ -40,24 +42,28 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'infix',
             title: 'Tussenvoegsel',
             isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'lastName',
             title: 'Achternaam',
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createDateField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'dateOfBirth',
             title: 'Geboortedatum',
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'street',
             title: 'Straat',
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
@@ -65,6 +71,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'houseNumber',
             title: 'Huisnummer',
             inputMode: 'numeric',
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
@@ -73,6 +80,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'Huisnummer toevoeging',
             maxLength: 10,
             isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createPostalCodeField(
@@ -80,6 +88,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'postalCode',
             title: 'Postcode',
             isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
@@ -87,12 +96,14 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'city',
             title: 'Plaats',
             maxLength: 100,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createCountryField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'country',
             title: 'Land',
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
@@ -102,6 +113,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             inputMode: 'tel',
             maxLength: 20,
             isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
@@ -111,12 +123,14 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             inputMode: 'email',
             maxLength: 300,
             isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createBankAccountField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'bankAccountNumber',
             title: 'IBAN',
+            retentionPeriod: DataRetentionPeriod::Long
         );
 
         $this->createTextField(
@@ -124,6 +138,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'bankAccountHolder',
             title: 'Naam rekeninghouder',
             maxLength: 50,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createUploadField(
@@ -131,7 +146,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'certifiedEmploymentDocument',
             title: 'Gewaarmerkt verzekeringsbericht',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
-            maxFileSize: 20971520
+            maxFileSize: 20971520,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createUploadField(
@@ -139,14 +155,16 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'wiaDecisionDocument',
             title: 'WIA-Beslissing',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
-            maxFileSize: 20971520
+            maxFileSize: 20971520,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'isWiaDecisionPostponed',
             title: 'Is WIA beslissing uitgesteld?',
-            options: ['Ja', 'Nee']
+            options: ['Ja', 'Nee'],
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         //If isWiaDecisionPostponed === yes
@@ -159,6 +177,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             requiredCondition: new ComparisonCondition(
                 1, 'isWiaDecisionPostponed', Operator::Identical, 'Ja'
             ),
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createUploadField(
@@ -166,7 +185,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'employmentContract',
             title: 'Bewijs dienstverband',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
-            maxFileSize: 20971520
+            maxFileSize: 20971520,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createSelectField(
@@ -187,7 +207,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
                 'Verzorgende in de individuele gezondheidszorg (VIG’er) of verzorgende',
                 'Zorgondersteuner en/of voedingsassistent',
                 'Anders',
-            ]
+            ],
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
@@ -196,13 +217,15 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'Andere functie',
             maxLength: 300,
             requiredCondition: new ComparisonCondition(1, 'employmentFunction', Operator::Identical, 'Anders'),
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'employerKind',
             title: 'Werkgever',
-            options: ['Zorgaanbieder', 'Andere organisatie']
+            options: ['Zorgaanbieder', 'Andere organisatie'],
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createUploadField(
@@ -214,13 +237,16 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             requiredCondition: new OrCondition([
                 new ComparisonCondition(1, 'employmentFunction', Operator::Identical, 'Anders'),
                 new ComparisonCondition(1, 'employerKind', Operator::Identical, 'Andere organisatie'),
-            ]));
+            ]),
+            retentionPeriod: DataRetentionPeriod::Short
+        );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'hasBeenWorkingAtJudicialInstitution',
             title: 'Bent u werkzaam geweest bij een justitiële inrichting?',
-            options: ['Ja', 'Nee']
+            options: ['Ja', 'Nee'],
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
@@ -229,6 +255,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'BIG-nummer',
             maxLength: 11,
             requiredCondition: new ComparisonCondition(1, 'hasBeenWorkingAtJudicialInstitution', Operator::Identical, 'Ja'),
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createUploadField(
@@ -236,14 +263,16 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             code: 'socialMedicalAssessment',
             title: 'Medisch onderzoeksverslag',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
-            maxFileSize: 20971520
+            maxFileSize: 20971520,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'hasPostCovidDiagnose',
             title: 'Heeft langdurige post-COVID klachten',
-            options: ['Ja', 'Nee']
+            options: ['Ja', 'Nee'],
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createUploadField(
@@ -253,12 +282,14 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
             requiredCondition: new ComparisonCondition(1, 'hasPostCovidDiagnose', Operator::Identical, 'Nee'),
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createCheckboxField(
             subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             code: 'truthfullyCompleted',
-            title: ''
+            title: '',
+            retentionPeriod: DataRetentionPeriod::Short
         );
     }
 
