@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
-use _PHPStan_adbc35a1c\Nette\Neon\Exception;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
@@ -34,8 +33,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * @group application
@@ -370,6 +367,47 @@ class ApplicationDataServiceTest extends TestCase
     /**
      * @group field-hash
      */
+    public function testFieldHashIsNotCreatedAfterSave(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $bankAccountField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'bankAccountNumber',
+                'type' => FieldType::CustomBankAccount,
+                'is_required' => false
+            ]);
+
+        $subsidyStageHash = SubsidyStageHash::factory()
+            ->for($this->subsidyStage1)
+            ->create();
+
+        SubsidyStageHashField::factory()
+            ->for($subsidyStageHash)
+            ->for($bankAccountField)
+            ->create();
+
+        $params = [
+            $bankAccountField->code => null,
+        ];
+
+        $body = new FieldValidationParams(
+            (object) $params
+        );
+
+        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+            $applicationStage,
+            $body->data,
+            submit: true,
+        );
+
+        $this->assertDatabaseEmpty(ApplicationHash::class);
+    }
+
+    /**
+     * @group field-hash
+     */
     public function testMultiFieldHashCreationAfterSave(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
@@ -398,7 +436,9 @@ class ApplicationDataServiceTest extends TestCase
         $body = new FieldValidationParams((object)$params);
 
         $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
-            $applicationStage, $body->data, submit: true
+            $applicationStage,
+            $body->data,
+            submit: true
         );
 
         /** @var SubsidyStashFieldHasher $hasher */
@@ -446,7 +486,9 @@ class ApplicationDataServiceTest extends TestCase
         $body = new FieldValidationParams((object)$params);
 
         $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
-            $applicationStage, $body->data, submit: true
+            $applicationStage,
+            $body->data,
+            submit: true
         );
 
         /** @var SubsidyStashFieldHasher $hasher */
@@ -461,7 +503,7 @@ class ApplicationDataServiceTest extends TestCase
 
     private function createFieldAndParam(array $fieldData, $subsidyStageHash): array
     {
-        $paramValue = match($fieldData['code']) {
+        $paramValue = match ($fieldData['code']) {
             'postalCode' => $this->faker->postcode(),
             'houseNumber' => $this->faker->randomNumber(),
             'houseNumberAddition' => $this->faker->randomElement(['A', 'B', 'C', '', '1', '2', '3']),
