@@ -297,7 +297,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
     {
         DB::table('subsidy_stage_hashes')->insert([
             'id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             'name' => 'Bank account',
             'description' => 'Bank account duplicate reporting',
         ]);

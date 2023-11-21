@@ -96,7 +96,7 @@ readonly class ApplicationDataService
 
         $this->saveFieldValues($fieldValues, $encrypter, $applicationStage);
 
-        $this->updateSubsidyStageHashFields($fieldValues, $applicationStage);
+        $this->updateSubsidyStageHashes($fieldValues, $applicationStage);
 
         return $validationResult;
     }
@@ -215,7 +215,7 @@ readonly class ApplicationDataService
         };
     }
 
-    private function updateSubsidyStageHashFields(array $fieldValues, ApplicationStage $applicationStage): void
+    private function updateSubsidyStageHashes(array $fieldValues, ApplicationStage $applicationStage): void
     {
         $fieldValues = array_filter($fieldValues, fn($fieldValue) => !empty($fieldValue->value));
         foreach ($applicationStage->subsidyStage->subsidyStageHashes as $subsidyStageHash) {
@@ -223,7 +223,7 @@ readonly class ApplicationDataService
         }
     }
 
-    private function updateSubsidyStageHash(
+    public function updateSubsidyStageHash(
         array $fieldValues,
         SubsidyStageHash $subsidyStageHash,
         ApplicationStage $applicationStage
