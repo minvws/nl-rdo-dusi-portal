@@ -15,13 +15,35 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 class ApplicationHashService
 {
+    /**
+     * @return Collection
+     */
     public function getSubsidyStageHashesForSubsidy(Subsidy $subsidy): Collection
     {
-        return $subsidy->subsidyVersions->flatMap(
-            fn(SubsidyVersion $version) => $version->subsidyStages->flatMap(
-                fn(SubsidyStage $stage) => $stage->subsidyStageHashes
-            )
+        // Eager load the nested relations
+        $subsidy->load('subsidyVersions.subsidyStages.subsidyStageHashes');
+
+        /** @var Collection|SubsidyVersion[] $versions */
+        $versions = $subsidy->subsidyVersions;
+
+        $stageHashesCollections = $versions->map(function (SubsidyVersion $version) {
+            /** @var Collection|SubsidyStage[] $stages */
+            $stages = $version->subsidyStages;
+
+            return $stages->map(function (SubsidyStage $stage) {
+                /** @var Collection|SubsidyStageHash[] $stageHashes */
+                $stageHashes = $stage->subsidyStageHashes;
+
+                return $stageHashes;
+            });
+        });
+
+        // flatten 2D collection to 1D and create new Eloquent Collection
+        $allStageHashes = new Collection(
+            $stageHashesCollections->flatten()->all()
         );
+
+        return $allStageHashes;
     }
 
     public function getApplicationHashDuplicatesQuery(SubsidyStageHash $subsidyStageHash): Builder

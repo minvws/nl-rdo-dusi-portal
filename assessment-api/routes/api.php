@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationAssessorController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationFileController;
+use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationHashController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\UserController;
 use MinVWS\DUSi\Assessment\API\Http\Middleware\EnsurePasswordUpdated;
 
@@ -67,5 +68,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         );
 
         Route::get('/messages/{message}/download/pdf', [ApplicationController::class, 'getLetterForMessage']);
+
+        Route::get('subsidies/{subsidy}/bankaccounts/duplicates', [
+            ApplicationHashController::class, 'getBankAccountDuplicates'
+        ]);
     });
 });

@@ -31,7 +31,7 @@ class BankAccountDuplicatesServiceTest extends TestCase
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
     private SubsidyStage $subsidyStage1;
-    private SubsidyStageHash $subsidyStageHash;
+    private SubsidyStageHash $bankAccountSubsidyStageHash;
     private Identity $identity;
     private Application $application;
 
@@ -71,14 +71,14 @@ class BankAccountDuplicatesServiceTest extends TestCase
             ['is_current' => false, 'is_submitted' => true, 'submitted_at' => Carbon::now()]
         );
 
-        ApplicationHash::factory()->for($this->subsidyStageHash)->for($application)->create(['hash' => $hash]);
+        ApplicationHash::factory()->for($this->bankAccountSubsidyStageHash)->for($application)->create(['hash' => $hash]);
 
         return $application;
     }
 
     public function createBankAccountSubsidyStageHash(): void
     {
-        $this->subsidyStageHash = SubsidyStageHash::factory()
+        $this->bankAccountSubsidyStageHash = SubsidyStageHash::factory()
             ->for($this->subsidyStage1)->create([
                   'name' => BankAccountDuplicatesService::BANK_ACCOUNT_SUBSIDY_STAGE_HASH_NAME,
               ]);
