@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationHashFactory;
 use MinVWS\DUSi\Shared\Application\Traits\HasCompositePrimaryKey;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 
 class ApplicationHash extends Model
 {
@@ -35,6 +36,11 @@ class ApplicationHash extends Model
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
+    }
+
+    public function subsidyStageHash(): BelongsTo
+    {
+        return $this->belongsTo(SubsidyStageHash::class, 'subsidy_stage_hash_id', 'id');
     }
 
     protected static function newFactory(): ApplicationHashFactory
