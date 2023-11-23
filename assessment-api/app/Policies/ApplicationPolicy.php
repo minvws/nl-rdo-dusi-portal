@@ -185,4 +185,9 @@ class ApplicationPolicy
             $application->subsidyVersion->subsidy_id
         );
     }
+
+    public function export(User $user): bool
+    {
+        return $user->hasRole(Role::DataExporter);
+    }
 }
