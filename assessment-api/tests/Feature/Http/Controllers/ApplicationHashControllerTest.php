@@ -6,6 +6,7 @@ namespace Feature\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Assessment\API\Services\BankAccountDuplicatesService;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -24,11 +25,12 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
- * @group application-list
+ * @group application-hash
  */
 class ApplicationHashControllerTest extends TestCase
 {
     use MocksEncryption;
+    use WithFaker;
 
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
@@ -92,14 +94,14 @@ class ApplicationHashControllerTest extends TestCase
             ]);
     }
 
-    public function testBankAccountDuplicates(): void
+    public function testBankAccountDuplicatesEmpty(): void
     {
         $this->createBankAccountSubsidyStageHash();
         $this->createApplicationWithBankAccountNumberHash(
-            '1151a36e738c7e5933927387b1a55931ce4fbcfc45c8197476d6050aac5b59a7'
+            $this->faker->sentence
         );
         $this->createApplicationWithBankAccountNumberHash(
-            '1151a36e738c7e5933927387b1a55931ce4fbcfc45c8197476d6050aac5b59a7'
+            $this->faker->sentence
         );
 
         $response = $this
@@ -107,8 +109,27 @@ class ApplicationHashControllerTest extends TestCase
             ->json('GET', sprintf('/api/subsidies/%s/bankaccounts/duplicates', $this->subsidy->id));
 
         $response->assertStatus(200);
-        $response->assertJsonCount(2, 'data');
+        $response->assertJsonCount(0, 'data');
+    }
 
-        $response->assertJsonFragment(['hash' => '1151a36e738c7e5933927387b1a55931ce4fbcfc45c8197476d6050aac5b59a7']);
+    public function testBankAccountDuplicates(): void
+    {
+        $this->createBankAccountSubsidyStageHash();
+        $hash = '1151a36e738c7e5933927387b1a55931ce4fbcfc45c8197476d6050aac5b59a7';
+        $this->createApplicationWithBankAccountNumberHash(
+            $hash
+        );
+        $this->createApplicationWithBankAccountNumberHash(
+            $hash
+        );
+
+        $response = $this
+            ->be($this->implementationCoordinatorUser)
+            ->json('GET', sprintf('/api/subsidies/%s/bankaccounts/duplicates', $this->subsidy->id));
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+
+        $response->assertJsonFragment(['hash' => $hash]);
     }
 }
