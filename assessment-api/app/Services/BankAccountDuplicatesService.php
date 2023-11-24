@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Services;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use League\CommonMark\Exception\LogicException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\BankAccountSubsidyStageHashNotFoundException;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationHash as ApplicationHashDTO;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationHashService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
+use RuntimeException;
 use Webmozart\Assert\Assert;
 
 class BankAccountDuplicatesService
@@ -22,7 +24,7 @@ class BankAccountDuplicatesService
     }
 
     /**
-     * @return array|Collection
+     * @return Collection
      */
     public function getDuplicatesForSubsidy(Subsidy $subsidy): Collection
     {
@@ -30,9 +32,17 @@ class BankAccountDuplicatesService
 
         $query = $this->applicationHashService->getApplicationHashDuplicatesQuery($subsidyStageHash);
 
-        return $query->join('applications', 'applications.id', 'application_hashes.application_id')
+        /**
+         * @psalm-suppress InvalidTemplateParam
+         */
+        return $query
+                ->join('applications', 'applications.id', 'application_hashes.application_id')
                 ->whereNotIn('applications.status', [ApplicationStatus::Draft, ApplicationStatus::Rejected])
-                ->get();
+                ->get()
+                ->map(function ($result) {
+                    /** @phpstan-ignore-next-line  */
+                    return new ApplicationHashDTO($result->hash, $result->count, $result->application_ids);
+                });
     }
 
     public function getBankAccountSubsidyStageHash(Subsidy $subsidy): SubsidyStageHash
@@ -59,6 +69,7 @@ class BankAccountDuplicatesService
                     $subsidy->id
                 )
             ),
+            default => throw new RuntimeException('Unexpected case in match expression')
         };
         Assert::isInstanceOf($subsidyStageHash, SubsidyStageHash::class);
 

@@ -49,10 +49,10 @@ class ApplicationHashService
     public function getApplicationHashDuplicatesQuery(SubsidyStageHash $subsidyStageHash): Builder
     {
         $query = ApplicationHash::query()->select(
-                'hash',
-                DB::raw('COUNT(*) as count'),
-                DB::raw('string_agg(application_id::text, \',\') as application_ids')
-            )
+            'hash',
+            DB::raw('COUNT(*) as count'),
+            DB::raw('string_agg(application_id::text, \',\') as application_ids')
+        )
             ->where('subsidy_stage_hash_id', $subsidyStageHash->id)
             ->groupBy('hash')
             ->havingRaw('COUNT(hash) > 1');

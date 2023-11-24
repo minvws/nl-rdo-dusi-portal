@@ -71,7 +71,10 @@ class BankAccountDuplicatesServiceTest extends TestCase
             ['is_current' => false, 'is_submitted' => true, 'submitted_at' => Carbon::now()]
         );
 
-        ApplicationHash::factory()->for($this->bankAccountSubsidyStageHash)->for($application)->create(['hash' => $hash]);
+        ApplicationHash::factory()
+            ->for($this->bankAccountSubsidyStageHash)
+            ->for($application)
+            ->create(['hash' => $hash]);
 
         return $application;
     }
