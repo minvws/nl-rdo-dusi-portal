@@ -18,6 +18,7 @@ use MinVWS\DUSi\Assessment\API\Http\Middleware\EnsurePasswordUpdated;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'show']);
+    Route::get('/user/subsidies', [UserController::class, 'subsidies']);
 
     Route::middleware(EnsurePasswordUpdated::class)->group(function () {
         Route::prefix('applications')
