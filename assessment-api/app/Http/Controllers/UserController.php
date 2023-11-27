@@ -17,10 +17,21 @@ class UserController extends Controller
     {
         return UserResource::make($request->user());
     }
+
     public function subsidies(Request $request): ResourceCollection
     {
         /** @var User $user */
         $user = $request->user();
-        return SubsidyResource::collection($user->roles->flatMap(fn(Role $role) => $role->pivot->subsidy()->get()));
+
+        /**
+         * @psalm-suppress InvalidTemplateParam
+         */
+        $subsidies = $user->roles->map(function (Role $role) {
+            return $role->pivot->subsidy()->get();
+        });
+
+        $flattenedSubsidies = $subsidies->flatten();
+
+        return SubsidyResource::collection($flattenedSubsidies);
     }
 }

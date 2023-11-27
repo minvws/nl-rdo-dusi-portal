@@ -18,7 +18,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
- * @group application-hash
+ * @group user
  */
 class UserControllerTest extends TestCase
 {
