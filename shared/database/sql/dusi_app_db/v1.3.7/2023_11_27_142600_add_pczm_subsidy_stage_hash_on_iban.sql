@@ -2,7 +2,7 @@ INSERT INTO public.subsidy_stage_hashes (id, subsidy_stage_id, description, crea
 VALUES ('bd26ae6f-05ac-4690-81da-87b534f7758d', '7e5d64e9-35f0-4fee-b8d2-dca967b43183',
         'Bank account duplicate reporting', '2023-11-27 13:24:43', '2023-11-27 13:24:43', 'Bank account');
 
-INSERT INTO subsidy_stage_hash_fields (subsidy_stage_hash_id, field_id)
+INSERT INTO public.subsidy_stage_hash_fields (subsidy_stage_hash_id, field_id)
 SELECT
     'bd26ae6f-05ac-4690-81da-87b534f7758d',
     fields.id

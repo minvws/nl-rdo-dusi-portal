@@ -116,8 +116,8 @@ class ApplicationHashControllerTest extends TestCase
     {
         $this->createBankAccountSubsidyStageHash();
         $hash = $this->faker->sentence;
-        $this->createApplicationWithBankAccountNumberHash($hash);
-        $this->createApplicationWithBankAccountNumberHash($hash);
+        $application1 = $this->createApplicationWithBankAccountNumberHash($hash);
+        $application2 = $this->createApplicationWithBankAccountNumberHash($hash);
 
         $response = $this
             ->be($this->internalAuditorUser)
@@ -127,6 +127,8 @@ class ApplicationHashControllerTest extends TestCase
         $response->assertJsonCount(1, 'data');
 
         $response->assertJsonFragment(['hash' => $hash]);
+        $response->assertJsonFragment(['id' => $application1->id, 'reference' => $application1->reference]);
+        $response->assertJsonFragment(['id' => $application2->id, 'reference' => $application2->reference]);
     }
 
     public function testBankAccountDuplicatesPolicy(): void

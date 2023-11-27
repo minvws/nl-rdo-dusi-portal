@@ -25,7 +25,7 @@ class ApplicationHashController extends Controller
         return ApplicationHashResource::collection(
             $this->bankAccountDuplicatesService->getDuplicatesForSubsidy($subsidy)
                 ->map(fn(ApplicationHashDTO $item) =>
-                        ApplicationHashResource::make($item->hash, $item->count, $item->applicationIds))
+                        ApplicationHashResource::make($item->hash, $item->count, $item->applications))
         );
     }
 }

@@ -6,15 +6,17 @@ namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 
 class ApplicationHashResource extends JsonResource
 {
-    public function __construct(string $hash, int $count, string $applicationReferences)
+    public function __construct(string $hash, int $count, Collection $applications)
     {
         parent::__construct([
             'hash' => $hash,
             'count' => $count,
-            'applicationReferences' => $applicationReferences,
+            'applications' => $applications,
         ]);
     }
 
@@ -23,10 +25,17 @@ class ApplicationHashResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var Collection $applications */
+        $applications = $this['applications'];
+
         return [
             'hash' => $this['hash'],
             'count' => $this['count'],
-            'application_references' => explode(',', $this['applicationReferences']),
+            'applications' => $applications->map(
+                function (Application $application) {
+                    return ['id' => $application->id, 'reference' => $application->reference];
+                }
+            )->toArray(),
         ];
     }
 }

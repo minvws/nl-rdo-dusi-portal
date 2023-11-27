@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use League\CommonMark\Exception\LogicException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\BankAccountSubsidyStageHashNotFoundException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationHash as ApplicationHashDTO;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationHashService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -32,6 +33,7 @@ class BankAccountDuplicatesService
 
         $query = $this->applicationHashService->getApplicationHashDuplicatesQuery($subsidyStageHash);
 
+
         /**
          * @psalm-suppress InvalidTemplateParam
          */
@@ -41,7 +43,14 @@ class BankAccountDuplicatesService
                 ->get()
                 ->map(function ($result) {
                     /** @phpstan-ignore-next-line  */
-                    return new ApplicationHashDTO($result->hash, $result->count, $result->application_ids);
+                    $applicationIds = $result->application_ids;
+
+                    $applications = Application::query()
+                        ->whereIn('id', explode(',', $applicationIds))
+                        ->get();
+
+                    /** @phpstan-ignore-next-line  */
+                    return new ApplicationHashDTO($result->hash, $result->count, $applications);
                 });
     }
 
