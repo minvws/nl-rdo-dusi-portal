@@ -314,6 +314,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
             'name' => 'Bank account',
             'description' => 'Bank account duplicate reporting',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         /** @var Field $bankAccountNumber */
@@ -326,6 +328,6 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         DB::table('subsidy_stage_hash_fields')->insert([
           'subsidy_stage_hash_id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
           'field_id' => $bankAccountNumber->id,
-      ]);
+        ]);
     }
 }
