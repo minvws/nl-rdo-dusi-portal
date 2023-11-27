@@ -9,7 +9,7 @@ class ApplicationHash
     public function __construct(
         public readonly string $hash,
         public readonly int $count,
-        public readonly string $application_ids
+        public readonly string $applicationIds
     ) {
     }
 }
