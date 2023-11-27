@@ -18,6 +18,9 @@ class ApplicationHashResource extends JsonResource
         ]);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function toArray(Request $request): array
     {
         return [

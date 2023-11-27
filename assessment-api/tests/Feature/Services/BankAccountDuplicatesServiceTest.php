@@ -103,8 +103,8 @@ class BankAccountDuplicatesServiceTest extends TestCase
         $duplicates = $this->bankAccountDuplicatesService->getDuplicatesForSubsidy($this->subsidy);
 
         $this->assertCount(1, $duplicates);
-        $this->assertContains($application1->id, explode(',', $duplicates->first()->application_ids));
-        $this->assertContains($application2->id, explode(',', $duplicates->first()->application_ids));
+        $this->assertContains($application1->id, explode(',', $duplicates->first()->applicationIds));
+        $this->assertContains($application2->id, explode(',', $duplicates->first()->applicationIds));
     }
 
     public function testBankAccountDuplicatesNotFound(): void
