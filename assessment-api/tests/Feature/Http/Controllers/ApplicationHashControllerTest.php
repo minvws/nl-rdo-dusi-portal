@@ -39,7 +39,7 @@ class ApplicationHashControllerTest extends TestCase
     private Identity $identity;
     private Application $application;
 
-    private Authenticatable $implementationCoordinatorUser;
+    private Authenticatable $internalAuditorUser;
 
     protected function setUp(): void
     {
@@ -58,8 +58,8 @@ class ApplicationHashControllerTest extends TestCase
 
         $this->identity = Identity::factory()->create();
 
-        $this->implementationCoordinatorUser = User::factory()->create();
-        $this->implementationCoordinatorUser->attachRole(RoleEnum::ImplementationCoordinator, $this->subsidy->id);
+        $this->internalAuditorUser = User::factory()->create();
+        $this->internalAuditorUser->attachRole(RoleEnum::InternalAuditor, $this->subsidy->id);
     }
 
     public function createApplicationWithBankAccountNumberHash(string $hash): Application
@@ -105,7 +105,7 @@ class ApplicationHashControllerTest extends TestCase
         );
 
         $response = $this
-            ->be($this->implementationCoordinatorUser)
+            ->be($this->internalAuditorUser)
             ->json('GET', sprintf('/api/subsidies/%s/bankaccounts/duplicates', $this->subsidy->id));
 
         $response->assertStatus(200);
@@ -115,21 +115,31 @@ class ApplicationHashControllerTest extends TestCase
     public function testBankAccountDuplicates(): void
     {
         $this->createBankAccountSubsidyStageHash();
-        $hash = '1151a36e738c7e5933927387b1a55931ce4fbcfc45c8197476d6050aac5b59a7';
-        $this->createApplicationWithBankAccountNumberHash(
-            $hash
-        );
-        $this->createApplicationWithBankAccountNumberHash(
-            $hash
-        );
+        $hash = $this->faker->sentence;
+        $this->createApplicationWithBankAccountNumberHash($hash);
+        $this->createApplicationWithBankAccountNumberHash($hash);
 
         $response = $this
-            ->be($this->implementationCoordinatorUser)
+            ->be($this->internalAuditorUser)
             ->json('GET', sprintf('/api/subsidies/%s/bankaccounts/duplicates', $this->subsidy->id));
 
         $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
 
         $response->assertJsonFragment(['hash' => $hash]);
+    }
+
+    public function testBankAccountDuplicatesPolicy(): void
+    {
+        $this->createBankAccountSubsidyStageHash();
+
+        $assessor = User::factory()->create();
+        $assessor->attachRole(RoleEnum::Assessor, $this->subsidy->id);
+
+        $response = $this
+            ->be($assessor)
+            ->json('GET', sprintf('/api/subsidies/%s/bankaccounts/duplicates', $this->subsidy->id));
+
+        $response->assertStatus(403);
     }
 }
