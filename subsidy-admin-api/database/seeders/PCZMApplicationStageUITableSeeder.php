@@ -70,7 +70,7 @@ class PCZMApplicationStageUITableSeeder extends Seeder
         ];
     }
 
-    private function buildViewSchema(): array
+    public function buildViewSchema(): array
     {
         $filePath = __DIR__ . '/resources/pczm/viewschema-stage1.json';
         if(!file_exists($filePath)) {
@@ -83,14 +83,29 @@ class PCZMApplicationStageUITableSeeder extends Seeder
 
     public function run(): void
     {
-        $ui = [
+        $ui = $this->buildInputUi();
+        $view_ui = $this->buildViewSchema();
+
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::PCZM_STAGE1_V1_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+    }
+
+    public function buildInputUi(): array
+    {
+        return [
             'type' => 'CustomPageNavigationControl',
             'elements' => [
                 $this->buildPage(
                     1,
                     'Start',
                     [
-                ]),
+                    ]),
                 $this->buildPage(2,
                     'Persoonsgegevens toevoegen',
                     [
@@ -126,19 +141,8 @@ class PCZMApplicationStageUITableSeeder extends Seeder
                     'Controleren en ondertekenen',
                     [
                         'truthfullyCompleted'
-                ])
+                    ])
             ]
         ];
-
-        $view_ui = $this->buildViewSchema();
-
-        DB::table('subsidy_stage_uis')->insert([
-            'id' => self::PCZM_STAGE1_V1_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
-            'version' => 1,
-            'status' => 'published',
-            'input_ui' => json_encode($ui),
-            'view_ui' => json_encode($view_ui)
-        ]);
     }
 }

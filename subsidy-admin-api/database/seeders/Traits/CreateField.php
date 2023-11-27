@@ -499,6 +499,8 @@ trait CreateField
         bool $isRequired = true,
         ?array $mimeTypes = null,
         ?int $maxFileSize = null,
+        ?int $minItems = null,
+        ?int $maxItems = null,
         ?Condition $requiredCondition = null,
         DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
     ): string {
@@ -513,6 +515,8 @@ trait CreateField
             params: array_filter([
                 'mimeTypes' => $mimeTypes,
                 'maxFileSize' => $maxFileSize,
+                'minItems' => $minItems,
+                'maxItems' => $maxItems,
             ]),
             retentionPeriod: $retentionPeriod,
         );
