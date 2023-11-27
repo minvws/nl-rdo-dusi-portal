@@ -59,6 +59,7 @@ class SubsidyStageDataSchemaBuilder
                     'type' => 'string',
                     'enum' => $field->params['options']
                 ];
+                $result = array_merge($result, $this->getArrayValidationOptions($field));
                 break;
             case FieldType::Select:
                 $result['enum'] = $field->params['options'];
@@ -95,6 +96,7 @@ class SubsidyStageDataSchemaBuilder
                     'required' => ['id']
                 ];
                 $result['file'] = true;
+                $result = array_merge($result, $this->getArrayValidationOptions($field));
                 break;
         }
     }

@@ -147,6 +147,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'Gewaarmerkt verzekeringsbericht',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -156,6 +158,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'WIA-Beslissing',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -174,6 +178,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'Toekenningsbrief',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
             requiredCondition: new ComparisonCondition(
                 1, 'isWiaDecisionPostponed', Operator::Identical, 'Ja'
             ),
@@ -186,6 +192,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'Bewijs dienstverband',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -234,6 +242,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'Verklaring zorgaanbieder',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
             requiredCondition: new OrCondition([
                 new ComparisonCondition(1, 'employmentFunction', Operator::Identical, 'Anders'),
                 new ComparisonCondition(1, 'employerKind', Operator::Identical, 'Andere organisatie'),
@@ -264,6 +274,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'Medisch onderzoeksverslag',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -281,6 +293,8 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: 'Verklaring arts',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
             requiredCondition: new ComparisonCondition(1, 'hasPostCovidDiagnose', Operator::Identical, 'Nee'),
             retentionPeriod: DataRetentionPeriod::Short
         );
