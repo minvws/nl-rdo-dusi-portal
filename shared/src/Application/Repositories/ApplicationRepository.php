@@ -410,8 +410,6 @@ class ApplicationRepository
                 'application_id' => $application->id
             ],
             [
-                'subsidy_stage_hash_id' => $subsidyStageHash->id,
-                'application_id' => $application->id,
                 'hash' => $hash
             ]
         );
