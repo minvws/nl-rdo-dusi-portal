@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
-use MinVWS\DUSi\Shared\User\Models\Role;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\User\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use MinVWS\DUSi\Assessment\API\Http\Resources\SubsidyResource;
 use MinVWS\DUSi\Shared\User\Resources\UserResource;
+use MinVWS\DUSi\Shared\User\Services\UserService;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private readonly UserService $userService
+    ) {
+    }
+
     public function show(Request $request): UserResource
     {
         return UserResource::make($request->user());
@@ -23,15 +29,10 @@ class UserController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        /**
-         * @psalm-suppress InvalidTemplateParam
-         */
-        $subsidies = $user->roles->map(function (Role $role) {
-            return $role->pivot->subsidy()->get();
-        });
+        if ($this->userService->hasAccessToAllSubsidies($user)) {
+            return SubsidyResource::collection(Subsidy::all());
+        }
 
-        $flattenedSubsidies = $subsidies->flatten();
-
-        return SubsidyResource::collection($flattenedSubsidies);
+        return SubsidyResource::collection($this->userService->getSubsidiesForUser($user));
     }
 }

@@ -5,15 +5,8 @@ declare(strict_types=1);
 namespace Feature\Http\Controllers;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
-use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
-use MinVWS\DUSi\Shared\Test\MocksEncryption;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
 
@@ -22,15 +15,8 @@ use MinVWS\DUSi\Shared\User\Models\User;
  */
 class UserControllerTest extends TestCase
 {
-    use MocksEncryption;
-    use WithFaker;
-
-    private Subsidy $subsidy;
-    private SubsidyVersion $subsidyVersion;
-    private SubsidyStage $subsidyStage1;
-    private SubsidyStageHash $bankAccountSubsidyStageHash;
-    private Identity $identity;
-    private Application $application;
+    private Subsidy $subsidy1;
+    private Subsidy $subsidy2;
 
     private Authenticatable $implementationCoordinatorUser;
 
@@ -38,20 +24,34 @@ class UserControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->subsidy = Subsidy::factory()->create();
-
+        $this->subsidy1 = Subsidy::factory()->create();
+        $this->subsidy2 = Subsidy::factory()->create();
 
         $this->implementationCoordinatorUser = User::factory()->create();
-        $this->implementationCoordinatorUser->attachRole(RoleEnum::ImplementationCoordinator, $this->subsidy->id);
     }
 
     public function testSubsidyList(): void
     {
+        $this->implementationCoordinatorUser->attachRole(RoleEnum::ImplementationCoordinator, $this->subsidy1->id);
+
         $response = $this
             ->be($this->implementationCoordinatorUser)
             ->json('GET', '/api/user/subsidies');
 
         $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
+    }
+
+    public function testSubsidyListForSuperUser(): void
+    {
+        //When a user has no subsidy attached to one of his roles, this means he as access to all subsidies.
+        $this->implementationCoordinatorUser->attachRole(RoleEnum::ImplementationCoordinator, null);
+
+        $response = $this
+            ->be($this->implementationCoordinatorUser)
+            ->json('GET', '/api/user/subsidies');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(2, 'data');
     }
 }
