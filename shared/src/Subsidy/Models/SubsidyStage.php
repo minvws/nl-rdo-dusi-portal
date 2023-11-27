@@ -87,6 +87,19 @@ class SubsidyStage extends Model
         return $query->whereIn('subject_role', [$subjectRole]);
     }
 
+    public function scopeBySubsidyIds(Builder $query, ?array $subsidyIds = null): Builder
+    {
+        if ($subsidyIds === null || count($subsidyIds) === 0) {
+            return $query;
+        }
+
+        return $query->whereIn('subsidy_version_id', function ($query) use ($subsidyIds) {
+            $query->select('id')
+                ->from('subsidy_versions')
+                ->whereIn('subsidy_id', $subsidyIds);
+        });
+    }
+
     public function internalNoteField(): HasOne
     {
         return $this->hasOne(Field::class, 'code', 'internal_note_field_code');
