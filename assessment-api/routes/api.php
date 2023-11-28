@@ -20,7 +20,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'show']);
 
     Route::middleware(EnsurePasswordUpdated::class)->group(function () {
-        Route::get('applications/export', [ApplicationExportController::class, 'export']);
+        Route::get('export/applications', [ApplicationExportController::class, 'export']);
 
         Route::prefix('applications')
             ->controller(ApplicationController::class)
