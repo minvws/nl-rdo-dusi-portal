@@ -7,7 +7,7 @@ SELECT
     'bd26ae6f-05ac-4690-81da-87b534f7758d',
     fields.id
 FROM
-    fields
+    public.fields
 WHERE
       fields.subsidy_stage_id = '7e5d64e9-35f0-4fee-b8d2-dca967b43183'
   AND fields.code = 'bankAccountNumber'
