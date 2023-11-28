@@ -247,7 +247,7 @@ class SubsidyRepositoryTest extends TestCase
 
         $repository = $this->app->make(SubsidyRepository::class);
         $actualShortRegulations = $repository->getActiveSubsidyCodes($subsidyIds);
-        $this->assertEquals($expectedSubsidyCodes, $actualShortRegulations->toArray());
+        $this->assertEquals($expectedSubsidyCodes, $actualShortRegulations);
     }
 
     public static function dataProviderSubsidyCodes(): array
@@ -314,7 +314,7 @@ class SubsidyRepositoryTest extends TestCase
         $repository = $this->app->make(SubsidyRepository::class);
         $actualSubsidyStageTitles = $repository->getSubsidyStageTitles($subsidyIds);
 
-        $this->assertEquals($expectedSubsidyStageTitles, $actualSubsidyStageTitles->toArray());
+        $this->assertEquals($expectedSubsidyStageTitles, $actualSubsidyStageTitles);
     }
 
     public static function dataProviderSubsidyStageTitles(): array

@@ -110,18 +110,17 @@ class ApplicationController extends Controller
     /**
      * Get the filter UI resource.
      */
-    public function getApplicationRequestFilterForUserResource(): ApplicationRequestsFilterResource
+    public function getApplicationRequestFilterForUserResource(Request $request): ApplicationRequestsFilterResource
     {
-        //TODO: get and validate user from Auth
-        return $this->applicationService->getApplicationRequestFilterResource(null);
+        return $this->applicationService->getApplicationRequestFilterResource($request->user());
     }
 
     /**
      * Get the filter UI resource.
      */
-    public function getApplicationRequestFilterResource(): ApplicationRequestsFilterResource
+    public function getApplicationRequestFilterResource(Request $request): ApplicationRequestsFilterResource
     {
-        return $this->applicationService->getApplicationRequestFilterResource(null);
+        return $this->applicationService->getApplicationRequestFilterResource($request->user());
     }
 
     public function getApplicationHistory(Application $application): ResourceCollection

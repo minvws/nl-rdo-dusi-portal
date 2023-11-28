@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -181,26 +179,28 @@ class SubsidyRepository
 
     /**
      * @param array<int> $subsidyIds
-     * @return Collection<array-key, string>
+     * @return array<array-key, string>
      */
-    public function getActiveSubsidyCodes(?array $subsidyIds = null): Collection
+    public function getActiveSubsidyCodes(?array $subsidyIds = null): array
     {
         return Subsidy::filterByIds($subsidyIds)
             ->active()
             ->ordered()
-            ->pluck('code');
+            ->pluck('code')
+            ->toArray();
     }
 
     /**
      * @param array<int> $subsidyIds
-     * @return Collection<array-key, string>
+     * @return array<array-key, string>
      */
-    public function getSubsidyStageTitles(?array $subsidyIds = null): Collection
+    public function getSubsidyStageTitles(?array $subsidyIds = null): array
     {
         return SubsidyStage::bySubsidyIds($subsidyIds)
             ->pluck('title')
             ->unique()
-            ->sort();
+            ->sort()
+            ->toArray();
     }
 
     public function findSubsidyByCode(string $code): ?Subsidy
