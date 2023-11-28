@@ -36,8 +36,8 @@ class ApplicationExportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date_from' => 'date',
-            'date_to' => 'date',
+            'date_from' => 'date|after_or_equal:2023-01-01',
+            'date_to' => 'date|before_or_equal:today',
         ];
     }
 }

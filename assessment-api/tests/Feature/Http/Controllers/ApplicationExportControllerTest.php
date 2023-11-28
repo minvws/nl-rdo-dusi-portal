@@ -42,7 +42,11 @@ class ApplicationExportControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->subsidy = Subsidy::factory()->create(['code' => 'PCZM']);
+        $this->subsidy = Subsidy::factory()->create([
+            'code' => 'PCZM',
+            'reference_prefix' => 'TEST',
+        ]);
+
         $subsidyVersion = SubsidyVersion::factory()
             ->for($this->subsidy)
             ->create(['status' => VersionStatus::Published]);
@@ -71,7 +75,6 @@ class ApplicationExportControllerTest extends TestCase
                     'created_at' => Carbon::today(),
                     'final_review_deadline' => Carbon::tomorrow(),
                     'status' => 'approved',
-
                 ]
             )
             ->each(function (Application $application) use ($subsidyStage1, $subsidyStage2, $faker) {
@@ -122,11 +125,12 @@ class ApplicationExportControllerTest extends TestCase
                         $encryptedAnswer = '';
                     }
 
-                    Answer::factory()->create([
-                        'application_stage_id' => $appStage1->id,
-                        'field_id' => $field->id,
-                        'encrypted_answer' => $encryptedAnswer,
-                    ]);
+                    Answer::factory()
+                        ->for($field)
+                        ->create([
+                            'application_stage_id' => $appStage1->id,
+                            'encrypted_answer' => $encryptedAnswer,
+                        ]);
                 }
             })
         ;
@@ -152,8 +156,12 @@ class ApplicationExportControllerTest extends TestCase
         $response->assertHeader('Content-Disposition', $responseFilename);
 
         $content = $response->streamedContent();
+
+        // remove the BOM for assertions
         $content = str_replace("\xEF\xBB\xBF", '', $content);
-        $rows = explode("\n", $content);
+        $rows = explode("\n", trim($content));
+
+        $this->assertCount(11, $rows);
 
         $headerRow = str_getcsv($rows[0]);
         $this->assertContains("Dossiernummer", $headerRow);
@@ -176,6 +184,8 @@ class ApplicationExportControllerTest extends TestCase
         $this->assertEquals($firstApplication->reference, $firstRow[0]);
 
         $applicationSurePayResult = $firstApplication->applicationSurePayResult;
+        assert($applicationSurePayResult !== null);
+
         $this->assertEquals($applicationSurePayResult->account_number_validation->value, $firstRow[9]);
     }
 
