@@ -13,6 +13,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\Logging\Laravel\LogService;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApplicationExportController extends Controller
 {
@@ -25,10 +26,10 @@ class ApplicationExportController extends Controller
     /**
      * @param ApplicationExportRequest $request
      *
-     * @return void
+     * @return StreamedResponse
      * @throws \Exception
      */
-    public function export(ApplicationExportRequest $request): void
+    public function export(ApplicationExportRequest $request)
     {
         $this->authorize('export', [Application::class]);
 
@@ -41,32 +42,39 @@ class ApplicationExportController extends Controller
             'status' => [ApplicationStatus::Approved],
         ]);
 
-        $fileName = sprintf('export-%s.csv', CarbonImmutable::now()->format('Y-m-d-His'));
-        $csvWriter = SimpleExcelWriter::streamDownload($fileName);
 
         $this->logger->log(
             (new ExportApplicationsEvent())
                 ->withData([
                     'userId' => $user->id,
                     'subsidy' => implode(', ', $filter->subsidy),
-                    'status' => implode(', ', $filter->status),
+                    'status' => implode(', ', array_map(static fn($status) => $status->value, $filter->status)),
                     'dateFrom' => $filter->dateFrom,
                     'dateTo' => $filter->dateTo
                 ])
         );
 
-        $rowCounter = 0;
-        $limit = 100;
-        foreach ($this->exportService->exportApplications($filter) as $row) {
-            $csvWriter->addRow($row);
+        $fileName = sprintf('export-%s.csv', CarbonImmutable::now()->format('Y-m-d-His'));
 
-            if ($rowCounter % $limit === 0) {
-                flush();
+        return response()->streamDownload(function () use ($filter, $fileName) {
+
+            $csvWriter = SimpleExcelWriter::streamDownload($fileName);
+
+            $rowCounter = 0;
+            $limit = 100;
+            foreach ($this->exportService->exportApplications($filter) as $row) {
+                $csvWriter->addRow($row);
+
+                if ($rowCounter % $limit === 0) {
+                    flush();
+                }
+
+                $rowCounter++;
             }
 
-            $rowCounter++;
-        }
+            $csvWriter->close();
+        }, $fileName);
 
-        $csvWriter->toBrowser();
+
     }
 }

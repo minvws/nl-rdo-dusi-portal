@@ -188,6 +188,9 @@ class ApplicationPolicy
 
     public function export(User $user): bool
     {
-        return $user->hasRole(Role::DataExporter);
+        return $user->hasRoleForSubsidy(
+            Role::DataExporter,
+            Subsidy::whereCode('PCZM')->first()->id
+        );
     }
 }

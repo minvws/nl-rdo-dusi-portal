@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
@@ -24,7 +23,7 @@ class ApplicationExportService
 
     public function exportApplications(ApplicationsFilter $filter): \Generator
     {
-        $query = Application::query();
+        $query = Application::query()->orderBy('created_at');
         $this->applyFilters($query, $filter);
 
         foreach ($query->lazy(100) as $application) {
@@ -48,7 +47,18 @@ class ApplicationExportService
             $encrypter = $this->encryptionService->getEncrypter($firstStage);
             assert($encrypter instanceof Encrypter);
 
-            $answers = $firstStage->answers;
+            if ($firstStage->answers->count() === 0) {
+                Log::error(
+                    sprintf(
+                        'No answers found for application %s / %s',
+                        $application->reference,
+                        $application->id
+                    )
+                );
+                continue;
+            }
+
+            $answers = $firstStage->answers->pluck('encrypted_answer', 'field.code');
 
             Log::debug(sprintf('Add data for %s', $application->reference));
 
@@ -85,14 +95,14 @@ class ApplicationExportService
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Collection<array-key, Answer> $answers
+     * @param Collection<array-key, mixed> $answers
      */
     private function getDecryptedAnswerByCode(
         Collection $answers,
         string $fieldCode,
         Encrypter $encrypter
     ): string|int|null {
-        $encryptedAnswer = $answers->firstWhere('field.code', '=', $fieldCode);
+        $encryptedAnswer = $answers->get($fieldCode);
 
         if ($encryptedAnswer === null) {
             Log::debug('No encryptedAnswer', ['field' => $fieldCode]);
@@ -100,9 +110,7 @@ class ApplicationExportService
             return null;
         }
 
-        assert($encryptedAnswer->field !== null);
-
-        return $encrypter->decrypt($encryptedAnswer->encrypted_answer);
+        return $encrypter->decrypt($encryptedAnswer);
     }
 
     private function applyFilters(Builder $query, ApplicationsFilter $filter): void
