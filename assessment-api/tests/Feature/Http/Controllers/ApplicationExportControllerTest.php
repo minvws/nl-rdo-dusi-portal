@@ -20,13 +20,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Test\MocksEncryption;
-use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
- * @group application-assessor
- * @group application-assessor-controller
+ * @group application-export
+ * @group application-export-controller
  */
 class ApplicationExportControllerTest extends TestCase
 {
@@ -153,7 +152,7 @@ class ApplicationExportControllerTest extends TestCase
         $response->assertHeader('Content-Disposition', $responseFilename);
 
         $content = $response->streamedContent();
-        $content = str_replace("\xEF\xBB\xBF",'', $content);
+        $content = str_replace("\xEF\xBB\xBF", '', $content);
         $rows = explode("\n", $content);
 
         $headerRow = str_getcsv($rows[0]);

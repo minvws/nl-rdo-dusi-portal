@@ -29,7 +29,7 @@ class ApplicationExportController extends Controller
      * @return StreamedResponse
      * @throws \Exception
      */
-    public function export(ApplicationExportRequest $request)
+    public function export(ApplicationExportRequest $request): StreamedResponse
     {
         $this->authorize('export', [Application::class]);
 
@@ -42,13 +42,14 @@ class ApplicationExportController extends Controller
             'status' => [ApplicationStatus::Approved],
         ]);
 
+        assert($filter->status !== null);
 
         $this->logger->log(
             (new ExportApplicationsEvent())
                 ->withData([
                     'userId' => $user->id,
                     'subsidy' => implode(', ', $filter->subsidy),
-                    'status' => implode(', ', array_map(static fn($status) => $status->value, $filter->status)),
+                    'status' => implode(', ', array_map(static fn($state) => $state->value, $filter->status)),
                     'dateFrom' => $filter->dateFrom,
                     'dateTo' => $filter->dateTo
                 ])
@@ -57,7 +58,6 @@ class ApplicationExportController extends Controller
         $fileName = sprintf('export-%s.csv', CarbonImmutable::now()->format('Y-m-d-His'));
 
         return response()->streamDownload(function () use ($filter, $fileName) {
-
             $csvWriter = SimpleExcelWriter::streamDownload($fileName);
 
             $rowCounter = 0;
@@ -74,7 +74,5 @@ class ApplicationExportController extends Controller
 
             $csvWriter->close();
         }, $fileName);
-
-
     }
 }
