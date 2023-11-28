@@ -79,7 +79,7 @@ class BankAccountDuplicatesService
             ),
             default => throw new RuntimeException('Unexpected case in match expression')
         };
-        assert($subsidyStageHash instanceof SubsidyStageHash::class);
+        assert($subsidyStageHash instanceof SubsidyStageHash);
 
         return $subsidyStageHash;
     }
