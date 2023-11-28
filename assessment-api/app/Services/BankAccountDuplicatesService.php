@@ -14,7 +14,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 use RuntimeException;
-use Webmozart\Assert\Assert;
 
 class BankAccountDuplicatesService
 {
