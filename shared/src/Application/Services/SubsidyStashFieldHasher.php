@@ -36,7 +36,7 @@ class SubsidyStashFieldHasher
                         '');
                 }
             )->reduce(function (null|string $carry, string $value) {
-                return $carry . $value;
+                return ($carry ? $carry . '-' : '') . $value;
             });
 
         if (empty($concattedValues)) {
