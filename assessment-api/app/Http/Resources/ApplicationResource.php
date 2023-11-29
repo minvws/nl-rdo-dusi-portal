@@ -6,24 +6,25 @@ namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Collection;
 
 /**
- * @property string $hash
- * @property int $count
- * @property Collection $applications
+ * @property string $id
+ * @property string $reference
  */
-class ApplicationHashResource extends JsonResource
+class ApplicationResource extends JsonResource
 {
     /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array
     {
         return [
-            'hash' => $this->hash,
-            'count' => $this->count,
-            'applications' => ApplicationResource::collection($this->applications),
+            'id' => $this->id,
+            'reference' => $this->reference,
         ];
     }
 }
