@@ -12,7 +12,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 use Ramsey\Uuid\Uuid;
 use Webmozart\Assert\Assert;
 
-class UpdateSubsidyStageHash extends Command
+class UpdateSubsidyStageHashCommand extends Command
 {
     protected $signature = 'subsidy-stage-hash:update {subsidyStageHashId}';
 
