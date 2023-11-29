@@ -233,24 +233,12 @@ readonly class ApplicationDataService
          */
         $subsidyStageHashFields = $subsidyStageHash->subsidyStageHashFields()->get();
 
-        /**
-         * @var Collection $hashFieldCodesMap
-         */
-        $hashFieldCodesMap = $subsidyStageHashFields->map(
-            fn(SubsidyStageHashField $field) => $field->field?->code
-        );
-
-        foreach ($fieldValues as $fieldValue) {
-            if ($hashFieldCodesMap->contains($fieldValue->field->code)) {
-                $this->updateOrNewApplicationStageFieldHash(
-                    $subsidyStageHash,
-                    $applicationStage,
-                    $fieldValues
-                );
-
-                //Prevent updating the same hash multiple times
-                break;
-            }
+        if ($this->fieldValuesContainsSubsidyStageHashField($fieldValues, $subsidyStageHashFields)) {
+            $this->updateOrNewApplicationStageFieldHash(
+                $subsidyStageHash,
+                $applicationStage,
+                $fieldValues
+            );
         }
     }
 
@@ -277,5 +265,25 @@ readonly class ApplicationDataService
             $fieldValues,
             $applicationStage
         );
+    }
+
+    public function fieldValuesContainsSubsidyStageHashField(
+        array $fieldValues,
+        Collection $subsidyStageHashFields
+    ): bool {
+        /**
+         * @var Collection $hashFieldCodesMap
+         */
+        $hashFieldCodesMap = $subsidyStageHashFields->map(
+            fn(SubsidyStageHashField $field) => $field->field?->code
+        );
+
+        foreach ($fieldValues as $fieldValue) {
+            if ($hashFieldCodesMap->contains($fieldValue->field->code)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
