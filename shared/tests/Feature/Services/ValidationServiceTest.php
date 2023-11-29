@@ -29,7 +29,6 @@ use Mockery;
  */
 class ValidationServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
 
     /**
