@@ -23,7 +23,10 @@ class ApplicationExportService
 
     public function exportApplications(ApplicationsFilter $filter): \Generator
     {
-        $query = Application::query()->orderBy('created_at');
+        $query = Application::query()
+            ->with(['applicationSurePayResult'])
+            ->orderBy('created_at');
+
         $this->applyFilters($query, $filter);
 
         foreach ($query->lazy(100) as $application) {
@@ -43,6 +46,8 @@ class ApplicationExportService
 
             $firstStage = $application->firstApplicationStage;
             assert($firstStage instanceof ApplicationStage);
+
+            $firstStage->load(['answers', 'answers.field']);
 
             $encrypter = $this->encryptionService->getEncrypter($firstStage);
             assert($encrypter instanceof Encrypter);

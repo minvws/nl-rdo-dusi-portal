@@ -142,8 +142,8 @@ class ApplicationExportControllerTest extends TestCase
         $user->attachRole(RoleEnum::DataExporter, $this->subsidy->id);
 
         $firstApplication = Application::orderBy('created_at')->first();
+        Carbon::setTestNow();
         $currentTime = Carbon::now();
-        Carbon::setTestNow($currentTime);
 
         $response = $this
             ->be($user)
