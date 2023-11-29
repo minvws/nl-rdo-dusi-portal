@@ -72,6 +72,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::get('subsidies/{subsidy}/bankaccounts/duplicates', [
             ApplicationHashController::class, 'getBankAccountDuplicates'
-        ])->middleware('can:viewBankAccountDuplicates,subsidy');
+        ]);
     });
 });

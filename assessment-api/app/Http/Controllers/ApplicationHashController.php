@@ -21,6 +21,8 @@ class ApplicationHashController extends Controller
      */
     public function getBankAccountDuplicates(Subsidy $subsidy): ResourceCollection
     {
+        $this->authorize('viewBankAccountDuplicates', $subsidy);
+
         return ApplicationHashResource::collection(
             $this->bankAccountDuplicatesService->getDuplicatesForSubsidy($subsidy)
         );
