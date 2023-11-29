@@ -6,7 +6,7 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
@@ -38,12 +38,8 @@ class ApplicationHashService
             });
         });
 
-        // flatten 2D collection to 1D and create new Eloquent Collection
-        $allStageHashes = new Collection(
-            $stageHashesCollections->flatten()->all()
-        );
-
-        return $allStageHashes;
+        // flatten 2D collection to 1D and create new Collection
+        return $stageHashesCollections->flatten()->collect();
     }
 
     public function getApplicationHashDuplicatesQuery(SubsidyStageHash $subsidyStageHash): Builder
