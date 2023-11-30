@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationHashFactory;
 use MinVWS\DUSi\Shared\Application\Traits\HasCompositePrimaryKey;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 
 class ApplicationHash extends Model
 {
@@ -17,7 +18,7 @@ class ApplicationHash extends Model
 
     protected $connection = Connection::APPLICATION;
 
-    protected $primaryKey = ['subsidy_stage_id', 'application_id']; // @phpstan-ignore-line
+    protected $primaryKey = ['subsidy_stage_hash_id', 'application_id']; // @phpstan-ignore-line
 
     public $timestamps = false;
 
@@ -27,7 +28,7 @@ class ApplicationHash extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'subsidy_stage_id',
+        'subsidy_stage_hash_id',
         'application_id',
         'hash'
     ];
@@ -35,6 +36,11 @@ class ApplicationHash extends Model
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
+    }
+
+    public function subsidyStageHash(): BelongsTo
+    {
+        return $this->belongsTo(SubsidyStageHash::class, 'subsidy_stage_hash_id', 'id');
     }
 
     protected static function newFactory(): ApplicationHashFactory

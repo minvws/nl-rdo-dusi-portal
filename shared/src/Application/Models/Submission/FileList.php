@@ -48,6 +48,14 @@ class FileList implements Codable, JsonSerializable
         return $this->items;
     }
 
+    public function __toString(): string
+    {
+        return (string)array_reduce(
+            $this->getFileIds(),
+            fn(null|string $carry, string $id) => $carry . $id
+        );
+    }
+
     public function count(): int
     {
         return count($this->items);
