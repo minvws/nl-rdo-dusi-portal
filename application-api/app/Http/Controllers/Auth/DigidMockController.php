@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Application\API\Http\Controllers\Auth;
 use MinVWS\DUSi\Application\API\Http\Controllers\Controller;
 use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use MinVWS\OpenIDConnectLaravel\Http\Responses\LoginResponseHandlerInterface;
+use phpseclib3\Crypt\Random;
 use Symfony\Component\HttpFoundation\Response;
 
 class DigidMockController extends Controller
@@ -22,6 +23,7 @@ class DigidMockController extends Controller
         return $this->loginResponseHandler->handleLoginResponse(
             (object)[
                 "bsn" => "942424242",
+                "session_id" => Random::string(16),
                 "loa_authn" => $this->mockLoa->value
             ]
         );

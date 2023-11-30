@@ -22,7 +22,7 @@ class PortalUser implements Authenticatable, Decodable
      */
     public function __construct(
         public string $bsn,
-        #[CodableName('bsn')] public string $id,
+        #[CodableName('session_id')] public string $id,
         #[CodableName('loa_authn')] public OidcUserLoa $loaAuthn,
     ) {
     }
@@ -34,7 +34,7 @@ class PortalUser implements Authenticatable, Decodable
      */
     public function getAuthIdentifierName(): string
     {
-        return $this->bsn;
+        return 'session_id';
     }
 
     /**
@@ -44,7 +44,7 @@ class PortalUser implements Authenticatable, Decodable
      */
     public function getAuthIdentifier(): string
     {
-        return $this->bsn;
+        return $this->id;
     }
 
     /**

@@ -47,9 +47,11 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
             ]));
         }
 
+        assert($user instanceof PortalUser);
+
         $this->logger->log((new LoginEvent())
             ->withData([
-//                'userId' => $user?->getAuthIdentifier(), //TODO: re-instate this when we have something other then bsn
+                'userId' => $user->getAuthIdentifier(),
                 'type' => 'user',
                 'typeId' => 4,
             ]));

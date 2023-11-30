@@ -31,7 +31,7 @@ class ApplicationAssessorController extends Controller
 {
     public function __construct(
         private readonly ApplicationAssessorService $assessorService,
-        private readonly ApplicationSubsidyService $applicationSubsidyService
+        private readonly ApplicationSubsidyService $applicationSubsidyService,
         private readonly LogService $logger,
     ) {
     }
