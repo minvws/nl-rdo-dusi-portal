@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationAssessorController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationController;
+use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationExportController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\ApplicationFileController;
 use MinVWS\DUSi\Assessment\API\Http\Controllers\UserController;
 use MinVWS\DUSi\Assessment\API\Http\Middleware\EnsurePasswordUpdated;
@@ -19,6 +20,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'show']);
 
     Route::middleware(EnsurePasswordUpdated::class)->group(function () {
+        Route::get('export/applications', [ApplicationExportController::class, 'export']);
+
         Route::prefix('applications')
             ->controller(ApplicationController::class)
             ->group(function () {
@@ -50,6 +53,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             ApplicationAssessorController::class, 'getAssessorPool'
         ]);
         Route::put('applications/{application}/assign', [ApplicationAssessorController::class, 'assign']);
+
+
 
 
         Route::get('/ui/applications/count', [ApplicationController::class, 'getApplicationsCount']);
