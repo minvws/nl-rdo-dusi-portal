@@ -19,7 +19,7 @@ class ApplicationExportController extends Controller
 {
     public function __construct(
         private readonly ApplicationExportService $exportService,
-        private LogService $logger,
+        private readonly LogService $logger,
     ) {
     }
 
