@@ -51,7 +51,7 @@ class ListSubsidyStageHashesCommand extends Command
         if ($subsidyStageHashes->count() > 0) {
             $this->table(array_keys($subsidyStageHashes->firstOrFail()->toArray()), $subsidyStageHashes->toArray());
         } else {
-            $this->info('No SubsidyStageHases found!');
+            $this->info('No SubsidyStageHashes found!');
         }
 
         return 0;
