@@ -91,7 +91,7 @@ class SubsidyVersion extends Model
 
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', 'published');
+        return $query->where('status', VersionStatus::Published);
     }
 
     public function scopeSubjectRole(Builder $query, SubjectRole $role): Builder

@@ -41,6 +41,9 @@ class ApplicationControllerTest extends TestCase
     private ApplicationStage $application4Stage1;
     private ApplicationStage $application4Stage2;
 
+    private Application $application5;
+    private ApplicationStage $application5Stage1;
+
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
     private SubsidyStage $subsidyStage1;
@@ -97,6 +100,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Submitted,
             ]
         );
         $this->application1Stage1 = ApplicationStage::factory()
@@ -115,6 +119,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::RequestForChanges,
             ]
         );
         $this->application2Stage1 = ApplicationStage::factory()
@@ -144,6 +149,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Submitted,
             ]
         );
         $this->application3Stage1 = ApplicationStage::factory()
@@ -153,6 +159,7 @@ class ApplicationControllerTest extends TestCase
                     'is_current' => false,
                     'is_submitted' => true,
                     'application_id' => $this->application3->id,
+                    'assessor_user_id' => $this->assessorUser2->id
                 ]
             );
 
@@ -174,6 +181,7 @@ class ApplicationControllerTest extends TestCase
                     'updated_at' => Carbon::today(),
                     'created_at' => Carbon::today(),
                     'final_review_deadline' => Carbon::today(),
+                    'status' => ApplicationStatus::Submitted,
                 ]
             );
         $this->application4Stage1 = ApplicationStage::factory()
@@ -190,6 +198,25 @@ class ApplicationControllerTest extends TestCase
             ->create([
                 'sequence_number' => 2,
             ]);
+
+        $this->application5 = Application::factory()->create(
+            [
+                'application_title' => 'application 5',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Draft,
+            ]
+        );
+        $this->application5Stage1 = ApplicationStage::factory()
+            ->for($this->subsidyStage1)
+            ->create(
+                [
+                    'application_id' => $this->application5->id,
+                    'sequence_number' => 1,
+                ]
+            );
     }
 
     public function testFilterForImplementationCoordinator(): void
@@ -201,6 +228,7 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications', $filters);
 
         $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
 
         $this->assertJsonFragment($response, $this->application1, ['show']);
     }
@@ -214,6 +242,7 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications', $filters);
 
         $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
 
         $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
     }
@@ -230,6 +259,7 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications', $filters);
 
         $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
 
         $this->assertJsonFragment($response, $this->application4, ['claim']);
     }
@@ -244,27 +274,20 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(3, 'data');
 
-        $response->assertJsonFragment([
-            'application_title' => $this->application2->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application2->status->value,
-            'final_review_deadline' => $this->application2->final_review_deadline,
-            'updated_at' => $this->application2->updated_at,
-            'actions' => ['release', 'show'],
-        ]);
-        $response->assertJsonFragment([
-            'application_title' => $this->application4->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application4->status->value,
-            'final_review_deadline' => $this->application4->final_review_deadline,
-            'updated_at' => $this->application4->updated_at,
-            'actions' => ['claim'],
-        ]);
+        $this->assertJsonFragment($response, $this->application1, ['release', 'show']);
+        $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
+        $this->assertJsonFragment($response, $this->application4, ['claim']);
 
         // Don't show the one where you are not the assessor
         $response->assertJsonMissing([
          'application_title' => $this->application3->application_title,
+        ]);
+
+        // Don't show draft
+        $response->assertJsonMissing([
+         'application_title' => $this->application5->application_title,
         ]);
     }
 
@@ -278,22 +301,14 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(4, 'data');
 
-        $response->assertJsonFragment([
-            'application_title' => $this->application1->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application1->status->value,
-            'final_review_deadline' => $this->application1->final_review_deadline,
-            'updated_at' => $this->application1->updated_at,
-            'actions' => ['show'],
-        ]);
-        $response->assertJsonFragment([
-            'application_title' => $this->application2->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application2->status->value,
-            'final_review_deadline' => $this->application2->final_review_deadline,
-            'updated_at' => $this->application2->updated_at,
-            'actions' => ['release', 'show'],
+        $this->assertJsonFragment($response, $this->application1, ['show']);
+        $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
+
+        // Don't show draft
+        $response->assertJsonMissing([
+            'application_title' => $this->application5->application_title,
         ]);
     }
 
@@ -314,6 +329,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Draft->value,
             ]
         );
 
@@ -331,9 +347,14 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(4, 'data');
 
         $response->assertJsonMissing([
             'application_title' => $unsubmittedApplication->application_title,
+        ]);
+
+        $response->assertJsonMissing([
+            'application_title' => $this->application5->application_title,
         ]);
     }
 
@@ -344,19 +365,16 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications/assigned');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
 
-        $response->assertJsonFragment([
-            'application_title' => $this->application2->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application2->status->value,
-            'final_review_deadline' => $this->application2->final_review_deadline,
-            'updated_at' => $this->application2->updated_at,
-            'actions' => ['release', 'show'],
-        ]);
+        $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
 
         // Don't show the one where you are not the assessor
         $response->assertJsonMissing([
             'application_title' => $this->application3->application_title,
+        ]);
+        $response->assertJsonMissing([
+            'application_title' => $this->application5->application_title,
         ]);
     }
 

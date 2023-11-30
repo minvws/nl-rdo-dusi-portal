@@ -19,7 +19,6 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
 
 /**
  * @property string $id
- * @property string $subsidy_id
  * @property int $version
  * @property string $title
  * @property VersionStatus $status
@@ -86,6 +85,19 @@ class SubsidyStage extends Model
     public function scopeSubjectRole(Builder $query, SubjectRole $subjectRole): Builder
     {
         return $query->whereIn('subject_role', [$subjectRole]);
+    }
+
+    public function scopeBySubsidyIds(Builder $query, ?array $subsidyIds = null): Builder
+    {
+        if ($subsidyIds === null || count($subsidyIds) === 0) {
+            return $query;
+        }
+
+        return $query->whereIn('subsidy_version_id', function ($query) use ($subsidyIds) {
+            $query->select('id')
+                ->from('subsidy_versions')
+                ->whereIn('subsidy_id', $subsidyIds);
+        });
     }
 
     public function internalNoteField(): HasOne

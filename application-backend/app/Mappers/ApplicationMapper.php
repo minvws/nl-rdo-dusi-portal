@@ -64,7 +64,7 @@ class ApplicationMapper
             $app->is_editable_for_applicant,
             $form,
             $data,
-            $validationResult
+            $validationResult?->validationResult,
         );
     }
 

@@ -18,6 +18,8 @@
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
                                 "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
@@ -39,6 +41,8 @@
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
                                 "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         },
@@ -57,6 +61,8 @@
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
                                 "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             },
                             "rule": {
@@ -85,6 +91,8 @@
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
                                 "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
@@ -142,6 +150,8 @@
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
                                 "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             },
                             "rule": {
@@ -225,6 +235,8 @@
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
                                 "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
@@ -253,6 +265,8 @@
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
                                 "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             },
                             "rule": {

@@ -49,6 +49,8 @@ class Subsidy extends Model
         'valid_to',
         'created_at',
         'updated_at',
+        'short_retention_period',
+        'long_retention_period',
     ];
 
     protected $casts = [
@@ -56,6 +58,8 @@ class Subsidy extends Model
         'status' => VersionStatus::class,
         'valid_from' => 'immutable_datetime',
         'valid_to' => 'immutable_datetime',
+        'short_retention_period' => 'integer',
+        'long_retention_period' => 'integer',
     ];
 
     public function subsidyVersions(): HasMany
@@ -70,26 +74,40 @@ class Subsidy extends Model
     {
         return $this->hasOne(SubsidyVersion::class)->published();
     }
-    public function scopeOrdered(Builder $query): Builder
-    {
-        return $query->orderBy('title');
-    }
 
     protected static function newFactory(): SubsidyFactory
     {
         return new SubsidyFactory();
     }
 
+    public function scopeOrdered(Builder $query): Builder
+    {
+        return $query->orderBy('title');
+    }
+
     public function scopeActive(Builder $query): Builder
     {
-        //@phpstan-ignore-next-line
-        return $query->whereRelation('subsidyVersions', fn (Builder $subQuery) => $subQuery->open());
+        return $query->whereHas('subsidyVersions', function (Builder $subQuery) {
+            /** @var Builder<SubsidyVersion> $subQuery */
+            return $subQuery->open();
+        });
     }
 
     public function scopeSubjectRole(Builder $query, SubjectRole $role): Builder
     {
-        //@phpstan-ignore-next-line
-        return $query->whereRelation('subsidyVersions', fn (Builder $subQuery) => $subQuery->subjectRole($role));
+        return $query->whereHas('subsidyVersions', function (Builder $subQuery) use ($role) {
+            /** @var Builder<SubsidyVersion> $subQuery */
+            return $subQuery->subjectRole($role);
+        });
+    }
+
+    public function scopeFilterByIds(Builder $query, ?array $subsidyIds = null): Builder
+    {
+        if ($subsidyIds === null) {
+            return $query;
+        }
+
+        return $query->whereIn('id', $subsidyIds);
     }
 
     protected function isOpenForNewApplications(): Attribute

@@ -9,8 +9,9 @@ use MinVWS\DUSi\Application\API\Http\Resources\SubsidyStageResource;
 use MinVWS\DUSi\Application\API\Http\Resources\SubsidyResource;
 use MinVWS\DUSi\Application\API\Models\SubsidyStageData;
 use MinVWS\DUSi\Application\API\Repositories\CacheRepository;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 class CacheService
@@ -22,6 +23,10 @@ class CacheService
     ) {
     }
 
+    /**
+     * @param Collection<array-key, Subsidy> $subsidies
+     * @return string|false
+     */
     public function cacheActiveSubsidies(Collection $subsidies): string|false
     {
         $key = $this->cacheKeyHelper->keyForActiveSubsidies();

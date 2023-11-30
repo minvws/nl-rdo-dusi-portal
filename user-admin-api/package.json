@@ -19,14 +19,14 @@
     "devDependencies": {
         "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.14",
         "autoprefixer": "^10.4.16",
-        "axios": "^1.6.0",
+        "axios": "^1.6.2",
         "better-npm-audit": "^3.7.3",
-        "eslint": "^8.52.0",
+        "eslint": "^8.54.0",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-compat": "^4.1.4",
         "eslint-plugin-prettier": "^5.0.1",
         "laravel-mix": "^6.0.49",
-        "prettier": "^3.0.3",
+        "prettier": "^3.1.0",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.69.5",
         "sass-loader": "^13.3.2"

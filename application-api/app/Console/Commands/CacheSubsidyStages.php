@@ -34,27 +34,25 @@ class CacheSubsidyStages extends Command
                 }
             );
 
-            if (count($subsidyStages) === 0) {
+            if ($subsidyStages->isEmpty()) {
                 $this->warn('No active forms found for subsidy!');
                 $this->newLine();
                 continue;
             }
 
-            if (!empty($subsidyStages)) {
-                $this->info('Caching forms for subsidy...');
-                $this->withProgressBar(
-                    $subsidyStages,
-                    function (SubsidyStage $subsidyStage) use ($cacheService) {
-                        $cacheService->cacheSubsidyStage($subsidyStage);
-                    }
-                );
-
-                $this->newLine();
-
-                $this->info("Cached forms:");
-                foreach ($subsidyStages as $subsidyStage) {
-                    $this->info("v" . $subsidyStage->subsidyVersion->version . ': ' . $subsidyStage->id);
+            $this->info('Caching forms for subsidy...');
+            $this->withProgressBar(
+                $subsidyStages,
+                function (SubsidyStage $subsidyStage) use ($cacheService) {
+                    $cacheService->cacheSubsidyStage($subsidyStage);
                 }
+            );
+
+            $this->newLine();
+
+            $this->info("Cached forms:");
+            foreach ($subsidyStages as $subsidyStage) {
+                $this->info("v" . $subsidyStage->subsidyVersion->version . ': ' . $subsidyStage->id);
             }
 
             $this->newLine();

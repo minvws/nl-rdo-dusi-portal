@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use Ramsey\Uuid\Uuid;
@@ -29,7 +30,8 @@ class FieldFactory extends Factory
             'code' => $this->faker->word,
             'title' => $this->faker->words(3, true),
             'type' => 'text',
-            'is_required' => true
+            'is_required' => true,
+            'retention_period_on_approval' => DataRetentionPeriod::Short->value,
         ];
     }
 }

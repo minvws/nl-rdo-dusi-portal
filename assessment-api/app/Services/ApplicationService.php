@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterResource;
@@ -68,9 +67,8 @@ class ApplicationService
     public function getApplicationMessageFilterResource(): ApplicationMessageFilterResource
     {
         $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
-        $phases = $this->subsidyRepository->getSubsidyStageTitles();
 
-        return ApplicationMessageFilterResource::make(['shortRegulations' => $shortRegulations, 'phases' => $phases]);
+        return ApplicationMessageFilterResource::make(['shortRegulations' => $shortRegulations]);
     }
 
     /**
@@ -78,12 +76,15 @@ class ApplicationService
      */
     public function getApplicationRequestFilterResource(?User $user): ApplicationRequestsFilterResource
     {
-        if ($user) {
-            Log::debug("Fetching application request filter for user {$user->id}");
-            throw new Exception("Not Implemented");
+        $userSubsidies = $user?->roles()->pluck('subsidy_id')->toArray() ?? [];
+
+        // If user has null in subsidy_id for a role, they can see all subsidies
+        if (in_array(null, $userSubsidies, true)) {
+            $userSubsidies = null;
         }
-        $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes();
-        $phases = $this->subsidyRepository->getSubsidyStageTitles();
+
+        $shortRegulations = $this->subsidyRepository->getActiveSubsidyCodes($userSubsidies);
+        $phases = $this->subsidyRepository->getSubsidyStageTitles($userSubsidies);
 
         return ApplicationRequestsFilterResource::make(['shortRegulations' => $shortRegulations, 'phases' => $phases]);
     }

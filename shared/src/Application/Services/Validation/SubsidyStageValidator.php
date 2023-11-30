@@ -16,6 +16,9 @@ class SubsidyStageValidator
     {
     }
 
+    /**
+     * @throws ValidationErrorException
+     */
     public function validate(): array
     {
         try {

@@ -16,9 +16,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\DUSi\Shared\Tests\TestCase;
-
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertNull;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @group subsidy
@@ -30,7 +28,7 @@ class SubsidyRepositoryTest extends TestCase
     {
         $subsidy = Subsidy::factory()->create();
 
-        assertNull($subsidy->publishedVersion()->first());
+        $this->assertNull($subsidy->publishedVersion()->first());
 
 
         $subsidyVersion = SubsidyVersion::factory()->create(
@@ -41,7 +39,7 @@ class SubsidyRepositoryTest extends TestCase
             ]
         );
 
-        assertNotNull($subsidy->publishedVersion()->first());
+        $this->assertNotNull($subsidy->publishedVersion()->first());
 
 
         $subsidyStage = SubsidyStage::factory()->create(
@@ -50,7 +48,7 @@ class SubsidyRepositoryTest extends TestCase
                 'stage' => 1
             ]
         );
-        assertNotNull($subsidyStage->id);
+        $this->assertNotNull($subsidyStage->id);
 
         $field = Field::factory()->create(
             attributes: [
@@ -88,7 +86,6 @@ class SubsidyRepositoryTest extends TestCase
         return SubsidyStage::factory()->create(
             [
                 'subsidy_version_id' => $subsidyVersion->id,
-                'stage' => 1,
                 'subject_role' => $subjectRole,
                 'stage' => $stage,
             ]
@@ -215,10 +212,17 @@ class SubsidyRepositoryTest extends TestCase
         $this->assertEquals($publishedMessage->id, $transition->publishedSubsidyStageTransitionMessage->id);
     }
 
-    public function testGetActiveSubsidyCodes(): void
+    /**
+     * @dataProvider dataProviderSubsidyCodes
+     * @param array|null $subsidyIds
+     * @param array $expectedSubsidyCodes
+     * @return void
+     */
+    public function testGetActiveSubsidyCodes(?array $subsidyIds, array $expectedSubsidyCodes): void
     {
         SubsidyVersion::factory()->for(
             Subsidy::factory()->create([
+                'id' => 'e0f2cf72-587c-4c87-a5a9-978bb3816bb1',
                 'title' => 'Subsidy A',
                 'code' => 'SA',
             ])
@@ -230,6 +234,7 @@ class SubsidyRepositoryTest extends TestCase
             ]);
         SubsidyVersion::factory()->for(
             Subsidy::factory()->create([
+                'id' => 'cc388455-58b3-4895-a359-50a42bef08cf',
                 'title' => 'Subsidy B',
                 'code' => 'SB',
             ])
@@ -241,7 +246,88 @@ class SubsidyRepositoryTest extends TestCase
             ]);
 
         $repository = $this->app->make(SubsidyRepository::class);
-        $actualShortRegulations = $repository->getActiveSubsidyCodes();
-        $this->assertEquals(['SA', 'SB'], $actualShortRegulations->toArray());
+        $actualShortRegulations = $repository->getActiveSubsidyCodes($subsidyIds);
+        $this->assertEquals($expectedSubsidyCodes, $actualShortRegulations);
+    }
+
+    public static function dataProviderSubsidyCodes(): array
+    {
+        return [
+            '2 subsidy codes when not filtered' => [null, ['SA', 'SB']],
+            'get sa subsidy code filtered' => [['e0f2cf72-587c-4c87-a5a9-978bb3816bb1'], ['SA']],
+            'get sb subsidy code filtered' => [['cc388455-58b3-4895-a359-50a42bef08cf'], ['SB']],
+            'get sa and sb subsidy code filtered' => [
+                ['e0f2cf72-587c-4c87-a5a9-978bb3816bb1', 'cc388455-58b3-4895-a359-50a42bef08cf'],
+                ['SA', 'SB'],
+            ],
+            'empty list of codes when subsidies not found' => [[Uuid::uuid4()->toString()], []],
+            'empty list of codes when empty subsidy filter provided' => [[], []],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderSubsidyStageTitles
+     * @return void
+     */
+    public function testGetSubsidyStageTitles(?array $subsidyIds, array $expectedSubsidyStageTitles): void
+    {
+        // One item
+        $subsidy = Subsidy::factory()->create([
+            'id' => '025ffd57-5591-4150-989e-63c1b1ec6de1',
+        ]);
+        $subsidyVersion = SubsidyVersion::factory()->create([
+            'subsidy_id' => $subsidy->id,
+            'subsidy_page_url' => 'random_url',
+            'status' => 'published',
+            'version' => 1,
+            'created_at' => '2021-01-01 00:00:00',
+        ]);
+        SubsidyStage::factory()->for($subsidyVersion)->create([
+            'title' => 'Title A',
+            'stage' => 1,
+        ]);
+        SubsidyStage::factory()->for($subsidyVersion)->create([
+            'title' => 'Title B',
+            'stage' => 2,
+        ]);
+
+        // Second item
+        $secondSubsidy = Subsidy::factory()->create([
+            'id' => '00059634-ce1d-47ad-9b8d-7a326dbd2598',
+        ]);
+        $secondSubsidyVersion = SubsidyVersion::factory()->create([
+            'subsidy_id' => $secondSubsidy->id,
+            'subsidy_page_url' => 'random_url',
+            'status' => 'published',
+            'version' => 1,
+            'created_at' => '2021-01-01 00:00:00',
+        ]);
+        SubsidyStage::factory()->for($secondSubsidyVersion)->create([
+            'title' => 'Title C',
+            'stage' => 1,
+        ]);
+        SubsidyStage::factory()->for($secondSubsidyVersion)->create([
+            'title' => 'Title D',
+            'stage' => 2,
+        ]);
+
+        $repository = $this->app->make(SubsidyRepository::class);
+        $actualSubsidyStageTitles = $repository->getSubsidyStageTitles($subsidyIds);
+
+        $this->assertEquals($expectedSubsidyStageTitles, $actualSubsidyStageTitles);
+    }
+
+    public static function dataProviderSubsidyStageTitles(): array
+    {
+        return [
+            '4 subsidy stage titles when not filtered' => [null, ['Title A', 'Title B', 'Title C', 'Title D']],
+            'get title a and b when filtered' => [['025ffd57-5591-4150-989e-63c1b1ec6de1'], ['Title A', 'Title B']],
+            'get title c and d when filtered' => [['00059634-ce1d-47ad-9b8d-7a326dbd2598'], ['Title C', 'Title D']],
+            'get title a, b, c and d when filtered' => [
+                ['00059634-ce1d-47ad-9b8d-7a326dbd2598', '025ffd57-5591-4150-989e-63c1b1ec6de1'],
+                ['Title A', 'Title B', 'Title C', 'Title D'],
+            ],
+            'empty list of titles when subsidies not found' => [[Uuid::uuid4()->toString()], []],
+        ];
     }
 }

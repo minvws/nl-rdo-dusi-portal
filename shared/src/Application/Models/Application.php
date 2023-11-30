@@ -38,7 +38,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read Collection<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage|null $currentApplicationStage
  * @property-read ApplicationStage $lastApplicationStage
- * @property-read Collection<ApplicationStage> $applicationStages
+ * @property-read Collection<string, ApplicationStage> $applicationStages
  * @property-read Collection<ApplicationStageTransition> $applicationStageTransitions
  * @property-read ApplicationSurePayResult|null $applicationSurePayResult
  * @method static Builder<self> forIdentity(Identity $identity)

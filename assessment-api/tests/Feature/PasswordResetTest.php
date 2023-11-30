@@ -38,8 +38,8 @@ class PasswordResetTest extends TestCase
             ->json('POST', route('password.email'), [
                 'email' => 'user@example.com',
             ])
-            ->assertStatus(422)
-            ->assertJson($this->noUserFoundResponse());
+            ->assertStatus(200)
+            ->assertJson($this->passwordResetRequestResponse());
     }
 
     /**
@@ -59,8 +59,8 @@ class PasswordResetTest extends TestCase
             ->json('POST', route('password.email'), [
                 'email' => $user->email,
             ])
-            ->assertStatus(422)
-            ->assertJson($this->noUserFoundResponse());
+            ->assertStatus(200)
+            ->assertJson($this->passwordResetRequestResponse());
 
         Notification::assertNothingSent();
     }
@@ -80,9 +80,7 @@ class PasswordResetTest extends TestCase
                 'email' => $user->email,
             ])
             ->assertOk()
-            ->assertJson([
-                'message' => 'We hebben een e-mail verstuurd met instructies om een nieuw wachtwoord in te stellen.'
-            ]);
+            ->assertJson($this->passwordResetRequestResponse());
 
 
         // Assert that a notification was sent...
@@ -126,15 +124,12 @@ class PasswordResetTest extends TestCase
         ];
     }
 
-    protected function noUserFoundResponse(): array
+    protected function passwordResetRequestResponse(): array
     {
+        // @codingStandardsIgnoreStart
         return [
-            'message' => 'Geen gebruiker bekend met dit e-mailadres.',
-            'errors' => [
-                'email' => [
-                    "Geen gebruiker bekend met dit e-mailadres."
-                ]
-            ]
+            'message' => 'Indien dit e-mailadres bij ons bekend is, hebben we een e-mail verstuurd met instructies om een nieuw wachtwoord in te stellen.'
         ];
+        // @codingStandardsIgnoreEnd
     }
 }

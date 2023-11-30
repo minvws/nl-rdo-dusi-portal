@@ -13,28 +13,5 @@ class VerifyCsrfToken extends BaseVerifyCsrfToken
      *
      * @var array<int, string>
      */
-    protected $except = [
-        '/api/login',
-        '/api/forgot-password',
-        '/api/reset-password',
-    ];
-
-    /**
-     * We use the XSRF-TOKEN cookie as our default CSRF token response.
-     *
-     * @param $request
-     * @return string
-     */
-    protected function getTokenFromRequest($request): string
-    {
-        $token = parent::getTokenFromRequest($request);
-        if (empty($token)) {
-            $token = $request->cookies->get('XSRF-TOKEN', '');
-            if (!is_string($token)) {
-                $token = '';
-            }
-        }
-
-        return $token;
-    }
+    protected $except = [];
 }

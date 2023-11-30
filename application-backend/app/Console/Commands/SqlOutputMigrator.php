@@ -14,9 +14,8 @@ use Illuminate\Filesystem\Filesystem;
 
 class SqlOutputMigrator extends Migrator
 {
-    private string $migrationsDir =  __DIR__ . '/../../../../dusi-shared/database/migrations';
-    private string $sqlMigrationsDir
-        = __DIR__ . '/../../../../dusi-shared/database/sql/dusi_app_db';
+    private string $migrationsDir =  __DIR__ . '/../../../../shared/database/migrations';
+    private string $sqlMigrationsDir = __DIR__ . '/../../../../shared/database/sql/dusi_app_db';
 
     public function __construct(
         MigrationRepositoryInterface $repository,

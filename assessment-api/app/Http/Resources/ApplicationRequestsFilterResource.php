@@ -203,7 +203,7 @@ class ApplicationRequestsFilterResource extends JsonResource
                     'type' => 'array',
                     'items' => [
                         'type' => 'string',
-                        'enum' => $this['phases']->map(fn ($item) => $item->title)
+                        'enum' => $this['phases']
                     ],
                     'title' => 'Fase'
                 ],

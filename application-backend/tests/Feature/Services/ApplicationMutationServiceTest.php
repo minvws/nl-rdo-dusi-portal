@@ -60,6 +60,8 @@ class ApplicationMutationServiceTest extends TestCase
     private Identity $identity;
     private Field $textField;
     private Field $uploadField;
+    private Field $bankAccountHolderField;
+    private Field $bankAccountNumber;
     private string $keyPair;
     private ClientPublicKey $publicKey;
     private ResponseEncryptionService $responseEncryptionService;
@@ -86,6 +88,18 @@ class ApplicationMutationServiceTest extends TestCase
             Field::factory()
                 ->for($this->subsidyStage1)
                 ->create(['code' => 'file', 'type' => FieldType::Upload, 'is_required' => false]);
+        $this->bankAccountHolderField =
+            Field::factory()
+                ->for($this->subsidyStage1)
+                ->create(['code' => 'bankAccountHolder', 'type' => FieldType::Text, 'is_required' => false]);
+        $this->bankAccountNumber =
+            Field::factory()
+                ->for($this->subsidyStage1)
+                ->create([
+                    'code' => 'bankAccountNumber',
+                    'type' => FieldType::CustomBankAccount,
+                    'is_required' => false,
+                ]);
         $this->subsidyStage2 =
             SubsidyStage::factory()
                 ->for($this->subsidyVersion)
@@ -504,7 +518,6 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertCount(2, get_object_vars($app->data));
         $this->assertObjectHasProperty($this->uploadField->code, $app->data);
 
-
         $uploadData = $app->data->{$this->uploadField->code};
         $this->assertEquals($body->data->{$this->uploadField->code}, $uploadData);
     }
@@ -554,5 +567,91 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertNotNull($validationResultDTO);
         $this->assertEquals('error', $validationResultDTO->validationResult['file'][0]->type);
         $this->assertEquals('File not found!', $validationResultDTO->validationResult['file'][0]->message);
+    }
+
+    public function testSaveApplicationWithValidationResult(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        Answer::factory()->for($applicationStage)->for($this->textField)->create();
+
+        // Create draft application
+        $body = new ApplicationSaveBody(
+            (object)[
+                $this->textField->code => "Test A",
+            ],
+            false
+        );
+
+        $json = (new JSONEncoder())->encode($body);
+
+        $params = new EncryptedApplicationSaveParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
+            $this->publicKey,
+            $application->reference,
+            new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
+        );
+
+        $encryptedResponse = $this->app->make(ApplicationMutationService::class)->saveApplication($params);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+
+        $app = $this->responseEncryptionService
+            ->decryptCodable($encryptedResponse, ApplicationDTO::class, $this->keyPair);
+
+        $this->assertNotNull($app);
+        $this->assertEquals($application->reference, $app->reference);
+        $this->assertNotNull($app->data);
+        $this->assertEquals("Test A", $app->data->text);
+
+        // Update draft application for validation testing
+        $body = new ApplicationSaveBody(
+            (object)[
+                $this->textField->code => "Test",
+                $this->bankAccountHolderField->code => "Pieter",
+                $this->bankAccountNumber->code => "NL58ABNA9999142181",
+            ],
+            false
+        );
+
+        $json = (new JSONEncoder())->encode($body);
+
+        $params = new EncryptedApplicationSaveParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
+            ),
+            $this->publicKey,
+            $application->reference,
+            new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
+        );
+
+        $encryptedResponse = $this->app->make(ApplicationMutationService::class)->saveApplication($params);
+        $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+
+        $app = $this->responseEncryptionService->decrypt($encryptedResponse, $this->keyPair);
+
+        $object = json_decode($app, true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertNotNull($app);
+        $this->assertEquals($application->reference, $object['reference']);
+        $this->assertEquals([
+            'bankAccountNumber' => [
+                [
+                    'type' => 'warning',
+                    'message' => 'Naam rekeninghouder lijkt niet volledig te kloppen! Bedoelde u {suggestion}?',
+                    'params' => [
+                        'suggestion' => [
+                            'code' => 'bankAccountHolder',
+                            'value' => 'Pietersma',
+                        ]
+                    ]
+                ],
+            ]
+        ], $object['validationResult']);
     }
 }

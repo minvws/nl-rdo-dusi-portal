@@ -19,7 +19,7 @@
         "barryvdh/laravel-ide-helper": "^2.13",
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",
-        "laravel-lang/common": "^4.0",
+        "laravel-lang/common": "^5.1",
         "laravel/pint": "^1.10",
         "laravel/sail": "^1.23",
         "laravel/tinker": "^2.8",

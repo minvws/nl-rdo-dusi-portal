@@ -122,6 +122,8 @@ class BTVFieldsTableSeeder extends Seeder
             code: 'bankStatement',
             title: 'Kopie bankafschrift',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            minItems: 1,
+            maxItems: 20,
             maxFileSize: 5242880
         );
 
@@ -130,6 +132,8 @@ class BTVFieldsTableSeeder extends Seeder
             code: 'extractPersonalRecordsDatabase',
             title: 'Uittreksel bevolkingsregister niet ouder dan 3 maanden',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            minItems: 1,
+            maxItems: 20,
             maxFileSize: 5242880
         );
 
@@ -138,6 +142,8 @@ class BTVFieldsTableSeeder extends Seeder
             code: 'proofOfMedicalTreatment',
             title: 'Verklaring behandeltraject',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            minItems: 1,
+            maxItems: 20,
             maxFileSize: 5242880
         );
 
@@ -146,6 +152,8 @@ class BTVFieldsTableSeeder extends Seeder
             code: 'proofOfTypeOfMedicalTreatment',
             title: 'Verklaring type behandeling',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            minItems: 1,
+            maxItems: 20,
             maxFileSize: 5242880
         );
 
