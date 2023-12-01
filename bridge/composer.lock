@@ -175,22 +175,22 @@
         },
         {
             "name": "php-amqplib/php-amqplib",
-            "version": "v3.5.4",
+            "version": "v3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-amqplib/php-amqplib.git",
-                "reference": "1aecbd182b35eb039667c50d7d92d71f105be779"
+                "reference": "fb84e99589de0904a25861451b0552f806284ee5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/1aecbd182b35eb039667c50d7d92d71f105be779",
-                "reference": "1aecbd182b35eb039667c50d7d92d71f105be779",
+                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/fb84e99589de0904a25861451b0552f806284ee5",
+                "reference": "fb84e99589de0904a25861451b0552f806284ee5",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
                 "ext-sockets": "*",
-                "php": "^7.1||^8.0",
+                "php": "^7.2||^8.0",
                 "phpseclib/phpseclib": "^2.0|^3.0"
             },
             "conflict": {
@@ -250,22 +250,22 @@
             ],
             "support": {
                 "issues": "https://github.com/php-amqplib/php-amqplib/issues",
-                "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.5.4"
+                "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.6.0"
             },
-            "time": "2023-07-01T11:25:08+00:00"
+            "time": "2023-10-22T15:02:02+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.23",
+            "version": "3.0.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "866cc78fbd82462ffd880e3f65692afe928bed50"
+                "reference": "56c79f16a6ae17e42089c06a2144467acc35348a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/866cc78fbd82462ffd880e3f65692afe928bed50",
-                "reference": "866cc78fbd82462ffd880e3f65692afe928bed50",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/56c79f16a6ae17e42089c06a2144467acc35348a",
+                "reference": "56c79f16a6ae17e42089c06a2144467acc35348a",
                 "shasum": ""
             },
             "require": {
@@ -346,7 +346,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.23"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.34"
             },
             "funding": [
                 {
@@ -362,7 +362,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-18T17:22:01+00:00"
+            "time": "2023-11-27T11:13:31+00:00"
         }
     ],
     "packages-dev": [
@@ -9697,5 +9697,5 @@
         "ext-openssl": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
