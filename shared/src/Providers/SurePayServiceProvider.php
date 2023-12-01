@@ -56,7 +56,7 @@ class SurePayServiceProvider extends ServiceProvider
 
         $options = [
             'base_uri' => config('surepay_api.endpoint'),
-            'verify' => config('surepay_api.verify_ssl', false),
+            'verify' => config('surepay_api.verify_ssl', true),
             'proxy' => []
         ];
 
