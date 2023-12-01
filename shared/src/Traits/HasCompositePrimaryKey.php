@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Shared\Application\Traits;
+namespace MinVWS\DUSi\Shared\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -61,9 +61,8 @@ trait HasCompositePrimaryKey
     {
         $fields = $this->getKeyName();
 
-        if (!is_array($fields)) {
-            throw new \LogicException('Composite primary key must be an array');
-        }
+        // @phpstan-ignore-next-line
+        assert(is_array($fields), 'Composite primary key must be an array');
 
         return array_map(function ($key) {
             return $this->getAttribute($key);
