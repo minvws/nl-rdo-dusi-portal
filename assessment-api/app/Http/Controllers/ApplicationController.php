@@ -10,7 +10,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewApplicationEvent;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
@@ -26,6 +25,7 @@ use MinVWS\DUSi\Assessment\API\Services\Exceptions\TransitionNotFoundException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\Logging\Laravel\LogService;
@@ -153,7 +153,7 @@ class ApplicationController extends Controller
     public function saveAssessment(
         Application $application,
         Authenticatable $user,
-        Request $request
+        Request $request,
     ): ApplicationSubsidyVersionResource {
         $this->authorize('save', $application);
 
@@ -168,12 +168,12 @@ class ApplicationController extends Controller
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
-        } catch (ValidationException $exception) {
-            Log::error('ValidationException while saveAssessment', [
+        } catch (ValidationErrorException $exception) {
+            Log::error('ValidationErrorException while saveAssessment', [
                 'userId' => $user->id,
                 'applicationId' => $application->id,
                 'submitAssessment' => $submit,
-                'validationErrors' => $exception->errors(),
+                'validationErrors' => $exception->getValidationResults(),
             ]);
             abort(Response::HTTP_BAD_REQUEST);
         }
@@ -194,16 +194,25 @@ class ApplicationController extends Controller
         }
     }
 
-    public function submitAssessment(Application $application): ApplicationSubsidyVersionResource
-    {
+    public function submitAssessment(
+        Application $application,
+        Authenticatable $user,
+    ): ApplicationSubsidyVersionResource {
         $this->authorize('submit', $application);
+
+        assert($user instanceof User);
 
         try {
             $application = $this->applicationService->submitAssessment($application);
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
         } catch (InvalidApplicationSubmitException) {
             abort(Response::HTTP_FORBIDDEN);
-        } catch (ValidationException) {
+        } catch (ValidationErrorException $exception) {
+            Log::error('ValidationErrorException while submitAssessment', [
+                'userId' => $user->id,
+                'applicationId' => $application->id,
+                'validationErrors' => $exception->getValidationResults(),
+            ]);
             abort(Response::HTTP_BAD_REQUEST);
         }
     }

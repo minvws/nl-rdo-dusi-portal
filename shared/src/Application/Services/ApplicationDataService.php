@@ -12,8 +12,6 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
@@ -23,6 +21,7 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
@@ -72,7 +71,7 @@ readonly class ApplicationDataService
 
     /**
      * @throws Throwable
-     * @throws ValidationException
+     * @throws ValidationErrorException
      */
     public function saveApplicationStageData(
         ApplicationStage $applicationStage,
