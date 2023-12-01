@@ -4,15 +4,20 @@
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
+use function Amp\Iterator\toArray;
 
 class PCZMApplicationFieldsTableSeeder extends Seeder
 {
     use CreateField;
+
+    public const SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID = 'bd26ae6f-05ac-4690-81da-87b534f7758d';
 
     /**
      * Run the database seeds.
@@ -20,6 +25,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
     public function run(): void
     {
         $this->pczmApplicationFields();
+        $this->pczmSubsidyStageHashes();
     }
 
     public function pczmApplicationFields(): void
@@ -299,5 +305,29 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             title: '',
             retentionPeriod: DataRetentionPeriod::Short
         );
+    }
+
+    private function pczmSubsidyStageHashes(): void
+    {
+        DB::table('subsidy_stage_hashes')->insert([
+            'id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
+            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            'name' => 'Bank account',
+            'description' => 'Bank account duplicate reporting',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        /** @var Field $bankAccountNumber */
+        $bankAccountNumber = DB::table('fields')
+            ->where('subsidy_stage_id', SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID)
+            ->where('code', 'bankAccountNumber')
+            ->where('title', 'IBAN')
+            ->first();
+
+        DB::table('subsidy_stage_hash_fields')->insert([
+          'subsidy_stage_hash_id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
+          'field_id' => $bankAccountNumber->id,
+        ]);
     }
 }

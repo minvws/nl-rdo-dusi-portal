@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Providers;
 
-// use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use MinVWS\DUSi\Assessment\API\Policies\ApplicationPolicy;
+use MinVWS\DUSi\Assessment\API\Policies\SubidyPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -16,8 +16,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         \MinVWS\DUSi\Shared\Application\Models\Application::class => ApplicationPolicy::class,
+        \MinVWS\DUSi\Shared\Subsidy\Models\Subsidy::class => SubidyPolicy::class,
     ];
 
     /**
@@ -28,7 +28,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        //
     }
 }

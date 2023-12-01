@@ -38,6 +38,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read Collection<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage|null $currentApplicationStage
  * @property-read ApplicationStage $lastApplicationStage
+ * @property-read ApplicationStage $firstApplicationStage
  * @property-read Collection<string, ApplicationStage> $applicationStages
  * @property-read Collection<ApplicationStageTransition> $applicationStageTransitions
  * @property-read ApplicationSurePayResult|null $applicationSurePayResult
@@ -135,6 +136,14 @@ class Application extends Model
         return
             $this->hasOne(ApplicationStage::class)
                 ->orderBy('sequence_number', 'desc')
+                ->limit(1);
+    }
+
+    public function firstApplicationStage(): HasOne
+    {
+        return
+            $this->hasOne(ApplicationStage::class, 'application_id', 'id')
+                ->orderBy('sequence_number', 'asc')
                 ->limit(1);
     }
 

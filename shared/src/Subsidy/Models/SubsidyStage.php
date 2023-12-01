@@ -28,6 +28,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
  * @property string|null $internal_note_field_code
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read Collection<int, SubsidyStageTransition> $subsidyStageTransitions
+ * @property-read Collection<int, SubsidyStageHash> $subsidyStagesHashes
  * @property-read Field|null $internalNoteField
  */
 class SubsidyStage extends Model
@@ -75,6 +76,11 @@ class SubsidyStage extends Model
     public function subsidyStageTransitions(): HasMany
     {
         return $this->hasMany(SubsidyStageTransition::class, 'current_subsidy_stage_id', 'id');
+    }
+
+    public function subsidyStageHashes(): HasMany
+    {
+        return $this->hasMany(SubsidyStageHash::class, 'subsidy_stage_id', 'id');
     }
 
     public function scopeOrdered(Builder $query): Builder

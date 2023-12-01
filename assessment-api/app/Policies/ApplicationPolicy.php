@@ -185,4 +185,15 @@ class ApplicationPolicy
             $application->subsidyVersion->subsidy_id
         );
     }
+
+    public function export(User $user): bool
+    {
+        $pczmSubsidy = Subsidy::whereCode('PCZM')->first();
+        assert($pczmSubsidy !== null);
+
+        return $user->hasRoleForSubsidy(
+            Role::DataExporter,
+            $pczmSubsidy->id
+        );
+    }
 }

@@ -12,6 +12,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResul
 class MockedBankAccountRepository implements BankAccountRepository
 {
     public const BANK_HOLDER_SUGGESTION = 'Pietersma';
+    public const BANK_ACCCOUNT_NUMBER_MATCH = 'NL62ABNA9999841479';
 
     public function checkOrganisationsAccount(
         string $accountOwner,
@@ -48,7 +49,7 @@ class MockedBankAccountRepository implements BankAccountRepository
 
         $bankAccountMockData = [
             //Valid Iban, NameMatchResult::Match
-            'NL62ABNA9999841479' => [
+            self::BANK_ACCCOUNT_NUMBER_MATCH => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 null
