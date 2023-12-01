@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
-use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 
 /**
  * @template T of Codable

@@ -5,9 +5,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models\Condition;
 
-use Illuminate\Contracts\Encryption\Encrypter;
 use MinVWS\Codable\Reflection\Attributes\CodableArray;
-use MinVWS\DUSi\Shared\Application\Models\Answer;
 
 readonly class OrCondition extends Condition
 {
