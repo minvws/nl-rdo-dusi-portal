@@ -60,13 +60,14 @@ trait HasCompositePrimaryKey
     public function getKey()
     {
         $fields = $this->getKeyName();
-        // @phpstan-ignore-next-line
-        assert(is_array($fields), 'Composite primary key must be an array');
-        $keys = [];
-        array_map(function ($key) use (&$keys) {
-            $keys[] = $this->getAttribute($key);
-        }, $fields);
-        return $keys;
+
+        if (!is_array($fields)) {
+            throw new \LogicException('Composite primary key must be an array');
+        }
+
+        return array_map(function ($key) {
+            return $this->getAttribute($key);
+        }, (array)$fields);
     }
 
     /**
