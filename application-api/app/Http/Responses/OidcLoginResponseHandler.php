@@ -51,7 +51,7 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
 
         $this->logger->log((new LoginEvent())
             ->withData([
-                'userId' => $user->getAuthIdentifier(),
+                'sessionId' => $user->getAuthIdentifier(),
                 'type' => 'user',
                 'typeId' => 4,
             ]));

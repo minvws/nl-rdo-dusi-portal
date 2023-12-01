@@ -32,7 +32,7 @@ class UserController extends Controller
 
         $this->logger->log((new LogoutEvent())
             ->withData([
-                'userId' => $user?->getAuthIdentifier(),
+                'sessionId' => $user->getAuthIdentifier(),
                 'type' => 'user',
                 'typeId' => 4,
             ]));
