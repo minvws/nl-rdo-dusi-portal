@@ -88,7 +88,9 @@ class OidcLoginResponseHandlerTest extends TestCase
             'missing_loa_authn' => [['bsn' => '123456789']],
             'missing_bsn' => [['loa_authn' => OidcUserLoa::SUBSTANTIAL->value]],
             'missing_session_id' => [['bsn' => '123456789', 'loa_authn' => OidcUserLoa::SUBSTANTIAL->value]],
-            'invalid_loa_authn' => [['bsn' => '123456789', 'loa_authn' => 'does-not-exist', 'session_id' => 'test-session-id']],
+            'invalid_loa_authn' => [
+                ['bsn' => '123456789', 'loa_authn' => 'does-not-exist', 'session_id' => 'test-session-id']
+            ],
         ];
     }
 }
