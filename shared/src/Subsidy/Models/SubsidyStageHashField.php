@@ -6,7 +6,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use MinVWS\DUSi\Shared\Subsidy\Traits\HasCompositePrimaryKey;
+use MinVWS\DUSi\Shared\Traits\HasCompositePrimaryKey;
 
 class SubsidyStageHashField extends Model
 {
