@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationHashFactory;
-use MinVWS\DUSi\Shared\Application\Traits\HasCompositePrimaryKey;
+use MinVWS\DUSi\Shared\Traits\HasCompositePrimaryKey;
 
 class ApplicationHash extends Model
 {
