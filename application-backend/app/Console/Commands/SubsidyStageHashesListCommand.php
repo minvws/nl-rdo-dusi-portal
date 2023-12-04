@@ -10,7 +10,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 use Ramsey\Uuid\Uuid;
 
-class ListSubsidyStageHashesCommand extends Command
+class SubsidyStageHashesListCommand extends Command
 {
     protected $signature = 'subsidy-stage-hash:list {subsidyId?}';
 
