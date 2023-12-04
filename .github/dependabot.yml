@@ -116,3 +116,11 @@ updates:
       - github-minvws
     schedule:
       interval: "weekly"
+
+  # Maintain dependencies for Composer
+  - package-ecosystem: "composer"
+    directory: "/bridge"
+    registries:
+      - github-minvws
+    schedule:
+      interval: "weekly"

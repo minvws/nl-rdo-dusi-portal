@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use MinVWS\DUSi\Shared\Application\Console\Commands\Hsm\HsmInfoCommand;
-use MinVWS\DUSi\Shared\Application\Console\Commands\Hsm\HsmLocalClearCommand;
-use MinVWS\DUSi\Shared\Application\Console\Commands\Hsm\HsmLocalInitCommand;
 use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
 use MinVWS\DUSi\Shared\Application\Services\FileKeyReader;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
