@@ -21,7 +21,7 @@
 <!--    </stubs>-->
 <!--    <issueHandlers>-->
 <!--    </issueHandlers>-->
-    <plugins>
-        <pluginClass class="Psalm\LaravelPlugin\Plugin"/>
-    </plugins>
+<!--    <plugins>-->
+<!--        <pluginClass class="Psalm\LaravelPlugin\Plugin"/>-->
+<!--    </plugins>-->
 </psalm>
