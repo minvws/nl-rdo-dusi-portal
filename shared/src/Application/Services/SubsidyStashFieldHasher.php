@@ -48,7 +48,7 @@ class SubsidyStashFieldHasher
         $delimiter = '|';
         $hashedConcattedFields = $collectedValues->reduce(
             function (null|string $carry, string $value) use ($delimiter, $applicationStage) {
-                return ($carry ? $this->hash($carry . $delimiter, $applicationStage) : '') . $value;
+                return ($carry ? $carry . $delimiter : '') . $this->hash($value, $applicationStage);
             }
         );
 
