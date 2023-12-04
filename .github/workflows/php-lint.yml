@@ -38,7 +38,7 @@ jobs:
         with:
           php-version: '8.2'
           extensions: zip
-          tools: psalm
+          tools: vimeo/psalm
 
       - name: Copy .env
         continue-on-error: true
