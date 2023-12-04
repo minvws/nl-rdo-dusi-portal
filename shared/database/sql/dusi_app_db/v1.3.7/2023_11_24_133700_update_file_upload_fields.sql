@@ -2,7 +2,7 @@ ALTER TABLE public.fields
     ALTER COLUMN params TYPE jsonb USING params::jsonb;
 
 ALTER TABLE public.fields
-    ALTER COLUMN required_condition TYPE jsonb USING params::jsonb;
+    ALTER COLUMN required_condition TYPE jsonb USING required_condition::jsonb;
 
 UPDATE public.fields
 SET params = params || '{"minItems": 1, "maxItems": 20}'
