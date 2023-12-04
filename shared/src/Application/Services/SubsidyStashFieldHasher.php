@@ -25,7 +25,7 @@ class SubsidyStashFieldHasher
         $fieldValueCollection = collect($fieldValues);
         $fieldValueSearch = $fieldValueCollection->map(fn(FieldValue $fieldValue) =>  $fieldValue->valueToString());
 
-        $concattedValues = $subsidyStageHash->subsidyStageHashFields()
+        $collectedValues = $subsidyStageHash->subsidyStageHashFields()
             ->orderBy('field_id')
             ->get()
             ->map(
@@ -35,15 +35,24 @@ class SubsidyStashFieldHasher
                         $fieldValueSearch->get($subsidyStageHashField->field->code) :
                         '');
                 }
-            )->reduce(function (null|string $carry, string $value) {
-                return ($carry ? $carry . '-' : '') . $value;
-            });
+            );
 
-        if (empty($concattedValues)) {
+        $notEmptyValues = $collectedValues->reject(function ($value) {
+            return empty($value);
+        });
+
+        if ($notEmptyValues->isEmpty()) {
             throw new LogicException("All fields in hash are empty. Hash will not be created.");
         }
 
-        return $this->hash($concattedValues, $applicationStage);
+        $delimiter = '|';
+        $hashedConcattedFields = $collectedValues->reduce(
+            function (null|string $carry, string $value) use ($delimiter, $applicationStage) {
+                return ($carry ? $carry . $delimiter : '') . $this->hash($value, $applicationStage);
+            }
+        );
+
+        return $this->hash($hashedConcattedFields, $applicationStage);
     }
 
     public function hash(string $value, ApplicationStage $applicationStage): string
