@@ -8,8 +8,8 @@
         "php": "^8.2",
         "ext-fileinfo": "*",
         "ext-openssl": "*",
-        "ext-sodium": "*",
         "ext-sockets": "*",
+        "ext-sodium": "*",
         "doctrine/dbal": "^3.6",
         "firebase/php-jwt": "^6.8",
         "guzzlehttp/guzzle": "^7.7",
@@ -18,7 +18,9 @@
         "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "xenolope/quahog": "^3.0"
+        "symfony/config": "v6.4.0",
+        "xenolope/quahog": "^3.0",
+        "minvws/laravel-sql-exporter": "dev-feat/initial-export-command"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -86,6 +88,10 @@
         {
             "type": "git",
             "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-laravel-sql-export.git"
         },
         {
             "type": "path",
