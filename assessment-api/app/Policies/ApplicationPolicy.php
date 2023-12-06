@@ -133,26 +133,26 @@ class ApplicationPolicy
         if (!$this->validateClaim($application)) {
             return false;
         }
-        $stage = $application->currentApplicationStage;
-        if ($stage === null) {
-            return false;
-        }
-        $subsidyStage = $stage->subsidyStage;
+        $currentApplicationStage = $application->currentApplicationStage;
+        $subsidyStage = $currentApplicationStage->subsidyStage;
         if ($subsidyStage->assessor_user_role === null) {
             return false;
         }
         if (
             !$user->hasRoleForSubsidy($subsidyStage->assessor_user_role, $application->subsidyVersion->subsidy_id)
         ) {
-            Log::debug('Current stage is not assignable to this assessor', ['stageId' => $stage->id]);
+            Log::debug(
+                'Current stage is not assignable to this assessor',
+                ['stageId' => $application->currentApplicationStage->id]
+            );
             return false;
         }
 
         // 4-ogen principe; user can't assess more than 1 stage
-        $applicationStages = $application->applicationStages;
+        $applicationStages = $this->applicationRepository->getApplicationStagesUpToIncluding($currentApplicationStage);
         foreach ($applicationStages as $applicationStage) {
             if ($applicationStage->assessor_user_id === $user->id) {
-                Log::debug('User already assessed a stage', ['stageId' => $stage->id]);
+                Log::debug('User already assessed a stage', ['stageId' => $currentApplicationStage->id]);
                 return false;
             }
         }
