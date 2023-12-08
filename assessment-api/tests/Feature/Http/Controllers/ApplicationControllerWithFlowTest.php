@@ -65,7 +65,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $applicationStage3,
             $secondAssessmentField,
-            AbstractSubsidyAggregateManager::AGREE_WITH_FIRST_ASSESSMENT
+            AbstractSubsidyAggregateManager::VALUE_AGREES
         );
 
         $applicationStage4 = $this->flowService->submitApplicationStage($applicationStage3);
@@ -124,7 +124,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $applicationStage3,
             $secondAssessmentField,
-            AbstractSubsidyAggregateManager::AGREE_WITH_FIRST_ASSESSMENT
+            AbstractSubsidyAggregateManager::VALUE_AGREES
         );
 
         $applicationStage4 = $this->flowService->submitApplicationStage($applicationStage3);

@@ -50,8 +50,8 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'type' => FieldType::Select,
             'params' => [
                 'options' => [
-                    "Onbeoordeeld",
-                    "Aanvulling nodig",
+                    self::VALUE_UNASSESSED,
+                    self::VALUE_SUPPLEMENT_NEEDED,
                     self::VALUE_APPROVED,
                     self::VALUE_REJECTED,
                 ],
@@ -67,8 +67,8 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'type' => FieldType::Select,
             'params' => [
                 'options' => [
-                    self::AGREE_WITH_FIRST_ASSESSMENT,
-                    self::DISAGREE_WITH_FIRST_ASSESSMENT,
+                    self::VALUE_AGREES,
+                    self::VALUE_DISAGREES,
                 ],
             ],
         ]);
@@ -113,14 +113,14 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
 
         $this->createSubsidyStageTransaction(2, 1, [
             'description' => 'Aanvulling gevraagd',
-            'target_application_status' => ApplicationStatus::Submitted,
+            'target_application_status' => ApplicationStatus::RequestForChanges,
             'assign_to_previous_assessor' => true,
             'clone_data' => true,
             'condition' => new ComparisonCondition(
                 2,
                 'firstAssessment',
                 Operator::Identical,
-                'Aanvulling nodig'
+                self::VALUE_SUPPLEMENT_NEEDED
             ),
             'send_message' => true,
         ]);
@@ -141,7 +141,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                 3,
                 'secondAssessment',
                 Operator::Identical,
-                self::DISAGREE_WITH_FIRST_ASSESSMENT
+                self::VALUE_DISAGREES
             ),
             'send_message' => false,
             'assign_to_previous_assessor' => true,
@@ -162,7 +162,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                     3,
                     'secondAssessment',
                     Operator::Identical,
-                    self::AGREE_WITH_FIRST_ASSESSMENT
+                    self::VALUE_AGREES
                 )
             ]),
             'send_message' => true
@@ -181,7 +181,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                     3,
                     'secondAssessment',
                     Operator::Identical,
-                    self::AGREE_WITH_FIRST_ASSESSMENT
+                    self::VALUE_AGREES
                 ),
             ]),
             'send_message' => false,

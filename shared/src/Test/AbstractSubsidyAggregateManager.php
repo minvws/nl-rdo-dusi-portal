@@ -34,8 +34,9 @@ abstract class AbstractSubsidyAggregateManager
     public const VALUE_REQ_CHANGES = ApplicationStatus::RequestForChanges->value;
     public const VALUE_AGREES = 'agrees';
     public const VALUE_DISAGREES = 'disagrees';
-    public const DISAGREE_WITH_FIRST_ASSESSMENT = 'Disagree with first assessment';
-    public const AGREE_WITH_FIRST_ASSESSMENT = 'Agree with first assessment';
+    public const VALUE_UNASSESSED = "unassessed";
+    public const VALUE_SUPPLEMENT_NEEDED = 'supplement needed';
+
 
     private array $users = [];
     private Subsidy $subsidy;
