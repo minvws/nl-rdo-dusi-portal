@@ -100,7 +100,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
         );
     }
 
-    public function createTransactions(): void
+    public function createTransitions(): void
     {
         $this->createSubsidyStageTransaction(1, 2, [
             'target_application_status' => ApplicationStatus::Submitted,
@@ -128,7 +128,9 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                 Operator::Identical,
                 self::DISAGREE_WITH_FIRST_ASSESSMENT
             ),
+            'send_message' => false,
             'assign_to_previous_assessor' => true,
+            'clone_data' => true,
         ]);
 
         $this->createSubsidyStageTransaction(3, 4, [

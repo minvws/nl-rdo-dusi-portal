@@ -53,7 +53,7 @@ abstract class AbstractSubsidyAggregateManager
         $this->createUsers();
     }
 
-    abstract protected function createTransactions(): void;
+    abstract protected function createTransitions(): void;
 
     abstract protected function createSubsidyStages(): void;
 
