@@ -9,7 +9,6 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Test\AbstractSubsidyAggregateManager;
 use MinVWS\DUSi\Shared\Test\ApplicationCreator;
 use MinVWS\DUSi\Shared\Test\AssessmentOutcome;
 use MinVWS\DUSi\Shared\Test\ComplexSubsidyAggregateManager;
