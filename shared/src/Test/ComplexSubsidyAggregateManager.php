@@ -103,25 +103,40 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
     public function createTransitions(): void
     {
         $this->createSubsidyStageTransaction(1, 2, [
+            'description' => 'Aanvraag ingediend',
             'target_application_status' => ApplicationStatus::Submitted,
             'assign_to_previous_assessor' => true,
             'clone_data' => true,
             'condition' => null,
+            'send_message' => false,
+        ]);
+
+        $this->createSubsidyStageTransaction(2, 1, [
+            'description' => 'Aanvulling gevraagd',
+            'target_application_status' => ApplicationStatus::Submitted,
+            'assign_to_previous_assessor' => true,
+            'clone_data' => true,
+            'condition' => new ComparisonCondition(
+                2,
+                'firstAssessment',
+                Operator::Identical,
+                'Aanvulling nodig'
+            ),
+            'send_message' => true,
         ]);
 
         $this->createSubsidyStageTransaction(2, 3, [
+            'description' => 'Eerste beoordeling voltooid',
             'condition' => new InCondition(
                 2,
                 'firstAssessment',
                 [self::VALUE_APPROVED, self::VALUE_REJECTED]
             ),
+            'send_message' => false,
         ]);
-
 
         $this->createSubsidyStageTransaction(3, 2, [
             'target_application_status' => ApplicationStatus::RequestForChanges,
-            'clone_data' => true,
-            'send_message' => true,
             'condition' => new ComparisonCondition(
                 3,
                 'secondAssessment',
@@ -133,7 +148,28 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'clone_data' => true,
         ]);
 
+        $this->createSubsidyStageTransaction(3, null, [
+            'description' => 'Tweede beoordeling eens met afkeuring eerste beoordeling',
+            'target_application_status' => ApplicationStatus::Rejected,
+            'condition' => new AndCondition([
+                new ComparisonCondition(
+                    2,
+                    'firstAssessment',
+                    Operator::Identical,
+                    self::VALUE_REJECTED
+                ),
+                new ComparisonCondition(
+                    3,
+                    'secondAssessment',
+                    Operator::Identical,
+                    self::AGREE_WITH_FIRST_ASSESSMENT
+                )
+            ]),
+            'send_message' => true
+        ]);
+
         $this->createSubsidyStageTransaction(3, 4, [
+            'description' => 'Tweede beoordeling eens met goedkeuring eerste beoordeling',
             'condition' => new AndCondition([
                 new ComparisonCondition(
                     2,
@@ -148,6 +184,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                     self::AGREE_WITH_FIRST_ASSESSMENT
                 ),
             ]),
+            'send_message' => false,
         ]);
 
         $this->createSubsidyStageTransaction(4, 2, [
@@ -182,8 +219,54 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                     ),
                 ]),
             ]),
+            'send_message' => false,
             'assign_to_previous_assessor' => true,
-            'clone_data' => true,
+            'clone_data' => true
+        ]);
+
+        $this->createSubsidyStageTransaction(4, 5, [
+           'description' => 'Interne controle eens met beoordeling',
+           'condition' => new AndCondition([
+                new ComparisonCondition(
+                    2,
+                    'firstAssessment',
+                    Operator::Identical,
+                    self::VALUE_APPROVED
+                ),
+                new ComparisonCondition(
+                    4,
+                    'internalAssessment',
+                    Operator::Identical,
+                    self::VALUE_APPROVED
+                )
+           ]),
+           'send_message' => false,
+        ]);
+
+        $this->createSubsidyStageTransaction(5, null, [
+                   'description' => 'Aanvraag afgekeurd',
+                   'target_application_status' => ApplicationStatus::Rejected,
+                   'condition' => new ComparisonCondition(
+                       5,
+                       'implementationCoordinatorAssessment',
+                       Operator::Identical,
+                       self::VALUE_REJECTED
+                   ),
+                   'send_message' => true
+               ]);
+
+
+        $this->createSubsidyStageTransaction(5, null, [
+           'description' => 'Aanvraag goedgekeurd',
+           'target_application_status' => ApplicationStatus::Approved,
+           'condition' =>
+               new ComparisonCondition(
+                   5,
+                   'implementationCoordinatorAssessment',
+                   Operator::Identical,
+                   self::VALUE_APPROVED
+               ),
+           'send_message' => true
         ]);
     }
 

@@ -21,6 +21,9 @@ use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @propery Subsidy $subsidy
+ *
+ * @psalm-suppress InvalidReturnStatement
+ * @psalm-suppress InvalidReturnType
  */
 abstract class AbstractSubsidyAggregateManager
 {
@@ -37,7 +40,7 @@ abstract class AbstractSubsidyAggregateManager
     private array $users = [];
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
-    private array $subsidyStages = [];
+    public array $subsidyStages = [];
     private array $subsidyStageFields = [];
 
     public function __construct(
@@ -45,11 +48,11 @@ abstract class AbstractSubsidyAggregateManager
     ) {
     }
 
-    public function build(): void
+    public function setup(): void
     {
         $this->createSubsidy();
         $this->createSubsidyStages();
-        $this->createTransactions();
+        $this->createTransitions();
         $this->createUsers();
     }
 
@@ -59,14 +62,17 @@ abstract class AbstractSubsidyAggregateManager
 
     abstract protected function createUsers(): void;
 
+    /**
+     * @psalm-suppress InvalidPropertyAssignmentValue
+     */
     protected function createSubsidy(): void
     {
-        $this->subsidy = Subsidy::factory()->create()->first();
+        $this->subsidy = Subsidy::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()
             ->for($this->subsidy)
             ->create([
                          'review_period' => self::REVIEW_PERIOD
-                     ])->first();
+                     ]);
     }
 
     public function getSubsidy(): Subsidy
@@ -99,7 +105,7 @@ abstract class AbstractSubsidyAggregateManager
         }
 
         $this->subsidyStageFields[$name] =
-            Field::factory()->for($subsidyStage)->create(['code' => $name, ...$subsidyStageFieldAttributes])->first();
+            Field::factory()->for($subsidyStage)->create(['code' => $name, ...$subsidyStageFieldAttributes]);
 
         return $this->subsidyStageFields[$name];
     }
@@ -115,27 +121,31 @@ abstract class AbstractSubsidyAggregateManager
 
         $this->subsidyStages[$stage] = SubsidyStage::factory()
             ->for($subsidyVersion)
-            ->create(['stage' => $stage, ...$subsidyStageAttributes])
-            ->first();
+            ->create(['stage' => $stage, ...$subsidyStageAttributes]);
 
         return $this->subsidyStages[$stage];
     }
 
     public function createSubsidyStageTransaction(
         int $current,
-        int $target,
+        ?int $target,
         array $transitionAttributes
     ): SubsidyStageTransition {
-        return SubsidyStageTransition::factory()
+        $subsidyStageTransition =  SubsidyStageTransition::factory()
             ->for($this->getSubsidyStage($current), 'currentSubsidyStage')
-            ->for($this->getSubsidyStage($target), 'targetSubsidyStage')
-            ->create($transitionAttributes)
-            ->first();
+            ->create($transitionAttributes);
+
+        if ($target) {
+            $subsidyStageTransition->targetSubsidyStage()->associate($this->getSubsidyStage($target));
+            $subsidyStageTransition->save();
+        }
+
+        return $subsidyStageTransition;
     }
 
     public function createUser(string $name, RoleEnum $role): User
     {
-        $user = User::factory()->create()->first();
+        $user = User::factory()->create();
         $user->attachRole($role, $this->getSubsidy()->id);
 
         $this->users[$name] = $user;
@@ -160,7 +170,7 @@ abstract class AbstractSubsidyAggregateManager
             ->for($identity)
             ->for($this->getSubsidyVersion())
             ->create()
-            ->first();
+            ;
     }
 
     public function createApplicationStage(
@@ -173,12 +183,7 @@ abstract class AbstractSubsidyAggregateManager
             ->for($application)
             ->for($this->getSubsidyStage($stage))
             ->create(['encrypted_key' => $encryptedKey, ...$attributes])
-            ->first();
-    }
-
-    public function createApplicationStageWithAnswer(): void
-    {
-        //todo
+            ;
     }
 
     public function createAnswer(ApplicationStage $applicationStage, Field $field, string $value): Answer
@@ -190,6 +195,6 @@ abstract class AbstractSubsidyAggregateManager
             ->create([
                          'encrypted_answer' => $encrypter->encrypt($value)
                      ])
-            ->first();
+            ;
     }
 }
