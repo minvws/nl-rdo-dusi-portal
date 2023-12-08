@@ -27,7 +27,6 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
  */
 class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
 {
-
     protected function createSubsidyStages(): void
     {
         $subsidyStage1 =
@@ -37,7 +36,9 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
 
         $this->createSubsidyStageField('lastName', $subsidyStage1, ['type' => FieldType::Text]);
         $this->createSubsidyStageField(
-            'employmentContract', $subsidyStage1, ['type' => FieldType::Upload]
+            'employmentContract',
+            $subsidyStage1,
+            ['type' => FieldType::Upload]
         );
 
         $subsidyStage2 =
@@ -93,7 +94,9 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                 'assessor_user_role' => Role::ImplementationCoordinator,
             ]);
         $this->createSubsidyStageField(
-            'implementationCoordinatorAssessment', $subsidyStage5, ['type' => FieldType::Select]
+            'implementationCoordinatorAssessment',
+            $subsidyStage5,
+            ['type' => FieldType::Select]
         );
     }
 
@@ -108,7 +111,9 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
 
         $this->createSubsidyStageTransaction(2, 3, [
             'condition' => new InCondition(
-                2, 'firstAssessment', [self::VALUE_APPROVED, self::VALUE_REJECTED]
+                2,
+                'firstAssessment',
+                [self::VALUE_APPROVED, self::VALUE_REJECTED]
             ),
         ]);
 
@@ -118,50 +123,63 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'clone_data' => true,
             'send_message' => true,
             'condition' => new ComparisonCondition(
-                3, 'secondAssessment', Operator::Identical, self::DISAGREE_WITH_FIRST_ASSESSMENT
+                3,
+                'secondAssessment',
+                Operator::Identical,
+                self::DISAGREE_WITH_FIRST_ASSESSMENT
             ),
-            'send_message' => false,
             'assign_to_previous_assessor' => true,
-            'clone_data' => true,
         ]);
 
         $this->createSubsidyStageTransaction(3, 4, [
             'condition' => new AndCondition([
-                                                new ComparisonCondition(
-                                                    2, 'firstAssessment', Operator::Identical,
-                                                    self::VALUE_APPROVED
-                                                ),
-                                                new ComparisonCondition(
-                                                    3, 'secondAssessment', Operator::Identical,
-                                                    self::AGREE_WITH_FIRST_ASSESSMENT
-                                                ),
-                                            ]),
+                new ComparisonCondition(
+                    2,
+                    'firstAssessment',
+                    Operator::Identical,
+                    self::VALUE_APPROVED
+                ),
+                new ComparisonCondition(
+                    3,
+                    'secondAssessment',
+                    Operator::Identical,
+                    self::AGREE_WITH_FIRST_ASSESSMENT
+                ),
+            ]),
         ]);
 
         $this->createSubsidyStageTransaction(4, 2, [
             'description' => 'Interne controle oneens met beoordeling',
             'condition' => new OrCondition([
-                                               new AndCondition([
-                                                                    new ComparisonCondition(
-                                                                        2, 'firstAssessment', Operator::Identical,
-                                                                        self::VALUE_REJECTED
-                                                                    ),
-                                                                    new ComparisonCondition(
-                                                                        4, 'internalAssessment', Operator::Identical,
-                                                                        self::VALUE_APPROVED
-                                                                    ),
-                                                                ]),
-                                               new AndCondition([
-                                                                    new ComparisonCondition(
-                                                                        2, 'firstAssessment', Operator::Identical,
-                                                                        self::VALUE_APPROVED
-                                                                    ),
-                                                                    new ComparisonCondition(
-                                                                        4, 'internalAssessment', Operator::Identical,
-                                                                        self::VALUE_REJECTED
-                                                                    ),
-                                                                ]),
-                                           ]),
+                new AndCondition([
+                    new ComparisonCondition(
+                        2,
+                        'firstAssessment',
+                        Operator::Identical,
+                        self::VALUE_REJECTED
+                    ),
+                    new ComparisonCondition(
+                        4,
+                        'internalAssessment',
+                        Operator::Identical,
+                        self::VALUE_APPROVED
+                    ),
+                   ]),
+                new AndCondition([
+                    new ComparisonCondition(
+                        2,
+                        'firstAssessment',
+                        Operator::Identical,
+                        self::VALUE_APPROVED
+                    ),
+                    new ComparisonCondition(
+                        4,
+                        'internalAssessment',
+                        Operator::Identical,
+                        self::VALUE_REJECTED
+                    ),
+                ]),
+            ]),
             'assign_to_previous_assessor' => true,
             'clone_data' => true,
         ]);

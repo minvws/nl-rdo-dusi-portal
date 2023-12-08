@@ -133,7 +133,12 @@ class ApplicationPolicy
         if (!$this->validateClaim($application)) {
             return false;
         }
+
         $currentApplicationStage = $application->currentApplicationStage;
+        if ($currentApplicationStage === null) {
+            return false;
+        }
+
         $subsidyStage = $currentApplicationStage->subsidyStage;
         if ($subsidyStage->assessor_user_role === null) {
             return false;
@@ -143,7 +148,7 @@ class ApplicationPolicy
         ) {
             Log::debug(
                 'Current stage is not assignable to this assessor',
-                ['stageId' => $application->currentApplicationStage->id]
+                ['stageId' => $currentApplicationStage->id]
             );
             return false;
         }

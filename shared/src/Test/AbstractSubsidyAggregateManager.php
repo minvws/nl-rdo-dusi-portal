@@ -18,8 +18,10 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
-use Ramsey\Uuid\Uuid;
 
+/**
+ * @propery Subsidy $subsidy
+ */
 abstract class AbstractSubsidyAggregateManager
 {
     private const REVIEW_PERIOD = 7; // days
@@ -40,8 +42,7 @@ abstract class AbstractSubsidyAggregateManager
 
     public function __construct(
         private readonly ApplicationStageEncryptionService $encryptionService
-    )
-    {
+    ) {
     }
 
     public function build(): void
@@ -52,7 +53,6 @@ abstract class AbstractSubsidyAggregateManager
         $this->createUsers();
     }
 
-
     abstract protected function createTransactions(): void;
 
     abstract protected function createSubsidyStages(): void;
@@ -61,12 +61,12 @@ abstract class AbstractSubsidyAggregateManager
 
     protected function createSubsidy(): void
     {
-        $this->subsidy = Subsidy::factory()->create();
+        $this->subsidy = Subsidy::factory()->create()->first();
         $this->subsidyVersion = SubsidyVersion::factory()
             ->for($this->subsidy)
             ->create([
-               'review_period' => self::REVIEW_PERIOD
-           ]);
+                         'review_period' => self::REVIEW_PERIOD
+                     ])->first();
     }
 
     public function getSubsidy(): Subsidy
@@ -89,39 +89,53 @@ abstract class AbstractSubsidyAggregateManager
         return $this->subsidyStageFields[$name];
     }
 
-    public function createSubsidyStageField(string $name, SubsidyStage$subsidyStage, array $subsidyStageFieldAttributes): Field
-    {
+    public function createSubsidyStageField(
+        string $name,
+        SubsidyStage $subsidyStage,
+        array $subsidyStageFieldAttributes
+    ): Field {
         if (array_key_exists($name, $this->subsidyStageFields)) {
             throw new LogicException(sprintf('SubsidyStageField key already exits. Key: %s', $name));
         }
 
-        $this->subsidyStageFields[$name] = Field::factory()->for($subsidyStage)->create(['code' => $name, ...$subsidyStageFieldAttributes]);
+        $this->subsidyStageFields[$name] =
+            Field::factory()->for($subsidyStage)->create(['code' => $name, ...$subsidyStageFieldAttributes])->first();
 
         return $this->subsidyStageFields[$name];
     }
 
-    public function createSubsidyStage(int $stage, SubsidyVersion $subsidyVersion, array $subsidyStageAttributes): SubsidyStage
-    {
+    public function createSubsidyStage(
+        int $stage,
+        SubsidyVersion $subsidyVersion,
+        array $subsidyStageAttributes
+    ): SubsidyStage {
         if (array_key_exists($stage, $this->subsidyStages)) {
             throw new LogicException(sprintf('SubidyStage sequence already exits. Key: %s', $stage));
         }
 
-        $this->subsidyStages[$stage] = SubsidyStage::factory()->for($subsidyVersion)->create(['stage' => $stage, ...$subsidyStageAttributes]);
+        $this->subsidyStages[$stage] = SubsidyStage::factory()
+            ->for($subsidyVersion)
+            ->create(['stage' => $stage, ...$subsidyStageAttributes])
+            ->first();
 
         return $this->subsidyStages[$stage];
     }
 
-    public function createSubsidyStageTransaction(int $current, int $target, array $transitionAttributes): SubsidyStageTransition
-    {
+    public function createSubsidyStageTransaction(
+        int $current,
+        int $target,
+        array $transitionAttributes
+    ): SubsidyStageTransition {
         return SubsidyStageTransition::factory()
             ->for($this->getSubsidyStage($current), 'currentSubsidyStage')
             ->for($this->getSubsidyStage($target), 'targetSubsidyStage')
-            ->create($transitionAttributes);
+            ->create($transitionAttributes)
+            ->first();
     }
 
     public function createUser(string $name, RoleEnum $role): User
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create()->first();
         $user->attachRole($role, $this->getSubsidy()->id);
 
         $this->users[$name] = $user;
@@ -145,17 +159,21 @@ abstract class AbstractSubsidyAggregateManager
         return Application::factory()
             ->for($identity)
             ->for($this->getSubsidyVersion())
-            ->create();
-
+            ->create()
+            ->first();
     }
 
-    public function createApplicationStage(Application $application, int $stage, array $attributes = []): ApplicationStage
-    {
+    public function createApplicationStage(
+        Application $application,
+        int $stage,
+        array $attributes = []
+    ): ApplicationStage {
         [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
         return ApplicationStage::factory()
             ->for($application)
             ->for($this->getSubsidyStage($stage))
-            ->create(['encrypted_key' => $encryptedKey, ...$attributes]);
+            ->create(['encrypted_key' => $encryptedKey, ...$attributes])
+            ->first();
     }
 
     public function createApplicationStageWithAnswer(): void
@@ -171,8 +189,7 @@ abstract class AbstractSubsidyAggregateManager
             ->for($field)
             ->create([
                          'encrypted_answer' => $encrypter->encrypt($value)
-                     ]);
+                     ])
+            ->first();
     }
-
-
 }
