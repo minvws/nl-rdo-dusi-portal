@@ -10,7 +10,6 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
@@ -24,19 +23,12 @@ use MinVWS\DUSi\Shared\User\Models\User;
  *
  * @psalm-suppress InvalidReturnStatement
  * @psalm-suppress InvalidReturnType
+ *
+ * @SuppressWarnings("CouplingBetweenObjects")
  */
 abstract class AbstractSubsidyAggregateManager
 {
     private const REVIEW_PERIOD = 7; // days
-
-    public const VALUE_APPROVED = ApplicationStatus::Approved->value;
-    public const VALUE_REJECTED = ApplicationStatus::Rejected->value;
-    public const VALUE_REQ_CHANGES = ApplicationStatus::RequestForChanges->value;
-    public const VALUE_AGREES = 'agrees';
-    public const VALUE_DISAGREES = 'disagrees';
-    public const VALUE_UNASSESSED = "unassessed";
-    public const VALUE_SUPPLEMENT_NEEDED = 'supplement needed';
-
 
     private array $users = [];
     private Subsidy $subsidy;

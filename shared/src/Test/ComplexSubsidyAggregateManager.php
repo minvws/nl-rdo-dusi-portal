@@ -50,10 +50,10 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'type' => FieldType::Select,
             'params' => [
                 'options' => [
-                    self::VALUE_UNASSESSED,
-                    self::VALUE_SUPPLEMENT_NEEDED,
-                    self::VALUE_APPROVED,
-                    self::VALUE_REJECTED,
+                    AssessmentOutcome::UNASSESSED,
+                    AssessmentOutcome::SUPPLEMENT_NEEDED,
+                    AssessmentOutcome::APPROVED,
+                    AssessmentOutcome::REJECTED,
                 ],
             ],
         ]);
@@ -67,8 +67,8 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'type' => FieldType::Select,
             'params' => [
                 'options' => [
-                    self::VALUE_AGREES,
-                    self::VALUE_DISAGREES,
+                    AssessmentOutcome::AGREES,
+                    AssessmentOutcome::DISAGREES,
                 ],
             ],
         ]);
@@ -82,8 +82,8 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'type' => FieldType::Select,
             'params' => [
                 'options' => [
-                    self::VALUE_APPROVED,
-                    self::VALUE_REJECTED,
+                    AssessmentOutcome::APPROVED,
+                    AssessmentOutcome::REJECTED,
                 ],
             ],
         ]);
@@ -100,6 +100,9 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
         );
     }
 
+    /**
+     * @SuppressWarnings("ExcessiveMethodLength")
+     */
     public function createTransitions(): void
     {
         $this->createSubsidyStageTransaction(1, 2, [
@@ -120,7 +123,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                 2,
                 'firstAssessment',
                 Operator::Identical,
-                self::VALUE_SUPPLEMENT_NEEDED
+                AssessmentOutcome::SUPPLEMENT_NEEDED
             ),
             'send_message' => true,
         ]);
@@ -130,7 +133,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'condition' => new InCondition(
                 2,
                 'firstAssessment',
-                [self::VALUE_APPROVED, self::VALUE_REJECTED]
+                [AssessmentOutcome::APPROVED, AssessmentOutcome::REJECTED]
             ),
             'send_message' => false,
         ]);
@@ -141,7 +144,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                 3,
                 'secondAssessment',
                 Operator::Identical,
-                self::VALUE_DISAGREES
+                AssessmentOutcome::DISAGREES
             ),
             'send_message' => false,
             'assign_to_previous_assessor' => true,
@@ -156,13 +159,13 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                     2,
                     'firstAssessment',
                     Operator::Identical,
-                    self::VALUE_REJECTED
+                    AssessmentOutcome::REJECTED
                 ),
                 new ComparisonCondition(
                     3,
                     'secondAssessment',
                     Operator::Identical,
-                    self::VALUE_AGREES
+                    AssessmentOutcome::AGREES
                 )
             ]),
             'send_message' => true
@@ -175,13 +178,13 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                     2,
                     'firstAssessment',
                     Operator::Identical,
-                    self::VALUE_APPROVED
+                    AssessmentOutcome::APPROVED
                 ),
                 new ComparisonCondition(
                     3,
                     'secondAssessment',
                     Operator::Identical,
-                    self::VALUE_AGREES
+                    AssessmentOutcome::AGREES
                 ),
             ]),
             'send_message' => false,
@@ -195,13 +198,13 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                         2,
                         'firstAssessment',
                         Operator::Identical,
-                        self::VALUE_REJECTED
+                        AssessmentOutcome::REJECTED
                     ),
                     new ComparisonCondition(
                         4,
                         'internalAssessment',
                         Operator::Identical,
-                        self::VALUE_APPROVED
+                        AssessmentOutcome::APPROVED
                     ),
                    ]),
                 new AndCondition([
@@ -209,13 +212,13 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                         2,
                         'firstAssessment',
                         Operator::Identical,
-                        self::VALUE_APPROVED
+                        AssessmentOutcome::APPROVED
                     ),
                     new ComparisonCondition(
                         4,
                         'internalAssessment',
                         Operator::Identical,
-                        self::VALUE_REJECTED
+                        AssessmentOutcome::REJECTED
                     ),
                 ]),
             ]),
@@ -231,13 +234,13 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                     2,
                     'firstAssessment',
                     Operator::Identical,
-                    self::VALUE_APPROVED
+                    AssessmentOutcome::APPROVED
                 ),
                 new ComparisonCondition(
                     4,
                     'internalAssessment',
                     Operator::Identical,
-                    self::VALUE_APPROVED
+                    AssessmentOutcome::APPROVED
                 )
            ]),
            'send_message' => false,
@@ -250,7 +253,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                        5,
                        'implementationCoordinatorAssessment',
                        Operator::Identical,
-                       self::VALUE_REJECTED
+                       AssessmentOutcome::REJECTED
                    ),
                    'send_message' => true
                ]);
@@ -264,7 +267,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                    5,
                    'implementationCoordinatorAssessment',
                    Operator::Identical,
-                   self::VALUE_APPROVED
+                   AssessmentOutcome::APPROVED
                ),
            'send_message' => true
         ]);
