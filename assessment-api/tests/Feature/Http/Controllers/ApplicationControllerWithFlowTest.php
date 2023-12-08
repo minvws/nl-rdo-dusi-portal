@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Test\AbstractSubsidyAggregateManager;
 use MinVWS\DUSi\Shared\Test\ApplicationCreator;
+use MinVWS\DUSi\Shared\Test\AssessmentOutcome;
 use MinVWS\DUSi\Shared\Test\ComplexSubsidyAggregateManager;
 use MinVWS\DUSi\Shared\Test\MocksEncryption;
 
@@ -55,7 +56,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $applicationStage2,
             $firstAssessmentField,
-            AbstractSubsidyAggregateManager::VALUE_APPROVED
+            AssessmentOutcome::APPROVED->value
         );
         $applicationStage3 = $this->flowService->submitApplicationStage($applicationStage2);
 
@@ -65,7 +66,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $applicationStage3,
             $secondAssessmentField,
-            AbstractSubsidyAggregateManager::VALUE_AGREES
+            AssessmentOutcome::AGREES->value
         );
 
         $applicationStage4 = $this->flowService->submitApplicationStage($applicationStage3);
@@ -75,7 +76,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $applicationStage4,
             $internalAssessmentField,
-            AbstractSubsidyAggregateManager::VALUE_APPROVED
+            AssessmentOutcome::APPROVED->value
         );
 
         $implementationCoordinatorStage = $this->flowService->submitApplicationStage($applicationStage4);
@@ -86,7 +87,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $implementationCoordinatorStage,
             $implementationCoordinatorAssessmentField,
-            AbstractSubsidyAggregateManager::VALUE_APPROVED
+            AssessmentOutcome::APPROVED->value
         );
         $nextApplicationStage = $this->flowService->submitApplicationStage($implementationCoordinatorStage);
 
@@ -114,7 +115,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $applicationStage2,
             $firstAssessmentField,
-            AbstractSubsidyAggregateManager::VALUE_APPROVED
+            AssessmentOutcome::APPROVED->value
         );
         $applicationStage3 = $this->flowService->submitApplicationStage($applicationStage2);
 
@@ -124,7 +125,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $applicationStage3,
             $secondAssessmentField,
-            AbstractSubsidyAggregateManager::VALUE_AGREES
+            AssessmentOutcome::AGREES->value
         );
 
         $applicationStage4 = $this->flowService->submitApplicationStage($applicationStage3);
@@ -134,7 +135,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $applicationStage4,
             $internalAssessmentField,
-            AbstractSubsidyAggregateManager::VALUE_REJECTED
+            AssessmentOutcome::REJECTED->value
         );
 
         $currentApplicationStage = $this->flowService->submitApplicationStage($applicationStage4);
@@ -143,7 +144,7 @@ class ApplicationControllerWithFlowTest extends TestCase
         $this->subsidyManager->createAnswer(
             $currentApplicationStage,
             $firstAssessmentField,
-            AbstractSubsidyAggregateManager::VALUE_APPROVED
+            AssessmentOutcome::APPROVED->value
         );
         $nextApplicationStage = $this->flowService->submitApplicationStage($currentApplicationStage);
 
