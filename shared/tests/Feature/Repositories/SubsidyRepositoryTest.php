@@ -303,12 +303,20 @@ class SubsidyRepositoryTest extends TestCase
             'created_at' => '2021-01-01 00:00:00',
         ]);
         SubsidyStage::factory()->for($secondSubsidyVersion)->create([
-            'title' => 'Title C',
+            'title' => 'Title A',
             'stage' => 1,
         ]);
         SubsidyStage::factory()->for($secondSubsidyVersion)->create([
-            'title' => 'Title D',
+            'title' => 'Title B',
             'stage' => 2,
+        ]);
+        SubsidyStage::factory()->for($secondSubsidyVersion)->create([
+            'title' => 'Title C',
+            'stage' => 3,
+        ]);
+        SubsidyStage::factory()->for($secondSubsidyVersion)->create([
+            'title' => 'Title D',
+            'stage' => 4,
         ]);
 
         $repository = $this->app->make(SubsidyRepository::class);
@@ -320,12 +328,21 @@ class SubsidyRepositoryTest extends TestCase
     public static function dataProviderSubsidyStageTitles(): array
     {
         return [
-            '4 subsidy stage titles when not filtered' => [null, ['Title A', 'Title B', 'Title C', 'Title D']],
-            'get title a and b when filtered' => [['025ffd57-5591-4150-989e-63c1b1ec6de1'], ['Title A', 'Title B']],
-            'get title c and d when filtered' => [['00059634-ce1d-47ad-9b8d-7a326dbd2598'], ['Title C', 'Title D']],
-            'get title a, b, c and d when filtered' => [
+            '6 subsidy stage titles when not filtered' => [
+                null,
+                ['Title A', 'Title B', 'Title A', 'Title B', 'Title C', 'Title D']
+            ],
+            'get first subsidy stage titles when filtered' => [
+                ['025ffd57-5591-4150-989e-63c1b1ec6de1'],
+                ['Title A', 'Title B']
+            ],
+            'get second subsidy stage titles when filtered' => [
+                ['00059634-ce1d-47ad-9b8d-7a326dbd2598'],
+                ['Title A', 'Title B', 'Title C', 'Title D']
+            ],
+            'get both stage titles when filtered' => [
                 ['00059634-ce1d-47ad-9b8d-7a326dbd2598', '025ffd57-5591-4150-989e-63c1b1ec6de1'],
-                ['Title A', 'Title B', 'Title C', 'Title D'],
+                ['Title A', 'Title B', 'Title A', 'Title B', 'Title C', 'Title D'],
             ],
             'empty list of titles when subsidies not found' => [[Uuid::uuid4()->toString()], []],
         ];

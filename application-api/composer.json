@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-openssl": "*",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
@@ -13,23 +14,23 @@
         "minvws/dusi-shared": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.6",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "ext-openssl": "*"
+        "symfony/config": "v6.4.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",
+        "larastan/larastan": "^2.0",
         "laravel/pint": "^1.10",
         "laravel/sail": "^1.23",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^7.8",
-        "nunomaduro/larastan": "^2.6",
+        "phpcsstandards/php_codesniffer": "^3.0",
         "phpmd/phpmd": "^2.13",
         "phpunit/phpunit": "^10.3",
         "psalm/plugin-laravel": "^2.8",
         "slevomat/coding-standard": "^8.13",
         "spatie/laravel-ignition": "^2.2",
-        "squizlabs/php_codesniffer": "^3.7",
         "vimeo/psalm": "^5.14"
     },
     "autoload": {

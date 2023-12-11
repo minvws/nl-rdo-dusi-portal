@@ -10,18 +10,19 @@
         "ext-posix": "*",
         "minvws/codable": "dev-main as 1.0.x-dev",
         "php-amqplib/php-amqplib": "^3.5",
-        "ext-openssl": "*"
+        "ext-openssl": "*",
+        "symfony/config": "v6.4.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/framework": "^10.0",
-        "nunomaduro/larastan": "^2.0",
         "orchestra/testbench": "^8.6",
         "phpmd/phpmd": "^2.13",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.3",
         "slevomat/coding-standard": "^8.13",
-        "squizlabs/php_codesniffer": "^3.7"
+        "larastan/larastan": "^2.0",
+        "phpcsstandards/php_codesniffer": "^3.0"
     },
     "suggest": {
         "laravel/framework": "^10.0"

@@ -197,9 +197,12 @@ class SubsidyRepository
     public function getSubsidyStageTitles(?array $subsidyIds = null): array
     {
         return SubsidyStage::bySubsidyIds($subsidyIds)
-            ->pluck('title')
-            ->unique()
-            ->sort()
+            ->select('title', 'stage', 'subsidy_version_id')
+            ->get()
+            ->groupBy('subsidy_version_id')
+            ->each->sortBy('stage')
+            ->map->pluck('title')
+            ->flatten()
             ->toArray();
     }
 

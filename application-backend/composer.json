@@ -8,8 +8,8 @@
         "php": "^8.2",
         "ext-fileinfo": "*",
         "ext-openssl": "*",
-        "ext-sodium": "*",
         "ext-sockets": "*",
+        "ext-sodium": "*",
         "doctrine/dbal": "^3.6",
         "firebase/php-jwt": "^6.8",
         "guzzlehttp/guzzle": "^7.7",
@@ -18,22 +18,24 @@
         "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
-        "xenolope/quahog": "^3.0"
+        "symfony/config": "v6.4.0",
+        "xenolope/quahog": "^3.0",
+        "minvws/laravel-sql-exporter": "dev-feat/initial-export-command"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",
+        "larastan/larastan": "^2.0",
         "laravel/pint": "^1.10",
         "laravel/sail": "^1.23",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^7.1",
-        "nunomaduro/larastan": "^2.6",
+        "phpcsstandards/php_codesniffer": "^3.0",
         "phpmd/phpmd": "^2.13",
         "phpunit/phpunit": "^10.3",
         "psalm/plugin-laravel": "^2.8",
         "slevomat/coding-standard": "^8.13",
         "spatie/laravel-ignition": "^2.2",
-        "squizlabs/php_codesniffer": "^3.7",
         "vimeo/psalm": "^5.14"
     },
     "autoload": {
@@ -86,6 +88,10 @@
         {
             "type": "git",
             "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-laravel-sql-export.git"
         },
         {
             "type": "path",
