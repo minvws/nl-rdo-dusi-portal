@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use MinVWS\DUSi\Assessment\API\Events\Logging\SubmitAssessmentEvent;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewApplicationEvent;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
@@ -79,6 +80,7 @@ class ApplicationController extends Controller
         $this->authorize('show', $application);
         assert($user instanceof User);
         $this->logger->log((new ViewApplicationEvent())
+            ->withActor($user)
             ->withData([
                 'applicationId' => $application->id,
                 'userId' => $user->id,
@@ -165,6 +167,16 @@ class ApplicationController extends Controller
 
         try {
             $application = $this->applicationService->saveAssessment($application, $data, $submit);
+
+            if ($submit) {
+                $this->logger->log((new SubmitAssessmentEvent())
+                    ->withActor($user)
+                    ->withData([
+                        'applicationId' => $application->id,
+                        'userId' => $user->getAuthIdentifier(),
+                    ]));
+            }
+
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
@@ -204,6 +216,14 @@ class ApplicationController extends Controller
 
         try {
             $application = $this->applicationService->submitAssessment($application);
+
+            $this->logger->log((new SubmitAssessmentEvent())
+                ->withActor($user)
+                ->withData([
+                    'applicationId' => $application->id,
+                    'userId' => $user->getAuthIdentifier(),
+                ]));
+
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
         } catch (InvalidApplicationSubmitException) {
             abort(Response::HTTP_FORBIDDEN);

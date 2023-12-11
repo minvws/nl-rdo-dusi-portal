@@ -12,6 +12,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
+use MinVWS\DUSi\Application\API\Events\Logging\LoginEvent;
+use MinVWS\Logging\Laravel\LogService;
 use MinVWS\OpenIDConnectLaravel\Http\Responses\LoginResponseHandlerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +22,8 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
     public function __construct(
         private readonly string $frontendBaseUrl,
         private readonly Decoder $decoder,
-        private readonly OidcUserLoa $minimumLoa
+        private readonly OidcUserLoa $minimumLoa,
+        private readonly LogService $logger,
     ) {
     }
 
@@ -44,7 +47,14 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
             ]));
         }
 
-        // TODO: Log login to Calvin?
+        assert($user instanceof PortalUser);
+
+        $this->logger->log((new LoginEvent())
+            ->withData([
+                'sessionId' => $user->getAuthIdentifier(),
+                'identityProvider' => 'digid',
+            ]));
+
         Auth::setUser($user);
         return new RedirectResponse($this->frontendBaseUrl . '/login-callback');
     }
