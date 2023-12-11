@@ -54,6 +54,7 @@ class OidcLoginResponseHandler implements LoginResponseHandlerInterface
                 'sessionId' => $user->getAuthIdentifier(),
                 'type' => 'user',
                 'typeId' => 4,
+                'identityProvider' => 'digid',
             ]));
 
         Auth::setUser($user);

@@ -35,6 +35,7 @@ class UserController extends Controller
                 'sessionId' => $user->getAuthIdentifier(),
                 'type' => 'user',
                 'typeId' => 4,
+                'identityProvider' => 'digid',
             ]));
 
         Auth::logout();
