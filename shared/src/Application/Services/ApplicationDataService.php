@@ -1,5 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
-
+<?php
 
 /**
  * Application Data Service
