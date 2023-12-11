@@ -21,6 +21,7 @@
       <env name="HSM_API_CLIENT_CERTIFICATE_PATH" value="secrets/pki/issued/softhsm^SoftHSMLabel^*=create,destroy,use,import.crt"/>
       <env name="HSM_API_CLIENT_CERTIFICATE_KEY_PATH" value="secrets/pki/private/softhsm^SoftHSMLabel^*=create,destroy,use,import.key"/>
       <env name="HSM_API_ENDPOINT_URL" value="https://portal-backend-hsm-api-service:8000/hsm"/>
+      <env name="HSM_API_VERIFY_SSL" value="false"/>
 
       <env name="HSM_PUBLIC_KEY_FILE_PATH" value="secrets/public.key"/>
       <env name="HSM_ENCRYPTION_KEY_LABEL" value="SoftHSMLabel"/>

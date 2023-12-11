@@ -6,6 +6,8 @@ return [
 
     'endpoint_url' => env('HSM_API_ENDPOINT_URL'),
 
+    'verify_ssl' => env('HSM_API_VERIFY_SSL', true),
+
     'client_certificate_path' => env('HSM_API_CLIENT_CERTIFICATE_PATH'),
 
     'client_certificate_key_path' => env('HSM_API_CLIENT_CERTIFICATE_KEY_PATH'),

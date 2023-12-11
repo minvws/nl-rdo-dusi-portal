@@ -1,5 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
-
+<?php
 
 /**
  * Application Data Service
@@ -11,7 +10,7 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Collection;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
@@ -21,8 +20,11 @@ use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHashField;
 use stdClass;
 use Throwable;
 
@@ -39,6 +41,7 @@ readonly class ApplicationDataService
         private ApplicationFileManager $applicationFileManager,
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
+        private readonly SubsidyStashFieldHasher $subsidyStashFieldHasher,
     ) {
     }
 
@@ -67,7 +70,7 @@ readonly class ApplicationDataService
 
     /**
      * @throws Throwable
-     * @throws ValidationException
+     * @throws ValidationErrorException
      */
     public function saveApplicationStageData(
         ApplicationStage $applicationStage,
@@ -89,11 +92,18 @@ readonly class ApplicationDataService
         $applicationStage->encrypted_key = $encryptedKey;
         $applicationStage->save();
 
+        $this->saveFieldValues($fieldValues, $encrypter, $applicationStage);
+
+        $this->updateSubsidyStageHashes($fieldValues, $applicationStage);
+
+        return $validationResult;
+    }
+
+    private function saveFieldValues(array $fieldValues, mixed $encrypter, ApplicationStage $applicationStage): void
+    {
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);
         }
-
-        return $validationResult;
     }
 
     public function validateFieldValues(
@@ -201,5 +211,77 @@ readonly class ApplicationDataService
             FieldType::Upload => $this->jsonDecoder->decode($value)->decodeObject(FileList::class),
             default => $value,
         };
+    }
+
+    private function updateSubsidyStageHashes(array $fieldValues, ApplicationStage $applicationStage): void
+    {
+        $fieldValues = array_filter($fieldValues, fn($fieldValue) => !empty($fieldValue->value));
+        foreach ($applicationStage->subsidyStage->subsidyStageHashes as $subsidyStageHash) {
+            $this->updateSubsidyStageHash($fieldValues, $subsidyStageHash, $applicationStage);
+        }
+    }
+
+    public function updateSubsidyStageHash(
+        array $fieldValues,
+        SubsidyStageHash $subsidyStageHash,
+        ApplicationStage $applicationStage
+    ): void {
+        /**
+         * @var Collection|SubsidyStageHashField[] $subsidyStageHashFields
+         */
+        $subsidyStageHashFields = $subsidyStageHash->subsidyStageHashFields()->get();
+
+        if ($this->fieldValuesContainsSubsidyStageHashField($fieldValues, $subsidyStageHashFields)) {
+            $this->updateOrNewApplicationStageFieldHash(
+                $subsidyStageHash,
+                $applicationStage,
+                $fieldValues
+            );
+        }
+    }
+
+    private function updateOrNewApplicationStageFieldHash(
+        SubsidyStageHash $subsidyStageHash,
+        ApplicationStage $applicationStage,
+        array $fieldValues
+    ): void {
+        $hash = $this->makeApplicationFieldHash($subsidyStageHash, $fieldValues, $applicationStage);
+        $this->applicationRepository->updateOrNewApplicationStageFieldHash(
+            $subsidyStageHash,
+            $applicationStage->application,
+            $hash
+        );
+    }
+
+    private function makeApplicationFieldHash(
+        SubsidyStageHash $subsidyStageHash,
+        array $fieldValues,
+        ApplicationStage $applicationStage
+    ): string {
+        return $this->subsidyStashFieldHasher->makeApplicationFieldHash(
+            $subsidyStageHash,
+            $fieldValues,
+            $applicationStage
+        );
+    }
+
+    public function fieldValuesContainsSubsidyStageHashField(
+        array $fieldValues,
+        Collection $subsidyStageHashFields
+    ): bool {
+        /**
+         * @var Collection $hashFieldCodesMap
+         */
+        $hashFieldCodesMap = $subsidyStageHashFields->map(
+            fn(SubsidyStageHashField $field) => $field->field?->code
+        );
+
+        foreach ($fieldValues as $fieldValue) {
+            if ($hashFieldCodesMap->contains($fieldValue->field->code)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

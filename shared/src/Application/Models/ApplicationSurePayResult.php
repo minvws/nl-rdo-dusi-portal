@@ -6,8 +6,10 @@ namespace MinVWS\DUSi\Shared\Application\Models;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationSurePayResultFactory;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountType;
@@ -30,6 +32,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\PaymentPreVali
  */
 class ApplicationSurePayResult extends Model
 {
+    use HasFactory;
     use HasUuids;
 
     protected $table = 'application_surepay_results';
@@ -47,5 +50,10 @@ class ApplicationSurePayResult extends Model
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
+    }
+
+    protected static function newFactory(): ApplicationSurePayResultFactory
+    {
+        return ApplicationSurePayResultFactory::new();
     }
 }

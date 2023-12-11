@@ -7,7 +7,6 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 

@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
-use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
@@ -24,6 +23,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Application\Services\ValidationService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
@@ -96,8 +96,8 @@ class ApplicationService
 
     /**
      * @throws InvalidApplicationSaveException
-     * @throws ValidationException
      * @throws ApplicationFlowException
+     * @throws ValidationErrorException
      */
     public function saveAssessment(Application $application, object $data, bool $submit): Application
     {
@@ -116,6 +116,11 @@ class ApplicationService
         return $application;
     }
 
+    /**
+     * @throws InvalidApplicationSubmitException
+     * @throws ApplicationFlowException
+     * @throws ValidationErrorException
+     */
     public function submitAssessment(Application $application): Application
     {
         $stage = $application->currentApplicationStage;

@@ -7,8 +7,6 @@ namespace MinVWS\DUSi\Shared\User\Repositories;
 use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\User\Models\User;
-use Ramsey\Uuid\Uuid;
-use MinVWS\DUSi\Shared\User\Enums\Role;
 
 class UserRepository
 {

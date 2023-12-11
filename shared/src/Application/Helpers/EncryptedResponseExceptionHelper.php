@@ -11,8 +11,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Error;
-use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Throwable;

@@ -54,7 +54,7 @@ class PortalUser implements Authenticatable, Decodable
      */
     public function getAuthPassword(): string
     {
-        throw new RuntimeException("Portal uses can't have a password");
+        throw new RuntimeException("Portal user can't have a password");
     }
 
     /**

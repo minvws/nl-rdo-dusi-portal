@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use Ramsey\Uuid\Uuid;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
