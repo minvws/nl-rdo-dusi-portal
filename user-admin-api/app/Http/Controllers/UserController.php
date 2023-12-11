@@ -83,8 +83,6 @@ class UserController extends Controller
             ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
-                'type' => 'user',
-                'typeId' => 4,
             ]));
 
         return redirect()
@@ -125,8 +123,6 @@ class UserController extends Controller
            ->withActor($requestUser)
            ->withData([
                 'userId' => $user->id,
-                'type' => 'user',
-                'typeId' => 4,
             ]));
 
         return view('users.show', [
@@ -149,8 +145,6 @@ class UserController extends Controller
             ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
-                'type' => 'user',
-                'typeId' => 4,
             ]));
 
         return redirect()
@@ -174,8 +168,6 @@ class UserController extends Controller
             ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
-                'type' => 'user',
-                'typeId' => 4,
             ]));
 
         return redirect()

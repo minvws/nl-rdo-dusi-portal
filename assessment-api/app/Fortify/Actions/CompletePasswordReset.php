@@ -31,8 +31,6 @@ class CompletePasswordReset
             ->withActor($user)
             ->withData([
                 'userId' => $user->getAuthIdentifier(),
-                'type' => 'user',
-                'typeId' => 4,
             ]));
 
         event(new PasswordReset($user));

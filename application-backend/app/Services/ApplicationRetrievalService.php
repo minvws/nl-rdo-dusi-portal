@@ -78,8 +78,6 @@ readonly class ApplicationRetrievalService
         $this->logService->log((new ListApplicationsEvent())
             ->withData([
                 'userId' => $identity->id,
-                'type' => 'applications',
-                'typeId' => 1,
             ]));
 
         return $this->responseEncryptionService->encryptCodable(
@@ -121,8 +119,6 @@ readonly class ApplicationRetrievalService
             ->withData([
                 'reference' => $params->reference,
                 'userId' => $identity->id,
-                'type' => 'applications',
-                'typeId' => 1,
             ]));
 
         return $this->responseEncryptionService->encryptCodable(

@@ -55,8 +55,6 @@ class UserRolesController extends Controller
             ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
-                'type' => 'user',
-                'typeId' => 4,
             ]));
 
         return redirect()
@@ -84,8 +82,6 @@ class UserRolesController extends Controller
             ->withActor($requestUser)
             ->withData([
                 'userId' => $user->id,
-                'type' => 'user',
-                'typeId' => 4,
             ]));
 
         return redirect()

@@ -50,8 +50,6 @@ class ApplicationAssessorController extends Controller
                         [
                             'applicationId' => $application->id,
                             'userId' => $user->getAuthIdentifier(),
-                            'type' => 'application',
-                            'typeId' => 1,
                         ]
                     )
             );

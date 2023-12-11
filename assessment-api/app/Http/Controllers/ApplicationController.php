@@ -84,8 +84,6 @@ class ApplicationController extends Controller
             ->withData([
                 'applicationId' => $application->id,
                 'userId' => $user->id,
-                'type' => 'application-details',
-                'typeId' => 2,
             ]));
 
         $readOnly =
@@ -176,8 +174,6 @@ class ApplicationController extends Controller
                     ->withData([
                         'applicationId' => $application->id,
                         'userId' => $user->getAuthIdentifier(),
-                        'type' => 'application-details',
-                        'typeId' => 2,
                     ]));
             }
 
@@ -226,8 +222,6 @@ class ApplicationController extends Controller
                 ->withData([
                     'applicationId' => $application->id,
                     'userId' => $user->getAuthIdentifier(),
-                    'type' => 'application-details',
-                    'typeId' => 2,
                 ]));
 
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);

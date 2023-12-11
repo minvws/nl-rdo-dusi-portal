@@ -40,8 +40,6 @@ class ApplicationFileController extends Controller
                 'fieldCode' => $fieldCode,
                 'fileId' => $fileId,
                 'userId' => $user->getAuthIdentifier(),
-                'type' => 'application-details',
-                'typeId' => 2,
             ]));
         return $this->applicationFileService->getApplicationFile(
             $application,

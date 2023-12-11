@@ -163,8 +163,6 @@ readonly class ApplicationMutationService
             ->withData([
                 'reference' => $application->reference,
                 'userId' => $identity->id,
-                'type' => 'applications',
-                'typeId' => 1,
             ]));
 
         [$encryptedKey] = $this->applicationEncryptionService->generateEncryptionKey();
@@ -249,8 +247,6 @@ readonly class ApplicationMutationService
                 ->withData([
                     'reference' => $application->reference,
                     'userId' => $identity->id,
-                    'type' => 'applications',
-                    'typeId' => 1,
                 ]));
         } catch (ValidationErrorException $e) {
             $this->logger->debug('Validation returns errors', [
@@ -271,8 +267,6 @@ readonly class ApplicationMutationService
                 ->withData([
                     'reference' => $application->reference,
                     'userId' => $identity->id,
-                    'type' => 'applications',
-                    'typeId' => 1,
                 ]));
 
             // TODO: this should be generalized

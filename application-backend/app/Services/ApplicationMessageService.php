@@ -80,8 +80,6 @@ readonly class ApplicationMessageService
         $this->logService->log((new ListMessagesEvent())
             ->withData([
                 'userId' => $identity->id,
-                'type' => 'messages',
-                'typeId' => 3,
             ]));
 
         return $this->responseEncryptionService->encryptCodable(
@@ -140,8 +138,6 @@ readonly class ApplicationMessageService
             ->withData([
                 'messageId' => $message->id,
                 'userId' => $identity->id,
-                'type' => 'messages',
-                'typeId' => 3,
             ]));
 
 
