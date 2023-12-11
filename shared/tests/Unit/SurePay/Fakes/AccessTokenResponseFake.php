@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Shared\Tests\Unit\SurePay\Fakes;
 use Carbon\Carbon;
 use Faker\Factory;
 
-class AccesstokenResponseFake
+class AccessTokenResponseFake
 {
     public static function build(): array
     {
@@ -20,7 +20,7 @@ class AccesstokenResponseFake
             'organization_name' => $faker->company(),
             'developer.email' => $faker->companyEmail(),
             'token_type' => $faker->randomElement(['Bearer', 'OAuth']),
-            'issued_at' => Carbon::now()->getTimestamp(),
+            'issued_at' => Carbon::now()->getTimestampMs(),
             'client_id' => $faker->uuid(),
             'access_token' => $faker->md5(),
             'application_name' => implode(' ', [$faker->company, $faker->slug]),

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO;
 
+use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayInvalidAccessTokenResponse;
 
-class AccesstokenResponse
+class AccessTokenResponse
 {
     public int $refreshTokenExpiresIn;
     public string $apiProductList;
@@ -46,13 +48,23 @@ class AccesstokenResponse
     }
 
     /**
-     * @throws ValidationException
+     * @throws SurePayInvalidAccessTokenResponse
      */
-    public static function fromJson(string $jsonResponse): AccesstokenResponse
+    public static function fromJson(string $jsonResponse): AccessTokenResponse
     {
-        $data = json_decode($jsonResponse, true);
+        if (empty($jsonResponse)) {
+            throw new SurePayInvalidAccessTokenResponse('Empty response from SurePay');
+        }
 
-        return new self($data);
+        try {
+            $data = json_decode($jsonResponse, true, 512, JSON_THROW_ON_ERROR);
+            return new self($data);
+        } catch (Exception $e) {
+            throw new SurePayInvalidAccessTokenResponse(
+                message: 'Invalid response from SurePay',
+                previous: $e,
+            );
+        }
     }
 
     /**
