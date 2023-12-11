@@ -9,11 +9,18 @@ use Illuminate\Support\Facades\Queue;
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Models\Submission\File;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\SubsidyStashFieldHasher;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
@@ -23,10 +30,13 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHashField;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @group application
@@ -313,5 +323,277 @@ class ApplicationDataServiceTest extends TestCase
                 );
             }
         }
+    }
+
+    /**
+     * @group field-hash
+     */
+    public function testSingleFieldHashCreationAfterSave(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $bankAccountField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'bankAccountNumber',
+                'type' => FieldType::CustomBankAccount,
+            ]);
+
+        $subsidyStageHash = SubsidyStageHash::factory()
+            ->for($this->subsidyStage1)
+            ->create();
+
+        SubsidyStageHashField::factory()
+            ->for($subsidyStageHash)
+            ->for($bankAccountField)
+            ->create();
+
+        $params = [
+            $bankAccountField->code => MockedBankAccountRepository::BANK_ACCCOUNT_NUMBER_MATCH,
+        ];
+
+        $body = new FieldValidationParams(
+            (object) $params
+        );
+
+        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+            $applicationStage,
+            $body->data,
+            submit: true,
+        );
+
+        $this->assertDatabaseHas(ApplicationHash::class, [
+            'subsidy_stage_hash_id' => $subsidyStageHash->id,
+            'application_id' => $application->id
+        ]);
+    }
+
+    /**
+     * @group field-hash
+     */
+    public function testFieldHashIsNotCreatedAfterSave(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $bankAccountField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => 'bankAccountNumber',
+                'type' => FieldType::CustomBankAccount,
+                'is_required' => false
+            ]);
+
+        $subsidyStageHash = SubsidyStageHash::factory()
+            ->for($this->subsidyStage1)
+            ->create();
+
+        SubsidyStageHashField::factory()
+            ->for($subsidyStageHash)
+            ->for($bankAccountField)
+            ->create();
+
+        $params = [
+            $bankAccountField->code => null,
+        ];
+
+        $body = new FieldValidationParams(
+            (object) $params
+        );
+
+        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+            $applicationStage,
+            $body->data,
+            submit: true,
+        );
+
+        $this->assertDatabaseEmpty(ApplicationHash::class);
+    }
+
+    /**
+     * @group field-hash
+     */
+    public function testMultiFieldHashCreationAfterSave(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $subsidyStageHash = SubsidyStageHash::factory()
+            ->for($this->subsidyStage1)
+            ->create();
+
+        $fields = [
+            ['code' => 'postalCode', 'type' => FieldType::CustomPostalCode],
+            ['code' => 'houseNumber', 'type' => FieldType::TextNumeric],
+            ['code' => 'houseNumberAddition', 'type' => FieldType::Text]
+        ];
+
+        $params = [];
+        $fieldValuesCollection = [];
+
+        foreach ($fields as $fieldData) {
+            [$field, $paramValue] = $this->createFieldAndParam($fieldData, $subsidyStageHash);
+            $params[$field->code] = $paramValue;
+            $fieldValuesCollection[$field->code] = new FieldValue($field, $paramValue);
+        }
+
+        ksort($fieldValuesCollection);
+
+        $body = new FieldValidationParams((object)$params);
+
+        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+            $applicationStage,
+            $body->data,
+            submit: true
+        );
+
+        /** @var SubsidyStashFieldHasher $hasher */
+        $hasher = $this->app->make(SubsidyStashFieldHasher::class);
+
+        $this->assertDatabaseHas(ApplicationHash::class, [
+            'subsidy_stage_hash_id' => $subsidyStageHash->id,
+            'application_id' => $application->id,
+            'hash' => $hasher->makeApplicationFieldHash($subsidyStageHash, $fieldValuesCollection, $applicationStage),
+        ]);
+    }
+
+    /**
+     * @group field-hash
+     */
+    public function testMultiFieldHashCreationAfterSaveWhenPartOfDataIsMissing(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $subsidyStageHash = SubsidyStageHash::factory()
+            ->for($this->subsidyStage1)
+            ->create();
+
+        $fields = [
+            ['code' => 'postalCode', 'type' => FieldType::CustomPostalCode],
+            ['code' => 'houseNumber', 'type' => FieldType::TextNumeric],
+            ['code' => 'houseNumberAddition', 'type' => FieldType::Text]
+        ];
+
+        $params = [];
+        $fieldValuesCollection = [];
+
+        foreach ($fields as $fieldData) {
+            [$field, $paramValue] = $this->createFieldAndParam($fieldData, $subsidyStageHash);
+            $params[$field->code] = $paramValue;
+            $fieldValuesCollection[$field->code] = new FieldValue($field, $paramValue);
+        }
+
+        //Remove data from $params and $fieldValuesCollection
+        array_pop($params);
+        array_pop($fieldValuesCollection);
+
+        ksort($fieldValuesCollection);
+
+        $body = new FieldValidationParams((object)$params);
+
+        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+            $applicationStage,
+            $body->data,
+            submit: true
+        );
+
+        /** @var SubsidyStashFieldHasher $hasher */
+        $hasher = $this->app->make(SubsidyStashFieldHasher::class);
+
+        $this->assertDatabaseHas(ApplicationHash::class, [
+            'subsidy_stage_hash_id' => $subsidyStageHash->id,
+            'application_id' => $application->id,
+            'hash' => $hasher->makeApplicationFieldHash($subsidyStageHash, $fieldValuesCollection, $applicationStage),
+        ]);
+    }
+
+    private function createFieldAndParam(array $fieldData, $subsidyStageHash): array
+    {
+        $paramValue = match ($fieldData['code']) {
+            'postalCode' => $this->faker->postcode(),
+            'houseNumber' => $this->faker->randomNumber(),
+            'houseNumberAddition' => $this->faker->randomElement(['A', 'B', 'C', '', '1', '2', '3']),
+        };
+
+        $field = Field::factory()->for($this->subsidyStage1)
+            ->create(['code' => $fieldData['code'], 'type' => $fieldData['type'], 'is_required' => false]);
+
+        SubsidyStageHashField::factory()->for($subsidyStageHash)->for($field)->create();
+
+        return [$field, $paramValue];
+    }
+
+    /**
+     * @group field-hash
+     */
+    public function testFileListHashCreationAfterSave(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $uploadField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                         'code' => 'fileList',
+                         'type' => FieldType::Upload,
+                     ]);
+
+        $subsidyStageHash = SubsidyStageHash::factory()
+            ->for($this->subsidyStage1)
+            ->create();
+
+        SubsidyStageHashField::factory()
+            ->for($subsidyStageHash)
+            ->for($uploadField)
+            ->create();
+
+
+        $fileId1 = Uuid::uuid4()->toString();
+        $fileRepository = $this->app->get(ApplicationFileManager::class);
+        $fileRepository->writeFile($applicationStage, $uploadField, $fileId1, random_bytes(100));
+
+        $fileId2 = Uuid::uuid4()->toString();
+        $fileRepository = $this->app->get(ApplicationFileManager::class);
+        $fileRepository->writeFile($applicationStage, $uploadField, $fileId2, random_bytes(100));
+
+        $uploadValue = [
+            (object)[
+                'id' => $fileId1,
+                'name' => 'filename1.pdf',
+                'mimeType' => 'application/pdf'
+            ],
+            (object)[
+                'id' => $fileId2,
+                'name' => 'filename2.pdf',
+                'mimeType' => 'application/pdf'
+            ]
+        ];
+        $params = [
+            $uploadField->code => $uploadValue,
+        ];
+
+        $body = new FieldValidationParams(
+            (object) $params
+        );
+
+        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+            $applicationStage,
+            $body->data,
+            submit: true,
+        );
+
+        $fieldValuesCollection[$uploadField->code] = new FieldValue(
+            $uploadField,
+            new FileList([
+                new File($fileId1, 'filename1.pdf', 'application/pdf'),
+                new File($fileId2, 'filename2.pdf', 'application/pdf'),
+            ])
+        );
+
+        /** @var SubsidyStashFieldHasher $hasher */
+        $hasher = $this->app->make(SubsidyStashFieldHasher::class);
+
+        $this->assertDatabaseHas(ApplicationHash::class, [
+            'subsidy_stage_hash_id' => $subsidyStageHash->id,
+            'application_id' => $application->id,
+            'hash' => $hasher->makeApplicationFieldHash($subsidyStageHash, $fieldValuesCollection, $applicationStage),
+        ]);
     }
 }

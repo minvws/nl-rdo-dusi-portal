@@ -7,7 +7,7 @@ return [
     'key' => env('SUREPAY_KEY'),
     'secret' => env('SUREPAY_SECRET'),
     'endpoint' => env('SUREPAY_ENDPOINT'),
-    'verify_ssl' => env('SUREPAY_VERIFY_SSL', false),
+    'verify_ssl' => env('SUREPAY_VERIFY_SSL', true),
     'proxy' => [
         'http' => env('SUREPAY_HTTP_PROXY', ''),
         'https' => env('SUREPAY_HTTPS_PROXY', ''),

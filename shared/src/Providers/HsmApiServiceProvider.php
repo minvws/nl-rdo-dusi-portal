@@ -70,7 +70,7 @@ class HsmApiServiceProvider extends ServiceProvider
             return new HsmService(
                 client: new Client([
                     'base_uri' => $config->get('hsm_api.endpoint_url'),
-                    'verify' => false,
+                    'verify' => $config->get('hsm_api.verify_ssl', true),
                     'cert' => $config->get('hsm_api.client_certificate_path'),
                     'ssl_key' => $config->get('hsm_api.client_certificate_key_path')
                 ]),

@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Shared\Application\Services\Validation\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Translation\Translator;
 use Illuminate\Validation\ValidationException;
