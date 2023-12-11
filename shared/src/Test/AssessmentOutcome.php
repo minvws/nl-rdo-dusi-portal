@@ -11,6 +11,6 @@ enum AssessmentOutcome: string
     case CHANGES_REQUESTED = 'changes_requested';
     case AGREES = 'agrees';
     case DISAGREES = 'disagrees';
-    case UNASSESSED = "unassessed";
+    case UNASSESSED = 'unassessed';
     case SUPPLEMENT_NEEDED = 'supplement_needed';
 }
