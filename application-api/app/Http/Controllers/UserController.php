@@ -33,8 +33,6 @@ class UserController extends Controller
         $this->logger->log((new LogoutEvent())
             ->withData([
                 'sessionId' => $user->getAuthIdentifier(),
-                'type' => 'user',
-                'typeId' => 4,
                 'identityProvider' => 'digid',
             ]));
 
