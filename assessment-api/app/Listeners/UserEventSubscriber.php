@@ -39,8 +39,6 @@ readonly class UserEventSubscriber
             ->withActor($user)
             ->withData([
                 'userId' => $user->getAuthIdentifier(),
-                'type' => 'user',
-                'typeId' => 4,
             ]));
     }
 
@@ -53,8 +51,6 @@ readonly class UserEventSubscriber
             ->withActor($user)
             ->withData([
                 'userId' => $event->user->getAuthIdentifier(),
-                'type' => 'user',
-                'typeId' => 4,
             ]));
     }
 }
