@@ -92,4 +92,15 @@ class MockedBankAccountRepository implements BankAccountRepository
         return $accountNumber === self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH &&
             $accountHolder === self::BANK_HOLDER_SUGGESTION;
     }
+
+    public static function all(): array
+    {
+        return [
+            self::BANK_ACCOUNT_NUMBER_MATCH,
+            self::BANK_ACCOUNT_NUMBER_NO_MATCH,
+            self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
+            self::BANK_ACCOUNT_NUMBER_TOO_SHORT,
+            self::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH,
+        ];
+    }
 }
