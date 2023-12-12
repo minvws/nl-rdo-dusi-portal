@@ -214,7 +214,7 @@ class ApplicationRepository
      *
      * @return array<int, ApplicationStage> Application stages indexed by stage number.
      */
-    public function getApplicationStagesUpToIncluding(ApplicationStage $stage): array
+    public function getLatestApplicationStagesUpToIncluding(ApplicationStage $stage): array
     {
         /** @var array<ApplicationStage> $matchingStages */
         $matchingStages =
@@ -238,7 +238,7 @@ class ApplicationRepository
     public function getAnswersForApplicationStagesUpToIncluding(
         ApplicationStage $stage
     ): AnswersByApplicationStage {
-        $uniqueStages = $this->getApplicationStagesUpToIncluding($stage);
+        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage);
 
         $stages = [];
         foreach ($uniqueStages as $currentStage) {

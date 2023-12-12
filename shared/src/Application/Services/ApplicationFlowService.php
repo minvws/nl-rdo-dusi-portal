@@ -233,7 +233,7 @@ class ApplicationFlowService
             return;
         }
 
-        $stages = $this->applicationRepository->getApplicationStagesUpToIncluding($target);
+        $stages = $this->applicationRepository->getLatestApplicationStagesUpToIncluding($target);
         foreach ($stages as $stage) {
             if ($stage->assessor_user_id === $previousAssessor->id) {
                 // assessor already picked up an earlier (active!) stage, not allowed to assess 2 stages
