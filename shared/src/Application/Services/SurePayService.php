@@ -12,7 +12,6 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
-use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

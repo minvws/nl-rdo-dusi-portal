@@ -16,7 +16,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('application_surepay_results', function (Blueprint $table) {
-            $table->dropColumn('suggestion');
+            $table->dropColumn('encrypted_name_suggestion');
         });
     }
 };
