@@ -103,4 +103,14 @@ class MockedBankAccountRepository implements BankAccountRepository
             self::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH,
         ];
     }
+
+    public static function allValid(): array
+    {
+        return [
+            self::BANK_ACCOUNT_NUMBER_MATCH,
+            self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
+            self::BANK_ACCOUNT_NUMBER_TOO_SHORT,
+            self::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH,
+        ];
+    }
 }

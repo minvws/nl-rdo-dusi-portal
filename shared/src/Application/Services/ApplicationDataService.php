@@ -301,4 +301,13 @@ readonly class ApplicationDataService
 
         return $encrypter->decrypt($encryptedValue);
     }
+
+    public function encryptForStage(
+        ApplicationStage $applicationStage,
+        string $value
+    ): string {
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+
+        return $encrypter->encrypt($value);
+    }
 }

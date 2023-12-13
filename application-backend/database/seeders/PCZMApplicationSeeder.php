@@ -3,14 +3,20 @@
 namespace Database\Seeders;
 
 use Exception;
+use Faker\Factory;
+use Faker\Generator;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\DUSi\Application\Backend\Services\IdentityService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
@@ -23,6 +29,8 @@ use Throwable;
 
 class PCZMApplicationSeeder extends Seeder
 {
+    private Generator $faker;
+
     public const PCZM_VERSION_UUID = '513011cd-789b-4628-ba5c-2fee231f8959';
     public const PCZM_STAGE_1_UUID = '7e5d64e9-35f0-4fee-b8d2-dca967b43183';
     public const PCZM_STAGE_2_UUID = '8027c102-93ef-4735-ab66-97aa63b836eb';
@@ -33,6 +41,7 @@ class PCZMApplicationSeeder extends Seeder
         protected HsmEncryptionService $hsmEncryptionService,
         protected IdentityService $identityService,
     ) {
+         $this->faker = Factory::create();
     }
 
     private function createApplicationStage(
@@ -104,16 +113,15 @@ class PCZMApplicationSeeder extends Seeder
      */
     private function createApplicationData($application, $applicationData): void
     {
-        $app_stage = $this->createApplicationStage(
-            $application,
-            1,
-            true,
-            self::PCZM_STAGE_1_UUID,
-            false
+        $applicationStage = $this->createApplicationStage(
+            $application, 1, true, self::PCZM_STAGE_1_UUID, false
         );
-        $this->writeFields($app_stage);
+        $this->writeFields($applicationStage);
 
-        $this->applicationDataService->saveApplicationStageData($app_stage, $applicationData, true);
+        $this->applicationDataService->saveApplicationStageData($applicationStage, $applicationData, true);
+
+        $this->createApplicationSurepayResult($applicationData, $application, $applicationStage);
+
         $this->createApplicationStage(
             $application,
             2,
@@ -146,8 +154,32 @@ class PCZMApplicationSeeder extends Seeder
         )->for($this->createIdentifier())
             ->count($count)->create()
             ->each(function ($application) use ($application_data) {
+                $application_data->bankAccountNumber = Arr::random(MockedBankAccountRepository::allValid());
                 $this->createApplicationData($application, $application_data);
             });
+    }
+
+    public function createApplicationSurepayResult(
+        $applicationData,
+        Application $application,
+        ApplicationStage $applicationStage,
+    ): void
+    {
+        $applicationSurepayResult = [
+            'name_match_result' => match ($applicationData->bankAccountNumber) {
+                MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_MATCH => NameMatchResult::Match,
+                MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_CLOSE_MATCH => NameMatchResult::CloseMatch,
+                MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH => NameMatchResult::CouldNotMatch,
+                MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_TOO_SHORT => NameMatchResult::NameTooShort,
+                default => NameMatchResult::CouldNotMatch
+            },
+        ];
+        if ($applicationData->bankAccountNumber === MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_CLOSE_MATCH) {
+            $applicationSurepayResult['encrypted_name_suggestion'] =
+                $this->applicationDataService->encryptForStage($applicationStage, $this->faker->lastname);
+        }
+
+        ApplicationSurePayResult::factory()->for($application)->create($applicationSurepayResult);
     }
 
 
