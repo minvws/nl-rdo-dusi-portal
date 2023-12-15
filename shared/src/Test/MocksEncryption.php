@@ -8,7 +8,9 @@ use Illuminate\Encryption\Encrypter;
 use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationFileEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionMockService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\EncrypterMock;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmService;
@@ -88,20 +90,31 @@ trait MocksEncryption
                 return $value;
             });
 
-        $applicationEncryptorMock = Mockery::mock(ApplicationStageEncryptionService::class);
-        $applicationEncryptorMock
-            ->shouldReceive('getEncrypter')
-            ->andReturn($encrypterMock);
+        //TODO: This is a workaround to be able to check for the correct key which is used by encryption.
+        // This should be a more decent setup
+        $encrypterMockClosure = function () {
+            return new EncrypterMock(func_get_arg(0));
+        };
 
-        $applicationEncryptorMock
-            ->shouldReceive('generateEncryptionKey')
-            ->andReturn([new HsmEncryptedData('', ''), $encrypterMock]);
-
-        $applicationEncryptorMock
-            ->shouldReceive('getEncrypter')
-            ->andReturnUsing(function (ApplicationStage $applicationStage) use ($encrypterMock) {
-                return $encrypterMock;
-            });
+        $applicationEncryptorMock = new ApplicationStageEncryptionMockService(
+            $encrypterMockClosure,
+            $this->app->get(HsmEncryptionService::class),
+            $this->app->get(HsmDecryptionService::class)
+        );
+//        $applicationEncryptorMock = Mockery::mock(ApplicationStageEncryptionService::class);
+//        $applicationEncryptorMock
+//            ->shouldReceive('getEncrypter')
+//            ->andReturn($encrypterMock);
+//
+//        $applicationEncryptorMock
+//            ->shouldReceive('generateEncryptionKey')
+//            ->andReturn([new HsmEncryptedData('', ''), $encrypterMock]);
+//
+//        $applicationEncryptorMock
+//            ->shouldReceive('getEncrypter')
+//            ->andReturnUsing(function (ApplicationStage $applicationStage) use ($encrypterMock) {
+//                return $encrypterMock;
+//            });
 
         $this->app->instance(ApplicationStageEncryptionService::class, $applicationEncryptorMock);
 
