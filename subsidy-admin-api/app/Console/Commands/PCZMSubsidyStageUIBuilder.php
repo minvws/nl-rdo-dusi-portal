@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use JsonException;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZMApplicationStageUITableSeeder;
+use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMApplicationStageUITableSeeder;
 
 class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInput
 {

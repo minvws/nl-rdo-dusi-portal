@@ -1,17 +1,16 @@
 <?php
 /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection, PhpUnusedPrivateMethodInspection, SpellCheckingInspection, PhpSameParameterValueInspection, PhpNamedArgumentsWithChangedOrderInspection */
 
-namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
-use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
-use function Amp\Iterator\toArray;
 
 class PCZMApplicationFieldsTableSeeder extends Seeder
 {
@@ -31,14 +30,14 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
     public function pczmApplicationFields(): void
     {
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'firstName',
             title: 'Voornaam',
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'infix',
             title: 'Tussenvoegsel',
             isRequired: false,
@@ -46,28 +45,28 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'lastName',
             title: 'Achternaam',
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createDateField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'dateOfBirth',
             title: 'Geboortedatum',
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'street',
             title: 'Straat',
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'houseNumber',
             title: 'Huisnummer',
             inputMode: 'numeric',
@@ -75,7 +74,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'houseNumberSuffix',
             title: 'Huisnummer toevoeging',
             maxLength: 10,
@@ -84,7 +83,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createPostalCodeField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'postalCode',
             title: 'Postcode',
             isRequired: false,
@@ -92,7 +91,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'city',
             title: 'Plaats',
             maxLength: 100,
@@ -100,14 +99,14 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createCountryField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'country',
             title: 'Land',
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'phoneNumber',
             title: 'Telefoonnummer',
             inputMode: 'tel',
@@ -117,7 +116,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'email',
             title: 'E-mailadres',
             inputMode: 'email',
@@ -127,14 +126,14 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createBankAccountField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'bankAccountNumber',
             title: 'IBAN',
             retentionPeriod: DataRetentionPeriod::Long
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'bankAccountHolder',
             title: 'Naam rekeninghouder',
             maxLength: 50,
@@ -142,7 +141,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'certifiedEmploymentDocument',
             title: 'Gewaarmerkt verzekeringsbericht',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
@@ -153,7 +152,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'wiaDecisionDocument',
             title: 'WIA-Beslissing',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
@@ -164,7 +163,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'isWiaDecisionPostponed',
             title: 'Is WIA beslissing uitgesteld?',
             options: ['Ja', 'Nee'],
@@ -173,7 +172,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
 
         //If isWiaDecisionPostponed === yes
         $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'wiaDecisionPostponedLetter',
             title: 'Toekenningsbrief',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
@@ -187,7 +186,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'employmentContract',
             title: 'Bewijs dienstverband',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
@@ -198,7 +197,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'employmentFunction',
             title: 'Functie',
             options: [
@@ -220,7 +219,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'otherEmploymentFunction',
             title: 'Andere functie',
             maxLength: 300,
@@ -229,7 +228,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'employerKind',
             title: 'Werkgever',
             options: ['Zorgaanbieder', 'Andere organisatie'],
@@ -237,7 +236,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'otherEmployerDeclarationFile',
             title: 'Verklaring zorgaanbieder',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
@@ -252,7 +251,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'hasBeenWorkingAtJudicialInstitution',
             title: 'Bent u werkzaam geweest bij een justitiële inrichting?',
             options: ['Ja', 'Nee'],
@@ -260,7 +259,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'BIGNumberJudicialInstitution',
             title: 'BIG-nummer',
             maxLength: 11,
@@ -269,7 +268,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'socialMedicalAssessment',
             title: 'Medisch onderzoeksverslag',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
@@ -280,7 +279,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'hasPostCovidDiagnose',
             title: 'Heeft langdurige post-COVID klachten',
             options: ['Ja', 'Nee'],
@@ -288,7 +287,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'doctorsCertificate',
             title: 'Verklaring arts',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
@@ -300,7 +299,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
         );
 
         $this->createCheckboxField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'truthfullyCompleted',
             title: '',
             retentionPeriod: DataRetentionPeriod::Short
@@ -311,7 +310,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
     {
         DB::table('subsidy_stage_hashes')->insert([
             'id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             'name' => 'Bank account',
             'description' => 'Bank account duplicate reporting',
             'created_at' => now(),
@@ -320,7 +319,7 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
 
         /** @var Field $bankAccountNumber */
         $bankAccountNumber = DB::table('fields')
-            ->where('subsidy_stage_id', SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID)
+            ->where('subsidy_stage_id', PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID)
             ->where('code', 'bankAccountNumber')
             ->where('title', 'IBAN')
             ->first();

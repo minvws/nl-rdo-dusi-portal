@@ -1,9 +1,10 @@
 <?php
 
-namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\SubsidyStagesTableSeeder;
 use stdClass;
 
 class PCZMApplicationStageUITableSeeder extends Seeder
@@ -36,17 +37,17 @@ class PCZMApplicationStageUITableSeeder extends Seeder
 
     private function loadStep(int $step): stdClass
     {
-        $json = file_get_contents(__DIR__ . '/resources/pczm/step' . $step . '.json');
+        $json = file_get_contents(__DIR__ . '/resources/step' . $step . '.json');
         assert(is_string($json));
         $step = json_decode($json);
         assert($step instanceof stdClass);
-        $this->resolveFileReferences($step, __DIR__ . '/resources/pczm');
+        $this->resolveFileReferences($step, __DIR__ . '/resources');
         return $step;
     }
 
     private function loadAllOfStep(int $step): array
     {
-        $stepFilePath = __DIR__ . '/resources/pczm/allOfStep' . $step . '.json';
+        $stepFilePath = __DIR__ . '/resources/allOfStep' . $step . '.json';
         if(!file_exists($stepFilePath)) {
             return [];
         }
@@ -72,7 +73,7 @@ class PCZMApplicationStageUITableSeeder extends Seeder
 
     public function buildViewSchema(): array
     {
-        $filePath = __DIR__ . '/resources/pczm/viewschema-stage1.json';
+        $filePath = __DIR__ . '/resources/viewschema-stage1.json';
         if(!file_exists($filePath)) {
             return [];
         }
@@ -88,7 +89,7 @@ class PCZMApplicationStageUITableSeeder extends Seeder
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_STAGE1_V1_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($ui),

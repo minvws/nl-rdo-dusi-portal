@@ -3,6 +3,7 @@
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,16 +12,12 @@ class DatabaseSeeder extends Seeder
         $this->call(SubsidiesTableSeeder::class);
         $this->call(SubsidyVersionsTableSeeder::class);
         $this->call(SubsidyStagesTableSeeder::class);
-        $this->call(SubsidyStageTransitionsTableSeeder::class);
-        $this->call(SubsidyStageTransitionMessagesTableSeeder::class);
 
 //        $this->call(BTVFieldsTableSeeder::class);
 //        $this->call(BTVUIFormTableSeeder::class);
 //        $this->call(BTVUIAssessmentTableSeeder::class);
 
-        $this->call(PCZMApplicationFieldsTableSeeder::class);
-        $this->call(PCZMApplicationStageUITableSeeder::class);
-        $this->call(PCZMAssessmentFieldsTableSeeder::class);
-        $this->call(PCZMAssessmentStageUITableSeeder::class);
+        $this->call(PCZMSeeder::class);
+
     }
 }

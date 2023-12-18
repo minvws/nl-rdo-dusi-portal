@@ -12,7 +12,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 class SubsidiesTableSeeder extends Seeder
 {
     public const BTV_UUID = '00f26400-7232-475f-922c-6b569b7e421a';
-    public const PCZM_UUID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
     /**
      * Run the database seeds.
      */
@@ -27,15 +26,6 @@ class SubsidiesTableSeeder extends Seeder
 //            'valid_from' => '2019-02-01',
 //            'valid_to' => null
 //        ]);
-        DB::table('subsidies')->insert([
-            'id' => self::PCZM_UUID,
-            'title' => 'Zorgmedewerkers met langdurige post-COVID klachten',
-            'reference_prefix' => 'PCZM23',
-            'code' => 'PCZM',
-            'description' => "De regeling Zorgmedewerkers met langdurige post-COVID klachten richt zich op zorgmedewerkers die tijdens de eerste golf van de COVID-19 pandemie besmet zijn geraakt met COVID-19 en sindsdien langdurige post-COVID klachten hebben. Deze klachten hebben grote invloed op het werk en het privéleven van deze zorgmedewerkers. Zij kunnen soms hun eigen werk als zorgmedewerker niet meer (volledig) doen. Voor deze specifieke groep zorgmedewerkers is een eenmalige financiële ondersteuning van €15.000 beschikbaar.",
-            'valid_from' => '2023-09-25 09:00 CEST',
-            'valid_to' => null,
-        ]);
 //        Subsidy::factory()->count(2)
 //            ->create()
 //            ->each(function ($subsidy){

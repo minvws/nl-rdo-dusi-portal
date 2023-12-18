@@ -1,6 +1,6 @@
 <?php
 
-namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +12,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\InCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 
-class SubsidyStageTransitionsTableSeeder extends Seeder
+class PCZMSubsidyStageTransitionsSeeder extends Seeder
 {
     public const PZCM_TRANSITION_STAGE_1_TO_2 = '7ac879d1-63cb-478d-8745-737313f1643e';
     public const PZCM_TRANSITION_STAGE_2_TO_1 = '870bc38a-0d50-40a9-b49e-d56db5ead6b7';
@@ -37,8 +37,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_1_TO_2,
             'description' => 'Aanvraag ingediend',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             'target_application_status' => ApplicationStatus::Submitted,
             'condition' => null,
             'send_message' => false,
@@ -51,8 +51,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_2_TO_1,
             'description' => 'Aanvulling gevraagd',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_1_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             'target_application_status' => ApplicationStatus::RequestForChanges->value,
             'condition' => $encoder->encode(
                 new ComparisonCondition(
@@ -70,8 +70,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_2_TO_3,
             'description' => 'Eerste beoordeling voltooid',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_3_UUID,
             'condition' => $encoder->encode(
                 new InCondition(
                     2,
@@ -87,8 +87,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_3_TO_2,
             'description' => 'Tweede beoordeling oneens met eerste beoordeling',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_3_UUID,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     3,
@@ -108,7 +108,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_3_TO_REJECTED,
             'description' => 'Tweede beoordeling eens met afkeuring eerste beoordeling',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_3_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Rejected->value,
             'condition' => $encoder->encode(
@@ -135,8 +135,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_3_TO_4,
             'description' => 'Tweede beoordeling eens met goedkeuring eerste beoordeling',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_3_UUID,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(
@@ -163,8 +163,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_4_TO_2,
             'description' => 'Interne controle oneens met beoordeling',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             'condition' => $encoder->encode(
                 new OrCondition([
                     new AndCondition([
@@ -207,8 +207,8 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_4_TO_5,
             'description' => 'Interne controle eens met beoordeling',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(
@@ -233,7 +233,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_5_TO_REJECTED,
             'description' => 'Aanvraag afgekeurd',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Rejected->value,
             'condition' => $encoder->encode(
@@ -252,7 +252,7 @@ class SubsidyStageTransitionsTableSeeder extends Seeder
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::PZCM_TRANSITION_STAGE_5_TO_APPROVED,
             'description' => 'Aanvraag goedgekeurd',
-            'current_subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Approved->value,
             'condition' => $encoder->encode(
