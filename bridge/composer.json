@@ -10,8 +10,7 @@
         "ext-posix": "*",
         "minvws/codable": "dev-main as 1.0.x-dev",
         "php-amqplib/php-amqplib": "^3.5",
-        "ext-openssl": "*",
-        "symfony/config": "v6.4.0"
+        "ext-openssl": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -9,8 +9,7 @@
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17.4",
         "laravel/framework": "^10.15.0",
-        "minvws/dusi-shared": "@dev",
-        "symfony/config": "v6.4.0"
+        "minvws/dusi-shared": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8.1",
