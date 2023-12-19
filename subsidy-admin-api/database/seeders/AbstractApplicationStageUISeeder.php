@@ -71,7 +71,7 @@ abstract class AbstractApplicationStageUISeeder extends Seeder
         ];
     }
 
-    public function buildViewSchema(): array
+    public function buildViewUI(): array
     {
         $filePath = $this->resourceDir . '/resources/view_ui/stage1.json';
         if (!file_exists($filePath)) {

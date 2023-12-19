@@ -42,7 +42,7 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
         }
 
         $inputUi = $needsBuildInputUi ? $seeder->buildInputUi() : null;
-        $viewSchema = $needsBuildViewSchema ? $seeder->buildViewSchema() : null;
+        $viewSchema = $needsBuildViewSchema ? $seeder->buildViewUI() : null;
 
         $query = implode(PHP_EOL, array_filter([
             "UPDATE public.subsidy_stage_uis",

@@ -1,6 +1,8 @@
 <?php
 
-namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -133,7 +135,7 @@ class BTVUIAssessmentTableSeeder extends Seeder
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::BTV_STAGE2_V1_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
+            'subsidy_stage_id' => BTVSubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($ui),

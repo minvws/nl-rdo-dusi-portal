@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
 class PCZMSeeder extends Seeder
 {
@@ -49,7 +50,7 @@ class PCZMSeeder extends Seeder
             'id' => self::PCZM_VERSION_UUID,
             'subsidy_id' => self::PCZM_UUID,
             'version' => 1,
-            'status' => "published", //TODO should be an enum
+            'status' => VersionStatus::Published,
             'created_at' => '2023-08-31',
             'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/zorgmedewerkers-met-langdurige-post-covid-klachten',
             'contact_mail_address' => 'dienstpostbus@minvws.nl',

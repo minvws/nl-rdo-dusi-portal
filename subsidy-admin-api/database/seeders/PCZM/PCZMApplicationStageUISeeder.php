@@ -17,7 +17,7 @@ class PCZMApplicationStageUISeeder extends AbstractApplicationStageUISeeder
         $this->resourceDir = __DIR__;
 
         $inputUi = $this->buildInputUi();
-        $viewUi = $this->buildViewSchema();
+        $viewUI = $this->buildViewUI();
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_STAGE1_V1_UUID,
@@ -25,7 +25,7 @@ class PCZMApplicationStageUISeeder extends AbstractApplicationStageUISeeder
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($inputUi),
-            'view_ui' => json_encode($viewUi)
+            'view_ui' => json_encode($viewUI)
         ]);
     }
 
