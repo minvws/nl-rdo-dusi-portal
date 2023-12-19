@@ -93,7 +93,7 @@ if $INSTALL ; then
     fi
 
     npm install
-#    npm run build
+    npm run build
 fi
 
 vendor/bin/sail up -d --remove-orphans
