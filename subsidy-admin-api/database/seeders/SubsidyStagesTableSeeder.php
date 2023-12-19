@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
-use MinVWS\DUSi\Shared\User\Enums\Role;
 
 class SubsidyStagesTableSeeder extends Seeder
 {
@@ -32,6 +31,5 @@ class SubsidyStagesTableSeeder extends Seeder
 //            'assessor_user_role' => Role::Assessor->value,
 //            'stage' => 2,
 //        ]);
-
     }
 }

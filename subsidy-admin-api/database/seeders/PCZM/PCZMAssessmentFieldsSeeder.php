@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection, PhpUnusedPrivateMethodInspection, SpellCheckingInspection, PhpSameParameterValueInspection, PhpNamedArgumentsWithChangedOrderInspection */
 
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
@@ -7,7 +10,7 @@ use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
-class PCZMAssessmentFieldsTableSeeder extends Seeder
+class PCZMAssessmentFieldsSeeder extends Seeder
 {
     use CreateField;
 
@@ -116,7 +119,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
             ],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
-         );
+        );
 
         $this->createTextField(
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,

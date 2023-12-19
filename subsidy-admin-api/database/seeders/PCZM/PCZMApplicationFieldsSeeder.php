@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection, PhpUnusedPrivateMethodInspection, SpellCheckingInspection, PhpSameParameterValueInspection, PhpNamedArgumentsWithChangedOrderInspection */
 
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
@@ -12,7 +15,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
-class PCZMApplicationFieldsTableSeeder extends Seeder
+class PCZMApplicationFieldsSeeder extends Seeder
 {
     use CreateField;
 
@@ -180,7 +183,10 @@ class PCZMApplicationFieldsTableSeeder extends Seeder
             minItems: 1,
             maxItems: 20,
             requiredCondition: new ComparisonCondition(
-                1, 'isWiaDecisionPostponed', Operator::Identical, 'Ja'
+                1,
+                'isWiaDecisionPostponed',
+                Operator::Identical,
+                'Ja'
             ),
             retentionPeriod: DataRetentionPeriod::Short
         );

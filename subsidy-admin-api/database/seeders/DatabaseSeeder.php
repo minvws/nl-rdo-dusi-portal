@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -18,6 +20,5 @@ class DatabaseSeeder extends Seeder
 //        $this->call(BTVUIAssessmentTableSeeder::class);
 
         $this->call(PCZMSeeder::class);
-
     }
 }

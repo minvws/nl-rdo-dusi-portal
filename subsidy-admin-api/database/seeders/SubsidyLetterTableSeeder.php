@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -21,6 +23,5 @@ class SubsidyLetterTableSeeder extends Seeder
             'content_pdf' => file_get_contents(__DIR__ . '/resources/btv/btv-letter-pdf.latte'),
             'content_view' => file_get_contents(__DIR__ . '/resources/btv/btv-letter-view.latte'),
         ]);
-
     }
 }

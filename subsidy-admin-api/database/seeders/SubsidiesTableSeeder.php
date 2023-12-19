@@ -1,13 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
-use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 class SubsidiesTableSeeder extends Seeder
 {

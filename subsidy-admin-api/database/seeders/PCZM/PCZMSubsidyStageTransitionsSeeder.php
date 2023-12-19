@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
 
 use Illuminate\Database\Seeder;

@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class SubsidyVersionsTableSeeder extends Seeder
 {
@@ -27,6 +27,5 @@ class SubsidyVersionsTableSeeder extends Seeder
 //            'mail_to_name_field_identifier' => 'firstName;infix;lastName',
 //            'review_period' => 7 * 13 // 13 weeks
 //        ]);
-
     }
 }

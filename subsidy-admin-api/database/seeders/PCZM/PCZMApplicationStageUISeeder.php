@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\SubsidyStagesTableSeeder;
 use stdClass;
 
-class PCZMApplicationStageUITableSeeder extends Seeder
+class PCZMApplicationStageUISeeder extends Seeder
 {
     public const PCZM_STAGE1_V1_UUID = 'e6d5cd35-8c67-40c4-abc4-b1d6bf8afb97';
 
@@ -35,20 +36,20 @@ class PCZMApplicationStageUITableSeeder extends Seeder
         }
     }
 
-    private function loadStep(int $step): stdClass
+    private function loadInputUiStepForStage(int $stage, int $step): stdClass
     {
-        $json = file_get_contents(__DIR__ . '/resources/step' . $step . '.json');
+        $json = file_get_contents(__DIR__ . sprintf('/resources/input_ui/stage%d_step%d.json', $stage, $step));
         assert(is_string($json));
-        $step = json_decode($json);
-        assert($step instanceof stdClass);
-        $this->resolveFileReferences($step, __DIR__ . '/resources');
-        return $step;
+        $stageStepData = json_decode($json);
+        assert($stageStepData instanceof stdClass);
+        $this->resolveFileReferences($stageStepData, __DIR__ . '/resources/input_ui');
+        return $stageStepData;
     }
 
-    private function loadAllOfStep(int $step): array
+    private function loadAllOfStepForStage(int $stage, int $step): array
     {
-        $stepFilePath = __DIR__ . '/resources/allOfStep' . $step . '.json';
-        if(!file_exists($stepFilePath)) {
+        $stepFilePath = __DIR__ . sprintf('/resources/input_ui/stage%d_step%d_allOf.json', $stage, $step);
+        if (!file_exists($stepFilePath)) {
             return [];
         }
         $json = file_get_contents($stepFilePath);
@@ -58,23 +59,23 @@ class PCZMApplicationStageUITableSeeder extends Seeder
         return $allOf;
     }
 
-    private function buildPage(int $step, string $label, array $required): stdClass
+    private function buildInputUiStep(int $step, string $label, array $required): stdClass
     {
         return (object)[
             'type' => 'CustomPageControl',
             'label' => $label,
-            'elements' => [$this->loadStep($step)],
+            'elements' => [$this->loadInputUiStepForStage(1, $step)],
             'options' => (object)[
                 'required' => $required,
-                'allOf' => $this->loadAllOfStep($step)
+                'allOf' => $this->loadAllOfStepForStage(1, $step)
             ]
         ];
     }
 
     public function buildViewSchema(): array
     {
-        $filePath = __DIR__ . '/resources/viewschema-stage1.json';
-        if(!file_exists($filePath)) {
+        $filePath = __DIR__ . '/resources/view_ui/stage1.json';
+        if (!file_exists($filePath)) {
             return [];
         }
         $json = file_get_contents($filePath);
@@ -84,16 +85,16 @@ class PCZMApplicationStageUITableSeeder extends Seeder
 
     public function run(): void
     {
-        $ui = $this->buildInputUi();
-        $view_ui = $this->buildViewSchema();
+        $inputUi = $this->buildInputUi();
+        $viewUi = $this->buildViewSchema();
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_STAGE1_V1_UUID,
             'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             'version' => 1,
             'status' => 'published',
-            'input_ui' => json_encode($ui),
-            'view_ui' => json_encode($view_ui)
+            'input_ui' => json_encode($inputUi),
+            'view_ui' => json_encode($viewUi)
         ]);
     }
 
@@ -102,12 +103,14 @@ class PCZMApplicationStageUITableSeeder extends Seeder
         return [
             'type' => 'CustomPageNavigationControl',
             'elements' => [
-                $this->buildPage(
+                $this->buildInputUiStep(
                     1,
                     'Start',
                     [
-                    ]),
-                $this->buildPage(2,
+                    ]
+                ),
+                $this->buildInputUiStep(
+                    2,
                     'Persoonsgegevens toevoegen',
                     [
                         "firstName",
@@ -124,7 +127,8 @@ class PCZMApplicationStageUITableSeeder extends Seeder
                         "bankAccountNumber"
                     ]
                 ),
-                $this->buildPage(3,
+                $this->buildInputUiStep(
+                    3,
                     'Documenten toevoegen',
                     [
                         "certifiedEmploymentDocument",
@@ -138,11 +142,13 @@ class PCZMApplicationStageUITableSeeder extends Seeder
                         "hasPostCovidDiagnose",
                     ]
                 ),
-                $this->buildPage(4,
+                $this->buildInputUiStep(
+                    4,
                     'Controleren en ondertekenen',
                     [
                         'truthfullyCompleted'
-                    ])
+                    ]
+                )
             ]
         ];
     }
