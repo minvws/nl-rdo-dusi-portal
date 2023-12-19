@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "adb7c781ceb05fc706b024ca5bb8e41b",
+    "content-hash": "eb65f62121664d5775015b8ffdc2384b",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3032,7 +3032,7 @@
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-main",
+            "version": "dev-feature/DUSI-948/composer-update",
             "dist": {
                 "type": "path",
                 "url": "../shared",
@@ -3260,7 +3260,7 @@
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
-            "version": "dev-main",
+            "version": "dev-feature/DUSI-948/composer-update",
             "dist": {
                 "type": "path",
                 "url": "../bridge",

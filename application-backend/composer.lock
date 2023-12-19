@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c7fc046ae326487285da4aee1459155",
+    "content-hash": "71e15f229ee140004187d22c86de48c9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2987,11 +2987,11 @@
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-main",
+            "version": "dev-feature/DUSI-948/composer-update",
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "7f02c6dae20267ff48e97e5002152cb7543c9ce6"
+                "reference": "8962d3b570afcfd4524e55d2d9ae5d39ed5a2848"
             },
             "require": {
                 "barryvdh/laravel-dompdf": "^2.0",
@@ -3003,7 +3003,6 @@
                 "minvws/codable": "dev-main as 1.0.x-dev",
                 "minvws/laravel-logging": "^2.1",
                 "php": "^8.2",
-                "symfony/config": "v6.4.0",
                 "xenolope/quahog": "^3.0"
             },
             "require-dev": {
@@ -3203,7 +3202,7 @@
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
-            "version": "dev-main",
+            "version": "dev-feature/DUSI-948/composer-update",
             "dist": {
                 "type": "path",
                 "url": "../bridge",
