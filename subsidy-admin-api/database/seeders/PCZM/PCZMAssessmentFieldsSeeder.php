@@ -1,13 +1,16 @@
 <?php
+
+declare(strict_types=1);
+
 /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection, PhpUnusedPrivateMethodInspection, SpellCheckingInspection, PhpSameParameterValueInspection, PhpNamedArgumentsWithChangedOrderInspection */
 
-namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
 
 use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
-class PCZMAssessmentFieldsTableSeeder extends Seeder
+class PCZMAssessmentFieldsSeeder extends Seeder
 {
     use CreateField;
 
@@ -27,7 +30,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         // Eerste beoordeling
         //Persoonsgegevens
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'personalDataChecklist',
             title: 'Controlevragen',
             options: [
@@ -42,7 +45,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
 
         //Vaststellen wia
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'wiaChecklist',
             title: 'Algemeen',
             options: [
@@ -54,7 +57,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'WIADecisionIndicates',
             title: 'Uit de WIA-beslissing blijkt dat er sprake is van',
             options: [
@@ -67,7 +70,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'IVA_Or_WIA_Checklist',
             title: 'IVA- of WGA-uitkering',
             options: [
@@ -81,7 +84,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'WIA_RejectedOnHighSalaryChecklist',
             title: 'Geen WIA-uitkering met als reden dat meer dan 65% verdiend kan worden',
             options: [
@@ -94,7 +97,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
 
         //Zorgaanbieder en functie
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'employerChecklist',
             title: 'Controlevragen',
             options: [
@@ -106,7 +109,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'healthcareProviderStatementIsComplete',
             title: 'De verklaring van de zorgaanbieder is volledig ingevuld',
             options: [
@@ -116,10 +119,10 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
             ],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
-         );
+        );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'employerName',
             title: 'Naam werkgever',
             isRequired: false,
@@ -127,7 +130,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'healthcareProviderName',
             title: 'Naam zorgaanbieder, indien niet werkgever',
             isRequired: false,
@@ -135,7 +138,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'chamberOfCommerceNumberHealthcareProvider',
             title: 'KVK-nummer van de zorgaanbieder waar de zorg is verleend',
             isRequired: false,
@@ -143,7 +146,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'healthcareProviderChecklist',
             title: 'Controlevragen',
             options: [
@@ -156,7 +159,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'healthcareProviderSBICode',
             title: 'SBI-code zorgaanbieder',
             maxLength: 100,
@@ -165,7 +168,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'healthcareProviderAGBCode',
             title: 'AGB-code zorgaanbieder',
             maxLength: 100,
@@ -175,7 +178,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
 
         //Justitiële inrichting
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'judicialInstitutionIsEligible',
             title: 'De justitiële inrichting waar de aanvrager werkzaam is geweest valt binnen de regeling',
             options: ['Nee', 'Ja', 'Niet van toepassing'],
@@ -184,7 +187,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'applicantFoundInBigRegister',
             title: 'De aanvrager is op basis van het doorgegeven BIG-nummer terug te vinden in het BIG-register',
             options: ['Nee', 'Ja', 'Niet van toepassing'],
@@ -194,7 +197,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
 
         //Vaststellen post-COVID
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'postCovidChecklist',
             title: 'Controlevragen',
             options: [
@@ -206,7 +209,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'doctorFoundInBigRegister',
             title: 'De arts die de verklaring heeft afgegeven is als arts geregistreerd in het BIG-register',
             options: [
@@ -219,7 +222,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'doctorsCertificateIsComplete',
             title: 'De verklaring van de arts is volledig ingevuld',
             options: [
@@ -233,7 +236,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
 
         //Status
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'amount',
             title: 'Bedrag',
             options: ['€ 15.000'],
@@ -243,7 +246,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'firstAssessment',
             title: 'Beoordeling',
             options: ['Aanvulling nodig', 'Afgekeurd', 'Goedgekeurd'],
@@ -252,7 +255,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
 
         //Toelichting
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'firstAssessmentRequestedComplementReason',
             title: 'Reden',
             options: ['Incomplete aanvraag', 'Onduidelijkheid of vervolgvragen'],
@@ -261,7 +264,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'firstAssessmentRequestedComplementNote',
             title: 'Toelichting van benodigde aanvullingen',
             isRequired: false,
@@ -269,7 +272,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'firstAssessmentRejectedNote',
             title: 'Reden van afkeuring',
             isRequired: false,
@@ -277,7 +280,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'firstAssessmentInternalNote',
             title: 'Interne notitie',
             isRequired: false,
@@ -289,7 +292,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
     {
         //Tweede beoordeling
         $this->createCheckboxField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_3_UUID,
             code: 'firstAssessorMotivatedValid',
             title: 'De motivatie van de eerste behandelaar is duidelijk en correct',
             isRequired: false,
@@ -297,7 +300,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_3_UUID,
             code: 'secondAssessment',
             title: 'Beoordeling',
             options: ['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling'],
@@ -305,7 +308,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_3_UUID,
             code: 'secondAssessmentInternalNote',
             title: 'Interne notitie',
             isRequired: false,
@@ -317,7 +320,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
     {
         //Interne controle
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
             code: 'internalAssessmentChecklist',
             title: 'Controlevragen',
             options: [
@@ -330,7 +333,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
             options: ['Afgekeurd', 'Goedgekeurd'],
@@ -338,7 +341,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
             code: 'internalAssessmentInternalNote',
             title: 'Interne notitie',
             isRequired: false,
@@ -350,7 +353,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
     {
         //Uitvoeringscoördinator controle
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             code: 'implementationCoordinatorAssessment',
             title: 'Beoordeling',
             options: ['Afgekeurd', 'Goedgekeurd'],
@@ -358,7 +361,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             code: 'coordinatorImplementationInternalNote',
             title: 'Interne notitie',
             isRequired: false,
@@ -366,7 +369,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             code: 'coordinatorImplementationReasonForRejection',
             title: 'Reden van afkeuring',
             isRequired: false,
@@ -374,7 +377,7 @@ class PCZMAssessmentFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             code: 'coordinatorImplementationApprovalNote',
             title: 'Extra informatie over de gedane wijzigingen',
             isRequired: false,

@@ -1,11 +1,13 @@
 <?php
 
-namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders;
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class PCZMAssessmentStageUITableSeeder extends Seeder
+class PCZMAssessmentStageUISeeder extends Seeder
 {
     public const PCZM_V1_STAGE2_UI_UUID = '71F71916-C0ED-45BC-8186-1B4F5DFB69E8';
     public const PCZM_V1_STAGE3_UI_UUID = '44914BC7-9E4F-4B79-9498-01ADBE5C4CFE';
@@ -22,7 +24,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
 
     private function buildViewSchema(int $stage): array
     {
-        $filePath = __DIR__ . sprintf('/resources/pczm/viewschema-stage%d.json', $stage);
+        $filePath = __DIR__ . sprintf('/resources/view_ui/stage%d.json', $stage);
         if (!file_exists($filePath)) {
             return [];
         }
@@ -407,7 +409,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_V1_STAGE2_UI_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_2_UUID,
+            'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($input_ui),
@@ -473,7 +475,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_V1_STAGE3_UI_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_3_UUID,
+            'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_3_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($input_ui),
@@ -552,7 +554,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_V1_STAGE4_UI_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_4_UUID,
+            'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($input_ui),
@@ -651,7 +653,7 @@ class PCZMAssessmentStageUITableSeeder extends Seeder
 
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_V1_STAGE5_UI_UUID,
-            'subsidy_stage_id' => SubsidyStagesTableSeeder::PCZM_STAGE_5_UUID,
+            'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($input_ui),

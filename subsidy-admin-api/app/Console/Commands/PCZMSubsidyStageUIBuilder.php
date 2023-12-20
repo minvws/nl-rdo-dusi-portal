@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use JsonException;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZMApplicationStageUITableSeeder;
+use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMApplicationStageUISeeder;
 
 class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInput
 {
@@ -31,7 +31,7 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
      */
     public function handle(): void
     {
-        $seeder = new PCZMApplicationStageUITableSeeder();
+        $seeder = new PCZMApplicationStageUISeeder();
 
         $needsBuildInputUi = $this->option('input-ui');
         $needsBuildViewSchema = $this->option('view-schema');
@@ -42,7 +42,7 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
         }
 
         $inputUi = $needsBuildInputUi ? $seeder->buildInputUi() : null;
-        $viewSchema = $needsBuildViewSchema ? $seeder->buildViewSchema() : null;
+        $viewSchema = $needsBuildViewSchema ? $seeder->buildViewUI() : null;
 
         $query = implode(PHP_EOL, array_filter([
             "UPDATE public.subsidy_stage_uis",
@@ -50,7 +50,7 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
                 $this->getSetQuery('input_ui', $inputUi),
                 $this->getSetQuery('view_schema', $viewSchema),
             ])),
-            "WHERE id = '" . PCZMApplicationStageUITableSeeder::PCZM_STAGE1_V1_UUID . "';",
+            "WHERE id = '" . PCZMApplicationStageUISeeder::PCZM_STAGE1_V1_UUID . "';",
         ]));
 
         $this->info($query);
