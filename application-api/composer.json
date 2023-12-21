@@ -13,8 +13,7 @@
         "laravel/tinker": "^2.7",
         "minvws/dusi-shared": "@dev",
         "minvws/openid-connect-php-laravel": "^0.0.6",
-        "minvws/php-rmq-rpc-bridge": "@dev",
-        "symfony/config": "v6.4.0"
+        "minvws/php-rmq-rpc-bridge": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",

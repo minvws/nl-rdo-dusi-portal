@@ -4,17 +4,22 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories\SurePay;
 
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
+use Exception;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccesstokenResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccessTokenResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsRequest;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayInvalidAccessTokenResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
+use Psr\Log\LoggerInterface;
 
 /**
  * ===========================================================================
@@ -30,12 +35,20 @@ class SurePayClient
 {
     private mixed $config;
     private array $baseRequestOptions;
-    private ?AccesstokenResponse $accessToken;
+    private ?SurePayAccessToken $accessToken = null;
+
+    /**
+     * We want to be on the safe side and not use an expired access token.
+     * So we refresh the access token 100 seconds before it expires.
+     *
+     * @var int
+     */
+    protected int $accessTokenExpiresInLeeWay = 100;
 
     /**
      * @param ClientInterface $client
      */
-    public function __construct(protected ClientInterface $client)
+    public function __construct(protected ClientInterface $client, protected ?LoggerInterface $logger = null)
     {
         $this->config = config('surepay_api');
 
@@ -65,11 +78,15 @@ class SurePayClient
      *  The oAuth 2.0 specifications recommend passing the API key and secret values as an HTTP-Basic Authentication
      *  header.
      *
-     * @return AccesstokenResponse
-     * @throws ValidationException
+     * More information can be found in: SurePay API Authentication v1.4 - ORG.pdf
+     *
+     * @return SurePayAccessToken
+     * @throws SurePayRepositoryException
      */
-    private function fetchAccessToken(): AccesstokenResponse
+    private function fetchAccessToken(): SurePayAccessToken
     {
+        $this->logger?->info('Fetching SurePay access token');
+
         try {
             $response = $this->client->request(
                 'POST',
@@ -91,9 +108,30 @@ class SurePayClient
                 )
             );
 
-            return AccesstokenResponse::fromJson($response->getBody()->getContents());
+            $accessTokenResponse = AccessTokenResponse::fromJson($response->getBody()->getContents());
+            $accessToken = $this->parseAccessTokenFromAccessTokenResponse($accessTokenResponse);
+
+            $this->logger?->info('Fetched SurePay access token', [
+                'access_token' => [
+                    'issued_at' => $accessToken->getIssuedAt(),
+                    'expires_at' => $accessToken->getExpiresAt(),
+                ]
+            ]);
+
+            return $accessToken;
         } catch (GuzzleException $e) {
-            throw new SurePayRepositoryException('Unable to get accesstoken', 0, $e);
+            $this->logger?->error('Unable to fetch SurePay access token', [
+                'exception' => $e,
+                'response' => $this->getExceptionResponseDataForLog($e),
+            ]);
+
+            throw new SurePayRepositoryException(message: 'Unable to get accesstoken', previous: $e);
+        } catch (SurePayInvalidAccessTokenResponse $e) {
+            $this->logger?->error('Invalid SurePay access token response', [
+                'exception' => $e,
+            ]);
+
+            throw new SurePayRepositoryException(message: 'Invalid access token response', previous: $e);
         }
     }
 
@@ -101,36 +139,101 @@ class SurePayClient
      * @param string $accountOwner
      * @param string $accountNumber
      * @param string $accountType
-     * @throws ValidationException
+     * @return CheckOrganisationsAccountResponse
+     * @throws SurePayRepositoryException
+     * @throws Exception
      */
     public function checkOrganisationsAccount(
         string $accountOwner,
         string $accountNumber,
         string $accountType = 'IBAN'
     ): CheckOrganisationsAccountResponse {
-        try {
-            $response = $this->client->request(
-                'POST',
-                $this->config['endpoint_check_organisations'],
-                array_merge(
-                    $this->baseRequestOptions,
-                    [
-                        RequestOptions::HEADERS => [
-                            'charset' => 'utf-8',
-                            'X-Correlation-Id' => $this->getCorrelationId(),
-                            'Authorization' => sprintf('Bearer %s', $this->getAccessToken()),
-                        ],
-                        RequestOptions::JSON => CheckOrganisationsRequest
-                            ::build($accountOwner, $accountNumber, $accountType)
-                            ->toArray()
-                    ]
-                )
-            );
+        $this->logger?->info('Checking SurePay IBAN');
 
-            return CheckOrganisationsAccountResponse::fromJson($response->getBody()->getContents());
-        } catch (GuzzleException $e) {
-            throw new SurePayRepositoryException('Bad SurePay request', 400, $e);
+        $maxRetries = $this->config['max_retries'] ?? 3;
+        $retryCount = 0;
+        $latestException = null;
+
+        while ($retryCount < $maxRetries) {
+            $accessToken = $this->getAccessToken();
+
+            try {
+                $response = $this->client->request(
+                    'POST',
+                    $this->config['endpoint_check_organisations'],
+                    array_merge(
+                        $this->baseRequestOptions,
+                        [
+                            RequestOptions::HEADERS => [
+                                'charset' => 'utf-8',
+                                'X-Correlation-Id' => $this->getCorrelationId(),
+                                'Authorization' => sprintf('Bearer %s', $accessToken->getAccessToken()),
+                            ],
+                            RequestOptions::JSON => CheckOrganisationsRequest
+                                ::build($accountOwner, $accountNumber, $accountType)
+                                ->toArray()
+                        ]
+                    )
+                );
+
+                return CheckOrganisationsAccountResponse::fromJson($response->getBody()->getContents());
+            } catch (ClientException $e) {
+                $latestException = $e;
+                $retryCount++;
+
+                $response = $e->getResponse();
+
+                // 401 - Unauthorised - Authorization header missing or invalid token
+                if ($response->getStatusCode() === 401) {
+                    $this->logger?->info(
+                        'Checking SurePay IBAN failed because of access token unauthorized,'
+                        . ' invalidating access token and retrying'
+                    );
+                    $this->logger?->info('We thought the SurePay access token is still valid', [
+                        'access_token' => [
+                            'issued_at' => $accessToken->getIssuedAt(),
+                            'expired_at' => $accessToken->getExpiresAt(),
+                        ]
+                    ]);
+                    $this->invalidateAccessToken();
+                    continue;
+                }
+
+                // 429 - Too many requests - Response status code indicates the user has sent
+                // too many requests in a given amount of time.
+                if ($response->getStatusCode() === 429) {
+                    $this->logger?->info('Checking SurePay IBAN failed because of too many requests, retrying');
+                    sleep(random_int(1, 3));
+                    continue;
+                }
+
+                $this->logger?->info('Checking SurePay IBAN failed because of bad request', [
+                    'exception' => $e,
+                    'response' => $this->getExceptionResponseDataForLog($e),
+                ]);
+
+                // All other 4xx errors are considered bad requests and do not need to be retried
+                throw new SurePayRepositoryException(
+                    message: 'Bad request for Checking SurePay IBAN',
+                    previous: $e,
+                );
+            } catch (GuzzleException $e) {
+                $latestException = $e;
+                $retryCount++;
+
+                $this->logger?->error('Unable to check SurePay IBAN', [
+                    'exception' => $e,
+                    'response' => $this->getExceptionResponseDataForLog($e),
+                ]);
+
+                sleep(random_int(1, 3));
+            }
         }
+
+        throw new SurePayRepositoryException(
+            message: 'Max retries exceeded for Checking SurePay IBAN without successful response',
+            previous: $latestException
+        );
     }
 
     /**
@@ -159,37 +262,70 @@ class SurePayClient
     }
 
     /**
-     * Returns accesstoken. An existing one if valid or a new one is fetched
-     * @return string
-     * @throws ValidationException
+     * Returns access token. An existing one if valid or a new one is fetched
+     * @return SurePayAccessToken
+     * @throws SurePayRepositoryException
      */
-    private function getAccessToken(): string
+    private function getAccessToken(): SurePayAccessToken
     {
-        if ($this->shouldFetchToken()) {
+        if ($this->accessToken === null || $this->accessToken->isExpired()) {
+            $this->logger?->debug('No SurePay access token set or the access token is expired, fetching a new one', [
+                'access_token_exists' =>  $this->accessToken !== null,
+                'access_token_expired' => $this->accessToken?->isExpired()
+            ]);
+
             $this->accessToken = $this->fetchAccessToken();
         }
 
-        if (!isset($this->accessToken->accessToken)) {
-            throw new SurePayRepositoryException('Accesstoken not set');
-        }
-
-        return $this->accessToken->accessToken;
+        return $this->accessToken;
     }
 
     /**
-     * Checks if we already have a valid accesstoken or if one needs to be fetched from surepay
-     * @return bool
+     * According to the SurePay API documentation no PII is returned in the response body.
+     *
+     * For the check organisation endpoint we should receive a JSON body on 400 Bad Request
+     *  with an errorCode and a message that we can check in the documentation.
+     *
+     * You can find the information in:
+     *  SurePay API documentatie - ORG v2 - Account Check for Organisations v2.pdf
+     *
+     * @param GuzzleException $exception
+     * @return array
      */
-    private function shouldFetchToken(): bool
+    protected function getExceptionResponseDataForLog(GuzzleException $exception): array
     {
-        if (!isset($this->accessToken)) {
-            return true;
+        if (!($exception instanceof RequestException)) {
+            return [];
         }
 
-        // -100 seconds to be on the safe side.
-        $expiresInSeconds = ($this->accessToken->expiresIn - 100);
-        $tokenExpiresAt = Carbon::createFromTimestamp($this->accessToken->issuedAt)->addSeconds($expiresInSeconds);
+        $response = $exception->getResponse();
+        if ($response === null) {
+            return [];
+        }
 
-        return $tokenExpiresAt->isPast();
+        $responseBody = $response->getBody()->getContents();
+        $responseStatus = $response->getStatusCode();
+
+        return [
+            'status' => $responseStatus,
+            'body' => $responseBody,
+        ];
+    }
+
+    protected function invalidateAccessToken(): void
+    {
+        $this->accessToken = null;
+    }
+
+    protected function parseAccessTokenFromAccessTokenResponse(
+        AccessTokenResponse $accessTokenResponse
+    ): SurePayAccessToken {
+        $issuedAt = CarbonImmutable::createFromTimestampMsUTC($accessTokenResponse->issuedAt);
+
+        return new SurePayAccessToken(
+            accessToken: $accessTokenResponse->accessToken,
+            issuedAt: $issuedAt,
+            expiresAt: $issuedAt->addSeconds($accessTokenResponse->expiresIn - $this->accessTokenExpiresInLeeWay),
+        );
     }
 }

@@ -13,7 +13,6 @@
         "laravel/sanctum": "^3.3",
         "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
-        "symfony/config": "v6.4.0",
         "spatie/simple-excel": "^3.2"
     },
     "require-dev": {
@@ -22,7 +21,7 @@
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",
         "larastan/larastan": "^2.0",
-        "laravel-lang/common": "^5.1",
+        "laravel-lang/common": "^6.0",
         "laravel/pint": "^1.10",
         "laravel/sail": "^1.23",
         "laravel/tinker": "^2.8",

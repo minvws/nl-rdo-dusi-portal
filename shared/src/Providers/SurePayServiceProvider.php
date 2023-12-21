@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Providers;
 
 use GuzzleHttp\Client;
+use Illuminate\Log\LogManager;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\DUSi\Shared\Application\Console\Commands\CheckSurePay;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\SurePayRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class SurePayServiceProvider extends ServiceProvider
@@ -54,6 +56,25 @@ class SurePayServiceProvider extends ServiceProvider
             );
         }
 
+        return new SurePayClient(
+            client: $this->getGuzzleClient(),
+            logger: $this->getLogger(),
+        );
+    }
+
+    private function getLogger(): ?LoggerInterface
+    {
+        $logChannelValue = config('surepay_api.log_channel');
+        if (empty($logChannelValue)) {
+            return null;
+        }
+
+        $logManager = $this->app->make(LogManager::class);
+        return $logManager->channel(config('surepay_api.log_channel', 'stack'));
+    }
+
+    private function getGuzzleClient(): Client
+    {
         $options = [
             'base_uri' => config('surepay_api.endpoint'),
             'verify' => config('surepay_api.verify_ssl', true),
@@ -68,6 +89,6 @@ class SurePayServiceProvider extends ServiceProvider
             $options['proxy']['https'] = config('surepay_api.proxy.https');
         }
 
-        return new SurePayClient(client: new Client($options));
+        return new Client($options);
     }
 }

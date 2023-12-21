@@ -1,5 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
-
+<?php
 
 /**
  * Application Data Service
@@ -216,7 +215,7 @@ readonly class ApplicationDataService
 
     private function updateSubsidyStageHashes(array $fieldValues, ApplicationStage $applicationStage): void
     {
-        $fieldValues = array_filter($fieldValues, fn($fieldValue) => !empty($fieldValue->value));
+        $fieldValues = array_filter($fieldValues, fn($fieldValue) => $fieldValue->valueToString() !== "");
         foreach ($applicationStage->subsidyStage->subsidyStageHashes as $subsidyStageHash) {
             $this->updateSubsidyStageHash($fieldValues, $subsidyStageHash, $applicationStage);
         }

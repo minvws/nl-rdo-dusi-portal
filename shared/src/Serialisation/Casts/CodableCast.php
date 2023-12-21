@@ -1,4 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
+<?php
 
 /**
  * Cast for codables.

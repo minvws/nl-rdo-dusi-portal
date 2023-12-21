@@ -10,6 +10,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
+use MinVWS\Logging\Laravel\LogService;
 
 class Controller extends BaseController
 {
@@ -18,6 +19,11 @@ class Controller extends BaseController
     use ValidatesRequests;
 
     public const ENCRYPTED_HEADER_NAME = 'X-Dus-I-Encrypted';
+
+    public function __construct(
+        protected readonly LogService $logger
+    ) {
+    }
 
     protected function encryptedResponse(EncryptedResponse $response): Response
     {

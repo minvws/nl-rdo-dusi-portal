@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\User\Admin\API\Actions\Fortify;
 
 use Illuminate\Contracts\Validation\Rule;
-use Laravel\Fortify\Rules\Password;
+use Illuminate\Validation\Rules\Password;
 
 trait PasswordValidationRules
 {
@@ -16,6 +16,11 @@ trait PasswordValidationRules
      */
     protected function passwordRules(): array
     {
-        return ['required', 'string', new Password(), 'confirmed'];
+        $passwordRule = Password::min(12)
+            ->mixedCase()
+            ->numbers()
+            ->symbols();
+
+        return ['required', 'string', $passwordRule, 'confirmed'];
     }
 }

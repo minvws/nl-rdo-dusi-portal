@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories\BankAccount;
 
-use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use RuntimeException;
 
@@ -17,7 +17,7 @@ class SurePayRepository implements BankAccountRepository
     }
 
     /**
-     * @throws ValidationException
+     * @throws SurePayRepositoryException
      */
     public function checkOrganisationsAccount(
         string $accountOwner,
