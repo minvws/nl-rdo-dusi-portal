@@ -60,9 +60,9 @@ jobs:
         run: |
           if [ `grep -c ERROR ${{ matrix.database }}.log` -ne 0 ]; then grep ERROR ${{ matrix.database }}.log; fi
           exit `grep -c ERROR ${{ matrix.database }}.log`
-      - name: Upload manual documentation (pdf)
+      - name: Upload database import log
         uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
-          name: logs
+          name: ${{ matrix.database }}.log
           path: ${{ matrix.database }}.log

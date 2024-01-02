@@ -123,7 +123,7 @@ jobs:
       - if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: coverage-report-${{ matrix.directory }}
           path: ${{ matrix.directory }}/tests/coverage.xml
 
       - name: Coverage Report as Comment (Clover)
