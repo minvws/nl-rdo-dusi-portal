@@ -22,11 +22,11 @@ class BTVSeeder extends Seeder
     {
         $this->createSubsidy();
         $this->createSubsidyVersion();
-        $this->call(BTVSubsidyStagesTableSeeder::class);
+        $this->call(BTVSubsidyStagesSeeder::class);
 
-        $this->call(BTVFieldsTableSeeder::class);
-        $this->call(BTVUIApplicationStageUISeeder::class);
-        $this->call(BTVUIAssessmentTableSeeder::class);
+        $this->call(BTVApplicationFieldsSeeder::class);
+        $this->call(BTVApplicationStageUISeeder::class);
+        $this->call(BTVAssessmentStageUISeeder::class);
     }
 
     public function createSubsidy(): void

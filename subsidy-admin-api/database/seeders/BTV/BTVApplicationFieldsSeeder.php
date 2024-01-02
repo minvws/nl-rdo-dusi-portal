@@ -9,7 +9,7 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
-class BTVFieldsTableSeeder extends Seeder
+class BTVApplicationFieldsSeeder extends Seeder
 {
     use CreateField;
 
@@ -24,45 +24,45 @@ class BTVFieldsTableSeeder extends Seeder
     public function createBTVFields(): void
     {
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'firstName',
             title:          'Voornaam',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'infix',
             title:          'Tussenvoegsel',
             isRequired:     false,
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'lastName',
             title:          'Achternaam',
         );
 
         $this->createDateField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'dateOfBirth',
             title:          'Geboortedatum',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'street',
             title:          'Straat',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'houseNumber',
             title:          'Huisnummer',
             inputMode:      'numeric',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'houseNumberSuffix',
             title:          'Huisnummer toevoeging',
             maxLength:      10,
@@ -70,27 +70,27 @@ class BTVFieldsTableSeeder extends Seeder
         );
 
         $this->createPostalCodeField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'postalCode',
             title:          'Postcode',
             isRequired:     false,
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'city',
             title:          'Plaats',
             maxLength:      100,
         );
 
         $this->createCountryField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'country',
             title:          'Land',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'phoneNumber',
             title:          'Telefoonnummer',
             inputMode:      'tel',
@@ -99,7 +99,7 @@ class BTVFieldsTableSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'email',
             title:          'E-mailadres',
             inputMode:      'email',
@@ -108,20 +108,20 @@ class BTVFieldsTableSeeder extends Seeder
         );
 
         $this->createBankAccountField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'bankAccountNumber',
             title:          'IBAN',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'bankAccountHolder',
             title:          'Naam rekeninghouder',
             maxLength:      50,
         );
 
         $this->createUploadField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'bankStatement',
             title:          'Kopie bankafschrift',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
@@ -131,8 +131,8 @@ class BTVFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code:           'extractPersonalRecordsDatabase',
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            code:           'extractPopulationRegisterDocument',
             title:          'Uittreksel bevolkingsregister niet ouder dan 3 maanden',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
@@ -141,8 +141,8 @@ class BTVFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code:           'proofOfMedicalTreatment',
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            code:           'proofOfMedicalTreatmentDocument',
             title:          'Verklaring behandeltraject',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
@@ -151,8 +151,8 @@ class BTVFieldsTableSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
-            code:           'proofOfTypeOfMedicalTreatment',
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            code:           'proofOfTypeOfMedicalTreatmentDocument',
             title:          'Verklaring type behandeling',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
@@ -161,52 +161,16 @@ class BTVFieldsTableSeeder extends Seeder
         );
 
         $this->createCheckboxField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'permissionToProcessPersonalData',
             title:          'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',
         );
 
         $this->createCheckboxField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'truthfullyCompleted',
             title:          ''
         );
 
-        $this->createMultiSelectField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
-            code:           'checklist',
-            title:          'Gecontroleerd',
-            options:        [
-                'Uittreksel van het BRP is opgestuurd',
-                'De aanvrager is een ingezetene (> 4 maanden) in Nederland',
-                'de aanvrager is ouder dan 18 jaar',
-                'De verklaring van de arts over het behandeltraject is opgestuurd',
-                'De verklaring van de arts over het behandeltraject is minder dan 2 maanden oud',
-                'De verklaring van de arts over het behandeltraject is ondertekend en voorzien van een naamstempel',
-                'Het opgegeven BIG-nummer komt overeen met het BIG-register',
-                'De operatie heeft nog niet plaatsgevonden',
-                'De aanvrager heeft genderdysforie',
-                'De aanvrager heeft minimaal een jaar voor de aanvraag hormoonbehandeling ondergaan, of is hiermee vanwege medische redenen gestopt of kon deze om medische redenen niet ondergaan',
-                'De verklaring van de arts met de vermelding van de type behandeling is opgestuurd',
-                'De verklaring van de arts met de vermelding van de type behandeling is ondertekend en voorzien van een naamstempel',
-                'De type behandeling voldoet aan de voorwaarden conform de subsidieregeling',
-                'Het IBAN-nummer klopt met het opgegeven IBAN-nummer van de aanvraag',
-                'De tenaamstelling op het bankafschrift of bankpas klopt'
-            ],
-        );
-
-        $this->createSelectField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
-            code:           'amount',
-            title:          'Bedrag',
-            options:        ['€ 3.830', '€ 13.720']
-        );
-
-        $this->createSelectField(
-            subsidyStageId: BTVSubsidyStagesTableSeeder::BTV_STAGE_2_UUID,
-            code:           'review',
-            title:          'Beoordeling',
-            options:        ['Onbeoordeeld', 'Aanvulling nodig', 'Afgekeurd', 'Goedgekeurd']
-        );
     }
 }
