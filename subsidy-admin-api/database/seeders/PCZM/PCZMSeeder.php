@@ -21,14 +21,17 @@ class PCZMSeeder extends Seeder
     {
         $this->createSubsidy();
         $this->createSubsidyVersion();
+
         $this->call(PCZMSubsidyStagesSeeder::class);
-        $this->call(PCZMSubsidyStageTransitionsSeeder::class);
-        $this->call(PCZMSubsidyStageTransitionMessageSeeder::class);
 
         $this->call(PCZMApplicationFieldsSeeder::class);
         $this->call(PCZMApplicationStageUISeeder::class);
+
         $this->call(PCZMAssessmentFieldsSeeder::class);
         $this->call(PCZMAssessmentStageUISeeder::class);
+
+        $this->call(PCZMSubsidyStageTransitionsSeeder::class);
+        $this->call(PCZMSubsidyStageTransitionMessageSeeder::class);
     }
 
     public function createSubsidy(): void

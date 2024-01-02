@@ -10,9 +10,9 @@ use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV\BTVSubsidyStagesSeeder;
 
 class BTVAssessmentStageUISeeder extends Seeder
 {
-    public const BTV_STAGE2_UI_UUID = 'c2365ef6-5ff9-469f-ab4a-5533c33b299d';
-    public const BTV_STAGE3_UI_UUID = '44914BC7-9E4F-4B79-9498-01ADBE5C4CFE';
-    public const BTV_STAGE4_UI_UUID = 'E819DF05-03B7-4F37-B315-7F62339FD067';
+    public const BTV_STAGE2_UI_UUID = 'db1076a1-42f3-4c90-b1bf-57d1db025f2e';
+    public const BTV_STAGE3_UI_UUID = '787c8ef4-bfcd-4bd4-aec1-dec02139c897';
+    public const BTV_STAGE4_UI_UUID = 'a6080627-0ea9-436e-bbba-c454bd3809fd';
 
     public function run(): void
     {
@@ -250,13 +250,13 @@ class BTVAssessmentStageUISeeder extends Seeder
         ];
 
         DB::table('subsidy_stage_uis')->insert([
-                                                   'id' => self::BTV_STAGE3_UI_UUID,
-                                                   'subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_3_UUID,
-                                                   'version' => 1,
-                                                   'status' => 'published',
-                                                   'input_ui' => json_encode($input_ui),
-                                                   'view_ui' => json_encode($view_ui)
-                                               ]);
+            'id' => self::BTV_STAGE3_UI_UUID,
+            'subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_3_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
     }
 
     public function internalAssessment(): void
@@ -329,12 +329,12 @@ class BTVAssessmentStageUISeeder extends Seeder
         ];
 
         DB::table('subsidy_stage_uis')->insert([
-                                                   'id' => self::BTV_STAGE4_UI_UUID,
-                                                   'subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
-                                                   'version' => 1,
-                                                   'status' => 'published',
-                                                   'input_ui' => json_encode($input_ui),
-                                                   'view_ui' => json_encode($view_ui)
-                                               ]);
+            'id' => self::BTV_STAGE4_UI_UUID,
+            'subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
     }
 }

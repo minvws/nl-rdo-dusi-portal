@@ -8,7 +8,6 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 
 use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMSubsidyStagesSeeder;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
 class BTVAssessmentFieldsSeeder extends Seeder
@@ -23,7 +22,6 @@ class BTVAssessmentFieldsSeeder extends Seeder
         $this->firstAssessmentFields();
         $this->secondAssessmentFields();
         $this->internalAssessmentFields();
-        $this->coordinatorImplemenationFields();
     }
 
     public function firstAssessmentFields(): void
@@ -133,7 +131,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
     {
         //Interne controle
         $this->createMultiSelectField(
-            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             code: 'internalAssessmentChecklist',
             title: 'Controlevragen',
             options: [
@@ -151,7 +149,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
 
 
         $this->createSelectField(
-            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
             options: ['Afgekeurd', 'Goedgekeurd'],
@@ -159,7 +157,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             code: 'internalAssessmentInternalNote',
             title: 'Interne notitie',
             isRequired: false,
@@ -167,7 +165,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_4_UUID,
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             code: 'internalAssessmentReasonForRejection',
             title: 'Reden van afkeuring',
             isRequired: false,
