@@ -328,9 +328,9 @@ class SubsidyRepositoryTest extends TestCase
     public static function dataProviderSubsidyStageTitles(): array
     {
         return [
-            '6 subsidy stage titles when not filtered' => [
+            'combined subsidy stage titles when not filtered' => [
                 null,
-                ['Title A', 'Title B', 'Title A', 'Title B', 'Title C', 'Title D']
+                ['Title A', 'Title B', 'Title C', 'Title D']
             ],
             'get first subsidy stage titles when filtered' => [
                 ['025ffd57-5591-4150-989e-63c1b1ec6de1'],
@@ -342,7 +342,7 @@ class SubsidyRepositoryTest extends TestCase
             ],
             'get both stage titles when filtered' => [
                 ['00059634-ce1d-47ad-9b8d-7a326dbd2598', '025ffd57-5591-4150-989e-63c1b1ec6de1'],
-                ['Title A', 'Title B', 'Title A', 'Title B', 'Title C', 'Title D'],
+                ['Title A', 'Title B', 'Title C', 'Title D'],
             ],
             'empty list of titles when subsidies not found' => [[Uuid::uuid4()->toString()], []],
         ];

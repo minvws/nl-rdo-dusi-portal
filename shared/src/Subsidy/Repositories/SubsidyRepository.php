@@ -203,6 +203,8 @@ class SubsidyRepository
             ->each->sortBy('stage')
             ->map->pluck('title')
             ->flatten()
+            ->unique()
+            ->values()
             ->toArray();
     }
 
