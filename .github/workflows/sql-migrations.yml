@@ -61,7 +61,7 @@ jobs:
           if [ `grep -c ERROR ${{ matrix.database }}.log` -ne 0 ]; then grep ERROR ${{ matrix.database }}.log; fi
           exit `grep -c ERROR ${{ matrix.database }}.log`
       - name: Upload manual documentation (pdf)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
           name: logs
