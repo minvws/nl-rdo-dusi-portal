@@ -167,7 +167,7 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     4,
-                    'implementationCoordinatorAssessment',
+                    'internalAssessment',
                     Operator::Identical,
                     'Afgekeurd'
                 )

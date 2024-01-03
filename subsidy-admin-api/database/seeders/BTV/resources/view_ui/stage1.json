@@ -119,7 +119,7 @@
                     "options": {
                         "fields": {
                             "Kopie bankafschrift": "{bankStatement}",
-                            "Uitreksel bevolkingsregister": "{extractPersonalRecordsDatabaseDocument}",
+                            "Uitreksel bevolkingsregister": "{extractPopulationRegisterDocument}",
                             "Verklaring behandeltraject": "{proofOfMedicalTreatmentDocument}",
                             "Verklaring type behandeling": "{proofOfTypeOfMedicalTreatmentDocument}"
                         }

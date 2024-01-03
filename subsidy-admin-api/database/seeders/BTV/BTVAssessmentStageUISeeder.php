@@ -184,13 +184,13 @@ class BTVAssessmentStageUISeeder extends Seeder
         ];
 
         DB::table('subsidy_stage_uis')->insert([
-                                                   'id' => self::BTV_STAGE2_UI_UUID,
-                                                   'subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
-                                                   'version' => 1,
-                                                   'status' => 'published',
-                                                   'input_ui' => json_encode($input_ui),
-                                                   'view_ui' => json_encode($view_ui)
-                                               ]);
+            'id' => self::BTV_STAGE2_UI_UUID,
+            'subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
     }
 
     public function secondAssessment(): void
@@ -315,9 +315,19 @@ class BTVAssessmentStageUISeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/internalAssessmentInternalNote",
+                                    "scope" => "#/properties/internalAssessmentReasonForRejection",
                                     "options" => [
-                                        "format" => "textarea"
+                                        "format" => "textarea",
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/internalAssessment",
+                                            "schema" =>  [
+                                                "const" => "Afgekeurd"
+                                            ]
+                                        ]
                                     ]
                                 ]
                             ]
@@ -336,14 +346,6 @@ class BTVAssessmentStageUISeeder extends Seeder
                         ],
                     ]
                 ],
-                [
-                    "type" => "Group",
-                    "label" => "Toelichting",
-                    "elements" => [
-
-                    ]
-                ],
-
             ]
         ];
 
