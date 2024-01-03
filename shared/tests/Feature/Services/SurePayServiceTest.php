@@ -42,6 +42,8 @@ class SurePayServiceTest extends TestCase
     {
         parent::setUp();
 
+        $this->setupMocksEncryption();
+
         $this->surePayService = $this->app->get(SurePayService::class);
         $this->encryptionService = $this->app->get(ApplicationStageEncryptionService::class);
 
@@ -67,11 +69,21 @@ class SurePayServiceTest extends TestCase
         $this->identity = Identity::factory()->create();
     }
 
-
+    /**
+     * @group surepay-encryption
+     */
     public function testCheckSurePayForApplicationShouldStoreEncryptedNameSuggestion(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
-        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage = ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage1)
+            ->create([
+                'encrypted_key' => $encryptedKey
+            ]);
+
         $bankAccountField = Field::factory()
             ->for($this->subsidyStage1)
             ->create([
@@ -85,32 +97,34 @@ class SurePayServiceTest extends TestCase
                          'type' => FieldType::Text,
                      ]);
 
-        Answer::factory()
-            ->for($bankAccountHolderField)
-            ->for($applicationStage)
-            ->create();
-
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+        $encryptedValue = $encrypter->encrypt(
+            MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_CLOSE_MATCH
+        );
         Answer::factory()
             ->for($bankAccountField)
             ->for($applicationStage)
             ->create([
-                 'encrypted_answer' => $encrypter->encrypt(
-                     MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_CLOSE_MATCH
-                 ),
+                 'encrypted_answer' => $encryptedValue,
+            ]);
+        Answer::factory()
+            ->for($bankAccountHolderField)
+            ->for($applicationStage)
+            ->create([
+                 'encrypted_answer' => $encryptedValue,
             ]);
 
         $applicationSurePayResult = $this->surePayService->checkSurePayForApplication($application);
 
         $this->assertDatabaseHas(ApplicationSurePayResult::class, [
             'application_id' => $application->id,
-            'encrypted_name_suggestion' => MockedBankAccountRepository::BANK_HOLDER_SUGGESTION,
+            'encrypted_name_suggestion' => $encrypter->encrypt(MockedBankAccountRepository::BANK_HOLDER_SUGGESTION),
             'created_at' => $applicationSurePayResult->created_at->format('Y-m-d H:i:s')
         ]);
 
         $this->assertEquals(
             $applicationSurePayResult->encrypted_name_suggestion,
-            MockedBankAccountRepository::BANK_HOLDER_SUGGESTION
+            $encrypter->encrypt(MockedBankAccountRepository::BANK_HOLDER_SUGGESTION)
         );
     }
 }

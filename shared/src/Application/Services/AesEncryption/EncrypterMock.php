@@ -12,24 +12,18 @@ class EncrypterMock implements Encrypter
     {
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function encrypt($value, $serialize = true)
     {
-        return $this->key . $serialize ? serialize($value) : $value;
+        return $this->key . ($serialize ? serialize($value) : $value);
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function decrypt($payload, $unserialize = true)
     {
         if (substr($payload, 0, strlen($this->key)) !== $this->key) {
             throw new \Exception('Encrypted with different key');
         }
-        $decrypted = substr($payload, strlen($this->key))
-        return $unserialize ? unserialize($decrypted) : $decrypted
+        $decrypted = substr($payload, strlen($this->key));
+        return $unserialize ? unserialize($decrypted) : $decrypted;
     }
 
     public function getKey()
