@@ -167,7 +167,7 @@ class ApplicationFlowService
         // Calculate final review deadline:
         // 1. Take the first submit date from the applicant.
         // 2. Add the review period.
-        // 3. Distract any subsequent stages where the application was returned to the applicant.
+        // 3. Add any subsequent stages where the application was returned to the applicant.
         $stages = $this->applicationRepository->getOrderedApplicationStagesForSubsidyStage(
             $application,
             $transition->currentSubsidyStage
@@ -180,14 +180,9 @@ class ApplicationFlowService
             CarbonImmutable::instance(array_shift($stages)->submitted_at)
                 ->addDays($application->subsidyVersion->review_period);
 
-        $diff = null;
         foreach ($stages as $stage) {
-            $current = Carbon::instance($stage->created_at)->diff($stage->submitted_at);
-            $diff = $diff === null ? $current : $diff->add($current);
-        }
-
-        if ($diff !== null) {
-            $deadline = $deadline->add($diff);
+            $timeAtApplicant = Carbon::instance($stage->created_at)->diff($stage->submitted_at);
+            $deadline->add($timeAtApplicant);
         }
 
         $application->final_review_deadline = $deadline->endOfDay()->floorSecond();
