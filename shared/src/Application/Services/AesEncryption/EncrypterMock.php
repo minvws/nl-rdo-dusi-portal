@@ -28,7 +28,8 @@ class EncrypterMock implements Encrypter
         if (substr($payload, 0, strlen($this->key)) !== $this->key) {
             throw new \Exception('Encrypted with different key');
         }
-        return substr($payload, strlen($this->key));
+        $decrypted = substr($payload, strlen($this->key))
+        return $unserialize ? unserialize($decrypted) : $decrypted
     }
 
     public function getKey()
