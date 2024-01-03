@@ -50,7 +50,7 @@ class BTVSubsidyStagesSeeder extends Seeder
             'title' => 'Interne beoordeling',
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::InternalAuditor->value,
-            'stage' => 3,
+            'stage' => 4,
         ]);
     }
 }

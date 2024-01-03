@@ -322,6 +322,25 @@ class BTVAssessmentStageUISeeder extends Seeder
                                 ]
                             ]
                         ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/internalAssessmentInternalNote",
+                                    "options" => [
+                                        "format" => "textarea"
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Toelichting",
+                    "elements" => [
+
                     ]
                 ],
 

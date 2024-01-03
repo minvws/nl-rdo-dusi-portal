@@ -4,7 +4,6 @@
         "section": true
     },
     "elements": [
-
         {
             "type": "CustomControl",
             "scope": "#/properties/internalAssessmentChecklist",
@@ -27,6 +26,23 @@
             "options": {
                 "readonly": true,
                 "format": "textarea"
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/internalAssessmentReasonForRejection",
+            "options": {
+                "readonly": true,
+                "format": "textarea"
+            },
+            "rule": {
+                "effect": "SHOW",
+                "condition": {
+                    "scope": "#/properties/internalAssessment",
+                    "schema": {
+                        "const": "Afgekeurd"
+                    }
+                }
             }
         }
     ]

@@ -14,7 +14,7 @@
             "elements": [
                 {
                     "type": "CustomControl",
-                    "scope": "#/properties/personalDataChecklist",
+                    "scope": "#/properties/firstAssessmentChecklist",
                     "options": {
                         "readonly": true,
                         "format": "checkbox-group"
@@ -24,7 +24,7 @@
         },
         {
             "type": "FormGroupControl",
-            "label": "Vaststellen WIA",
+            "label": "Uitkering",
             "options": {
                 "section": true,
                 "headingLevel": "2"
@@ -32,163 +32,9 @@
             "elements": [
                 {
                     "type": "CustomControl",
-                    "scope": "#/properties/wiaChecklist",
-                    "options": {
-                        "readonly": true,
-                        "format": "checkbox-group"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/WIADecisionIndicates",
-                    "options": {
-                        "readonly": true,
-                        "format": "radio"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/IVA_Or_WIA_Checklist",
-                    "options": {
-                        "readonly": true,
-                        "format": "checkbox-group"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/WIA_RejectedOnHighSalaryChecklist",
-                    "options": {
-                        "readonly": true,
-                        "format": "checkbox-group"
-                    }
-                }
-            ]
-        },
-        {
-            "type": "FormGroupControl",
-            "label": "Zorgaanbieder en functie",
-            "options": {
-                "section": true,
-                "headingLevel": "2"
-            },
-            "elements": [
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/employerChecklist",
-                    "options": {
-                        "readonly": true,
-                        "format": "checkbox-group"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/healthcareProviderStatementIsComplete",
-                    "options": {
-                        "readonly": true,
-                        "format": "radio"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/employerName",
+                    "scope": "#/properties/amount",
                     "options": {
                         "readonly": true
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/healthcareProviderName",
-                    "options": {
-                        "readonly": true
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/chamberOfCommerceNumberHealthcareProvider",
-                    "options": {
-                        "readonly": true
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/healthcareProviderChecklist",
-                    "options": {
-                        "readonly": true,
-                        "format": "checkbox-group"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/healthcareProviderSBICode",
-                    "options": {
-                        "readonly": true
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/healthcareProviderAGBCode",
-                    "options": {
-                        "readonly": true
-                    }
-                }
-            ]
-        },
-        {
-            "type": "FormGroupControl",
-            "label": "Justitiële inrichting",
-            "options": {
-                "section": true,
-                "headingLevel": "2"
-            },
-            "elements": [
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/judicialInstitutionIsEligible",
-                    "options": {
-                        "readonly": true,
-                        "format": "radio"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/applicantFoundInBigRegister",
-                    "options": {
-                        "readonly": true,
-                        "format": "radio"
-                    }
-                }
-            ]
-        },
-        {
-            "type": "FormGroupControl",
-            "label": "Vaststellen post-COVID",
-            "options": {
-                "section": true,
-                "headingLevel": "2"
-            },
-            "elements": [
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/postCovidChecklist",
-                    "options": {
-                        "readonly": true,
-                        "format": "checkbox-group"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/doctorFoundInBigRegister",
-                    "options": {
-                        "readonly": true,
-                        "format": "radio"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/doctorsCertificateIsComplete",
-                    "options": {
-                        "readonly": true,
-                        "format": "radio"
                     }
                 }
             ]
@@ -201,13 +47,6 @@
                 "headingLevel": "2"
             },
             "elements": [
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/amount",
-                    "options": {
-                        "readonly": true
-                    }
-                },
                 {
                     "type": "CustomControl",
                     "scope": "#/properties/firstAssessment",

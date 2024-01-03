@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AbstractApplicationStageUISeeder;
-use stdClass;
 
 class BTVApplicationStageUISeeder extends AbstractApplicationStageUISeeder
 {
@@ -38,37 +36,37 @@ class BTVApplicationStageUISeeder extends AbstractApplicationStageUISeeder
             'elements' => [
                 $this->buildInputUiStep(
                     1, 'start', [
-                         'permissionToProcessPersonalData'
-                     ]
+                        'permissionToProcessPersonalData'
+                    ]
                 ),
                 $this->buildInputUiStep(
                     2, 'Persoonsgegevens toevoegen', [
-                         "firstName",
-                         "lastName",
-                         "street",
-                         "dateOfBirth",
-                         "houseNumber",
-                         "postalCode",
-                         "city",
-                         "country",
-                         "phoneNumber",
-                         "email",
-                         "bankAccountHolder",
-                         "bankAccountNumber"
-                     ]
+                        "firstName",
+                        "lastName",
+                        "street",
+                        "dateOfBirth",
+                        "houseNumber",
+                        "postalCode",
+                        "city",
+                        "country",
+                        "phoneNumber",
+                        "email",
+                        "bankAccountHolder",
+                        "bankAccountNumber"
+                    ]
                 ),
                 $this->buildInputUiStep(
                     3, 'Documenten toevoegen', [
-                         "bankStatement",
-                         "extractPersonalRecordsDatabase",
-                         "proofOfMedicalTreatment",
-                         "proofOfTypeOfMedicalTreatment"
-                     ]
+                        "bankStatement",
+                        "extractPopulationRegisterDocument",
+                        "proofOfMedicalTreatmentDocument",
+                        "proofOfTypeOfMedicalTreatmentDocument"
+                    ]
                 ),
                 $this->buildInputUiStep(
                     4, 'Controleren en ondertekenen', [
-                         'truthfullyCompleted'
-                     ]
+                        'truthfullyCompleted'
+                    ]
                 )
             ]
         ];
