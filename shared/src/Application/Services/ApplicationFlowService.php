@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
@@ -176,9 +175,8 @@ class ApplicationFlowService
         assert(count($stages) > 0);
         assert($stages[0]->submitted_at !== null);
 
-        $deadline =
-            CarbonImmutable::instance(array_shift($stages)->submitted_at)
-                ->addDays($application->subsidyVersion->review_period);
+        $deadline = Carbon::instance(array_shift($stages)->submitted_at)
+            ->addDays($application->subsidyVersion->review_period);
 
         foreach ($stages as $stage) {
             $timeAtApplicant = Carbon::instance($stage->created_at)->diff($stage->submitted_at);
