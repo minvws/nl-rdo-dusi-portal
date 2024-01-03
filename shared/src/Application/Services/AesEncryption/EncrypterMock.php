@@ -17,7 +17,7 @@ class EncrypterMock implements Encrypter
      */
     public function encrypt($value, $serialize = true)
     {
-        return $this->key . $value;
+        return $this->key . $serialize ? serialize($value) : $value;
     }
 
     /**
