@@ -88,7 +88,10 @@ trait MocksEncryption
                 return $value;
             });
 
-        $applicationEncryptorMock = $this->app->get(ApplicationStageEncryptionMockService::class);
+        $applicationEncryptorMock = new ApplicationStageEncryptionMockService(
+            $hsmEncryptionService,
+            $hsmDecryptionService,
+        );
         $this->app->instance(ApplicationStageEncryptionService::class, $applicationEncryptorMock);
 
         $applicationFileEncryptionService = Mockery::mock(ApplicationFileEncryptionService::class);
