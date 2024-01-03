@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Tests\Feature\Http\Controllers;
 
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Faker\Generator;
 use Illuminate\Container\Container;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
@@ -142,8 +143,8 @@ class ApplicationExportControllerTest extends TestCase
         $user->attachRole(RoleEnum::DataExporter, $this->subsidy->id);
 
         $firstApplication = Application::orderBy('created_at')->first();
-        Carbon::setTestNow();
-        $currentTime = Carbon::now();
+        CarbonImmutable::setTestNow();
+        $currentTime = CarbonImmutable::now();
 
         $response = $this
             ->be($user)
