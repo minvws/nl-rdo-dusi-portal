@@ -179,7 +179,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
         ];
     }
 
-    public function getCloseMatchSuggestion(): ?string
+    public function getCloseMatchSuggestion(): string
     {
         return $this->application->applicationSurePayResult?->encrypted_name_suggestion ?
             $this->applicationDataService->decryptForApplicantStage(
