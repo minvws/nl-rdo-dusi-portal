@@ -26,7 +26,6 @@ See https://github.com/minvws/nl-rdo-dusi-portal/issues/397.
 
 Add the newest note to the top, below this line:
 
-
 ====================================================================================================
 
 ### The calculated fieldHashes need to be updated
@@ -39,4 +38,3 @@ See <https://github.com/minvws/nl-rdo-dusi-portal/pull/911>
 
 Run the SQL migration which is added to version v1.3.8.
 See <https://github.com/minvws/nl-rdo-dusi-portal/pull/893>
-
