@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use MinVWS\DUSi\Application\Backend\Events\Logging\ListApplicationsEvent;
+use MinVWS\DUSi\Application\Backend\Events\Logging\ViewApplicationEvent;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
@@ -21,6 +23,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\Logging\Laravel\LogService;
 use Throwable;
 
 /**
@@ -37,7 +40,8 @@ readonly class ApplicationRetrievalService
         private ApplicationRepository $applicationRepository,
         private IdentityService $identityService,
         private ApplicationMapper $applicationMapper,
-        private EncryptedResponseExceptionHelper $exceptionHelper
+        private EncryptedResponseExceptionHelper $exceptionHelper,
+        private LogService $logService,
     ) {
     }
 
@@ -70,6 +74,11 @@ readonly class ApplicationRetrievalService
 
         $apps = $this->applicationRepository->getMyApplications($identity);
         $list = $this->applicationMapper->mapApplicationArrayToApplicationListDTO($apps);
+
+        $this->logService->log((new ListApplicationsEvent())
+            ->withData([
+                'userId' => $identity->id,
+            ]));
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,
@@ -105,6 +114,12 @@ readonly class ApplicationRetrievalService
         }
 
         $dto = $this->applicationMapper->mapApplicationToApplicationDTO($app, $data, null);
+
+        $this->logService->log((new ViewApplicationEvent())
+            ->withData([
+                'reference' => $params->reference,
+                'userId' => $identity->id,
+            ]));
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,

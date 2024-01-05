@@ -117,6 +117,101 @@ class PasswordResetTest extends TestCase
             ]);
     }
 
+    /**
+     * @dataProvider passwordPolicyProvider
+     * @param string $newPassword
+     * @param bool $valid
+     * @return void
+     */
+    public function testUserCanResetPasswordWithTokenPasswordPolicy(
+        string $newPassword,
+        bool $valid,
+        ?array $validationMessages = null
+    ): void {
+        // Create assessor user
+        $user = User::factory()->create([
+            'name' => 'New User',
+            'password' => Hash::make('password'),
+        ]);
+        $user->attachRole(RoleEnum::Assessor);
+
+        // Create token
+        $token = $this->resetTokenRepository->create($user);
+
+        // Password reset request
+        $response = $this
+            ->json('POST', route('password.update'), [
+                'email' => $user->email,
+                'token' => $token,
+                'password' => $newPassword,
+                'password_confirmation' => $newPassword,
+            ]);
+
+        if ($valid) {
+            $response
+                ->assertOk()
+                ->assertJson([
+                    'message' => 'Het wachtwoord van uw account is gewijzigd.',
+                ]);
+        } else {
+            $response
+                ->assertStatus(422)
+                ->assertJson($validationMessages, true);
+        }
+    }
+
+    public static function passwordPolicyProvider(): array
+    {
+        // phpcs:disable Generic.Files.LineLength
+        return [
+            [ 'aaaaaaaaaaaaaaa', false, [
+                'message' => 'Wachtwoord moet minimaal één kleine letter en één hoofdletter bevatten. (en 2 andere foutmeldingen)',
+                "errors" => [
+                    "password" => [
+                        'Wachtwoord moet minimaal één kleine letter en één hoofdletter bevatten.',
+                        'Wachtwoord moet minimaal één vreemd teken bevatten.',
+                        'Wachtwoord moet minimaal één cijfer bevatten.',
+                    ],
+                ],
+            ] ],
+            [ 'aaaaaaaBBBBBBBB', false, [
+                'message' => 'Wachtwoord moet minimaal één vreemd teken bevatten. (en 1 andere foutmelding)',
+                "errors" => [
+                    "password" => [
+                        'Wachtwoord moet minimaal één vreemd teken bevatten.',
+                        'Wachtwoord moet minimaal één cijfer bevatten.',
+                    ],
+                ],
+            ] ],
+            [ '42aaaaaaaBBBBBBBB', false, [
+                'message' => 'Wachtwoord moet minimaal één vreemd teken bevatten.',
+                "errors" => [
+                    "password" => [
+                        'Wachtwoord moet minimaal één vreemd teken bevatten.',
+                    ],
+                ],
+            ] ],
+            [ '@aaaaaaBBBBBBBB', false, [
+                'message' => 'Wachtwoord moet minimaal één cijfer bevatten.',
+                "errors" => [
+                    "password" => [
+                        'Wachtwoord moet minimaal één cijfer bevatten.',
+                    ],
+                ],
+            ] ],
+            [ '42@aaaaBBBBBBBB', true ],
+            [ '42@BBBBBBBBBBBB', false, [
+                'message' => 'Wachtwoord moet minimaal één kleine letter en één hoofdletter bevatten.',
+                "errors" => [
+                    "password" => ['Wachtwoord moet minimaal één kleine letter en één hoofdletter bevatten.',
+                    ],
+                ],
+            ] ],
+            [ '42@aBBBBBBBBBBB', true ],
+        ];
+        // phpcs:enable Generic.Files.LineLength
+    }
+
     public static function notAllowedRolesProvider(): array
     {
         return [
@@ -126,10 +221,10 @@ class PasswordResetTest extends TestCase
 
     protected function passwordResetRequestResponse(): array
     {
-        // @codingStandardsIgnoreStart
+        // phpcs:disable Generic.Files.LineLength
         return [
             'message' => 'Indien dit e-mailadres bij ons bekend is, hebben we een e-mail verstuurd met instructies om een nieuw wachtwoord in te stellen.'
         ];
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable Generic.Files.LineLength
     }
 }

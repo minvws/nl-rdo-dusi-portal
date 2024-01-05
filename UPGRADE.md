@@ -22,6 +22,8 @@ version. This command should exit cleanly without any errors.
 See https://github.com/minvws/nl-rdo-dusi-portal/issues/397.
 ```
 
+## Notes
+
 Add the newest note to the top, below this line:
 
 DUSI-491: SurePay CloseMatch resultaat tonen in behandelportaal
@@ -29,3 +31,9 @@ DUSI-491: SurePay CloseMatch resultaat tonen in behandelportaal
 - An SQL migration is needed which is added to version v1.3.8
 
 ====================================================================================================
+
+### The calculated fieldHashes need to be updated
+
+Run the artisan command to calculate the fieldHashes for all submitted applications. All hashes with fields with a
+value of "0" should be updated to a new hash.
+See <https://github.com/minvws/nl-rdo-dusi-portal/pull/911>
