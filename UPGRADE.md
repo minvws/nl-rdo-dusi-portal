@@ -25,6 +25,7 @@ See https://github.com/minvws/nl-rdo-dusi-portal/issues/397.
 Add the newest note to the top, below this line:
 
 DUSI-491: SurePay CloseMatch resultaat tonen in behandelportaal
+
 - An SQL migration is needed which is added to version v1.3.8
 
 ====================================================================================================
