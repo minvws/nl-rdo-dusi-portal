@@ -33,3 +33,11 @@ Add the newest note to the top, below this line:
 Run the artisan command to calculate the fieldHashes for all submitted applications. All hashes with fields with a
 value of "0" should be updated to a new hash.
 See <https://github.com/minvws/nl-rdo-dusi-portal/pull/911>
+
+### DUSI-179: BTV updaten
+
+For the BTV subsidy a signature needs to be added:
+assessment-api/storage/subsidy-files/00f26400-7232-475f-922c-6b569b7e421a/vws_dusi_signature.jpg
+
+To setup the BTV subsidy a SQL migration needs to be run, which is part of migration version v1.3.8. 
+More details: <https://github.com/minvws/nl-rdo-dusi-portal/pull/992>
