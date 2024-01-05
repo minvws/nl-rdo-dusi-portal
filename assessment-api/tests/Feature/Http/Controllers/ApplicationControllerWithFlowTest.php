@@ -218,6 +218,16 @@ class ApplicationControllerWithFlowTest extends TestCase
         );
         $applicationStage1Sequence3 = $this->flowService->submitApplicationStage($applicationStage2Sequence2);
 
+        /** @var ApplicationDataService $applicationDataService */
+        $applicationDataService = $this->app->get(ApplicationDataService::class);
+        $this->assertEquals(
+            MockedBankAccountRepository::BANK_HOLDER_SUGGESTION,
+            $applicationDataService->decryptForApplicantStage(
+                $application,
+                $application->applicationSurePayResult->encrypted_name_suggestion
+            )
+        );
+
         $body = new FieldValidationParams(
             (object) [
                 $bankAccountField->code => MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
@@ -231,7 +241,7 @@ class ApplicationControllerWithFlowTest extends TestCase
             submit: true,
         );
 
-        $applicationStage2Sequence4 = $this->flowService->submitApplicationStage($applicationStage1Sequence3);
+        $this->flowService->submitApplicationStage($applicationStage1Sequence3);
         $surePayService->checkSurePayForApplication($application);
 
         $this->assertDatabaseHas(ApplicationSurePayResult::class, [
@@ -240,8 +250,6 @@ class ApplicationControllerWithFlowTest extends TestCase
 
         $application->refresh();
 
-        /** @var ApplicationDataService $applicationDataService */
-        $applicationDataService = $this->app->get(ApplicationDataService::class);
         $this->assertEquals(
             MockedBankAccountRepository::BANK_HOLDER_SUGGESTION,
             $applicationDataService->decryptForApplicantStage(
