@@ -235,7 +235,7 @@ class ApplicationControllerWithFlowTest extends TestCase
             ]
         );
 
-        $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
+        $applicationDataService->saveApplicationStageData(
             $applicationStage1Sequence3,
             $body->data,
             submit: true,
