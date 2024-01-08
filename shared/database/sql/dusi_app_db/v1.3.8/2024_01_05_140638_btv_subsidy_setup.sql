@@ -193,7 +193,7 @@ insert into public.fields ("id", "subsidy_stage_id", "code", "title", "descripti
                       "required_condition", "retention_period_on_approval")
 values ('37d65c7c-5a7a-4c25-bebd-6f32046d111e', 'b2b08566-8493-4560-8afa-d56402931f74', 'secondAssessment',
         'Beoordeling', null, 'select',
-        '{"options":["Oneens met de eerste beoordeling","Eens met de eerste beoordeling"],"default":null}', 1, null,
+        '{"options":["Oneens met de eerste beoordeling","Eens met de eerste beoordeling"],"default":null}', true, null,
         'short');
 
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
