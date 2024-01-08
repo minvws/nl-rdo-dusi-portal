@@ -46,4 +46,3 @@ assessment-api/storage/subsidy-files/00f26400-7232-475f-922c-6b569b7e421a/vws_du
 
 To setup the BTV subsidy a SQL migration needs to be run, which is part of migration version v1.3.8.
 More details: <https://github.com/minvws/nl-rdo-dusi-portal/pull/992>
-
