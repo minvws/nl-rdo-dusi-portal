@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.17",
-        "sass": "^1.69.6",
+        "sass": "^1.69.7",
         "semver": "^7.5.4"
     }
 }
