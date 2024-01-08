@@ -38,3 +38,12 @@ See <https://github.com/minvws/nl-rdo-dusi-portal/pull/911>
 
 Run the SQL migration which is added to version v1.3.8.
 See <https://github.com/minvws/nl-rdo-dusi-portal/pull/893>
+
+### DUSI-179: BTV updaten
+
+For the BTV subsidy a signature needs to be added:
+assessment-api/storage/subsidy-files/00f26400-7232-475f-922c-6b569b7e421a/vws_dusi_signature.jpg
+
+To setup the BTV subsidy a SQL migration needs to be run, which is part of migration version v1.3.8.
+More details: <https://github.com/minvws/nl-rdo-dusi-portal/pull/992>
+

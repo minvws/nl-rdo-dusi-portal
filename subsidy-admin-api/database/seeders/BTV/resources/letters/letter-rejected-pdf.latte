@@ -16,10 +16,10 @@
     <p>Uw aanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
     <p>&nbsp;</p>
 
-    {if $content->motivation}
+    {if $content->stage2->firstAssessmentRejectedNote}
         <h2>Motivering bij het besluit</h2>
         <p>Uw aanvraag wordt afgewezen vanwege de volgende reden(en):</p>
-        <p>{$content->motivation}</p>
+        <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
         <p>&nbsp;</p>
     {/if}
 {/block}
