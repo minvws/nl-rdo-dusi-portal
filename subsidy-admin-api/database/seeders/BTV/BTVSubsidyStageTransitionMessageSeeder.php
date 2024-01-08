@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 
-class PCZMSubsidyStageTransitionMessageSeeder extends Seeder
+class BTVSubsidyStageTransitionMessageSeeder extends Seeder
 {
-    public const PCZM_TRANSITION_STAGE_2_TO_1_MESSAGE = '85bf054e-c6e3-42d2-880d-07c29d0fe6bf';
-    public const PZCM_TRANSITION_STAGE_3_TO_REJECTED_MESSAGE = '64a636d8-ed0c-4bb6-982e-f948c68755b6';
-    public const PZCM_TRANSITION_STAGE_5_TO_REJECTED_MESSAGE = '7da32b2f-4f0d-44ab-bc87-07718db4bfd5';
-    public const PZCM_TRANSITION_STAGE_5_TO_APPROVED_MESSAGE = '9c2ad81e-cf52-41a3-966f-fc9757de15c9';
+    public const TRANSITION_STAGE_3_TO_1_MESSAGE = 'cffe3600-77a9-43b2-9882-7b7f56c4d0ad';
+    public const TRANSITION_STAGE_3_TO_REJECTED_MESSAGE = 'c3b32e69-e093-4f0f-9318-7cc771114f2d';
+    public const TRANSITION_STAGE_4_TO_REJECTED_MESSAGE = '7476a2bd-15eb-4ab8-be8e-c9f3dd07f9b7';
+    public const TRANSITION_STAGE_4_TO_APPROVED_MESSAGE = '1983fa28-cfc6-4c0f-9bc3-cba9e0909456';
 
     public function run(): void
     {
         DB::table('subsidy_stage_transition_messages')->insert([
-           'id' => self::PCZM_TRANSITION_STAGE_2_TO_1_MESSAGE,
-           'subsidy_stage_transition_id' => PCZMSubsidyStageTransitionsSeeder::PZCM_TRANSITION_STAGE_2_TO_1,
+           'id' => self::TRANSITION_STAGE_3_TO_1_MESSAGE,
+           'subsidy_stage_transition_id' => BTVSubsidyStageTransitionsSeeder::TRANSITION_STAGE_2_TO_1,
            'version' => 1,
            'status' => VersionStatus::Published->value,
            'created_at' => Carbon::now(),
@@ -30,8 +30,8 @@ class PCZMSubsidyStageTransitionMessageSeeder extends Seeder
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
-           'id' => self::PZCM_TRANSITION_STAGE_3_TO_REJECTED_MESSAGE,
-           'subsidy_stage_transition_id' => PCZMSubsidyStageTransitionsSeeder::PZCM_TRANSITION_STAGE_3_TO_REJECTED,
+           'id' => self::TRANSITION_STAGE_3_TO_REJECTED_MESSAGE,
+           'subsidy_stage_transition_id' => BTVSubsidyStageTransitionsSeeder::TRANSITION_STAGE_3_TO_REJECTED,
            'version' => 1,
            'status' => VersionStatus::Published->value,
            'created_at' => Carbon::now(),
@@ -41,8 +41,8 @@ class PCZMSubsidyStageTransitionMessageSeeder extends Seeder
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
-           'id' => self::PZCM_TRANSITION_STAGE_5_TO_REJECTED_MESSAGE,
-           'subsidy_stage_transition_id' => PCZMSubsidyStageTransitionsSeeder::PZCM_TRANSITION_STAGE_5_TO_REJECTED,
+           'id' => self::TRANSITION_STAGE_4_TO_REJECTED_MESSAGE,
+           'subsidy_stage_transition_id' => BTVSubsidyStageTransitionsSeeder::TRANSITION_STAGE_4_TO_REJECTED,
            'version' => 1,
            'status' => VersionStatus::Published->value,
            'created_at' => Carbon::now(),
@@ -52,8 +52,8 @@ class PCZMSubsidyStageTransitionMessageSeeder extends Seeder
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
-           'id' => self::PZCM_TRANSITION_STAGE_5_TO_APPROVED_MESSAGE,
-           'subsidy_stage_transition_id' => PCZMSubsidyStageTransitionsSeeder::PZCM_TRANSITION_STAGE_5_TO_APPROVED,
+           'id' => self::TRANSITION_STAGE_4_TO_APPROVED_MESSAGE,
+           'subsidy_stage_transition_id' => BTVSubsidyStageTransitionsSeeder::TRANSITION_STAGE_4_TO_APPROVED,
            'version' => 1,
            'status' => VersionStatus::Published->value,
            'created_at' => Carbon::now(),

@@ -19,13 +19,13 @@ class PCZMAssessmentFieldsSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->pczmFirstAssessmentFields();
-        $this->pczmSecondAssessmentFields();
-        $this->pczmInternalAssessmentFields();
-        $this->pczmCoordinatorImplemenationFields();
+        $this->firstAssessmentFields();
+        $this->secondAssessmentFields();
+        $this->internalAssessmentFields();
+        $this->coordinatorImplemenationFields();
     }
 
-    public function pczmFirstAssessmentFields(): void
+    public function firstAssessmentFields(): void
     {
         // Eerste beoordeling
         //Persoonsgegevens
@@ -288,7 +288,7 @@ class PCZMAssessmentFieldsSeeder extends Seeder
         );
     }
 
-    public function pczmSecondAssessmentFields(): void
+    public function secondAssessmentFields(): void
     {
         //Tweede beoordeling
         $this->createCheckboxField(
@@ -316,7 +316,7 @@ class PCZMAssessmentFieldsSeeder extends Seeder
         );
     }
 
-    public function pczmInternalAssessmentFields(): void
+    public function internalAssessmentFields(): void
     {
         //Interne controle
         $this->createMultiSelectField(
@@ -349,7 +349,7 @@ class PCZMAssessmentFieldsSeeder extends Seeder
         );
     }
 
-    public function pczmCoordinatorImplemenationFields(): void
+    public function coordinatorImplemenationFields(): void
     {
         //Uitvoeringscoördinator controle
         $this->createSelectField(

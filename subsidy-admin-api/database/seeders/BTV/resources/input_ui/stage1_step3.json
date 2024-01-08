@@ -46,7 +46,7 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/extractPersonalRecordsDatabase",
+                            "scope": "#/properties/extractPopulationRegisterDocument",
                             "label": "Uittreksel bevolkingsregister",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
@@ -69,7 +69,7 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/proofOfMedicalTreatment",
+                            "scope": "#/properties/proofOfMedicalTreatmentDocument",
                             "label": "Verklaring behandeltraject",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
@@ -92,7 +92,7 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/proofOfTypeOfMedicalTreatment",
+                            "scope": "#/properties/proofOfTypeOfMedicalTreatmentDocument",
                             "label": "Verklaring type behandeling",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
