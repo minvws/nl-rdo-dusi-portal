@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71e15f229ee140004187d22c86de48c9",
+    "content-hash": "323d82b74aa5eeececb59fb7b340615a",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3138,11 +3138,11 @@
         },
         {
             "name": "minvws/laravel-sql-exporter",
-            "version": "dev-main",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-laravel-sql-export.git",
-                "reference": "d867bc6edaeb0deaf02a4441b724054422e22ac8"
+                "reference": "527a9a252eacc8d0ce71a9dc6225cd54db2d03ed"
             },
             "require": {
                 "laravel/framework": "^10",
@@ -3157,7 +3157,6 @@
                 "squizlabs/php_codesniffer": "^3.7",
                 "vimeo/psalm": "^5.8"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3201,7 +3200,7 @@
                 "laravel",
                 "sql"
             ],
-            "time": "2023-12-18T12:24:34+00:00"
+            "time": "2024-01-08T15:46:00+00:00"
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
@@ -13734,8 +13733,7 @@
     "stability-flags": {
         "minvws/codable": 20,
         "minvws/dusi-shared": 20,
-        "minvws/php-rmq-rpc-bridge": 20,
-        "minvws/laravel-sql-exporter": 20
+        "minvws/php-rmq-rpc-bridge": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
