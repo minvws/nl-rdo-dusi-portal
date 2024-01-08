@@ -159,7 +159,7 @@ values ('33f4c629-467f-4d9b-8e80-dfaeafde8d36', '6bcd59ab-2ba6-43bb-a1a1-9fb995f
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
                       "required_condition", "retention_period_on_approval")
 values ('9f0f8c1b-c622-40c0-9fd9-f4c82a3e7025', '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c', 'firstAssessment',
-        'Beoordeling', null, 'select', '{"options":["Aanvulling nodig","Afgekeurd","Goedgekeurd"],"default":null}', 1,
+        'Beoordeling', null, 'select', '{"options":["Aanvulling nodig","Afgekeurd","Goedgekeurd"],"default":null}', true,
         null, 'short');
 
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
