@@ -221,7 +221,7 @@ values ('20f072b3-e881-47b4-ba2b-a29ad1881449', 'e456e790-1919-4a2b-b3d5-337d005
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
                       "required_condition", "retention_period_on_approval")
 values ('44ab3128-bb25-4793-9b9b-f1db10520291', 'e456e790-1919-4a2b-b3d5-337d0053abe3',
-        'internalAssessmentReasonForRejection', 'Reden van afkeuring', null, 'text', '{"maxLength":null}', 0, null,
+        'internalAssessmentReasonForRejection', 'Reden van afkeuring', null, 'text', '{"maxLength":null}', false, null,
         'short');
 
 insert into public.subsidy_stage_uis ("id", "subsidy_stage_id", "version", "status", "input_ui", "view_ui")
