@@ -301,7 +301,8 @@ class ApplicationRepository
 
     public function cloneApplicationStageAnswers(ApplicationStage $source, ApplicationStage $target): void
     {
-        foreach ($source->answers as $answer) {
+        $cloneableAnswers = $source->answers->filter(fn(Answer $answer) => !$answer->field->exclude_from_clone_data);
+        foreach ($cloneableAnswers as $answer) {
             $newAnswer = $answer->replicate(['application_stage_id']);
             $newAnswer->applicationStage()->associate($target);
             $newAnswer->save();
