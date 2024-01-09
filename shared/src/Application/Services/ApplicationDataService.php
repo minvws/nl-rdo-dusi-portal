@@ -11,10 +11,12 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
+use League\CommonMark\Exception\LogicException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
@@ -283,5 +285,29 @@ readonly class ApplicationDataService
         }
 
         return false;
+    }
+
+    public function decryptForApplicantStage(
+        Application $application,
+        string $encryptedValue
+    ): string {
+        $applicantApplicationStage = $this->applicationRepository->getApplicantApplicationStage($application, false);
+
+        if (is_null($applicantApplicationStage)) {
+            throw new LogicException(sprintf('No Applicant stage found for Application: %s', $application->id));
+        }
+
+        $encrypter = $this->encryptionService->getEncrypter($applicantApplicationStage);
+
+        return $encrypter->decrypt($encryptedValue);
+    }
+
+    public function encryptForStage(
+        ApplicationStage $applicationStage,
+        string $value
+    ): string {
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+
+        return $encrypter->encrypt($value);
     }
 }

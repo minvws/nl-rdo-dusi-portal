@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Tests\Feature\Services;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -28,7 +27,6 @@ use Mockery;
  */
 class ValidationServiceTest extends TestCase
 {
-    use DatabaseTransactions;
     use WithFaker;
 
     /**

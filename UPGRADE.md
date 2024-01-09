@@ -34,6 +34,11 @@ Run the artisan command to calculate the fieldHashes for all submitted applicati
 value of "0" should be updated to a new hash.
 See <https://github.com/minvws/nl-rdo-dusi-portal/pull/911>
 
+### DUSI-491: SurePay CloseMatch resultaat tonen in behandelportaal
+
+Run the SQL migration which is added to version v1.3.8.
+See <https://github.com/minvws/nl-rdo-dusi-portal/pull/893>
+
 ### DUSI-179: BTV updaten
 
 For the BTV subsidy a signature needs to be added:

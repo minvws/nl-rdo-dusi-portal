@@ -12,6 +12,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 
@@ -27,6 +29,24 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
  */
 class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
 {
+    private const SUBSIDY_PZCM_ID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
+
+    /**
+     * @psalm-suppress InvalidPropertyAssignmentValue
+     */
+    protected function createSubsidy(): void
+    {
+        $this->subsidy = Subsidy::factory()
+            ->create([
+                'id' => self::SUBSIDY_PZCM_ID,
+            ]);
+        $this->subsidyVersion = SubsidyVersion::factory()
+            ->for($this->subsidy)
+            ->create([
+                'review_period' => self::REVIEW_PERIOD
+            ]);
+    }
+
     protected function createSubsidyStages(): void
     {
         $subsidyStage1 =

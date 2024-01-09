@@ -6,8 +6,8 @@ namespace MinVWS\DUSi\Shared\Test;
 
 use Illuminate\Encryption\Encrypter;
 use MinVWS\DUSi\Shared\Application\Interfaces\KeyReader;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationFileEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionMockService;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
@@ -88,21 +88,10 @@ trait MocksEncryption
                 return $value;
             });
 
-        $applicationEncryptorMock = Mockery::mock(ApplicationStageEncryptionService::class);
-        $applicationEncryptorMock
-            ->shouldReceive('getEncrypter')
-            ->andReturn($encrypterMock);
-
-        $applicationEncryptorMock
-            ->shouldReceive('generateEncryptionKey')
-            ->andReturn([new HsmEncryptedData('', ''), $encrypterMock]);
-
-        $applicationEncryptorMock
-            ->shouldReceive('getEncrypter')
-            ->andReturnUsing(function (ApplicationStage $applicationStage) use ($encrypterMock) {
-                return $encrypterMock;
-            });
-
+        $applicationEncryptorMock = new ApplicationStageEncryptionMockService(
+            $hsmEncryptionService,
+            $hsmDecryptionService,
+        );
         $this->app->instance(ApplicationStageEncryptionService::class, $applicationEncryptorMock);
 
         $applicationFileEncryptionService = Mockery::mock(ApplicationFileEncryptionService::class);

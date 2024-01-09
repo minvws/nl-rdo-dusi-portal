@@ -28,13 +28,13 @@ use MinVWS\DUSi\Shared\User\Models\User;
  */
 abstract class AbstractSubsidyAggregateManager
 {
-    private const REVIEW_PERIOD = 7; // days
+    protected const REVIEW_PERIOD = 7; // days
 
-    private array $users = [];
-    private Subsidy $subsidy;
-    private SubsidyVersion $subsidyVersion;
-    public array $subsidyStages = [];
-    private array $subsidyStageFields = [];
+    protected array $users = [];
+    protected Subsidy $subsidy;
+    protected SubsidyVersion $subsidyVersion;
+    protected array $subsidyStages = [];
+    protected array $subsidyStageFields = [];
 
     public function __construct(
         private readonly ApplicationStageEncryptionService $encryptionService
@@ -97,8 +97,11 @@ abstract class AbstractSubsidyAggregateManager
             throw new LogicException(sprintf('SubsidyStageField key already exits. Key: %s', $name));
         }
 
-        $this->subsidyStageFields[$name] =
-            Field::factory()->for($subsidyStage)->create(['code' => $name, ...$subsidyStageFieldAttributes]);
+        $this->subsidyStageFields[$name] = Field::factory()->for($subsidyStage)->create([
+            'code' => $name,
+            'is_required' => false,
+            ...$subsidyStageFieldAttributes
+        ]);
 
         return $this->subsidyStageFields[$name];
     }

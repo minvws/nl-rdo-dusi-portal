@@ -41,6 +41,8 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
     private function buildApplication(): array
     {
+        $surePayCloseMatchSuggestion = $this->getCloseMatchSuggestion();
+
         return [
             'metadata' => [
                 'application' => [
@@ -80,6 +82,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
                     ],
                     'surePayResult' => [
                         'type' => 'string'
+                    ],
+                    'surePayCloseMatchSuggestion' => [
+                        'type' => 'string'
                     ]
                 ]
             ],
@@ -100,7 +105,8 @@ class ApplicationSubsidyVersionResource extends JsonResource
                                 'Aangevraagd op' => '{submittedAt}',
                                 'Uiterste behandeldatum' => '{finalReviewDeadline}',
                                 'BSN aanvrager' => '{citizenServiceNumber}',
-                                'SurePay controle resultaat' => '{surePayResult}'
+                                'SurePay controle resultaat' => '{surePayResult}',
+                                'SurePay suggestie' => '{surePayCloseMatchSuggestion}'
                             ]
                         ]
                     ]
@@ -120,7 +126,8 @@ class ApplicationSubsidyVersionResource extends JsonResource
                         NameMatchResult::CouldNotMatch => 'Could not match',
                         NameMatchResult::NameTooShort => 'Naam te kort',
                         default => 'Onbekend'
-                    }
+                    },
+                'surePayCloseMatchSuggestion' => $surePayCloseMatchSuggestion
             ]
         ];
     }
@@ -170,5 +177,14 @@ class ApplicationSubsidyVersionResource extends JsonResource
             'uischema' => $uiSchema,
             'data' => $data
         ];
+    }
+
+    public function getCloseMatchSuggestion(): string
+    {
+        return $this->application->applicationSurePayResult?->encrypted_name_suggestion ?
+            $this->applicationDataService->decryptForApplicantStage(
+                $this->application,
+                $this->application->applicationSurePayResult->encrypted_name_suggestion
+            ) : "-";
     }
 }

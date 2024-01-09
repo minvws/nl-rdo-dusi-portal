@@ -95,7 +95,8 @@ class ApplicationFlowServiceTest extends TestCase
             'stage' => 1,
             'subject_role' => SubjectRole::Applicant
         ]);
-        $this->subsidyStage1Field = Field::factory()->for($this->subsidyStage1)->create(['type' => FieldType::Text]);
+        $this->subsidyStage1Field =
+            Field::factory()->for($this->subsidyStage1)->create(['type' => FieldType::CustomBankAccount]);
         $this->subsidyStage1Upload = Field::factory()->for($this->subsidyStage1)->create(['type' => FieldType::Upload]);
         $this->subsidyStage2 = SubsidyStage::factory()->for($this->subsidyVersion)->create([
             'stage' => 2,

@@ -14,6 +14,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -42,6 +43,10 @@ class ApplicationExportControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->setupMocksEncryption();
+
+        $encryptionService = $this->app->get(ApplicationStageEncryptionService::class);
 
         $this->subsidy = Subsidy::factory()->create([
             'code' => 'PCZM',
@@ -78,11 +83,15 @@ class ApplicationExportControllerTest extends TestCase
                     'status' => 'approved',
                 ]
             )
-            ->each(function (Application $application) use ($subsidyStage1, $subsidyStage2, $faker) {
+            ->each(function (Application $application) use (
+                $subsidyStage1,
+                $subsidyStage2,
+                $faker,
+                $encryptionService
+            ) {
                 ApplicationSurePayResult::factory()
                     ->for($application)
-                    ->create()
-                ;
+                    ->create();
 
                 $appStage1 = ApplicationStage::factory()->for($application)->for($subsidyStage1)
                     ->create(['is_current' => false, 'is_submitted' => true, 'submitted_at' => Carbon::now()]);
@@ -103,6 +112,8 @@ class ApplicationExportControllerTest extends TestCase
                     'bankAccountHolder' => 'name',
                     'bankAccountNumber' => null,
                 ];
+
+                $encrypter = $encryptionService->getEncrypter($appStage1);
 
                 foreach ($applicationFields as $fieldCode => $fakerFunction) {
                     $field = Field::factory()
@@ -130,11 +141,10 @@ class ApplicationExportControllerTest extends TestCase
                         ->for($field)
                         ->create([
                             'application_stage_id' => $appStage1->id,
-                            'encrypted_answer' => $encryptedAnswer,
+                            'encrypted_answer' => $encrypter->encrypt($encryptedAnswer),
                         ]);
                 }
-            })
-        ;
+            });
     }
 
     public function testExportApplications(): void
@@ -155,6 +165,7 @@ class ApplicationExportControllerTest extends TestCase
 
         $responseFilename = sprintf('attachment; filename=export-%s.csv', $currentTime->format('Y-m-d-His'));
         $response->assertHeader('Content-Disposition', $responseFilename);
+
 
         $content = $response->streamedContent();
 
