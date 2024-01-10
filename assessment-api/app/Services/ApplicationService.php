@@ -53,6 +53,7 @@ class ApplicationService
         bool $onlyMyApplications,
         ApplicationsFilter $applicationsFilter
     ): AnonymousResourceCollection {
+
         $applications = $this->applicationRepository
             ->filterApplications($user, $onlyMyApplications, $applicationsFilter);
 

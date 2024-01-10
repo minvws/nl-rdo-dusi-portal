@@ -11,4 +11,5 @@ enum Role: string
     case ImplementationCoordinator = 'implementationCoordinator';
     case InternalAuditor = 'internalAuditor';
     case DataExporter = 'dataExporter';
+    case LegalSpecialist = 'legalSpecialist';
 }
