@@ -288,4 +288,72 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertCount(1, $answers->stages[1]->answers);
         $this->assertEquals($applicationStage2->id, $answers->stages[1]->stage->id);
     }
+
+    /**
+     * @group clone-answers
+     */
+    public function testCloningAnswers(): void
+    {
+        $field = Field::factory()
+            ->for($this->subsidyStage)
+            ->create();
+
+        $applicationStageSource = ApplicationStage::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'sequence_number' => 1,
+            ]);
+
+        $answerSource = Answer::factory()
+            ->for($field)
+            ->for($applicationStageSource)
+            ->create();
+
+        $applicationStageTarget = ApplicationStage::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'sequence_number' => 2,
+            ]);
+
+        $this->repository->cloneApplicationStageAnswers($applicationStageSource, $applicationStageTarget);
+
+        $this->assertEquals(
+            $answerSource->encrypted_answer,
+            $applicationStageTarget->answers()->first()->encrypted_answer
+        );
+    }
+
+    /**
+     * @group clone-answers
+     */
+    public function testCloningAnswersShouldTakeExcludedFieldsIntoAccount(): void
+    {
+        $field = Field::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'exclude_from_clone_data' => true,
+            ]);
+
+
+        $applicationStageSource = ApplicationStage::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'sequence_number' => 1,
+            ]);
+
+        $answer = Answer::factory()
+            ->for($field)
+            ->for($applicationStageSource)
+            ->create();
+
+        $applicationStageTarget = ApplicationStage::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'sequence_number' => 2,
+            ]);
+
+        $this->repository->cloneApplicationStageAnswers($applicationStageSource, $applicationStageTarget);
+
+        $this->assertCount(0, $applicationStageTarget->answers);
+    }
 }
