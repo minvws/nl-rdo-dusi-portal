@@ -28,11 +28,14 @@ Add the newest note to the top, below this line:
 
 ====================================================================================================
 
-### The calculated fieldHashes need to be updated
+## Next release
 
-Run the artisan command to calculate the fieldHashes for all submitted applications. All hashes with fields with a
-value of "0" should be updated to a new hash.
-See <https://github.com/minvws/nl-rdo-dusi-portal/pull/911>
+### DUSI-858: Don't clone truthfullyCompleted field
+
+Run the SQL migration which is added to version v1.3.9.
+See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1032>
+
+## Release 1.10.4
 
 ### DUSI-491: SurePay CloseMatch resultaat tonen in behandelportaal
 
@@ -46,3 +49,11 @@ assessment-api/storage/subsidy-files/00f26400-7232-475f-922c-6b569b7e421a/vws_du
 
 To setup the BTV subsidy a SQL migration needs to be run, which is part of migration version v1.3.8.
 More details: <https://github.com/minvws/nl-rdo-dusi-portal/pull/992>
+
+## Release v1.10.3
+
+### The calculated fieldHashes need to be updated
+
+Run the artisan command to calculate the fieldHashes for all submitted applications. All hashes with fields with a
+value of "0" should be updated to a new hash.
+See <https://github.com/minvws/nl-rdo-dusi-portal/pull/911>
