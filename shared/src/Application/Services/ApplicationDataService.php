@@ -85,18 +85,7 @@ readonly class ApplicationDataService
         // Validate, throws a ValidationException on error
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
         $validationResult = $validator->validate();
-
-        // Remove all answers for this stage because we received new data
-        $this->applicationRepository->deleteAnswersByStage($applicationStage);
-
-        // New encryption key for each save, so we do not reuse the same key
-        [$encryptedKey, $encrypter] = $this->encryptionService->generateEncryptionKey();
-        $applicationStage->encrypted_key = $encryptedKey;
-        $applicationStage->save();
-
-        $this->saveFieldValues($fieldValues, $encrypter, $applicationStage);
-
-        $this->updateSubsidyStageHashes($fieldValues, $applicationStage);
+        $this->updateAnswersForApplicationStage($applicationStage, $fieldValues);
 
         return $validationResult;
     }
@@ -285,6 +274,27 @@ readonly class ApplicationDataService
         }
 
         return false;
+    }
+
+    /**
+     * @param ApplicationStage $applicationStage
+     * @param array $fieldValues
+     * @return void
+     * @throws Exception
+     */
+    private function updateAnswersForApplicationStage(ApplicationStage $applicationStage, array $fieldValues): void
+    {
+        // Remove all answers for this stage because we received new data
+        $this->applicationRepository->deleteAnswersByStage($applicationStage);
+
+        // New encryption key for each save, so we do not reuse the same key
+        [$encryptedKey, $encrypter] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage->encrypted_key = $encryptedKey;
+        $applicationStage->save();
+
+        $this->saveFieldValues($fieldValues, $encrypter, $applicationStage);
+
+        $this->updateSubsidyStageHashes($fieldValues, $applicationStage);
     }
 
     public function decryptForApplicantStage(

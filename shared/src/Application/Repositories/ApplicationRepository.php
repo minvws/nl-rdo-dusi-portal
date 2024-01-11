@@ -138,9 +138,9 @@ class ApplicationRepository
         }
     }
 
-    public function getApplication(string $appId): ?Application
+    public function getApplication(string $appId, bool $lockForUpdate = false): ?Application
     {
-        $application = Application::find($appId);
+        $application = Application::query()->when($lockForUpdate, fn($q) => $q->lockForUpdate())->find($appId);
         if ($application instanceof Application) {
             return $application;
         }
@@ -327,9 +327,12 @@ class ApplicationRepository
         return $identity->applications()->with(['subsidyVersion', 'subsidyVersion.subsidy'])->get()->all();
     }
 
-    public function getMyApplication(Identity $identity, string $reference): ?Application
+    public function getMyApplication(Identity $identity, string $reference, bool $lockForUpdate = false): ?Application
     {
-        return $identity->applications()->where('reference', $reference)->first();
+        return $identity->applications()
+            ->when($lockForUpdate, fn($q) => $q->lockForUpdate())
+            ->where('reference', $reference)
+            ->first();
     }
 
     public function isReferenceUnique(string $applicationReference): bool
