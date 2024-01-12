@@ -90,6 +90,7 @@ vendor/bin/sail artisan user:create anotherAssessor@example.com "Another Assesso
 vendor/bin/sail artisan user:create implementationCoordinator@example.com "Implementation Coordinator" password implementationCoordinator --secret=IMPLEMENTATIONCO
 vendor/bin/sail artisan user:create internalAuditor@example.com internalAuditor password internalAuditor --secret=INTERNALAUDITORI
 vendor/bin/sail artisan user:create dataExporter@example.com dataExporter password dataExporter --secret=DATAEXPORTERDATA
+vendor/bin/sail artisan user:create legalSpecialist@example.com legalSpecialist password legalSpecialist --secret=LEGALSPECIALISTD
 
 echo "User for user admin: user@example.com password"
 echo "Assessor user for assessment portal: assessor@example.com password"
@@ -97,5 +98,6 @@ echo "Another assessor user for assessment portal: anotherAssessor@example.com p
 echo "ImplementationCoordinator user for assessment portal: implementationCoordinator@example.com password"
 echo "InternalAuditor user for assessment portal: internalAuditor@example.com password"
 echo "DataExporter user for assessment portal: dataExporter@example.com password"
+echo "LegalSpecialist user for assessment portal: legalSpecialist@example.com password"
 
 cd "$BASEDIR"
