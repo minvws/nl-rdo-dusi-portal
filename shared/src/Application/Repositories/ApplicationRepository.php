@@ -31,6 +31,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\User\Models\User;
+use MinVWS\DUSi\Shared\User\Enums\Role;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -110,6 +111,8 @@ class ApplicationRepository
         $query->whereExists($filteredQuery);
 
         $this->applyFilters($query, $filter);
+
+        $query->when($user->hasRole(Role::LegalSpecialist), fn($q) => $q->where('status', ApplicationStatus::Rejected));
 
         return $query->get();
     }

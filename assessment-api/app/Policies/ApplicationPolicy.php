@@ -38,7 +38,12 @@ class ApplicationPolicy
 
     public function filterApplications(User $user): bool
     {
-        return $user->hasRole([Role::Assessor, Role::InternalAuditor, Role::ImplementationCoordinator]);
+        return $user->hasRole([
+            Role::Assessor,
+            Role::InternalAuditor,
+            Role::ImplementationCoordinator,
+            Role::LegalSpecialist,
+         ]);
     }
 
     public function filterAssignedApplications(User $user): bool

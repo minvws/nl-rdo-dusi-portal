@@ -44,6 +44,7 @@ class FortifyServiceProvider extends ServiceProvider
             Role::ImplementationCoordinator,
             Role::InternalAuditor,
             Role::DataExporter,
+            Role::LegalSpecialist,
         ];
 
         Auth::provider('assessment-user-provider', function ($app, array $config) use ($allowedRoles) {

@@ -547,4 +547,43 @@ class ApplicationControllerTest extends TestCase
             'actions' => $actions
         ]);
     }
+
+    public function testListAllApplicationsAsLegalSpecialist(): void
+    {
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::LegalSpecialist, $this->subsidy->id);
+
+        $application = Application::factory()->create(
+            [
+                'application_title' => 'application rejected',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Rejected,
+            ]
+        );
+        ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage1)
+            ->create();
+
+        $response = $this
+            ->be($user)
+            ->json('GET', '/api/applications');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+
+        $this->assertJsonFragment($response, $application, ['show']);
+
+        // Don't show other applications than rejected
+        $response->assertJsonMissing([
+            'application_title' => $this->application1->application_title,
+        ]);
+
+        $response->assertJsonMissing([
+            'application_title' => $this->application2->application_title,
+        ]);
+    }
 }
