@@ -577,7 +577,7 @@ class ApplicationControllerTest extends TestCase
 
         $this->assertJsonFragment($response, $application, ['show']);
 
-        // Don't unrejected applications
+        // Don't show other applications than rejected
         $response->assertJsonMissing([
             'application_title' => $this->application1->application_title,
         ]);
