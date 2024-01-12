@@ -49,9 +49,9 @@ class SubsidyRepository
      * @param string $id
      * @return ?SubsidyStage
      */
-    public function getSubsidyStage(string $id): ?SubsidyStage
+    public function getSubsidyStage(string $id, bool $lockForUpdate = false): ?SubsidyStage
     {
-        $subsidyStage = SubsidyStage::find($id);
+        $subsidyStage = SubsidyStage::query()->when($lockForUpdate, fn($q) => $q->lockForUpdate())->find($id);
         if ($subsidyStage instanceof SubsidyStage) {
             return $subsidyStage;
         }

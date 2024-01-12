@@ -169,7 +169,8 @@ class BTVApplicationFieldsSeeder extends Seeder
         $this->createCheckboxField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'truthfullyCompleted',
-            title:          ''
+            title:          '',
+            exclude_from_clone_data: true
         );
 
     }

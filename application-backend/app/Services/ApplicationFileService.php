@@ -96,7 +96,7 @@ readonly class ApplicationFileService
     private function doSaveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
     {
         $identity = $this->loadIdentity($params->identity);
-        $application = $this->loadApplication($identity, $params->applicationReference);
+        $application = $this->loadApplication($identity, $params->applicationReference, lockForUpdate: true);
         $applicationStage = $this->loadApplicationStage($application);
         $field = $this->loadField($applicationStage, $params->fieldCode);
 

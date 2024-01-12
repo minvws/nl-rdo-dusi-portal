@@ -25,9 +25,10 @@ class IdentityRepository
         return $identity;
     }
 
-    public function findIdentity(IdentityType $type, string $hashedIdentifier): ?Identity
+    public function findIdentity(IdentityType $type, string $hashedIdentifier, bool $lockForUpdate = false): ?Identity
     {
         return Identity::query()
+                ->when($lockForUpdate, fn ($q) => $q->lockForUpdate())
                 ->where('type', $type->value)
                 ->where('hashed_identifier', $hashedIdentifier)
                 ->first();

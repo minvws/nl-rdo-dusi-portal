@@ -112,7 +112,7 @@ readonly class ApplicationMutationService
             );
         }
 
-        $identity = $this->identityService->findOrCreateIdentity($params->identity);
+        $identity = $this->identityService->findOrCreateIdentity($params->identity, lockForUpdate: true);
 
         $application = $this->applicationRepository->findMyApplicationForSubsidy($identity, $subsidy);
 
@@ -207,7 +207,7 @@ readonly class ApplicationMutationService
     private function doSaveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse
     {
         $identity = $this->loadIdentity($params->identity);
-        $application = $this->loadApplication($identity, $params->applicationReference);
+        $application = $this->loadApplication($identity, $params->applicationReference, lockForUpdate: true);
         $body = $this->frontendDecryptionService->decryptCodable($params->data, ApplicationSaveBody::class);
 
         if (

@@ -29,6 +29,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
  * @property string $source
  * @property DataRetentionPeriod $retention_period_on_approval
  * @property SubsidyStage $subsidyStage
+ * @property bool $exclude_from_clone_data
  */
 class Field extends Model
 {
