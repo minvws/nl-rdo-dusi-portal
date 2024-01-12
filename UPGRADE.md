@@ -32,7 +32,7 @@ Add the newest note to the top, below this line:
 
 ### DUSI-1034: Add legalSpecialist role and filter on application list
 
-Run the duser_user_db SQL migrations up to version v1.5.0. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1036>
+Run the user_user_db SQL migrations up to version v1.5.0. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1036>
 
 ### DUSI-858: Don't clone truthfullyCompleted field
 
