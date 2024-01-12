@@ -112,9 +112,7 @@ class ApplicationRepository
 
         $this->applyFilters($query, $filter);
 
-        if ($user->hasRole(Role::LegalSpecialist)) {
-            $this->filterForLegalSpecialist($query);
-        }
+        $query->when($user->hasRole(Role::LegalSpecialist), fn($q) => $q->where('status', ApplicationStatus::Rejected));
 
         return $query->get();
     }
@@ -422,10 +420,5 @@ class ApplicationRepository
                 'hash' => $hash
             ]
         );
-    }
-
-    private function filterForLegalSpecialist(Builder $query): void
-    {
-        $query->where('status', ApplicationStatus::Rejected);
     }
 }
