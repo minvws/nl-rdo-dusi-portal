@@ -8,18 +8,11 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Enum;
+use MinVWS\DUSi\Assessment\API\Rules\SortRule;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 
 class ApplicationRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    // public function authorize(): bool
-    // {
-    //     return false;
-    // }
-
     /*
      * We convert camelCased data to snake_case
      */
@@ -45,7 +38,13 @@ class ApplicationRequest extends FormRequest
      */
     public function rules(): array
     {
+        $sortableColumns = [
+            'updated_at',
+            'final_review_deadline',
+        ];
+
         return [
+            'sort' => ['string', new SortRule($sortableColumns)],
             'reference' => 'string',
             'date_from' => 'date',
             'date_to' => 'date',
@@ -59,6 +58,8 @@ class ApplicationRequest extends FormRequest
             'date_last_modified_to' => 'date',
             'date_final_review_deadline_from' => 'date',
             'date_final_review_deadline_to' => 'date',
+            'per_page' => ['nullable', 'integer', 'between:1,100'],
+            'page' => ['nullable', 'integer', 'min:1'],
         ];
     }
 }

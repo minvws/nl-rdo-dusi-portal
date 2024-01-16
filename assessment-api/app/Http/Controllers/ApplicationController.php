@@ -27,6 +27,8 @@ use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveExcepti
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSubmitException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\TransitionNotFoundException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use MinVWS\DUSi\Shared\Application\DTO\PaginationOptions;
+use MinVWS\DUSi\Shared\Application\DTO\SortOptions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
@@ -63,7 +65,16 @@ class ApplicationController extends Controller
         assert($user !== null);
 
         $filter = ApplicationsFilter::fromArray($request->validated());
-        return $this->applicationService->getApplications($user, false, $filter);
+        $sortOptions = SortOptions::fromString($request->validated('sort'));
+        $paginationOptions = PaginationOptions::fromArray($request->safe(['page', 'per_page']));
+
+        return $this->applicationService->getApplications(
+            user: $user,
+            onlyMyApplications: false,
+            applicationsFilter: $filter,
+            paginationOptions: $paginationOptions,
+            sortOptions: $sortOptions,
+        );
     }
 
     public function filterAssignedApplications(ApplicationRequest $request): AnonymousResourceCollection
@@ -74,8 +85,16 @@ class ApplicationController extends Controller
         assert($user !== null);
 
         $filter = ApplicationsFilter::fromArray($request->validated());
+        $sortOptions = SortOptions::fromString($request->validated('sort'));
+        $paginationOptions = PaginationOptions::fromArray($request->safe(['page', 'per_page']));
 
-        return $this->applicationService->getApplications($user, true, $filter);
+        return $this->applicationService->getApplications(
+            user: $user,
+            onlyMyApplications: true,
+            applicationsFilter: $filter,
+            paginationOptions: $paginationOptions,
+            sortOptions: $sortOptions,
+        );
     }
 
     /**

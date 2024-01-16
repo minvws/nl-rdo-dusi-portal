@@ -152,10 +152,16 @@ class PCZMApplicationSeeder extends Seeder
                 'status' => 'submitted'
             ]
         )->for($this->createIdentifier())
-            ->count($count)->create()
+            ->count($count)
+            ->create()
             ->each(function ($application) use ($application_data) {
                 $application_data->bankAccountNumber = Arr::random(MockedBankAccountRepository::allValid());
                 $this->createApplicationData($application, $application_data);
+
+                // Random updated_at and final_review_deadline to test sorting
+                $application->final_review_deadline = now()->addDays(rand(0, 30))->startOfDay();
+                $application->updated_at = now()->subDays(rand(0, 100));
+                $application->save();
             });
     }
 

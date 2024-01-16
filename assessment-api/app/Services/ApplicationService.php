@@ -17,6 +17,9 @@ use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationStageTransitionResource
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSubmitException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use MinVWS\DUSi\Shared\Application\DTO\PaginationOptions;
+use MinVWS\DUSi\Shared\Application\DTO\SortColumn;
+use MinVWS\DUSi\Shared\Application\DTO\SortOptions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
@@ -34,6 +37,9 @@ use MinVWS\DUSi\Shared\User\Models\User;
  */
 class ApplicationService
 {
+    private const FINAL_REVIEW_DEADLINE_COLUMN = 'final_review_deadline';
+    private const UPDATED_AT_COLUMN = 'updated_at';
+
     public function __construct(
         private ApplicationDataService $applicationDataService,
         private ApplicationFlowService $applicationFlowService,
@@ -51,13 +57,33 @@ class ApplicationService
     public function getApplications(
         User $user,
         bool $onlyMyApplications,
-        ApplicationsFilter $applicationsFilter
+        ApplicationsFilter $applicationsFilter,
+        PaginationOptions $paginationOptions,
+        SortOptions $sortOptions,
     ): AnonymousResourceCollection {
+        if (!$sortOptions->hasSortColumns()) {
+            $sortOptions = new SortOptions([
+                new SortColumn(self::FINAL_REVIEW_DEADLINE_COLUMN, true),
+            ]);
+        }
+        if (!$sortOptions->containsColumn(self::UPDATED_AT_COLUMN)) {
+            $sortOptions = $sortOptions->append(new SortColumn(self::UPDATED_AT_COLUMN, true));
+        }
 
         $applications = $this->applicationRepository
-            ->filterApplications($user, $onlyMyApplications, $applicationsFilter);
+            ->filterApplicationsPaginated(
+                user: $user,
+                onlyMyApplications: $onlyMyApplications,
+                filter: $applicationsFilter,
+                paginationOptions: $paginationOptions,
+                sortOptions: $sortOptions,
+            );
 
-        return ApplicationFilterResource::Collection($applications);
+        return ApplicationFilterResource::collection($applications)->additional([
+            'meta' => [
+                ...$this->getResourceSortMetadata($sortOptions),
+            ],
+        ]);
     }
 
     public function getApplicationsCountMock(): ApplicationCountResource
@@ -151,5 +177,23 @@ class ApplicationService
     public function getLetterFromMessage(ApplicationMessage $message, MessageDownloadFormat $format): Response
     {
         return $this->applicationFileService->getMessageFile($message, $format);
+    }
+
+    protected function getResourceSortMetadata(SortOptions $sortOptions): array
+    {
+        $sorts = [];
+
+        if ($sortOptions->hasSortColumns()) {
+            foreach ($sortOptions->getSortColumns() as $sortColumn) {
+                $sorts[] = [
+                    'column' => $sortColumn->getColumn(),
+                    'direction' => $sortColumn->isAscending() ? 'ascending' : 'descending',
+                ];
+            }
+        }
+
+        return [
+            'sorts' => $sorts
+        ];
     }
 }

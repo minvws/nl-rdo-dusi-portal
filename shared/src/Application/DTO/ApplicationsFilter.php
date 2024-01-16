@@ -53,17 +53,17 @@ class ApplicationsFilter
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        public ?string $applicationTitle,
-        public ?string $reference,
-        public ?DateTime $dateFrom,
-        public ?DateTime $dateTo,
-        public ?DateTime $dateLastModifiedFrom,
-        public ?DateTime $dateLastModifiedTo,
-        public ?DateTime $dateFinalReviewDeadlineFrom,
-        public ?DateTime $dateFinalReviewDeadlineTo,
-        public ?array $status,
-        public ?array $subsidy,
-        public ?array $phase,
+        public ?string $applicationTitle = null,
+        public ?string $reference = null,
+        public ?DateTime $dateFrom = null,
+        public ?DateTime $dateTo = null,
+        public ?DateTime $dateLastModifiedFrom = null,
+        public ?DateTime $dateLastModifiedTo = null,
+        public ?DateTime $dateFinalReviewDeadlineFrom = null,
+        public ?DateTime $dateFinalReviewDeadlineTo = null,
+        public ?array $status = null,
+        public ?array $subsidy = null,
+        public ?array $phase = null,
     ) {
     }
 
