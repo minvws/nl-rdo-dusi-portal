@@ -15,6 +15,13 @@ class ApplicationMessageRepository
         $message = $identity->applicationMessages()->find($id);
         /* @phpstan-ignore-next-line */
         assert($message === null || $message instanceof ApplicationMessage);
+
+        if ($message && $message->is_new) {
+            $message->is_new = false;
+
+            $message->save();
+        }
+
         return $message;
     }
 
