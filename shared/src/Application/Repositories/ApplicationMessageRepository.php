@@ -16,7 +16,7 @@ class ApplicationMessageRepository
         /* @phpstan-ignore-next-line */
         assert($message === null || $message instanceof ApplicationMessage);
 
-        if ($message && $message->is_new) {
+        if ($message?->is_new) {
             $message->is_new = false;
 
             $message->save();
