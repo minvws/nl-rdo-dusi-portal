@@ -28,6 +28,11 @@ class ApplicationMessageRepository
         return $result;
     }
 
+    public function getMyMessagesCount(Identity $identity): int
+    {
+        return $identity->applicationMessages->count();
+    }
+
     public function createMessage(
         ApplicationStageTransition $transition,
         string $subject,

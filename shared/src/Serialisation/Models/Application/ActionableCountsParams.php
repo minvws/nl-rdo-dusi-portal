@@ -12,7 +12,8 @@ class ActionableCountsParams implements Codable
     use CodableSupport;
 
     public function __construct(
-        public readonly EncryptedIdentity $identity
+        public readonly EncryptedIdentity $identity,
+        public readonly ClientPublicKey $publicKey,
     ) {
     }
 }
