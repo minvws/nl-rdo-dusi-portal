@@ -28,9 +28,7 @@ class ActionableService
         private readonly EncryptedResponseExceptionHelper $exceptionHelper,
     ) {
     }
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
+
     public function getActionableCounts(ActionableCountsParams $params): EncryptedResponse
     {
         try {
@@ -59,10 +57,10 @@ class ActionableService
             );
         }
 
-        $messageCount = $this->messageRepository->getMyMessagesCount($identity);
+        $unreadMessagesCount = $this->messageRepository->getMyUnreadMessagesCount($identity);
         $applicationCount = $this->applicationRepository->getMyApplicationsThatNeededChangesCount($identity);
 
-        $count = new ActionableCounts($messageCount, $applicationCount);
+        $count = new ActionableCounts($unreadMessagesCount, $applicationCount);
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,

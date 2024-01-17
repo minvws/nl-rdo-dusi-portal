@@ -40,6 +40,11 @@ class ApplicationMessageRepository
         return $identity->applicationMessages->count();
     }
 
+    public function getMyUnreadMessagesCount(Identity $identity): int
+    {
+        return $identity->applicationMessages()->where('is_new', '=', true)->count();
+    }
+
     public function createMessage(
         ApplicationStageTransition $transition,
         string $subject,
