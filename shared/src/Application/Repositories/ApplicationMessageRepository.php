@@ -37,7 +37,7 @@ class ApplicationMessageRepository
 
     public function getMyMessagesCount(Identity $identity): int
     {
-        return $identity->applicationMessages->count();
+        return $identity->applicationMessages()->count();
     }
 
     public function getMyUnreadMessagesCount(Identity $identity): int
