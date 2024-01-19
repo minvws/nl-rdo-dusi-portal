@@ -251,6 +251,15 @@ class ApplicationFlowServiceTest extends TestCase
             ]);
     }
 
+    private function updateAnswer(ApplicationStage $applicationStage, Field $field, string $value): Answer
+    {
+        Answer::query()
+            ->where('application_stage_id', '=', $applicationStage->id)
+            ->where('field_id', '=', $field->id)
+            ->delete();
+        return $this->createAnswer($applicationStage, $field, $value);
+    }
+
     public function testStage1Submit(): void
     {
         $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
@@ -612,5 +621,101 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertEquals(ApplicationStatus::Draft, $transition->previous_application_status);
         $this->assertEquals($stage2->id, $transition->newApplicationStage->id);
         $this->assertEquals(ApplicationStatus::Submitted, $transition->new_application_status);
+    }
+
+    /**
+     * @group hotfix
+     */
+    public function testForcedTransition(): void
+    {
+        $this->subsidyVersion->review_deadline = $this->now->addDays(14)->endOfDay()->floorSecond();
+        $this->subsidyVersion->review_period = null;
+        $this->subsidyVersion->save();
+
+        $transition =
+            SubsidyStageTransition::factory()
+                ->for($this->subsidyStage1, 'currentSubsidyStage')
+                ->for($this->subsidyStage2, 'targetSubsidyStage')
+                ->create([
+                    'target_application_status' => ApplicationStatus::Submitted,
+                    'condition' => new ComparisonCondition(
+                        1,
+                        'someFieldThatDoesNotExist',
+                        Operator::Identical,
+                        'someValueThatCanNeverMatch'
+                    ),
+                    'clone_data' => true,
+                    'assign_to_previous_assessor' => true
+                ]);
+
+        $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->assertNotNull($stage2);
+
+        $this->createAnswer($stage2, $this->subsidyStage2Field, self::VALUE_REQ_CHANGES);
+        $stage3 = $this->flowService->submitApplicationStage($stage2);
+
+        $this->createAnswer($stage3, $this->subsidyStage3Field, self::VALUE_AGREES);
+        $reviseStage = $this->flowService->submitApplicationStage($stage3);
+
+        // change some data in the revised application
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
+        $reviseStage->encrypted_key = $encryptedKey;
+        $reviseStage->save();
+
+        $this->updateAnswer($reviseStage, $this->subsidyStage1Field, $this->faker->word);
+        $uploadId = Uuid::uuid4()->toString();
+        $this->fileRepository->writeFile(
+            $reviseStage,
+            $this->subsidyStage1Upload,
+            $uploadId,
+            $this->faker->paragraph(5)
+        );
+        $fileJson = json_encode([['id' => $uploadId]]);
+        $this->assertIsString($fileJson);
+        $this->updateAnswer($reviseStage, $this->subsidyStage1Upload, $fileJson);
+        $this->assertTrue(
+            $this->fileRepository->fileExists(
+                $reviseStage,
+                $this->subsidyStage1Upload,
+                $uploadId
+            )
+        );
+
+        $assessmentStage = $this->flowService->forceTransitionForApplicationStage($reviseStage, $transition, true);
+
+        $this->assertFalse($reviseStage->is_current);
+        $this->assertFalse($reviseStage->is_submitted);
+        $this->assertNull($reviseStage->submitted_at);
+        $this->assertCount(2, $reviseStage->answers);
+        $this->assertEquals($this->applicationStage1->encrypted_key, $reviseStage->encrypted_key);
+        $this->assertEquals(
+            $this->applicationStage1->answers()->first()->encrypted_answer,
+            $reviseStage->answers()->first()->encrypted_answer
+        );
+        $this->assertTrue(
+            $this->fileRepository->fileExists(
+                $reviseStage,
+                $this->subsidyStage1Upload,
+                $this->applicationStage1UploadId
+            )
+        );
+        $this->assertFalse(
+            $this->fileRepository->fileExists(
+                $reviseStage,
+                $this->subsidyStage1Upload,
+                $uploadId
+            )
+        );
+
+        $this->application->refresh();
+        $this->assertEquals(ApplicationStatus::Submitted, $this->application->status);
+        $this->assertEquals($this->subsidyVersion->review_deadline, $this->application->final_review_deadline);
+
+        $this->assertNotNull($assessmentStage);
+        $this->assertEquals($this->subsidyStage2->id, $assessmentStage->subsidy_stage_id);
+        $this->assertTrue($assessmentStage->is_current);
+        $this->assertFalse($assessmentStage->is_submitted);
+        $this->assertNull($assessmentStage->submitted_at);
+        $this->assertCount(1, $assessmentStage->answers);
     }
 }

@@ -301,4 +301,70 @@ class ApplicationFlowService
             $newApplicationStatus
         );
     }
+
+    // TEMP FOR HOTFIX
+    public function forceTransitionForApplicationStage(
+        ApplicationStage $currentStage,
+        SubsidyStageTransition $subsidyStageTransition,
+        bool $resetClonedDataOfCurrentStage
+    ): ?ApplicationStage {
+        return DB::transaction(
+            fn () =>
+                $this->doForceTransitionForApplicationStage(
+                    $currentStage,
+                    $subsidyStageTransition,
+                    $resetClonedDataOfCurrentStage
+                )
+        );
+    }
+
+    private function resetClonedDataForStage(ApplicationStage $stage): void
+    {
+        $previousInstanceOfStage =
+            $stage->application
+                ->applicationStages()
+                ->where('subsidy_stage_id', '=', $stage->subsidyStage->id)
+                ->where('sequence_number', '<', $stage->sequence_number)
+                ->orderBy('sequence_number', 'desc')
+                ->first();
+
+        if (! $previousInstanceOfStage instanceof ApplicationStage) {
+            throw new \RuntimeException('Resetting cloned data not possible if there is no previous instance of stage');
+        }
+
+        $stage->answers()->delete();
+        $this->applicationFileManager->deleteFiles($stage);
+
+        $this->cloneApplicationStageData($previousInstanceOfStage, $stage);
+    }
+
+    private function doForceTransitionForApplicationStage(
+        ApplicationStage $currentStage,
+        SubsidyStageTransition $subsidyStageTransition,
+        bool $resetClonedDataOfCurrentStage
+    ): ?ApplicationStage {
+        $currentStage->is_current = false;
+        // we don't set submitted / submit date as it is not a true submit
+        if ($resetClonedDataOfCurrentStage) {
+            $this->resetClonedDataForStage($currentStage);
+        }
+        $this->applicationRepository->saveApplicationStage($currentStage);
+
+        $application = $currentStage->application;
+        $currentApplicationStatus = $application->status;
+        $this->performTransitionForApplication($subsidyStageTransition, $application);
+        $newApplicationStatus = $application->status;
+        $newStage = $this->createNextApplicationStageForTransition($subsidyStageTransition, $currentStage);
+        $transition = $this->createApplicationStageTransition(
+            $subsidyStageTransition,
+            $application,
+            $currentStage,
+            $currentApplicationStatus,
+            $newStage,
+            $newApplicationStatus
+        );
+        $this->scheduleMessageForApplicationStageTransition($transition);
+        return $newStage;
+    }
+    // EOF TEMP FOR HOTFIX
 }
