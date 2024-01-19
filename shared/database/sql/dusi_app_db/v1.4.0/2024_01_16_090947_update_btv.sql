@@ -90,7 +90,7 @@ set description = 'Interne beoordeling eens met eerste beoordeling',
     condition = '{"type":"comparison","stage":4,"fieldCode":"internalAssessment","operator":"===","value":"Eens met de eerste beoordeling"}'
 where id = '5b876216-ba37-4b13-aa99-e311db027d6b';
 
-delete from "subsidy_stage_transitions_messages"
+delete from "subsidy_stage_transition_messages"
 where id = '7476a2bd-15eb-4ab8-be8e-c9f3dd07f9b7';
 
 
