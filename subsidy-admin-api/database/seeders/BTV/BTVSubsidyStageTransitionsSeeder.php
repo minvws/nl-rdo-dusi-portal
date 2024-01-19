@@ -201,7 +201,7 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'id' => self::TRANSITION_STAGE_4_TO_REJECTED,
             'description' => 'Interne beoording oneens met eerste beoordeling',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
-            'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
+            'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     4,
@@ -229,7 +229,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
                     'Eens met de eerste beoordeling'
                 )
             ),
-            'send_message' => true
+            'send_message' => true,
+            'assign_to_previous_assessor' => true
         ]);
     }
 }
