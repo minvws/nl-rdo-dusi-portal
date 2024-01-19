@@ -30,6 +30,10 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-1041: BTV updates
+
+Run the dus_app_db migration up to version 1.4.0. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1066>
+
 ## Release 2.0.0
 
 ### DUSI-1034: Add legalSpecialist role and filter on application list

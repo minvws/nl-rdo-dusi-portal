@@ -80,11 +80,17 @@ set input_ui = '{"type":"FormGroupControl","options":{"section":true,"group":tru
 where id = 'b6601986-9cc0-4c03-8935-79f4e782e418';
 
 update "subsidy_stage_transitions"
-set condition = '{"type":"comparison","stage":4,"fieldCode":"internalAssessment","operator":"===","value":"Oneens met de eerste beoordeling"}'
+set description = 'Interne beoording oneens met eerste beoordeling',
+    target_subsidy_stage_id = 'e456e790-1919-4a2b-b3d5-337d0053abe3',
+    condition = '{"type":"comparison","stage":4,"fieldCode":"internalAssessment","operator":"===","value":"Oneens met de eerste beoordeling"}'
 where id = '5b876216-ba37-4b13-aa99-e311db027d6b';
 
 update "subsidy_stage_transitions"
-set condition = '{"type":"comparison","stage":4,"fieldCode":"internalAssessment","operator":"===","value":"Eens met de eerste beoordeling"}'
+set description = 'Interne beoordeling eens met eerste beoordeling',
+    condition = '{"type":"comparison","stage":4,"fieldCode":"internalAssessment","operator":"===","value":"Eens met de eerste beoordeling"}'
 where id = '5b876216-ba37-4b13-aa99-e311db027d6b';
+
+delete from "subsidy_stage_transitions_messages"
+where id = '7476a2bd-15eb-4ab8-be8e-c9f3dd07f9b7';
 
 
