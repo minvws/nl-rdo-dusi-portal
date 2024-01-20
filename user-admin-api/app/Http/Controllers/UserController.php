@@ -44,6 +44,13 @@ class UserController extends Controller
         $users = User::query()
             ->with('organisation')
             ->filterByNameOrEmail($filterRequest->validated('filter'))
+            ->when(
+                value: $filterRequest->validated('sort'),
+                callback: fn($query) => $query->orderBy(
+                    column: $filterRequest->validated('sort'),
+                    direction: $filterRequest->validated('direction', 'asc')
+                )
+            )
             ->paginate();
 
         return view('users.index', [

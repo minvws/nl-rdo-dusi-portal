@@ -4,7 +4,6 @@
             <span class="slogan" lang="nl">@lang('De Rijksoverheid. Voor Nederland')</span>
             <nav aria-label="@lang('Footer Navigation')">
                 <ul>
-                    <li><a href="#">Something</a></li>
                 </ul>
             </nav>
         </div>

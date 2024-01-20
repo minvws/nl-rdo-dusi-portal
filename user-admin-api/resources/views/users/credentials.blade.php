@@ -27,7 +27,7 @@
                 @endif
                 @if($twoFactorAuthenticationReset)
                 <div>
-                    <dt>@lang('QR-code')</dt>
+                    <dt>@lang('QR-code') 2FA</dt>
                     <dd id="userQr">
                         {!! $user->twoFactorQrCodeSvgWithAria() !!}
                     </dd>
