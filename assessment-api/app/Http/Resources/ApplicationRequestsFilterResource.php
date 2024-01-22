@@ -176,10 +176,6 @@ class ApplicationRequestsFilterResource extends JsonResource
                         'type' => 'string',
                         'oneOf' => [
                             [
-                                'const' => ApplicationStatus::Draft,
-                                'title'  => 'Nog niet ingediend'
-                            ],
-                            [
                                 'const' => ApplicationStatus::Submitted,
                                 'title'  => 'Nieuw'
                             ],
