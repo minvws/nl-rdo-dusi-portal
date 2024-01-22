@@ -3,22 +3,22 @@ set reference_prefix = 'BTV'
 where id = '00f26400-7232-475f-922c-6b569b7e421a';
 
 update "subsidy_stages"
-set title = 'Interne Controle'
+set title = 'Interne controle'
 where id = 'e456e790-1919-4a2b-b3d5-337d0053abe3';
 
 delete
 from answers
 where field_id = (select id
-                    from fields
-                    where code = 'bankStatement' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045');
+                  from fields
+                  where code = 'bankStatement' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045');
 
 delete from fields where code = 'bankStatement' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045';
 
 delete
 from answers
 where field_id = (select id
-                    from fields
-                    where code = 'permissionToProcessPersonalData' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045');
+                  from fields
+                  where code = 'permissionToProcessPersonalData' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045');
 
 delete from fields where code = 'permissionToProcessPersonalData' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045';
 
@@ -29,8 +29,8 @@ where code = 'firstAssessmentChecklist'
 
 update "fields"
 set params = '{"options":["Oneens met de eerste beoordeling","Eens met de eerste beoordeling"],"default":null}'
-where code = 'secondAssessment'
-  and subsidy_stage_id = 'b2b08566-8493-4560-8afa-d56402931f74';
+where code = 'internalAssessment'
+  and subsidy_stage_id = 'e456e790-1919-4a2b-b3d5-337d0053abe3';
 
 insert into "subsidy_stage_hashes" ("id", "subsidy_stage_id", "name", "description", "created_at", "updated_at")
 values ('70609201-1301-455c-942b-654236221970', '721c1c28-e674-415f-b1c3-872a631ed045', 'Bank account',
@@ -38,11 +38,11 @@ values ('70609201-1301-455c-942b-654236221970', '721c1c28-e674-415f-b1c3-872a631
 
 insert into "subsidy_stage_hash_fields" ("subsidy_stage_hash_id", "field_id")
 values ('70609201-1301-455c-942b-654236221970', (select id
-        from "fields"
-        where "subsidy_stage_id" = '721c1c28-e674-415f-b1c3-872a631ed045'
-        and "code" = 'bankAccountNumber'
-        and "title" = 'IBAN' limit 1)
-);
+                                                 from "fields"
+                                                 where "subsidy_stage_id" = '721c1c28-e674-415f-b1c3-872a631ed045'
+                                                   and "code" = 'bankAccountNumber'
+                                                   and "title" = 'IBAN' limit 1)
+    );
 
 UPDATE fields
 SET params = '{"maxItems": 20, "minItems": 1, "mimeTypes": ["image/jpeg", "image/png", "application/pdf"], "maxFileSize": 20971520}'
@@ -67,30 +67,34 @@ where id = '72475863-7987-4375-94d7-21e04ff6552b';
 update "subsidy_stage_uis"
 set input_ui = '{"type":"FormGroupControl","options":{"section":true,"group":true},"elements":[{"type":"Group","label":"Beoordeling","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessmentChecklist","options":{"format":"checkbox-group"}}]}]},{"type":"Group","label":"Uitkering","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/amount","options":{"format":"radio"}}]}]},{"type":"Group","label":"Status","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessment","options":{"format":"radio"}}]}]},{"type":"Group","label":"Toelichting","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessmentRequestedComplementReason","options":{"format":"radio"},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/firstAssessment","schema":{"const":"Aanvulling nodig"}}}}]},{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessmentRequestedComplementNote","options":{"format":"textarea","tip":"Deze notitie wordt opgenomen binnen de brief aan de aanvrager."},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/firstAssessment","schema":{"const":"Aanvulling nodig"}}}}]},{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessmentRejectedNote","options":{"format":"textarea","tip":"Deze notitie wordt opgenomen binnen de brief aan de aanvrager."},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/firstAssessment","schema":{"const":"Afgekeurd"}}}}]},{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessmentInternalNote","options":{"format":"textarea"}}]}]}]}',
     view_ui  = '{"type":"FormGroupControl","options":{"section":true},"elements":[{"type":"FormGroupControl","label":"Persoonsgegevens","options":{"section":true,"headingLevel":"2"},"elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessmentChecklist","options":{"readonly":true,"format":"checkbox-group"}}]},{"type":"FormGroupControl","label":"Uitkering","options":{"section":true,"headingLevel":"2"},"elements":[{"type":"CustomControl","scope":"#\/properties\/amount","options":{"readonly":true}}]},{"type":"FormGroupControl","label":"Eerste beoordeling","options":{"section":true,"headingLevel":"2"},"elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessment","options":{"readonly":true,"format":"radio"}},{"type":"CustomControl","scope":"#\/properties\/firstAssessmentRequestedComplementReason","options":{"readonly":true,"format":"radio"},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/firstAssessment","schema":{"const":"Aanvulling nodig"}}}},{"type":"CustomControl","scope":"#\/properties\/firstAssessmentRequestedComplementNote","options":{"readonly":true,"format":"textarea"},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/firstAssessment","schema":{"const":"Aanvulling nodig"}}}},{"type":"CustomControl","scope":"#\/properties\/firstAssessmentRejectedNote","options":{"readonly":true,"format":"textarea"},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/firstAssessment","schema":{"const":"Afgekeurd"}}}},{"type":"CustomControl","scope":"#\/properties\/firstAssessmentInternalNote","options":{"readonly":true,"format":"textarea"}}]}]}'
-where id = 'f4e7f866-5750-45a5-b613-4d0a202676e4';
+where id = 'db1076a1-42f3-4c90-b1bf-57d1db025f2e';
 
 update "subsidy_stage_uis"
 set input_ui = '{"type":"FormGroupControl","options":{"section":true,"group":true},"elements":[{"type":"Group","label":"Status","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessorMotivatedValid","options":{"format":"checkbox"}}]},{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/secondAssessment","options":{"format":"radio"}}]},{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/secondAssessmentInternalNote","options":{"format":"textarea"}}]}]}]}',
     view_ui  = '{"type":"FormGroupControl","options":{"section":true},"elements":[{"type":"CustomControl","scope":"#\/properties\/firstAssessorMotivatedValid","options":{"readonly":true}},{"type":"CustomControl","scope":"#\/properties\/secondAssessment","options":{"readonly":true,"format":"radio"}},{"type":"CustomControl","scope":"#\/properties\/secondAssessmentInternalNote","options":{"readonly":true,"format":"textarea"}}]}'
-where id = 'abccb64e-bcb2-43fc-a571-20adc25590c4';
+where id = '787c8ef4-bfcd-4bd4-aec1-dec02139c897';
 
 update "subsidy_stage_uis"
 set input_ui = '{"type":"FormGroupControl","options":{"section":true,"group":true},"elements":[{"type":"Group","label":"Checklist","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/internalAssessmentChecklist","options":{"format":"checkbox-group"}}]}]},{"type":"Group","label":"Status","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/internalAssessment","options":{"format":"radio"}}]}]},{"type":"Group","label":"Toelichting","elements":[{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/internalAssessmentReasonForRejection","options":{"format":"textarea","tip":"Deze notitie wordt opgenomen binnen de brief aan de aanvrager."},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/internalAssessment","schema":{"const":"Oneens met de eerste beoordeling"}}}}]},{"type":"VerticalLayout","elements":[{"type":"CustomControl","scope":"#\/properties\/internalAssessmentInternalNote","options":{"format":"textarea"}}]}]}]}',
     view_ui  = '{"type":"FormGroupControl","options":{"section":true},"elements":[{"type":"CustomControl","scope":"#\/properties\/internalAssessmentChecklist","options":{"readonly":true,"format":"checkbox-group"}},{"type":"CustomControl","scope":"#\/properties\/internalAssessment","options":{"readonly":true,"format":"radio"}},{"type":"CustomControl","scope":"#\/properties\/internalAssessmentInternalNote","options":{"readonly":true,"format":"textarea"}},{"type":"CustomControl","scope":"#\/properties\/internalAssessmentReasonForRejection","options":{"readonly":true,"format":"textarea"},"rule":{"effect":"SHOW","condition":{"scope":"#\/properties\/internalAssessment","schema":{"const":"Oneens met de eerste beoordeling"}}}}]}'
-where id = 'b6601986-9cc0-4c03-8935-79f4e782e418';
+where id = 'a6080627-0ea9-436e-bbba-c454bd3809fd';
 
 update "subsidy_stage_transitions"
 set description = 'Interne beoording oneens met eerste beoordeling',
-    target_subsidy_stage_id = 'e456e790-1919-4a2b-b3d5-337d0053abe3',
-    condition = '{"type":"comparison","stage":4,"fieldCode":"internalAssessment","operator":"===","value":"Oneens met de eerste beoordeling"}'
-where id = '5b876216-ba37-4b13-aa99-e311db027d6b';
+    target_application_status = null,
+    target_subsidy_stage_id = '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c',
+    current_subsidy_stage_id = 'e456e790-1919-4a2b-b3d5-337d0053abe3',
+    condition = '{"type":"comparison","stage":4,"fieldCode":"internalAssessment","operator":"===","value":"Oneens met de eerste beoordeling"}',
+    send_message = false,
+    assign_to_previous_assessor = true
+where id = '3a293e03-1de4-47bf-917b-841b7c0a1fff';
 
 update "subsidy_stage_transitions"
 set description = 'Interne beoordeling eens met eerste beoordeling',
+    current_subsidy_stage_id = 'e456e790-1919-4a2b-b3d5-337d0053abe3',
+    target_application_status = 'approved',
     condition = '{"type":"comparison","stage":4,"fieldCode":"internalAssessment","operator":"===","value":"Eens met de eerste beoordeling"}'
 where id = '5b876216-ba37-4b13-aa99-e311db027d6b';
 
 delete from "subsidy_stage_transition_messages"
 where id = '7476a2bd-15eb-4ab8-be8e-c9f3dd07f9b7';
-
-
