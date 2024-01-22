@@ -1,4 +1,4 @@
-INSERT INTO subsidy_stage_transitions (
+INSERT INTO public.subsidy_stage_transitions (
     id, description, current_subsidy_stage_id, target_subsidy_stage_id, target_application_status,
     condition, send_message, assign_to_previous_assessor, clone_data
 )

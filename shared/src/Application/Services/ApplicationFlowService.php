@@ -337,7 +337,11 @@ class ApplicationFlowService
         bool $resetClonedDataOfCurrentStage
     ): ?ApplicationStage {
         $currentStage->is_current = false;
-        // we don't set submitted / submit date as it is not a true submit
+        // We do update the submitted at, but don't set is_submitted to true as if was not the user that submitted this
+        // data. We should probably revise the naming of these columns to make this distinction more clear when
+        // implementing this properly.
+        $currentStage->submitted_at = Carbon::now();
+        $currentStage->is_submitted = false;
         if ($resetClonedDataOfCurrentStage) {
             $this->resetClonedDataForStage($currentStage);
         }
