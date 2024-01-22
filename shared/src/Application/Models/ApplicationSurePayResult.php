@@ -26,6 +26,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\PaymentPreVali
  * @property bool|null $joint_account
  * @property int|null $number_of_account_holders
  * @property string|null $country_code
+ * @property string|null $encrypted_name_suggestion
  * @property DateTimeInterface $created_at
  * @property DateTimeInterface $updated_at
  */

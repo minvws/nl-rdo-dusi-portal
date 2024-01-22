@@ -349,7 +349,7 @@ class ApplicationDataServiceTest extends TestCase
             ->create();
 
         $params = [
-            $bankAccountField->code => MockedBankAccountRepository::BANK_ACCCOUNT_NUMBER_MATCH,
+            $bankAccountField->code => MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_MATCH,
         ];
 
         $body = new FieldValidationParams(

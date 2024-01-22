@@ -1,10 +1,5 @@
 <?php
 
-/**
- * phpcs:disable PSR1.Files.SideEffects
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Services;

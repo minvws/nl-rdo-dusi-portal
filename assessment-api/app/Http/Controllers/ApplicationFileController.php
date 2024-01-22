@@ -34,11 +34,12 @@ class ApplicationFileController extends Controller
         $this->authorize('show', $application);
         assert($user instanceof User);
         $this->logger->log((new ViewFileEvent())
+            ->withActor($user)
             ->withData([
                 'applicationId' => $application->id,
                 'fieldCode' => $fieldCode,
                 'fileId' => $fileId,
-                'userId' => $user->id,
+                'userId' => $user->getAuthIdentifier(),
             ]));
         return $this->applicationFileService->getApplicationFile(
             $application,

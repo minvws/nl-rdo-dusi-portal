@@ -9,6 +9,9 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Application\Backend\Events\Logging\SaveApplicationEvent;
+use MinVWS\DUSi\Application\Backend\Events\Logging\StartApplicationEvent;
+use MinVWS\DUSi\Application\Backend\Events\Logging\SubmitApplicationEvent;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
@@ -36,6 +39,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use MinVWS\Logging\Laravel\LogService;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Throwable;
@@ -63,7 +67,8 @@ readonly class ApplicationMutationService
         private ApplicationReferenceService $applicationReferenceService,
         private FrontendDecryption $frontendDecryptionService,
         private EncryptedResponseExceptionHelper $exceptionHelper,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private LogService $logService,
     ) {
     }
 
@@ -107,7 +112,7 @@ readonly class ApplicationMutationService
             );
         }
 
-        $identity = $this->identityService->findOrCreateIdentity($params->identity);
+        $identity = $this->identityService->findOrCreateIdentity($params->identity, lockForUpdate: true);
 
         $application = $this->applicationRepository->findMyApplicationForSubsidy($identity, $subsidy);
 
@@ -154,6 +159,12 @@ readonly class ApplicationMutationService
         );
         $this->applicationRepository->saveApplication($application);
 
+        $this->logService->log((new StartApplicationEvent())
+            ->withData([
+                'reference' => $application->reference,
+                'userId' => $identity->id,
+            ]));
+
         [$encryptedKey] = $this->applicationEncryptionService->generateEncryptionKey();
 
         $appStage = $this->applicationRepository->makeApplicationStage($application, $subsidyStage);
@@ -196,7 +207,7 @@ readonly class ApplicationMutationService
     private function doSaveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse
     {
         $identity = $this->loadIdentity($params->identity);
-        $application = $this->loadApplication($identity, $params->applicationReference);
+        $application = $this->loadApplication($identity, $params->applicationReference, lockForUpdate: true);
         $body = $this->frontendDecryptionService->decryptCodable($params->data, ApplicationSaveBody::class);
 
         if (
@@ -231,6 +242,12 @@ readonly class ApplicationMutationService
                 $body->data,
                 $body->submit
             );
+
+            $this->logService->log((new SaveApplicationEvent())
+                ->withData([
+                    'reference' => $application->reference,
+                    'userId' => $identity->id,
+                ]));
         } catch (ValidationErrorException $e) {
             $this->logger->debug('Validation returns errors', [
                 'validationResult' => $e->getValidationResults(),
@@ -245,6 +262,12 @@ readonly class ApplicationMutationService
 
         if ($body->submit) {
             $this->applicationFlowService->submitApplicationStage($applicationStage);
+
+            $this->logService->log((new SubmitApplicationEvent())
+                ->withData([
+                    'reference' => $application->reference,
+                    'userId' => $identity->id,
+                ]));
 
             // TODO: this should be generalized
             DB::afterCommit(fn () => CheckSurePayJob::dispatch($application->id));

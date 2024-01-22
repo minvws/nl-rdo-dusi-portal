@@ -1,0 +1,29 @@
+{layout 'letter_layout.latte'}
+
+{block concern}
+    Betreft: Afwijzing aanvraag {$content->subsidyTitle}
+{/block}
+
+{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
+        Met deze brief beslis ik op uw aanvraag.
+    </p>
+    <p>&nbsp;</p>
+
+    <h2>Besluit</h2>
+    <p>Uw aanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
+    <p>&nbsp;</p>
+
+    {if $content->stage2->firstAssessmentRejectedNote}
+        <h2>Motivering bij het besluit</h2>
+        <p>Uw aanvraag wordt afgewezen vanwege de volgende reden(en):</p>
+        <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
+        <p>&nbsp;</p>
+    {/if}
+{/block}
+
+{block sidebar}
+    {include parent}
+{/block}

@@ -7,7 +7,9 @@ namespace Feature\Http\Controllers;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
+use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
@@ -20,6 +22,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Test\MocksEncryption;
+use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 use MinVWS\DUSi\Shared\User\Models\User;
 
@@ -238,5 +241,45 @@ class ApplicationControllerShowTest extends TestCase
             ->getJson(sprintf('/api/applications/%s', $application->id));
 
         $response->assertOk();
+    }
+
+    public function testShowApplicationWithCloseMatchSuggestion(): void
+    {
+        $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
+
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage1 = ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage1)->create([
+               'sequence_number' => 1,
+               'encrypted_key' => $encryptedKey,
+            ]);
+
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage1);
+
+        ApplicationSurePayResult::factory()
+            ->for($application)
+            ->create([
+                 'encrypted_name_suggestion' => $encrypter->encrypt(
+                     MockedBankAccountRepository::BANK_HOLDER_SUGGESTION
+                 ),
+            ]);
+
+        $user = User::factory()->create();
+        $user->attachRole(Role::Assessor);
+
+        $this->flowService->submitApplicationStage($applicationStage1);
+        $applicationStage1->assessor_user_id = $user->id;
+        $applicationStage1->save();
+
+        $response = $this
+            ->be($user)
+            ->getJson(sprintf('/api/applications/%s', $application->id));
+
+        $response->assertOk();
+        $this->assertEquals(
+            MockedBankAccountRepository::BANK_HOLDER_SUGGESTION,
+            $response->json('data')['application']['data']['surePayCloseMatchSuggestion']
+        );
     }
 }

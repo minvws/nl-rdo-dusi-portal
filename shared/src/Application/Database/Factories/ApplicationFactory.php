@@ -6,8 +6,10 @@ namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
 /**
@@ -47,5 +49,15 @@ class ApplicationFactory extends Factory
         return $this->state(fn () => [
             'identity_id' => $identity,
         ]);
+    }
+
+    public function withApplicantStage(SubsidyStage $subsidyStage): self
+    {
+        return $this->afterCreating(function (Application $application) use ($subsidyStage) {
+            ApplicationStage::factory()
+                ->for($application)
+                ->for($subsidyStage)
+                ->create();
+        });
     }
 }

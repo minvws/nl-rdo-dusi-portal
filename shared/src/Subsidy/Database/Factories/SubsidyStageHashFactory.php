@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 
 /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Feature\Http\Controllers;
 
 use Carbon\Carbon;
+use Generator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Testing\TestResponse;
@@ -441,70 +442,70 @@ class ApplicationControllerTest extends TestCase
         ]);
     }
 
-    public static function noResultFilterProvider(): \Generator
+    public static function noResultFilterProvider(): Generator
     {
         yield 'reference' => [
             [
                 'reference' => "123test123",
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateFrom' => [
             [
                 'date_from' => Carbon::tomorrow(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateTo' => [
             [
                 'date_to' => Carbon::yesterday(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateLastModifiedFrom' => [
             [
                 'date_last_modified_from' => Carbon::tomorrow(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateLastModifiedTo' => [
             [
                 'date_last_modified_to' => Carbon::yesterday(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateFinalReviewDeadLineFrom' => [
             [
                 'date_final_review_deadline_from' => Carbon::tomorrow(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateFinalReviewDeadLineTo' => [
             [
                 'date_final_review_deadline_to' => Carbon::yesterday(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'Status' => [
             [
                 'status' => ['test'],
             ],
             422,
-            '{"message":"Gekozen status.0 is ongeldig.","errors":{"status.0":["Gekozen status.0 is ongeldig."]}}', // @phpcs:ignore
+            '{"message":"Gekozen status.0 is ongeldig.","errors":{"status.0":["Gekozen status.0 is ongeldig."]}}',
         ];
         yield 'Subsidy' => [
             [
                 'subsidy' => ['test'],
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
     }
 
@@ -546,5 +547,152 @@ class ApplicationControllerTest extends TestCase
             'updated_at' => $application->updated_at,
             'actions' => $actions
         ]);
+    }
+
+    public function testListAllApplicationsAsLegalSpecialist(): void
+    {
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::LegalSpecialist, $this->subsidy->id);
+
+        $application = Application::factory()->create(
+            [
+                'application_title' => 'application rejected',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Rejected,
+            ]
+        );
+        ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage1)
+            ->create();
+
+        $response = $this
+            ->be($user)
+            ->json('GET', '/api/applications');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+
+        $this->assertJsonFragment($response, $application, ['show']);
+
+        // Don't show other applications than rejected
+        $response->assertJsonMissing([
+            'application_title' => $this->application1->application_title,
+        ]);
+
+        $response->assertJsonMissing([
+            'application_title' => $this->application2->application_title,
+        ]);
+    }
+
+    /**
+     * @dataProvider sortProvider
+     */
+    public function testSortMetaDataIsReturned(string $sortParameter, array $expectedSortsResponse): void
+    {
+        $response = $this
+            ->be($this->assessorUser1)
+            ->json('GET', '/api/applications', ['sort' => $sortParameter]);
+
+        $response->assertJsonPath('meta.sorts', $expectedSortsResponse);
+    }
+
+    public static function sortProvider(): Generator
+    {
+        yield 'sort by final_review_deadline' => [
+            'final_review_deadline',
+            [
+                [
+                    'column' => 'final_review_deadline',
+                    'direction' => 'ascending',
+                ],
+                [
+                    'column' => 'updated_at',
+                    'direction' => 'ascending',
+                ],
+            ]
+        ];
+        yield 'sort by -final_review_deadline' => [
+            '-final_review_deadline',
+            [
+                [
+                    'column' => 'final_review_deadline',
+                    'direction' => 'descending',
+                ],
+                [
+                    'column' => 'updated_at',
+                    'direction' => 'ascending',
+                ],
+            ]
+        ];
+        yield 'sort by updated_at' => [
+            'updated_at',
+            [
+                [
+                    'column' => 'updated_at',
+                    'direction' => 'ascending',
+                ],
+            ]
+        ];
+        yield 'sort by -updated_at' => [
+            '-updated_at',
+            [
+                [
+                    'column' => 'updated_at',
+                    'direction' => 'descending',
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * @param array $queryParameters
+     * @param int $expectedPerPage
+     * @param int $expectedPage
+     * @return void
+     * @dataProvider paginationProvider
+     */
+    public function testPagination(array $queryParameters, int $expectedPerPage, int $expectedPage): void
+    {
+        $response = $this
+            ->be($this->assessorUser1)
+            ->json('GET', '/api/applications', $queryParameters);
+
+        $this->assertSame($response->json('meta.per_page'), $expectedPerPage);
+        $this->assertSame($response->json('meta.current_page'), $expectedPage);
+    }
+
+    public static function paginationProvider(): Generator
+    {
+        yield 'without pagination parameters' => [
+            [],
+            15,
+            1,
+        ];
+        yield '30 per page' => [
+            [
+                'per_page' => 30,
+            ],
+            30,
+            1,
+        ];
+        yield '30 per page and 2nd page' => [
+            [
+                'per_page' => 30,
+                'page' => 2,
+            ],
+            30,
+            2,
+        ];
+        yield '2nd page' => [
+            [
+                'page' => 2,
+            ],
+            15,
+            2,
+        ];
     }
 }

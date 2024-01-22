@@ -7,6 +7,9 @@ namespace MinVWS\DUSi\Shared\Tests\Feature\Repositories;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use MinVWS\DUSi\Shared\Application\DTO\PaginationOptions;
+use MinVWS\DUSi\Shared\Application\DTO\SortColumn;
+use MinVWS\DUSi\Shared\Application\DTO\SortOptions;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -85,8 +88,18 @@ class ApplicationRepositoryTest extends TestCase
             'subsidy' => ['SST'],
         ];
         $appFilter = ApplicationsFilter::fromArray($filter);
+
+        $applications = $this->repository->filterApplicationsPaginated(
+            user: $user,
+            onlyMyApplications: false,
+            filter: $appFilter,
+            paginationOptions: new PaginationOptions(1, 15),
+            sortOptions: new SortOptions()
+        )->items();
+
+        $foundApplication = $applications[0];
+
         // Test valid application
-        $foundApplication = $this->repository->filterApplications($user, false, $appFilter)->first();
         $this->assertInstanceOf(Application::class, $foundApplication);
         $this->assertEquals($foundApplication->subsidyVersion->id, $this->subsidyVersion->id);
 
@@ -97,8 +110,85 @@ class ApplicationRepositoryTest extends TestCase
 
         $appFilter = ApplicationsFilter::fromArray($filter);
 
-        $foundApplication = $this->repository->filterApplications($user, false, $appFilter);
-        $this->assertEmpty($foundApplication);
+        $applications = $this->repository->filterApplicationsPaginated(
+            user: $user,
+            onlyMyApplications: false,
+            filter: $appFilter,
+            paginationOptions: new PaginationOptions(1, 15),
+            sortOptions: new SortOptions()
+        )->items();
+
+        $this->assertEmpty($applications);
+    }
+
+    public function testGetApplicationPaginated()
+    {
+        Application::factory()
+            ->count(50)
+            ->for($this->identity)
+            ->for($this->subsidyVersion)
+            ->withApplicantStage($this->subsidyStage)
+            ->create([
+                'status' => ApplicationStatus::Submitted,
+            ]);
+
+        $user = User::factory()->create();
+        $user->attachRole(Role::Assessor);
+
+        $appFilter = new ApplicationsFilter();
+        $paginationOptions = new PaginationOptions(1, 15);
+        $paginatedApplications = $this->repository->filterApplicationsPaginated(
+            user: $user,
+            onlyMyApplications: false,
+            filter: $appFilter,
+            paginationOptions: $paginationOptions,
+            sortOptions: new SortOptions(),
+        );
+
+        $this->assertSame(50, $paginatedApplications->total());
+        $this->assertSame(15, $paginatedApplications->perPage());
+        $this->assertSame(1, $paginatedApplications->currentPage());
+
+        $paginationOptions = new PaginationOptions(2, 15);
+        $paginatedApplications = $this->repository->filterApplicationsPaginated(
+            user: $user,
+            onlyMyApplications: false,
+            filter: $appFilter,
+            paginationOptions: $paginationOptions,
+            sortOptions: new SortOptions(),
+        );
+
+        $this->assertSame(50, $paginatedApplications->total());
+        $this->assertSame(15, $paginatedApplications->perPage());
+        $this->assertSame(2, $paginatedApplications->currentPage());
+    }
+
+    public function testGetAllApplications()
+    {
+        Application::factory()
+            ->count(50)
+            ->for($this->identity)
+            ->for($this->subsidyVersion)
+            ->withApplicantStage($this->subsidyStage)
+            ->create([
+                'status' => ApplicationStatus::Submitted,
+            ]);
+
+        $user = User::factory()->create();
+        $user->attachRole(Role::Assessor);
+
+        $appFilter = new ApplicationsFilter();
+
+        $applicationsPaginated = $this->repository->filterApplicationsPaginated(
+            user: $user,
+            onlyMyApplications: false,
+            filter: $appFilter,
+            paginationOptions: new PaginationOptions(1, 15),
+            sortOptions: new SortOptions(),
+        );
+        $this->assertSame(50, $applicationsPaginated->total());
+        $this->assertSame(1, $applicationsPaginated->currentPage());
+        $this->assertCount(15, $applicationsPaginated->items());
     }
 
     public function testGetApplication()
@@ -287,5 +377,136 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);
         $this->assertCount(1, $answers->stages[1]->answers);
         $this->assertEquals($applicationStage2->id, $answers->stages[1]->stage->id);
+    }
+
+    /**
+     * @group clone-answers
+     */
+    public function testCloningAnswers(): void
+    {
+        $field = Field::factory()
+            ->for($this->subsidyStage)
+            ->create();
+
+        $applicationStageSource = ApplicationStage::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'sequence_number' => 1,
+            ]);
+
+        $answerSource = Answer::factory()
+            ->for($field)
+            ->for($applicationStageSource)
+            ->create();
+
+        $applicationStageTarget = ApplicationStage::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'sequence_number' => 2,
+            ]);
+
+        $this->repository->cloneApplicationStageAnswers($applicationStageSource, $applicationStageTarget);
+
+        $this->assertEquals(
+            $answerSource->encrypted_answer,
+            $applicationStageTarget->answers()->first()->encrypted_answer
+        );
+    }
+
+    /**
+     * @group clone-answers
+     */
+    public function testCloningAnswersShouldTakeExcludedFieldsIntoAccount(): void
+    {
+        $field = Field::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'exclude_from_clone_data' => true,
+            ]);
+
+
+        $applicationStageSource = ApplicationStage::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'sequence_number' => 1,
+            ]);
+
+        $answer = Answer::factory()
+            ->for($field)
+            ->for($applicationStageSource)
+            ->create();
+
+        $applicationStageTarget = ApplicationStage::factory()
+            ->for($this->subsidyStage)
+            ->create([
+                'sequence_number' => 2,
+            ]);
+
+        $this->repository->cloneApplicationStageAnswers($applicationStageSource, $applicationStageTarget);
+
+        $this->assertCount(0, $applicationStageTarget->answers);
+    }
+
+    public function testGetAllApplicationsSorted()
+    {
+        Carbon::setTestNow();
+
+        $firstApplication = Application::factory()
+            ->for($this->identity)
+            ->for($this->subsidyVersion)
+            ->withApplicantStage($this->subsidyStage)
+            ->create([
+                'application_title' => 'First Application',
+                'final_review_deadline' => Carbon::now()->addDays(1)->startOfDay(),
+                'updated_at' => Carbon::now(),
+                'status' => ApplicationStatus::Submitted,
+            ]);
+
+        $secondApplication = Application::factory()
+            ->for($this->identity)
+            ->for($this->subsidyVersion)
+            ->withApplicantStage($this->subsidyStage)
+            ->create([
+                'application_title' => 'Second Application',
+                'final_review_deadline' => Carbon::now()->addDays(2)->startOfDay(),
+                'updated_at' => Carbon::now(),
+                'status' => ApplicationStatus::Submitted,
+            ]);
+
+        $user = User::factory()->create();
+        $user->attachRole(Role::Assessor);
+
+        $appFilter = new ApplicationsFilter();
+
+        $applicationsPaginated = $this->repository->filterApplicationsPaginated(
+            user: $user,
+            onlyMyApplications: false,
+            filter: $appFilter,
+            paginationOptions: new PaginationOptions(1, 15),
+            sortOptions: new SortOptions([
+                new SortColumn('final_review_deadline', true),
+            ]),
+        );
+
+        /** @var Application[] $applications */
+        $applications = $applicationsPaginated->items();
+        $this->assertSame($firstApplication->application_title, $applications[0]->application_title);
+        $this->assertSame($secondApplication->application_title, $applications[1]->application_title);
+
+        $applicationsPaginated = $this->repository->filterApplicationsPaginated(
+            user: $user,
+            onlyMyApplications: false,
+            filter: $appFilter,
+            paginationOptions: new PaginationOptions(1, 15),
+            sortOptions: new SortOptions([
+                new SortColumn('final_review_deadline', false),
+            ]),
+        );
+
+
+        /** @var Application[] $applications */
+        $applications = $applicationsPaginated->items();
+        $this->assertSame($firstApplication->application_title, $applications[1]->application_title);
+        $this->assertSame($secondApplication->application_title, $applications[0]->application_title);
     }
 }

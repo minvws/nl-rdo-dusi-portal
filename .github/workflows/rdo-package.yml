@@ -98,7 +98,7 @@ jobs:
         run: tar -czhf ${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}.tar.gz ./app ./bootstrap ./config ./database ./lang ./public ./resources ./routes ./vendor ./composer.json
 
       - name: Upload release tar
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}
           path: ${{ matrix.directory }}/${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}.tar.gz

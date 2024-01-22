@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -23,6 +24,7 @@ class SurePayService
         private readonly BankAccountRepository $bankAccountRepository,
         private readonly ApplicationDataService $applicationDataService,
         private readonly ApplicationRepository $applicationRepository,
+        private readonly ApplicationStageEncryptionService $encryptionService,
     ) {
     }
 
@@ -72,6 +74,11 @@ class SurePayService
         $model->joint_account = $result->account->jointAccount;
         $model->number_of_account_holders = $result->account->numberOfAccountHolders;
         $model->country_code = $result->account->countryCode;
+
+        if (!empty($result->nameSuggestion)) {
+            $encrypter = $this->encryptionService->getEncrypter($stage);
+            $model->encrypted_name_suggestion = $encrypter->encrypt($result->nameSuggestion);
+        }
         $model->save();
 
         return $model;

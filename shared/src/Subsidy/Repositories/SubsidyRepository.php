@@ -49,9 +49,9 @@ class SubsidyRepository
      * @param string $id
      * @return ?SubsidyStage
      */
-    public function getSubsidyStage(string $id): ?SubsidyStage
+    public function getSubsidyStage(string $id, bool $lockForUpdate = false): ?SubsidyStage
     {
-        $subsidyStage = SubsidyStage::find($id);
+        $subsidyStage = SubsidyStage::query()->when($lockForUpdate, fn($q) => $q->lockForUpdate())->find($id);
         if ($subsidyStage instanceof SubsidyStage) {
             return $subsidyStage;
         }
@@ -197,9 +197,14 @@ class SubsidyRepository
     public function getSubsidyStageTitles(?array $subsidyIds = null): array
     {
         return SubsidyStage::bySubsidyIds($subsidyIds)
-            ->pluck('title')
+            ->select('title', 'stage', 'subsidy_version_id')
+            ->get()
+            ->groupBy('subsidy_version_id')
+            ->each->sortBy('stage')
+            ->map->pluck('title')
+            ->flatten()
             ->unique()
-            ->sort()
+            ->values()
             ->toArray();
     }
 

@@ -43,7 +43,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install libecpg-dev postgresql-client
       - name: Set up Python 3.8
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
       - name: Install dependencies
@@ -60,9 +60,9 @@ jobs:
         run: |
           if [ `grep -c ERROR ${{ matrix.database }}.log` -ne 0 ]; then grep ERROR ${{ matrix.database }}.log; fi
           exit `grep -c ERROR ${{ matrix.database }}.log`
-      - name: Upload manual documentation (pdf)
-        uses: actions/upload-artifact@v3
+      - name: Upload database import log
+        uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
-          name: logs
+          name: ${{ matrix.database }}.log
           path: ${{ matrix.database }}.log

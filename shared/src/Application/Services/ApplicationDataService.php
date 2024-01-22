@@ -1,5 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
-
+<?php
 
 /**
  * Application Data Service
@@ -12,17 +11,18 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use League\CommonMark\Exception\LogicException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
@@ -72,7 +72,7 @@ readonly class ApplicationDataService
 
     /**
      * @throws Throwable
-     * @throws ValidationException
+     * @throws ValidationErrorException
      */
     public function saveApplicationStageData(
         ApplicationStage $applicationStage,
@@ -85,18 +85,7 @@ readonly class ApplicationDataService
         // Validate, throws a ValidationException on error
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
         $validationResult = $validator->validate();
-
-        // Remove all answers for this stage because we received new data
-        $this->applicationRepository->deleteAnswersByStage($applicationStage);
-
-        // New encryption key for each save, so we do not reuse the same key
-        [$encryptedKey, $encrypter] = $this->encryptionService->generateEncryptionKey();
-        $applicationStage->encrypted_key = $encryptedKey;
-        $applicationStage->save();
-
-        $this->saveFieldValues($fieldValues, $encrypter, $applicationStage);
-
-        $this->updateSubsidyStageHashes($fieldValues, $applicationStage);
+        $this->updateAnswersForApplicationStage($applicationStage, $fieldValues);
 
         return $validationResult;
     }
@@ -217,7 +206,7 @@ readonly class ApplicationDataService
 
     private function updateSubsidyStageHashes(array $fieldValues, ApplicationStage $applicationStage): void
     {
-        $fieldValues = array_filter($fieldValues, fn($fieldValue) => !empty($fieldValue->value));
+        $fieldValues = array_filter($fieldValues, fn($fieldValue) => $fieldValue->valueToString() !== "");
         foreach ($applicationStage->subsidyStage->subsidyStageHashes as $subsidyStageHash) {
             $this->updateSubsidyStageHash($fieldValues, $subsidyStageHash, $applicationStage);
         }
@@ -285,5 +274,50 @@ readonly class ApplicationDataService
         }
 
         return false;
+    }
+
+    /**
+     * @param ApplicationStage $applicationStage
+     * @param array $fieldValues
+     * @return void
+     * @throws Exception
+     */
+    private function updateAnswersForApplicationStage(ApplicationStage $applicationStage, array $fieldValues): void
+    {
+        // Remove all answers for this stage because we received new data
+        $this->applicationRepository->deleteAnswersByStage($applicationStage);
+
+        // New encryption key for each save, so we do not reuse the same key
+        [$encryptedKey, $encrypter] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage->encrypted_key = $encryptedKey;
+        $applicationStage->save();
+
+        $this->saveFieldValues($fieldValues, $encrypter, $applicationStage);
+
+        $this->updateSubsidyStageHashes($fieldValues, $applicationStage);
+    }
+
+    public function decryptForApplicantStage(
+        Application $application,
+        string $encryptedValue
+    ): string {
+        $applicantApplicationStage = $this->applicationRepository->getApplicantApplicationStage($application, false);
+
+        if (is_null($applicantApplicationStage)) {
+            throw new LogicException(sprintf('No Applicant stage found for Application: %s', $application->id));
+        }
+
+        $encrypter = $this->encryptionService->getEncrypter($applicantApplicationStage);
+
+        return $encrypter->decrypt($encryptedValue);
+    }
+
+    public function encryptForStage(
+        ApplicationStage $applicationStage,
+        string $value
+    ): string {
+        $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+
+        return $encrypter->encrypt($value);
     }
 }

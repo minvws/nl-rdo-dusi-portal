@@ -8,14 +8,17 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
+use MinVWS\DUSi\Shared\Application\DTO\PaginationOptions;
+use MinVWS\DUSi\Shared\Application\DTO\SortOptions;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
@@ -31,7 +34,9 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\User\Models\User;
+use MinVWS\DUSi\Shared\User\Enums\Role;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -52,49 +57,70 @@ class ApplicationRepository
             ->where(function (QueryBuilder $query) use ($user) {
                 foreach ($user->roles as $role) {
                     $query->orWhere(function (QueryBuilder $query) use ($role, $user) {
-                        $query->where('applications.status', '<>', ApplicationStatus::Draft->value);
+                        $query
+                            ->where('applications.status', '<>', ApplicationStatus::Draft->value)
+                            // When your role is limited to a specific subsidy
+                            ->when(
+                                value: $role->pivot->subsidy_id !== null,
+                                callback: fn($q) => $q->where('sv.subsidy_id', '=', $role->pivot->subsidy_id)
+                            );
 
-                        // When you are implementationCoordinator, and you have the right to view all subsidies
+                        // When you can view all stages, it does not matter if there is an assessor attached
                         if ($role->view_all_stages) {
-                            // When you are implementationCoordinator, and you only have access to a specific subsidy
-                            if ($role->pivot->subsidy_id !== null) {
-                                $query->where('sv.subsidy_id', '=', $role->pivot->subsidy_id);
-                            }
-                        } else {
-                            // When you have another role
-                            $query->where(function (QueryBuilder $query) use ($role, $user) {
-                                // Filter on the stage where there isn't an assessor yet OR where the given user did the
-                                // assessment
-                                $query->where(function (QueryBuilder $query) use ($user) {
-                                    $query
-                                        ->whereNull('s.assessor_user_id')
-                                        ->orWhere('s.assessor_user_id', '=', $user->id);
-                                });
-
-                                // Check if the user role matches the required subsidy stage role
-                                $query->where('ss.assessor_user_role', '=', $role->name->value);
-
-                                // Check if the role is linked to a specific subsidy
-                                if ($role->pivot->subsidy_id !== null) {
-                                    $query->where('sv.subsidy_id', '=', $role->pivot->subsidy_id);
-                                }
-                            });
+                            return;
                         }
+
+                        // When you have another role
+                        $query->where(function (QueryBuilder $query) use ($role, $user) {
+                            // Filter on the stage where there isn't an assessor yet OR where the given user did the
+                            // assessment
+                            $query->where(function (QueryBuilder $query) use ($user) {
+                                $query
+                                    ->whereNull('s.assessor_user_id')
+                                    ->orWhere('s.assessor_user_id', '=', $user->id);
+                            });
+
+                            // Check if the user role matches the required subsidy stage role
+                            $query->where('ss.assessor_user_role', '=', $role->name->value);
+                        });
                     });
                 }
             });
     }
 
-    public function filterApplications(
+    public function filterApplicationsPaginated(
         User $user,
         bool $onlyMyApplications,
-        ApplicationsFilter $filter
-    ): array|Collection {
+        ApplicationsFilter $filter,
+        PaginationOptions $paginationOptions,
+        SortOptions $sortOptions,
+    ): LengthAwarePaginatorContract {
         if ($user->roles->isEmpty()) {
-            return [];
+            return new LengthAwarePaginator(
+                items: collect(),
+                total: 0,
+                perPage: $paginationOptions->getPerPage(),
+                currentPage: $paginationOptions->getPage(),
+            );
         }
 
-        $query = Application::query();
+        return $this->filterApplicationsQuery(
+            user: $user,
+            onlyMyApplications: $onlyMyApplications,
+            filter: $filter,
+            sortOptions: $sortOptions,
+        )->paginate(perPage: $paginationOptions->getPerPage(), page: $paginationOptions->getPage());
+    }
+
+    protected function filterApplicationsQuery(
+        User $user,
+        bool $onlyMyApplications,
+        ApplicationsFilter $filter,
+        SortOptions $sortOptions,
+    ): Builder {
+        if ($user->roles->isEmpty()) {
+            throw new RuntimeException('Not possible to filter applications when user has no roles');
+        }
 
         $filteredQuery = $this->getFilteredQueryForUser($user);
 
@@ -107,11 +133,16 @@ class ApplicationRepository
             });
         }
 
-        $query->whereExists($filteredQuery);
-
+        $query = Application::query()
+            ->whereExists($filteredQuery)
+            ->when(
+                value: $user->hasRole(Role::LegalSpecialist),
+                callback: fn($q) => $q->where('status', ApplicationStatus::Rejected),
+            );
         $this->applyFilters($query, $filter);
+        $this->applySort($query, $sortOptions);
 
-        return $query->get();
+        return $query;
     }
 
     private function applyFilters(Builder $query, ApplicationsFilter $filter): void
@@ -138,9 +169,9 @@ class ApplicationRepository
         }
     }
 
-    public function getApplication(string $appId): ?Application
+    public function getApplication(string $appId, bool $lockForUpdate = false): ?Application
     {
-        $application = Application::find($appId);
+        $application = Application::query()->when($lockForUpdate, fn($q) => $q->lockForUpdate())->find($appId);
         if ($application instanceof Application) {
             return $application;
         }
@@ -214,7 +245,7 @@ class ApplicationRepository
      *
      * @return array<int, ApplicationStage> Application stages indexed by stage number.
      */
-    public function getApplicationStagesUpToIncluding(ApplicationStage $stage): array
+    public function getLatestApplicationStagesUpToIncluding(ApplicationStage $stage): array
     {
         /** @var array<ApplicationStage> $matchingStages */
         $matchingStages =
@@ -238,7 +269,7 @@ class ApplicationRepository
     public function getAnswersForApplicationStagesUpToIncluding(
         ApplicationStage $stage
     ): AnswersByApplicationStage {
-        $uniqueStages = $this->getApplicationStagesUpToIncluding($stage);
+        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage);
 
         $stages = [];
         foreach ($uniqueStages as $currentStage) {
@@ -301,7 +332,8 @@ class ApplicationRepository
 
     public function cloneApplicationStageAnswers(ApplicationStage $source, ApplicationStage $target): void
     {
-        foreach ($source->answers as $answer) {
+        $cloneableAnswers = $source->answers->filter(fn(Answer $answer) => !$answer->field->exclude_from_clone_data);
+        foreach ($cloneableAnswers as $answer) {
             $newAnswer = $answer->replicate(['application_stage_id']);
             $newAnswer->applicationStage()->associate($target);
             $newAnswer->save();
@@ -326,9 +358,12 @@ class ApplicationRepository
         return $identity->applications()->with(['subsidyVersion', 'subsidyVersion.subsidy'])->get()->all();
     }
 
-    public function getMyApplication(Identity $identity, string $reference): ?Application
+    public function getMyApplication(Identity $identity, string $reference, bool $lockForUpdate = false): ?Application
     {
-        return $identity->applications()->where('reference', $reference)->first();
+        return $identity->applications()
+            ->when($lockForUpdate, fn($q) => $q->lockForUpdate())
+            ->where('reference', $reference)
+            ->first();
     }
 
     public function isReferenceUnique(string $applicationReference): bool
@@ -413,5 +448,12 @@ class ApplicationRepository
                 'hash' => $hash
             ]
         );
+    }
+
+    private function applySort(Builder $query, SortOptions $sortOptions): void
+    {
+        foreach ($sortOptions->getSortColumns() as $column) {
+            $query->orderBy($column->getColumn(), $column->getDirection());
+        }
     }
 }

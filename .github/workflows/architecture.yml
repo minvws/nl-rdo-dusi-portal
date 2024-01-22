@@ -1,4 +1,4 @@
-name: Generate Documentation
+name: Generate Documentation - Architectuur
 
 on:
   workflow_dispatch:
@@ -64,8 +64,8 @@ jobs:
          
       - name: Upload manual documentation (pdf)
         if: steps.check_files.outputs.files_exists == 'true'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         id: upload-document
         with:
-          name: documentatie
+          name: ${{ matrix.name }}
           path: pdfs

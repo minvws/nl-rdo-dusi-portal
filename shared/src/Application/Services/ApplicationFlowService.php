@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services;
 
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
@@ -167,7 +166,7 @@ class ApplicationFlowService
         // Calculate final review deadline:
         // 1. Take the first submit date from the applicant.
         // 2. Add the review period.
-        // 3. Distract any subsequent stages where the application was returned to the applicant.
+        // 3. Add any subsequent stages where the application was returned to the applicant.
         $stages = $this->applicationRepository->getOrderedApplicationStagesForSubsidyStage(
             $application,
             $transition->currentSubsidyStage
@@ -176,18 +175,12 @@ class ApplicationFlowService
         assert(count($stages) > 0);
         assert($stages[0]->submitted_at !== null);
 
-        $deadline =
-            CarbonImmutable::instance(array_shift($stages)->submitted_at)
-                ->addDays($application->subsidyVersion->review_period);
+        $deadline = Carbon::instance(array_shift($stages)->submitted_at)
+            ->addDays($application->subsidyVersion->review_period);
 
-        $diff = null;
         foreach ($stages as $stage) {
-            $current = Carbon::instance($stage->created_at)->diff($stage->submitted_at);
-            $diff = $diff === null ? $current : $diff->add($current);
-        }
-
-        if ($diff !== null) {
-            $deadline = $deadline->add($diff);
+            $timeAtApplicant = Carbon::instance($stage->created_at)->diff($stage->submitted_at);
+            $deadline->add($timeAtApplicant);
         }
 
         $application->final_review_deadline = $deadline->endOfDay()->floorSecond();
@@ -233,7 +226,7 @@ class ApplicationFlowService
             return;
         }
 
-        $stages = $this->applicationRepository->getApplicationStagesUpToIncluding($target);
+        $stages = $this->applicationRepository->getLatestApplicationStagesUpToIncluding($target);
         foreach ($stages as $stage) {
             if ($stage->assessor_user_id === $previousAssessor->id) {
                 // assessor already picked up an earlier (active!) stage, not allowed to assess 2 stages

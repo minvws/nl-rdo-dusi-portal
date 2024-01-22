@@ -16,7 +16,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountStatus;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use MinVWS\DUSi\Shared\Tests\TestCase;
-use MinVWS\DUSi\Shared\Tests\Unit\SurePay\Fakes\AccesstokenResponseFake;
+use MinVWS\DUSi\Shared\Tests\Unit\SurePay\Fakes\AccessTokenResponseFake;
 use MinVWS\DUSi\Shared\Tests\Unit\SurePay\Fakes\CheckOrganisationsAccountResponseFake;
 
 use function PHPUnit\Framework\assertCount;
@@ -117,7 +117,7 @@ class SurePayClientTest extends TestCase
         // Arrange & Assert
         $this->expectException(SurePayRepositoryException::class);
 
-        $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(AccesstokenResponseFake::build()));
+        $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(AccessTokenResponseFake::build()));
         $checkOrganisationsAccountResponse = new Response(status: 500);
 
         $sut = $this->initSUT([
@@ -135,7 +135,7 @@ class SurePayClientTest extends TestCase
      */
     public function testCheckOrganisationsAccountCallsClientRequestAndReturnsResponse()
     {
-        $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(AccesstokenResponseFake::build()));
+        $fetchAccessTokenResponse = new Response(status: 200, body: json_encode(AccessTokenResponseFake::build()));
         $checkOrganisationsAccountResponse = new Response(
             status: 200,
             body: json_encode(CheckOrganisationsAccountResponseFake::build())
@@ -159,7 +159,7 @@ class SurePayClientTest extends TestCase
     public function testAccessTokenReuse()
     {
         $sut = $this->initSUT([
-            new Response(status: 200, body: json_encode(AccesstokenResponseFake::build())),
+            new Response(status: 200, body: json_encode(AccessTokenResponseFake::build())),
             new Response(status: 200, body: json_encode(CheckOrganisationsAccountResponseFake::build())),
             new Response(status: 200, body: json_encode(CheckOrganisationsAccountResponseFake::build())),
         ]);

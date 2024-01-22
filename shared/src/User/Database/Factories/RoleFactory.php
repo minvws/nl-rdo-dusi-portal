@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\User\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
-use MinVWS\DUSi\Shared\User\Models\Organisation;
 use MinVWS\DUSi\Shared\User\Models\Role;
-use MinVWS\DUSi\Shared\User\Models\User;
 
 /**
  * @extends Factory<Role>

@@ -1,0 +1,27 @@
+{layout 'letter_layout.latte'}
+
+{block concern}
+    Betreft: Verlening aanvraag {$content->subsidyTitle}
+{/block}
+
+{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
+        Met deze brief beslis ik op uw aanvraag.
+    </p>
+    <p>&nbsp;</p>
+
+    <h2>Besluit</h2>
+    <p>Hierbij verleen ik u de financiële tegemoetkoming/subsidie van {$content->stage2->amount}.</p>
+    <p>&nbsp;</p>
+
+     <h2>Wanneer ontvangt u de financiële ondersteuning?</h2>
+      <p>Het bedrag van {$content->stage2->amount} wordt in één keer uitbetaald. Wij streven ernaar de financiële
+          ondersteuning binnen 10 werkdagen uit te keren.</p>
+
+{/block}
+
+{block sidebar}
+    {include parent}
+{/block}

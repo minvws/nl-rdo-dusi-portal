@@ -37,5 +37,11 @@ class RoleSeeder extends Seeder
         ], [
             'view_all_stages' => false,
         ]);
+
+        Role::updateOrCreate([
+            'name' => 'legalSpecialist', // Juridisch medewerker
+        ], [
+            'view_all_stages' => true,
+        ]);
     }
 }

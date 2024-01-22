@@ -15,11 +15,12 @@ class UserService
         /**
          * @psalm-suppress InvalidTemplateParam
          */
-        $subsidies = $user->roles->map(function (Role $role) {
-            return $role->pivot->subsidy()->get();
-        });
-
-        return $subsidies->flatten();
+        return $user->roles
+            ->map(function (Role $role) {
+                return $role->pivot->subsidy()->get();
+            })
+            ->flatten()
+            ->unique('id');
     }
 
     /**
