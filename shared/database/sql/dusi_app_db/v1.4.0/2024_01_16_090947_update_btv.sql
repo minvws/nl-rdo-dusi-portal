@@ -15,19 +15,19 @@ where field_id = (select id
 delete from public.fields where code = 'bankStatement' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045';
 
 delete
-from answers
+from public.answers
 where field_id = (select id
                   from public.fields
                   where code = 'permissionToProcessPersonalData' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045');
 
 delete from public.fields where code = 'permissionToProcessPersonalData' and subsidy_stage_id = '721c1c28-e674-415f-b1c3-872a631ed045';
 
-update fields
+update public.fields
 set params = '{"options":["Uittreksel van het BRP is opgestuurd","De aanvrager is een ingezetene (> 4 maanden) in Nederland","de aanvrager is ouder dan 18 jaar","De verklaring van de arts over het behandeltraject is opgestuurd","De verklaring van de arts over het behandeltraject is minder dan 2 maanden oud","De verklaring van de arts over het behandeltraject is ondertekend en voorzien van een naamstempel","Het opgegeven BIG-nummer komt overeen met het BIG-register","De operatie heeft nog niet plaatsgevonden","De aanvrager heeft genderdysforie","De aanvrager heeft minimaal een jaar voor de aanvraag hormoonbehandeling ondergaan, of is hiermee vanwege medische redenen gestopt of kon deze om medische redenen niet ondergaan","De verklaring van de arts met de vermelding van de type behandeling is opgestuurd","De verklaring van de arts met de vermelding van de type behandeling is ondertekend en voorzien van een naamstempel","De type behandeling voldoet aan de voorwaarden conform de subsidieregeling"]}'
 where code = 'firstAssessmentChecklist'
   and subsidy_stage_id = '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c';
 
-update fields
+update public.fields
 set params = '{"options":["Oneens met de eerste beoordeling","Eens met de eerste beoordeling"],"default":null}'
 where code = 'internalAssessment'
   and subsidy_stage_id = 'e456e790-1919-4a2b-b3d5-337d0053abe3';
