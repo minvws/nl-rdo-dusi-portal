@@ -17,10 +17,10 @@
 
             <p>@lang('Your password must adhere to the following rules:')</p>
             <ul>
-                <li>@lang('It must be at least 14 characters long.')</li>
-                <li>@lang('Cannot be similar to your name or email address.')</li>
-                <li>@lang('Is not a "common" password.')</li>
-                <li>@lang('Cannot contain only numerics.')</li>
+                <li>@lang('It must be at least 12 characters long.')</li>
+                <li>@lang('It must contain at least one uppercase and one lowercase letter.')</li>
+                <li>@lang('It must contain at least one number.')</li>
+                <li>@lang('It must contain at least one special character.')</li>
             </ul>
 
             <x-validation-errors />

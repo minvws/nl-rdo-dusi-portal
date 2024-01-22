@@ -26,7 +26,9 @@ class UserFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'filter' => ['nullable', 'string']
+            'filter' => ['nullable', 'string'],
+            'sort' => ['nullable', 'string', 'in:email,name'],
+            'direction' => ['nullable', 'string', 'in:asc,desc'],
         ];
     }
 }
