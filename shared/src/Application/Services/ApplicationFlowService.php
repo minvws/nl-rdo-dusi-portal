@@ -346,22 +346,7 @@ class ApplicationFlowService
             $this->resetClonedDataForStage($currentStage);
         }
         $this->applicationRepository->saveApplicationStage($currentStage);
-
-        $application = $currentStage->application;
-        $currentApplicationStatus = $application->status;
-        $this->performTransitionForApplication($subsidyStageTransition, $application);
-        $newApplicationStatus = $application->status;
-        $newStage = $this->createNextApplicationStageForTransition($subsidyStageTransition, $currentStage);
-        $transition = $this->createApplicationStageTransition(
-            $subsidyStageTransition,
-            $application,
-            $currentStage,
-            $currentApplicationStatus,
-            $newStage,
-            $newApplicationStatus
-        );
-        $this->scheduleMessageForApplicationStageTransition($transition);
-        return $newStage;
+        return $this->performTransitionForApplicationStage($subsidyStageTransition, $currentStage);
     }
     // EOF TEMP FOR HOTFIX
 }
