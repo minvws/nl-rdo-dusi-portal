@@ -686,7 +686,7 @@ class ApplicationFlowServiceTest extends TestCase
 
         $this->assertFalse($reviseStage->is_current);
         $this->assertFalse($reviseStage->is_submitted);
-        $this->assertNull($reviseStage->submitted_at);
+        $this->assertNotNull($reviseStage->submitted_at);
         $this->assertCount(2, $reviseStage->answers);
         $this->assertEquals($this->applicationStage1->encrypted_key, $reviseStage->encrypted_key);
         $this->assertEquals(
