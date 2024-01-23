@@ -14,30 +14,12 @@
 
     <h2>Besluit</h2>
     <p>Hierbij verleen ik u de financiële tegemoetkoming/subsidie van {$content->stage2->amount}.</p>
+    <p>&nbsp;</p>
 
-    {if $content->stage2->firstAssessmentApprovedNote}
-        <h2>Motivering bij het besluit</h2>
-        <p>{$content->stage2->firstAssessmentApprovedNote|breakLines}</p>
-    {/if}
-
-    <h2>Wanneer ontvangt u de financiële ondersteuning?</h2>
-    <p>Het bedrag van {$content->stage2->amount} wordt in één keer uitbetaald. Wij streven ernaar de financiële
+     <h2>Wanneer ontvangt u de financiële ondersteuning?</h2>
+      <p>Het bedrag van {$content->stage2->amount} wordt in één keer uitbetaald. Wij streven ernaar de financiële
           ondersteuning binnen 10 werkdagen uit te keren.</p>
 
-{/block}
-
-{block signature}
-    <p>
-        Met vriendelijke groet,<br/>
-        <br/>
-        de Minister voor Langdurige Zorg en Sport,<br/>
-        namens deze,<br/>
-        het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
-        <br/>
-        <img class="signature" alt="handtekening" src="{$content->getSignature('vws_dusi_signature.jpg')|dataStream}" />
-        <br/>
-        L. van der Weij
-    </p>
 {/block}
 
 {block sidebar}

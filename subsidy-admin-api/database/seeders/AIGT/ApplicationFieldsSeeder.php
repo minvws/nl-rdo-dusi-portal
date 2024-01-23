@@ -149,7 +149,7 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'truthfullyCompleted',
             title:          '',
-            excludeFromCloneData: true
+            exclude_from_clone_data: true
         );
 
     }

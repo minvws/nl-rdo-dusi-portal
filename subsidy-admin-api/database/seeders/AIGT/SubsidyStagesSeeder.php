@@ -25,15 +25,15 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_1_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Aanvraag',
-            'subject_role' => SubjectRole::Applicant,
+            'subject_role' => SubjectRole::Applicant->value,
             'stage' => 1,
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::SUBSIDY_STAGE_2_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Eerste beoordeling',
-            'subject_role' => SubjectRole::Assessor,
-            'assessor_user_role' => Role::Assessor,
+            'subject_role' => SubjectRole::Assessor->value,
+            'assessor_user_role' => Role::Assessor->value,
             'stage' => 2,
             'internal_note_field_code' => 'firstAssessmentInternalNote'
         ]);
@@ -41,8 +41,8 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_3_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Interne controle',
-            'subject_role' => SubjectRole::Assessor,
-            'assessor_user_role' => Role::InternalAuditor,
+            'subject_role' => SubjectRole::Assessor->value,
+            'assessor_user_role' => Role::InternalAuditor->value,
             'stage' => 3,
             'internal_note_field_code' => 'interalAssessmentInternalNote'
         ]);
@@ -50,8 +50,8 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_4_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Uitvoeringscoördinator controle',
-            'subject_role' => SubjectRole::Assessor,
-            'assessor_user_role' => Role::ImplementationCoordinator,
+            'subject_role' => SubjectRole::Assessor->value,
+            'assessor_user_role' => Role::ImplementationCoordinator->value,
             'stage' => 4,
             'internal_note_field_code' => 'implementationCoordinatorAssessmentInternalNote'
         ]);

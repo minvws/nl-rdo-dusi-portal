@@ -97,7 +97,24 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Start opleidingsonderdeel buitenland": "{abroadCourseComponentStartDate}",
+                            "Start opleidingsonderdeel buitenland": "{abroadCourseComponentStartDate}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Bestanden",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
                             "Bewijs van inschrijving": "{proofOfRegistrationDocument}",
                             "Verklaring van opleidingsinstituut": "{educationalInstituteDeclarationDocument}"
                         }

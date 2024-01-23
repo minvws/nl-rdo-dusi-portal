@@ -7,8 +7,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT;
 
 use Illuminate\Database\Seeder;
-use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
-use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
@@ -46,15 +44,13 @@ class AssessmentFieldsSeeder extends Seeder
                                 'Komt dit overeen met de opgave van de OIGT?',
                                 'Komt de aanvrager voor in het M&O-register?'
                             ],
-            isRequired:     false,
         );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code:           'subsidyAwardedBefore',
             title:          'Reeds eerder subsidie verleend aan dezelfde persoon voor de buitenlandstage?',
-            options:        ['Niet eerder subsidie verstrekt', 'Wel eerder subsidie verstrekt'],
-            isRequired:     false,
+            options:        ['Niet eerder subsidie verstrekt', 'Wel eerder subsidie verstrekt']
         );
 
         $this->createSelectField(
@@ -64,8 +60,6 @@ class AssessmentFieldsSeeder extends Seeder
             options:        ['€ 17.000'],
             default:        '€ 17.000',
             isRequired:     false,
-            requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
-            excludeFromCloneData: true,
         );
 
         $this->createSelectField(
@@ -102,14 +96,6 @@ class AssessmentFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            code: 'firstAssessmentApprovedNote',
-            title: 'Motivatie van goedkeuring',
-            isRequired: false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code: 'firstAssessmentInternalNote',
             title: 'Interne notitie',
             isRequired: false,
@@ -132,7 +118,7 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
-            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
+            options: ['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -151,7 +137,7 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             code: 'implementationCoordinatorAssessment',
             title: 'Beoordeling',
-            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
+            options: ['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -159,6 +145,14 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             code: 'implementationCoordinatorAssessmentInternalNote',
             title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            code: 'implementationCoordinatorReasonForRejection',
+            title: 'Reden van afkeuring',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );

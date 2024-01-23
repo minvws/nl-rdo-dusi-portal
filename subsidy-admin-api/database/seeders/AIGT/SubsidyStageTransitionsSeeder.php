@@ -19,9 +19,9 @@ class SubsidyStageTransitionsSeeder extends Seeder
     public const TRANSITION_STAGE_1_TO_2 = '24a47df1-fc9d-4557-9012-d51738e5bdec';
     public const TRANSITION_STAGE_2_TO_1 = '2f2e080d-0a05-467a-aaa5-292a95a6d361';
     public const TRANSITION_STAGE_2_TO_3 = '38957187-d17f-4e77-b4b2-90797f76b521';
+    public const TRANSITION_STAGE_3_TO_REJECTED = '4d3e230b-dec5-4c62-b6d9-8aea62819234';
     public const TRANSITION_STAGE_3_TO_2 = '04811943-3e98-4532-940f-5b49908a193d';
     public const TRANSITION_STAGE_3_TO_4 = 'd5a683bb-23bc-4c14-8ae2-2b2e62d378bb';
-    public const TRANSITION_STAGE_4_TO_2 = '4d3e230b-dec5-4c62-b6d9-8aea62819234';
     public const TRANSITION_STAGE_4_TO_APPROVED = '72bc33b6-2fbe-4d05-bd3b-0e9e88adb76a';
     public const TRANSITION_STAGE_4_TO_REJECTED = 'e4eb01fb-2acf-469c-9ffe-9a0a8be04752';
 
@@ -39,7 +39,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Aanvraag ingediend',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            'target_application_status' => ApplicationStatus::Pending,
+            'target_application_status' => ApplicationStatus::Submitted,
             'condition' => null,
             'send_message' => false,
             'assign_to_previous_assessor' => true,
@@ -53,7 +53,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Aanvulling gevraagd',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            'target_application_status' => ApplicationStatus::RequestForChanges,
+            'target_application_status' => ApplicationStatus::RequestForChanges->value,
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     2,
@@ -102,28 +102,64 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'clone_data' => true
         ]);
 
-        // Bij een beoordeeloptie 'Eens met de eerste beoordeling' gaat de aanvraag gaat naar de IC
+
+        // Bij een beoordeeloptie 'Eens met de eerste beoordeling', wordt de aanvraag als volgt doorgezet:
+        // - Eerste beoordeling = afgekeurd; aanvraag wordt afgekeurd en er wordt een afwijzingsbrief verzonden.
         DB::table('subsidy_stage_transitions')->insert([
-            'id' => self::TRANSITION_STAGE_3_TO_4,
-            'description' => 'Interne beoordeling eens met eerste beoordeling',
+            'id' => self::TRANSITION_STAGE_3_TO_REJECTED,
+            'description' => 'Interne beoordeling eens met afkeuring eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            'target_subsidy_stage_id' => null,
+            'target_application_status' => ApplicationStatus::Rejected->value,
             'condition' => $encoder->encode(
+                new AndCondition([
+                    new ComparisonCondition(
+                        2,
+                        'firstAssessment',
+                        Operator::Identical,
+                        'Afgekeurd'
+                    ),
                     new ComparisonCondition(
                         3,
                         'internalAssessment',
                         Operator::Identical,
                         'Eens met de eerste beoordeling'
                     )
+                ])
+            ),
+            'send_message' => true
+        ]);
+
+        // Bij een beoordeeloptie 'Eens met de eerste beoordeling', wordt de aanvraag als volgt doorgezet:
+        // - Eerste beoordeling = goedgekeurd; aanvraag gaat naar de IC
+        DB::table('subsidy_stage_transitions')->insert([
+            'id' => self::TRANSITION_STAGE_3_TO_4,
+            'description' => 'Interne beoordeling eens met goedkeuring eerste beoordeling',
+            'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
+            'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            'condition' => $encoder->encode(
+                new AndCondition([
+                    new ComparisonCondition(
+                        2,
+                        'firstAssessment',
+                        Operator::Identical,
+                        'Goedgekeurd'
+                    ),
+                    new ComparisonCondition(
+                        3,
+                        'internalAssessment',
+                        Operator::Identical,
+                        'Eens met de eerste beoordeling'
+                    )
+                ])
             ),
             'send_message' => false
         ]);
 
-        // Bij een beoordeeloptie 'Oneens met de eerste beoordeling' moet de aanvraag opnieuw
-        // volledig beoordeeld worden
+        // Bij een beoordeeloptie 'Oneens met de eerste beoordeling' gaat de aanvraag terug naar de eerste beoordelaar
         DB::table('subsidy_stage_transitions')->insert([
-            'id' => self::TRANSITION_STAGE_4_TO_2,
-            'description' => 'Implementatie coordinator beoordeling oneens met eerste beoordeling',
+            'id' => self::TRANSITION_STAGE_4_TO_REJECTED,
+            'description' => 'Interne beoording oneens met eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             'condition' => $encoder->encode(
@@ -139,60 +175,23 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'clone_data' => true
         ]);
 
-        // Bij een beoordeeloptie 'Eens met de eerste beoordeling' en 'Afgekeurd', wordt de aanvraag definitief
-        // afgekeurd en wordt de afkeuringsbrief verzonden.
-        DB::table('subsidy_stage_transitions')->insert([
-            'id' => self::TRANSITION_STAGE_4_TO_REJECTED,
-            'description' => 'Implementatie coordinator beoordeling eens met afkeuring',
-            'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
-            'target_subsidy_stage_id' => null,
-            'target_application_status' => ApplicationStatus::Rejected,
-            'condition' => $encoder->encode(
-                new AndCondition([
-                    new ComparisonCondition(
-                        2,
-                        'firstAssessment',
-                        Operator::Identical,
-                        'Afgekeurd'
-                    ),
-                    new ComparisonCondition(
-                        4,
-                        'implementationCoordinatorAssessment',
-                        Operator::Identical,
-                        'Eens met de eerste beoordeling'
-                    )
-                ])
-            ),
-            'send_message' => true,
-            'assign_to_previous_assessor' => false,
-            'clone_data' => false
-        ]);
-
         // Bij een beoordeeloptie 'Goedgekeurd' wordt de aanvraag definitief goedgekeurd en wordt een
         // toekenningsbrief verzonden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_4_TO_APPROVED,
-            'description' => 'Implementatie coordinator beoordeling eens met goedkeuring',
+            'description' => 'Interne beoordeling eens met eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => null,
-            'target_application_status' => ApplicationStatus::Approved,
+            'target_application_status' => ApplicationStatus::Approved->value,
             'condition' => $encoder->encode(
-                new AndCondition([
-                    new ComparisonCondition(
-                        2,
-                        'firstAssessment',
-                        Operator::Identical,
-                        'Goedgekeurd'
-                    ),
-                    new ComparisonCondition(
-                        4,
-                        'implementationCoordinatorAssessment',
-                        Operator::Identical,
-                        'Eens met de eerste beoordeling'
-                    )
-                ])
+                new ComparisonCondition(
+                    4,
+                    'implementationCoordinatorAssessment',
+                    Operator::Identical,
+                    'Eens met de eerste beoordeling'
+                )
             ),
-            'send_message' => true,
+            'send_message' => true
         ]);
     }
 }

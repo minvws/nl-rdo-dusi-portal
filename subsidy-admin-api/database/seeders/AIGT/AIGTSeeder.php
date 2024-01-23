@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -12,6 +13,7 @@ class AIGTSeeder extends Seeder
 {
     public const SUBSIDY_UUID = 'cb91d7d4-6261-4cd6-96e8-d09c86a670b7';
     public const SUBSIDY_VERSION_UUID = '2aaac0da-d265-40bb-bde6-ac20d77e6bca';
+
 
     /**
      * Run the database seeds.
@@ -54,7 +56,7 @@ class AIGTSeeder extends Seeder
             'status' => VersionStatus::Published,
             'created_at' => 'now()',
             'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/opleidingsactiviteiten-arts-internationale-gezondheid-en-tropengeneeskunde',
-            'contact_mail_address' => 'aigt@minvws.nl',
+            'contact_mail_address' => 'dienstpostbus@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
             'review_period' => 7 * 13 // 13 weeks

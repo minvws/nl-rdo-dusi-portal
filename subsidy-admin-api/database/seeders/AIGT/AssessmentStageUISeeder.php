@@ -182,28 +182,6 @@ class AssessmentStageUISeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/firstAssessmentApprovedNote",
-                                    "options" => [
-                                        "format" => "textarea",
-                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
-                                    ],
-                                    "rule" => [
-                                        "effect" => "SHOW",
-                                        "condition" =>  [
-                                            "scope" => "#/properties/firstAssessment",
-                                            "schema" =>  [
-                                                "const" => "Goedgekeurd"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentInternalNote",
                                     "options" => [
                                         "format" => "textarea"
@@ -325,6 +303,27 @@ class AssessmentStageUISeeder extends Seeder
                     "type" => "Group",
                     "label" => "Toelichting",
                     "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/implementationCoordinatorReasonForRejection",
+                                    "options" => [
+                                        "format" => "textarea"
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/implementationCoordinatorAssessment",
+                                            "schema" =>  [
+                                                "const" => "Oneens met de eerste beoordeling"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
                         [
                             "type" => "VerticalLayout",
                             "elements" => [
