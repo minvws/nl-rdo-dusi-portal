@@ -30,6 +30,13 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+DUSI-632: Create AIGT subsidy
+
+A signature needs to be added:  
+assessment-api/storage/subsidy-files/cb91d7d4-6261-4cd6-96e8-d09c86a670b7/vws_dusi_signature.jpg
+
+Run the dus_app_db migration up to version 1.4.0. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1118>
+
 ### DUSI-1041: BTV updates
 
 Run the dus_app_db migration up to version 1.4.0. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1066>

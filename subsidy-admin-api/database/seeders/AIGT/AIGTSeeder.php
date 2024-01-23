@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;

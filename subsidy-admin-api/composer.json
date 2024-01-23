@@ -20,14 +20,15 @@
         "laravel/pint": "^1.10.4",
         "laravel/sail": "^1.23.1",
         "laravel/tinker": "^2.8.1",
+        "minvws/laravel-sql-exporter": "^1.0",
         "mockery/mockery": "^1.6.2",
         "nunomaduro/collision": "^7.7.0",
-        "squizlabs/php_codesniffer": "^3.0",
         "phpmd/phpmd": "^2.13.0",
         "phpunit/phpunit": "^10.2.7",
         "psalm/plugin-laravel": "^2.8",
         "slevomat/coding-standard": "^8.13.1",
         "spatie/laravel-ignition": "^2.2.0",
+        "squizlabs/php_codesniffer": "^3.0",
         "vimeo/psalm": "^5.13.1"
     },
     "autoload": {
@@ -80,6 +81,10 @@
         {
             "type": "git",
             "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:minvws/nl-rdo-laravel-sql-export.git"
         },
         {
             "type": "path",
