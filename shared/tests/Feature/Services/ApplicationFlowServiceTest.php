@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
@@ -613,5 +614,27 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertEquals(ApplicationStatus::Draft, $transition->previous_application_status);
         $this->assertEquals($stage2->id, $transition->newApplicationStage->id);
         $this->assertEquals(ApplicationStatus::Submitted, $transition->new_application_status);
+    }
+
+    public function testUpdatedAtOfApplicationIsUpdatedAfterApplicationStageSubmit(): void
+    {
+        $now = CarbonImmutable::now()->startOfDay();
+        Date::setTestNow($now);
+
+        // Set start updated_at
+        $this->application->update([
+            'updated_at' => $now
+        ]);
+
+        // Submit after an hour
+        $nowWithHour = $now->addHour();
+        Date::setTestNow($nowWithHour);
+
+        $this->flowService->submitApplicationStage($this->applicationStage1);
+        $this->application->refresh();
+
+        // Updated at should be updated
+        $this->assertFalse($now->eq($this->application->updated_at));
+        $this->assertTrue($nowWithHour->eq($this->application->updated_at));
     }
 }
