@@ -6,27 +6,6 @@
     "elements": [
         {
             "type": "Group",
-            "label": "Uw bankgegevens",
-            "elements": [
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "FormResultsTable",
-                            "label": "Uw bankgegegvens",
-                            "options": {
-                                "fields": {
-                                    "Naam rekeninghouder": "{bankAccountHolder}",
-                                    "IBAN": "{bankAccountNumber}"
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "Group",
             "label": "Uittreksel bevolkingsregister",
             "elements": [
                 {
