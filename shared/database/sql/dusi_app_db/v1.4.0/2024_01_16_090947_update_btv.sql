@@ -28,7 +28,7 @@ where code = 'firstAssessmentChecklist'
   and subsidy_stage_id = '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c';
 
 update public.fields
-set params = '{"options":["Oneens met de eerste beoordeling","Eens met de eerste beoordeling"],"default":null}'
+set params = '{"options":["Eens met de eerste beoordeling","Oneens met de eerste beoordeling"],"default":null}'
 where code = 'internalAssessment'
   and subsidy_stage_id = 'e456e790-1919-4a2b-b3d5-337d0053abe3';
 
