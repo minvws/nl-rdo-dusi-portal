@@ -39,7 +39,7 @@ Run the dus_app_db migration up to version 1.4.0. See <https://github.com/minvws
 
 ### DUSI-1041: BTV updates
 
-Run the dus_app_db migration up to version 1.4.0. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1066>
+This feature contains a DB migration. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1066>
 
 ## Release 2.0.0
 
