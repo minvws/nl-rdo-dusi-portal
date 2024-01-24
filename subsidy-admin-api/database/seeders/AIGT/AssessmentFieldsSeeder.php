@@ -118,7 +118,7 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
-            options: ['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling'],
+            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -137,7 +137,7 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             code: 'implementationCoordinatorAssessment',
             title: 'Beoordeling',
-            options: ['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling'],
+            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
