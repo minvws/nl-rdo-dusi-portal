@@ -198,7 +198,8 @@ return [
         MinVWS\DUSi\Application\Backend\Providers\RouteServiceProvider::class,
         \MinVWS\DUSi\Shared\Providers\HsmEncryptionServiceProvider::class,
         \MinVWS\DUSi\Shared\Providers\HsmApiServiceProvider::class,
-        \MinVWS\DUSi\Shared\Providers\SurePayServiceProvider::class
+        \MinVWS\DUSi\Shared\Providers\SurePayServiceProvider::class,
+        \MinVWS\SqlExporter\SqlExporterServiceProvider::class,
     ],
 
     /*
