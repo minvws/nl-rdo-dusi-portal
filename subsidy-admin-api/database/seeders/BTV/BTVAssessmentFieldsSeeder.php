@@ -37,7 +37,6 @@ class BTVAssessmentFieldsSeeder extends Seeder
                                 'Uittreksel van het BRP is opgestuurd',
                                 'De aanvrager is een ingezetene (> 4 maanden) in Nederland',
                                 'De aanvrager is ouder dan 18 jaar',
-                                'Zijn het IBAN en het SurePay resultaat akkoord?',
                                 'De verklaring van de arts over het behandeltraject is opgestuurd',
                                 'De verklaring van de arts over het behandeltraject is minder dan 2 maanden oud',
                                 'De verklaring van de arts over het behandeltraject is ondertekend en voorzien van een naamstempel',
