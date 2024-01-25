@@ -22,7 +22,7 @@ class DigidMockController extends Controller
     {
         return $this->loginResponseHandler->handleLoginResponse(
             (object)[
-                "bsn" => "942424243",
+                "bsn" => "942424242",
                 "session_id" => Str::random(32),
                 "loa_authn" => $this->mockLoa->value
             ]
