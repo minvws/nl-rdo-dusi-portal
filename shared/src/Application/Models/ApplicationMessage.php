@@ -72,11 +72,11 @@ class ApplicationMessage extends Model
 
     protected static function booting(): void
     {
-        self::creating(function (self $self) {
+        self::creating(static function (self $self) {
             $self->setAttribute('sent_at', $self->freshTimestamp());
         });
 
-        self::updating(function (self $self) {
+        self::updating(static function (self $self) {
             if ($self->isDirty('is_new')) {
                 $self->setAttribute('seen_at', $self->freshTimestamp());
             }

@@ -366,6 +366,13 @@ class ApplicationRepository
             ->first();
     }
 
+    public function getMyApplicationsThatNeededChangesCount(Identity $identity): int
+    {
+        return $identity->applications()
+            ->where('status', ApplicationStatus::RequestForChanges)
+            ->count();
+    }
+
     public function isReferenceUnique(string $applicationReference): bool
     {
         return Application::where('reference', $applicationReference)->count() === 0;
