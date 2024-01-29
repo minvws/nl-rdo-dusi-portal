@@ -34,7 +34,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             options:        [
                                 'Uittreksel van het BRP is opgestuurd',
                                 'De aanvrager is een ingezetene (> 4 maanden) in Nederland',
-                                'de aanvrager is ouder dan 18 jaar',
+                                'De aanvrager is ouder dan 18 jaar',
                                 'De verklaring van de arts over het behandeltraject is opgestuurd',
                                 'De verklaring van de arts over het behandeltraject is minder dan 2 maanden oud',
                                 'De verklaring van de arts over het behandeltraject is ondertekend en voorzien van een naamstempel',
@@ -44,9 +44,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
                                 'De aanvrager heeft minimaal een jaar voor de aanvraag hormoonbehandeling ondergaan, of is hiermee vanwege medische redenen gestopt of kon deze om medische redenen niet ondergaan',
                                 'De verklaring van de arts met de vermelding van de type behandeling is opgestuurd',
                                 'De verklaring van de arts met de vermelding van de type behandeling is ondertekend en voorzien van een naamstempel',
-                                'De type behandeling voldoet aan de voorwaarden conform de subsidieregeling',
-                                'Het IBAN-nummer klopt met het opgegeven IBAN-nummer van de aanvraag',
-                                'De tenaamstelling op het bankafschrift of bankpas klopt'
+                                'De type behandeling voldoet aan de voorwaarden conform de subsidieregeling'
                             ],
         );
 
@@ -114,7 +112,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_3_UUID,
             code: 'secondAssessment',
             title: 'Beoordeling',
-            options: ['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling'],
+            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -152,7 +150,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
-            options: ['Afgekeurd', 'Goedgekeurd'],
+            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 

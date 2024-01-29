@@ -58,6 +58,7 @@ class BankAccountDuplicatesService
         $subsidyStageHashQuery = $this->applicationHashService->getSubsidyStageHashJoinedQuery();
 
         $subsidyStageHashQuery
+            ->where('subsidies.id', $subsidy->id)
             ->where('subsidy_stage_hashes.name', self::BANK_ACCOUNT_SUBSIDY_STAGE_HASH_NAME);
 
         $count = $subsidyStageHashQuery->count();

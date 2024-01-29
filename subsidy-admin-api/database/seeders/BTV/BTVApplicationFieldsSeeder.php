@@ -7,21 +7,27 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMSubsidyStagesSeeder;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
 class BTVApplicationFieldsSeeder extends Seeder
 {
     use CreateField;
 
+    public const SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID = '70609201-1301-455c-942b-654236221970';
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $this->createBTVFields();
+        $this->createFields();
+        $this->createSubsidyStageHashes();
     }
 
-    public function createBTVFields(): void
+    public function createFields(): void
     {
         $this->createTextField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
@@ -122,22 +128,12 @@ class BTVApplicationFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
-            code:           'bankStatement',
-            title:          'Kopie bankafschrift',
-            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
-            minItems:       1,
-            maxItems:       20,
-            maxFileSize:    5242880
-        );
-
-        $this->createUploadField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'extractPopulationRegisterDocument',
             title:          'Uittreksel bevolkingsregister niet ouder dan 3 maanden',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
-            maxFileSize:    5242880
+            maxFileSize:    20971520
         );
 
         $this->createUploadField(
@@ -147,7 +143,7 @@ class BTVApplicationFieldsSeeder extends Seeder
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
-            maxFileSize:    5242880
+            maxFileSize:    20971520
         );
 
         $this->createUploadField(
@@ -157,13 +153,7 @@ class BTVApplicationFieldsSeeder extends Seeder
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
-            maxFileSize:    5242880
-        );
-
-        $this->createCheckboxField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
-            code:           'permissionToProcessPersonalData',
-            title:          'Ik geef toestemming voor het verwerken van mijn persoonsgegevens voor deze subsidieaanvraag. Ik verklaar het formulier naar waarheid te hebben ingevuld.',
+            maxFileSize:    20971520
         );
 
         $this->createCheckboxField(
@@ -173,5 +163,29 @@ class BTVApplicationFieldsSeeder extends Seeder
             exclude_from_clone_data: true
         );
 
+    }
+
+    private function createSubsidyStageHashes(): void
+    {
+        DB::table('subsidy_stage_hashes')->insert([
+            'id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
+            'subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            'name' => 'Bank account',
+            'description' => 'Bank account duplicate reporting',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        /** @var Field $bankAccountNumber */
+        $bankAccountNumber = DB::table('fields')
+            ->where('subsidy_stage_id', BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID)
+            ->where('code', 'bankAccountNumber')
+            ->where('title', 'IBAN')
+            ->first();
+
+        DB::table('subsidy_stage_hash_fields')->insert([
+            'subsidy_stage_hash_id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
+            'field_id' => $bankAccountNumber->id,
+        ]);
     }
 }

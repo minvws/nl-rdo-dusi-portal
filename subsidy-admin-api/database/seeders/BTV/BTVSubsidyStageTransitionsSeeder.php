@@ -156,30 +156,30 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'send_message' => false
         ]);
 
-        // Bij een beoordeeloptie 'Afgekeurd' wordt de aanvraag afgekeurd, en moet de IC een motivatie
-        // invoeren en wordt vervolgens een afwijzingsbrief verzonden
+        // Bij een beoordeeloptie 'Oneens met de eerste beoordeling' gaat de aanvraag terug naar de eerste beoordelaar
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_4_TO_REJECTED,
-            'description' => 'Aanvraag afgekeurd',
+            'description' => 'Interne beoording oneens met eerste beoordeling',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
-            'target_subsidy_stage_id' => null,
-            'target_application_status' => ApplicationStatus::Rejected->value,
+            'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     4,
                     'internalAssessment',
                     Operator::Identical,
-                    'Afgekeurd'
+                    'Oneens met de eerste beoordeling'
                 )
             ),
-            'send_message' => true
+            'send_message' => false,
+            'assign_to_previous_assessor' => true,
+            'clone_data' => true
         ]);
 
         // Bij een beoordeeloptie 'Goedgekeurd' wordt de aanvraag definitief goedgekeurd en wordt een
         // toekenningsbrief verzonden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_4_TO_APPROVED,
-            'description' => 'Aanvraag goedgekeurd',
+            'description' => 'Interne beoordeling eens met eerste beoordeling',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Approved->value,
@@ -188,10 +188,10 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
                     4,
                     'internalAssessment',
                     Operator::Identical,
-                    'Goedgekeurd'
+                    'Eens met de eerste beoordeling'
                 )
             ),
-            'send_message' => true
+            'send_message' => true,
         ]);
     }
 }

@@ -19,6 +19,7 @@ use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryp
 class SurePayService
 {
     private const SUBSIDY_PZCM_ID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
+    private const SUBSIDY_BTV_UUID = '00f26400-7232-475f-922c-6b569b7e421a';
 
     public function __construct(
         private readonly BankAccountRepository $bankAccountRepository,
@@ -31,7 +32,8 @@ class SurePayService
     public function shouldCheckSurePayForApplication(Application $application): bool
     {
         // temporary until we have generalized this
-        return $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
+        return $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID ||
+            $application->subsidyVersion->subsidy_id === self::SUBSIDY_BTV_UUID;
     }
 
     /**
