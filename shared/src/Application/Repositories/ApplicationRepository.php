@@ -74,14 +74,15 @@ class ApplicationRepository
                         $query->where(function (QueryBuilder $query) use ($role, $user) {
                             // Filter on the stage where there isn't an assessor yet OR where the given user did the
                             // assessment
-                            $query->where(function (QueryBuilder $query) use ($user) {
+                            $query->where('s.assessor_user_id', '=', $user->id);
+                            $query->orWhere(function (QueryBuilder $query) use ($role) {
                                 $query
+                                    // Check if the current stage is not yet assessed
+                                    ->where('s.is_current', true)
                                     ->whereNull('s.assessor_user_id')
-                                    ->orWhere('s.assessor_user_id', '=', $user->id);
+                                    // Then also the user role need to match the required subsidy stage role
+                                    ->where('ss.assessor_user_role', '=', $role->name->value);
                             });
-
-                            // Check if the user role matches the required subsidy stage role
-                            $query->where('ss.assessor_user_role', '=', $role->name->value);
                         });
                     });
                 }
@@ -126,11 +127,6 @@ class ApplicationRepository
 
         if ($onlyMyApplications) {
             $filteredQuery->where('s.assessor_user_id', '=', $user->id);
-        } else {
-            $filteredQuery->where(function (QueryBuilder $query) use ($user) {
-                $query->where('s.is_current', true);
-                $query->orWhere('s.assessor_user_id', '=', $user->id);
-            });
         }
 
         $query = Application::query()
