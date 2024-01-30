@@ -83,6 +83,14 @@ with the provided description in the filename.
 
 Always check if the desired result is correctly generated.
 
+### Migrations
+
+The Laravel migrations are only for development purposes.
+The Laravel migrations can be converted to SQL migrations (which will be executed on Non-development environments)
+using the [export package](https://github.com/minvws/nl-rdo-laravel-sql-export).
+See the [backend README](https://github.com/minvws/nl-rdo-dusi-portal/tree/main/application-backend#migrations)
+for more information.
+
 ### Laravel Sail / Docker compose
 
 Docker compose is wrapped using Laravel Sail. Instead of using `docker compose`

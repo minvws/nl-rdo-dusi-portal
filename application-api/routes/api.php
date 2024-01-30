@@ -58,13 +58,13 @@ Route::middleware('auth')->group(
                 ->name('message-download');
         });
 
-        Route::get('actionables/counts', [ActionableController::class, 'counts']);
+        Route::get('actionables/counts', [ActionableController::class, 'counts'])->name('actionables-count');
 
         Route::get('user/info', [UserController::class, 'info'])->name('user-info');
         Route::post('user/logout', [UserController::class, 'logout'])->name('user-logout');
 
-        // TODO: route name not suitable for user messages
-        Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters']);
+        Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters'])
+            ->name('ui-applications-messages-filter');
     }
 );
 

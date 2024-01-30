@@ -79,10 +79,10 @@ class BankAccountDuplicatesServiceTest extends TestCase
         return $application;
     }
 
-    public function createBankAccountSubsidyStageHash(): void
+    public function createBankAccountSubsidyStageHash(SubsidyStage $subsidyStage): SubsidyStageHash
     {
-        $this->bankAccountSubsidyStageHash = SubsidyStageHash::factory()
-            ->for($this->subsidyStage1)->create([
+        return SubsidyStageHash::factory()
+            ->for($subsidyStage)->create([
                   'name' => BankAccountDuplicatesService::BANK_ACCOUNT_SUBSIDY_STAGE_HASH_NAME,
               ]);
     }
@@ -96,7 +96,7 @@ class BankAccountDuplicatesServiceTest extends TestCase
 
     public function testBankAccountDuplicatesFound(): void
     {
-        $this->createBankAccountSubsidyStageHash();
+        $this->bankAccountSubsidyStageHash = $this->createBankAccountSubsidyStageHash($this->subsidyStage1);
         $application1 = $this->createApplicationWithBankAccountNumberHash('hash1');
         $application2 = $this->createApplicationWithBankAccountNumberHash('hash1');
 
@@ -115,7 +115,7 @@ class BankAccountDuplicatesServiceTest extends TestCase
 
     public function testBankAccountDuplicatesNotFound(): void
     {
-        $this->createBankAccountSubsidyStageHash();
+        $this->bankAccountSubsidyStageHash = $this->createBankAccountSubsidyStageHash($this->subsidyStage1);
         $this->createApplicationWithBankAccountNumberHash('hash1');
         $this->createApplicationWithBankAccountNumberHash('hash2');
 
@@ -126,7 +126,7 @@ class BankAccountDuplicatesServiceTest extends TestCase
 
     public function testMultipleBankAccountDuplicatesFound(): void
     {
-        $this->createBankAccountSubsidyStageHash();
+        $this->bankAccountSubsidyStageHash = $this->createBankAccountSubsidyStageHash($this->subsidyStage1);
         $this->createApplicationWithBankAccountNumberHash('hash1');
         $this->createApplicationWithBankAccountNumberHash('hash2');
         $this->createApplicationWithBankAccountNumberHash('hash1');
@@ -135,5 +135,43 @@ class BankAccountDuplicatesServiceTest extends TestCase
         $duplicates = $this->bankAccountDuplicatesService->getDuplicatesForSubsidy($this->subsidy);
 
         $this->assertCount(2, $duplicates);
+    }
+
+    public function testBankAccountDuplicatesServiceWhenMultipleSubsidyHashesExist(): void
+    {
+        $this->bankAccountSubsidyStageHash = $this->createBankAccountSubsidyStageHash($this->subsidyStage1);
+
+        $this->createAnotherSubsidyWithSubsidyHash();
+
+        $application1 = $this->createApplicationWithBankAccountNumberHash('hash1');
+        $application2 = $this->createApplicationWithBankAccountNumberHash('hash1');
+
+        $duplicates = $this->bankAccountDuplicatesService->getDuplicatesForSubsidy($this->subsidy);
+
+        $this->assertCount(1, $duplicates);
+        $this->assertContains(
+            $application1->id,
+            $duplicates->first()->applications->map(fn(Application $application) => $application->id)
+        );
+        $this->assertContains(
+            $application2->id,
+            $duplicates->first()->applications->map(fn(Application $application) => $application->id)
+        );
+    }
+
+    private function createAnotherSubsidyWithSubsidyHash(): void
+    {
+        $subsidy = Subsidy::factory()->create();
+        $subsidyVersion = SubsidyVersion::factory()
+            ->for($subsidy)
+            ->create(['status' => VersionStatus::Published]);
+        $subsidyStage = SubsidyStage::factory()->for($subsidyVersion)->create([
+            'stage' => 1,
+            'subject_role' => SubjectRole::Applicant
+        ]);
+
+        $identity = Identity::factory()->create();
+
+        $this->createBankAccountSubsidyStageHash($subsidyStage);
     }
 }

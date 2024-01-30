@@ -49,7 +49,7 @@ class BTVSubsidyStagesSeeder extends Seeder
         DB::table('subsidy_stages')->insert([
             'id' => self::BTV_STAGE_4_UUID,
             'subsidy_version_id' => BTVSeeder::BTV_VERSION_UUID,
-            'title' => 'Interne beoordeling',
+            'title' => 'Interne Controle',
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::InternalAuditor->value,
             'stage' => 4,

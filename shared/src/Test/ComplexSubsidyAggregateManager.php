@@ -125,7 +125,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
      */
     public function createTransitions(): void
     {
-        $this->createSubsidyStageTransaction(1, 2, [
+        $this->createSubsidyStageTransition(1, 2, [
             'description' => 'Aanvraag ingediend',
             'target_application_status' => ApplicationStatus::Submitted,
             'assign_to_previous_assessor' => true,
@@ -134,7 +134,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'send_message' => false,
         ]);
 
-        $this->createSubsidyStageTransaction(2, 1, [
+        $this->createSubsidyStageTransition(2, 1, [
             'description' => 'Aanvulling gevraagd',
             'target_application_status' => ApplicationStatus::RequestForChanges,
             'assign_to_previous_assessor' => true,
@@ -148,7 +148,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'send_message' => true,
         ]);
 
-        $this->createSubsidyStageTransaction(2, 3, [
+        $this->createSubsidyStageTransition(2, 3, [
             'description' => 'Eerste beoordeling voltooid',
             'condition' => new InCondition(
                 2,
@@ -158,7 +158,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'send_message' => false,
         ]);
 
-        $this->createSubsidyStageTransaction(3, 2, [
+        $this->createSubsidyStageTransition(3, 2, [
             'target_application_status' => ApplicationStatus::RequestForChanges,
             'condition' => new ComparisonCondition(
                 3,
@@ -171,7 +171,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'clone_data' => true,
         ]);
 
-        $this->createSubsidyStageTransaction(3, null, [
+        $this->createSubsidyStageTransition(3, null, [
             'description' => 'Tweede beoordeling eens met afkeuring eerste beoordeling',
             'target_application_status' => ApplicationStatus::Rejected,
             'condition' => new AndCondition([
@@ -191,7 +191,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'send_message' => true
         ]);
 
-        $this->createSubsidyStageTransaction(3, 4, [
+        $this->createSubsidyStageTransition(3, 4, [
             'description' => 'Tweede beoordeling eens met goedkeuring eerste beoordeling',
             'condition' => new AndCondition([
                 new ComparisonCondition(
@@ -210,7 +210,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'send_message' => false,
         ]);
 
-        $this->createSubsidyStageTransaction(4, 2, [
+        $this->createSubsidyStageTransition(4, 2, [
             'description' => 'Interne controle oneens met beoordeling',
             'condition' => new OrCondition([
                 new AndCondition([
@@ -247,7 +247,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
             'clone_data' => true
         ]);
 
-        $this->createSubsidyStageTransaction(4, 5, [
+        $this->createSubsidyStageTransition(4, 5, [
            'description' => 'Interne controle eens met beoordeling',
            'condition' => new AndCondition([
                 new ComparisonCondition(
@@ -266,7 +266,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
            'send_message' => false,
         ]);
 
-        $this->createSubsidyStageTransaction(5, null, [
+        $this->createSubsidyStageTransition(5, null, [
                    'description' => 'Aanvraag afgekeurd',
                    'target_application_status' => ApplicationStatus::Rejected,
                    'condition' => new ComparisonCondition(
@@ -279,7 +279,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
                ]);
 
 
-        $this->createSubsidyStageTransaction(5, null, [
+        $this->createSubsidyStageTransition(5, null, [
            'description' => 'Aanvraag goedgekeurd',
            'target_application_status' => ApplicationStatus::Approved,
            'condition' =>

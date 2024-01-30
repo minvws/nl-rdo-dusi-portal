@@ -10,13 +10,14 @@
             "elements": [
                 {
                     "type": "FormResultsTable",
-                    "label": "Uw bankgegevens",
+                    "label": "Uw gegevens",
                     "options": {
                         "fields": {
-                            "Indiener": "{firstName} {infix} {lastName}",
-                            "Adres": "{streetName} {houseNumber}{houseNumberSuffix} {postalCode} {city}",
+                            "Naam": "{firstName} {infix} {lastName}",
+                            "Adres": "{street} {houseNumber}{houseNumberSuffix} {postalCode} {city}",
                             "Telefoon": "{phoneNumber}",
-                            "E-mailadres": "{email}"
+                            "E-mailadres": "{email}",
+                            "Geboortedatum": "{dateOfBirth}"
                         }
                     }
                 }
@@ -29,7 +30,7 @@
                 {
                     "type": "CustomControl",
                     "scope": "#/properties/truthfullyCompleted",
-                    "label": "Inhoud",
+                    "label": "Waarheidsverklaring",
                     "options": {
                         "description": "Ik verklaar het formulier naar waarheid te hebben ingevuld."
                     }

@@ -39,7 +39,7 @@ class BTVSeeder extends Seeder
         DB::table('subsidies')->insert([
             'id' => self::BTV_UUID,
             'title' => 'Borstprothesen transvrouwen',
-            'reference_prefix' => 'BTV24',
+            'reference_prefix' => 'BTV',
             'code' => 'BTV',
             'description' => "Transvrouwen zijn man-vrouw transgenders die negatieve gevoelens ('genderdysforie') ervaren omdat ze als man geboren zijn en in transitie zijn om als vrouw te leven. De meerderheid van de transvrouwen vindt, ook na behandeling (de zogeheten genderbevestigende hormonale therapie), dat zij te weinig borstweefsel heeft voor een vrouwelijk profiel. Dit kan een grote hindernis zijn bij de transitie. Een borstvergroting kan deze hinder verminderen.",
             'valid_from' => '2019-02-01',
@@ -56,7 +56,7 @@ class BTVSeeder extends Seeder
             'status' => VersionStatus::Published,
             'created_at' => '2019-02-01',
             'subsidy_page_url' => 'https://www.dus-i.nl/subsidies',
-            'contact_mail_address' => 'dienstpostbus@minvws.nl',
+            'contact_mail_address' => 'btv@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
             'review_period' => 7 * 13 // 13 weeks
