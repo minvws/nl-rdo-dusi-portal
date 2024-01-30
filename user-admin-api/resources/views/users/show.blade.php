@@ -33,7 +33,7 @@
                 </div>
                 <div>
                     <dt>@lang("Created at")</dt>
-                    <dd>{{ $user->created_at->format('Y-d-m H:i:s') }}</dd>
+                    <dd>{{ $user->created_at->format('d-m-Y H:i:s') }}</dd>
                 </div>
             </dl>
 
