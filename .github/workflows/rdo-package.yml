@@ -24,7 +24,7 @@ jobs:
 
       - name: Package json exist
         id: package_json_exist
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: "${{ matrix.directory }}/package.json"
 
