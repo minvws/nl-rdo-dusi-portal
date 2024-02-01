@@ -51,9 +51,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install pgsanity
       - name: Run tests SQL scripts
-        run: find ./shared/database/sql/${{ matrix.database }}/v* -type f -name '*.sql' | sort -V | xargs -I % sh -c "echo %; sed -e 's/\\\\c */-- \\\\c /g' % | pgsanity"
+        run: find ./shared/database/sql/${{ matrix.database }} -type f -name '*.sql' | sort -V | xargs -I % sh -c "echo %; sed -e 's/\\\\c */-- \\\\c /g' % | pgsanity"
       - name: Combine all SQL
-        run: find ./shared/database/sql/${{ matrix.database }}/v* -type f -name '*.sql' | sort -V | xargs cat > database.merged.sql
+        run: find ./shared/database/sql/${{ matrix.database }} -type f -name '*.sql' | sort -V | xargs cat > database.merged.sql
       - name: Import database.merged.sql
         run: PGPASSWORD=postgres psql -U postgres -d ${{ matrix.database }} -h 127.0.0.1 < database.merged.sql 2>&1 | tee ${{ matrix.database }}.log
       - name: Show and count ERRORs

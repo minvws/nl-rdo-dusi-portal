@@ -6,26 +6,6 @@
     "elements": [
         {
             "type": "FormGroupControl",
-            "label": "Metagegevens",
-            "options": {
-                "section": true,
-                "headingLevel": "2"
-            },
-            "elements": [
-                {
-                    "type": "FormResultsTable",
-                    "options": {
-                        "fields": {
-                            "Dossiernummer": "{assessmentId}",
-                            "Aangevraagd op": "{validFrom}",
-                            "Uiterste behandeldatum": "{validTo}"
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            "type": "FormGroupControl",
             "label": "Persoonlijke informatie",
             "options": {
                 "section": true,
@@ -118,7 +98,6 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Kopie bankafschrift": "{bankStatement}",
                             "Uitreksel bevolkingsregister": "{extractPopulationRegisterDocument}",
                             "Verklaring behandeltraject": "{proofOfMedicalTreatmentDocument}",
                             "Verklaring type behandeling": "{proofOfTypeOfMedicalTreatmentDocument}"

@@ -10,15 +10,42 @@
     <p>Uw aanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
     <p>&nbsp;</p>
 
+
+    <h2>Motivering bij het besluit</h2>
+
+    <p>U heeft een aanvraag voor de subsidieregeling borstprothesen transvrouwen ingediend, die verstrekt wordt op grond
+        van de subsidieregeling borstprothesen transvrouwen (hierna: de Beleidsregel). Het doel van de Beleidsregel is
+        dat man-vrouw transgenders met genderdysforie, die zich in een medisch transitietraject bevinden, door een
+        vergroting van de borsten een vrouwelijk(er) profiel kunnen krijgen.</p>
+
+    <p>
+        In artikel 4 van de Beleidsregel is opgenomen dat een subsidie uitsluitend wordt toegekend aan transvrouwen die:<br/>
+        <ul>
+            <li>Ingezetene zijn in Nederland;</li>
+            <li>Ouder zijn dan 18 jaar;</li>
+            <li>Op voorschrift van een BIG-geregistreerde arts:<br/>
+                <ul>
+                    <li>minimaal een jaar voorafgaand aan de subsidieaanvraag genderbevestigende behandeling hebben
+                        ondergaan;
+                        of
+                    </li>
+                    <li>op medische gronden geen genderbevestigende hormoonbehandelingen kunnen ondergaan; of</li>
+                    <li>om medische redenen binnen de tijdspanne van een jaar zijn gestopt met de hoormoontherapie;</li>
+                </ul>
+            </li>
+            <li>De operatie nog niet ondergaan hebben;</li>
+            <li>Geen aanspraak kunnen maken op vergoeding van het operatief plaatsen van borstprothesen op grond van artikel
+                2.1, onderdeel c, van de Regeling zorgverzekering.
+            </li>
+        </ul>
+    </p>
+
     {if $content->stage2->firstAssessmentRejectedNote}
-        <h2>Motivering bij het besluit</h2>
-        <p>Uw aanvraag wordt afgewezen vanwege de volgende reden(en):</p>
+        <p>
+            Uw aanvraag is getoetst aan de bovengenoemde voorwaarden en wordt afgewezen vanwege de volgende
+            reden(en):
+        </p>
         <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
-        <p>&nbsp;</p>
-    {elseif $content->stage4->internalAssessmentReasonForRejection}
-        <h2>Motivering bij het besluit</h2>
-        <p>Uw aanvraag wordt afgewezen vanwege de volgende reden(en):</p>
-        <p>{$content->stage4->internalAssessmentReasonForRejection|breakLines}</p>
         <p>&nbsp;</p>
     {/if}
 {/block}

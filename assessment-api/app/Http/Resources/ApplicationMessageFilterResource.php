@@ -10,15 +10,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ApplicationMessageFilterResource extends JsonResource
 {
     /**
-     * @param array<string> $regulations
-     */
-    //TODO dynamic regulations
-    public function __construct(array $regulations)
-    {
-        parent::__construct($regulations);
-    }
-
-    /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>

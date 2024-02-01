@@ -6,8 +6,8 @@ namespace MinVWS\DUSi\Application\API\Services;
 
 use Exception;
 use MinVWS\DUSi\Shared\Bridge\Client\Client;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCounts;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 
 class ActionableService
@@ -19,8 +19,8 @@ class ActionableService
     /**
      * @throws Exception
      */
-    public function getActionableCounts(ActionableCountsParams $params): ActionableCounts
+    public function getActionableCounts(ActionableCountsParams $params): EncryptedResponse
     {
-        return $this->bridgeClient->call(RPCMethods::GET_ACTIONABLE_COUNTS, $params, ActionableCounts::class);
+        return $this->bridgeClient->call(RPCMethods::GET_ACTIONABLE_COUNTS, $params, EncryptedResponse::class);
     }
 }

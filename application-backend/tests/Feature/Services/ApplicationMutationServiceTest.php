@@ -171,10 +171,6 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertCount(1, get_object_vars($app->data));
         $this->assertObjectHasProperty($this->textField->code, $app->data);
 
-        // TODO: Why checking this answer?
-//        $answerValue = json_decode($encryptionService->decryptBase64EncodedData($answer->encrypted_answer));
-//        $this->assertEquals($answerValue, $app->data->{$this->textField->code});
-
         $this->assertEquals(ApplicationStatus::Draft, $app->status);
     }
 

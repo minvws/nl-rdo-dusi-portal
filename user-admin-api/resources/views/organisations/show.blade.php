@@ -21,7 +21,7 @@
                 </div>
                 <div>
                     <dt>@lang("Created at")</dt>
-                    <dd>{{ $organisation->created_at->format('Y-d-m H:i:s') }}</dd>
+                    <dd>{{ $organisation->created_at->format('d-m-Y H:i:s') }}</dd>
                 </div>
             </dl>
 

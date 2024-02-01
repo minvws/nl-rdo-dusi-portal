@@ -22,15 +22,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 class ApplicationRequestsFilterResource extends JsonResource
 {
     /**
-     * @param array<string> $regulations
-     */
-    //TODO dynamic regulations
-    public function __construct(array $regulations)
-    {
-        parent::__construct($regulations);
-    }
-
-    /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
@@ -175,10 +166,6 @@ class ApplicationRequestsFilterResource extends JsonResource
                     'items' => [
                         'type' => 'string',
                         'oneOf' => [
-                            [
-                                'const' => ApplicationStatus::Draft,
-                                'title'  => 'Nog niet ingediend'
-                            ],
                             [
                                 'const' => ApplicationStatus::Submitted,
                                 'title'  => 'Nieuw'

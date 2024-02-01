@@ -41,10 +41,12 @@ class SubsidyStage extends Model
     public const UPDATED_AT = null;
 
     protected $fillable = [
+        'subsidy_version_id',
         'title',
         'subject_role',
-        'subject_organisation',
-        'stage'
+        'assessor_user_role',
+        'stage',
+        'internal_note_field_code'
     ];
 
     protected $casts = [

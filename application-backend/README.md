@@ -20,7 +20,15 @@ you need:
 By default the portal is accessable at http://localhost:8001
 ```
 
-## Usage
+## Migrations
+
+To convert the migrations to sql files, run the following command:
+
+```sh
+vendor/bin/sail artisan sql-export description_of_the_migrations \
+--laravelMigrationsPath=/var/www/html/vendor/minvws/dusi-shared/database/migrations \
+--sqlMigrationsPath=/var/www/html/vendor/minvws/dusi-shared/database/sql/dusi_app_db/
+```
 
 ## Development
 

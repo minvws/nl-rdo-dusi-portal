@@ -30,10 +30,10 @@
                         @foreach ($userRoles as $role)
                             <tr>
                                 <td>
-                                    {{ $role->name }}
+                                    {{ __($role->name->value) }}
                                 </td>
                                 <td>
-                                    {{ $subsidies[$role->pivot->subsidy_id] ?? 'Every subsidy' }}
+                                    {{ $subsidies[$role->pivot->subsidy_id] ?? __('Every subsidy') }}
                                 </td>
                                 <td class="nowrap">
                                     <form action="{{ route('users.roles.destroy', ['user' => $user->id, 'role' => $role->name ]) }}" method="POST" class="inline">
@@ -49,7 +49,7 @@
                         </tbody>
                     </table>
 
-                    {!! $userRoles->appends(\Request::except('page', '_token'))->render() !!}
+                    {!! $userRoles->appends(\Request::except(['page', '_token']))->render() !!}
                 </div>
             @endif
 
@@ -63,7 +63,7 @@
                             <select id="role" name="role" aria-describedby="role_error">
                                 <option value="">@lang("Select a role")</option>
                                 @foreach ($roles as $role)
-                                    <option value="{{ $role }}" {{ old('role') === $role ? 'selected' : '' }}>{{ $role }}</option>
+                                    <option value="{{ $role }}" {{ old('role') === $role ? 'selected' : '' }}>{{ __($role->value) }}</option>
                                 @endforeach
                             </select>
                             <x-input-error for="role" id="role_error" />

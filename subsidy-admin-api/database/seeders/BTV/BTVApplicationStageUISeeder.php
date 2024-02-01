@@ -36,7 +36,6 @@ class BTVApplicationStageUISeeder extends AbstractApplicationStageUISeeder
             'elements' => [
                 $this->buildInputUiStep(
                     1, 'start', [
-                        'permissionToProcessPersonalData'
                     ]
                 ),
                 $this->buildInputUiStep(
@@ -57,7 +56,6 @@ class BTVApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                 ),
                 $this->buildInputUiStep(
                     3, 'Documenten toevoegen', [
-                        "bankStatement",
                         "extractPopulationRegisterDocument",
                         "proofOfMedicalTreatmentDocument",
                         "proofOfTypeOfMedicalTreatmentDocument"

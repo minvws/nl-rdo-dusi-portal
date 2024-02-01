@@ -1,15 +1,27 @@
 {block content}
     <p>Beste lezer,</p>
     <p>
-        Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
+        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de 'Regeling {$content->subsidyTitle}' met referentienummer: {$content->reference}.
     </p>
 
-    <p>Om de aanvraag goed te kunnen beoordelen ontvang ik graag van u de volgende aanvullende informatie:</p>
-    <p>{$content->motivation}</p>
+    <p>Uw aanvraag bevat helaas nog onvoldoende gegevens om verder in behandeling te nemen. Met deze brief verzoek ik u om uw aanvraag aan te vullen.</p>
+
+    <h2>Wat moet u aanvullen?</h2>
+    <p>
+        Ik verzoek u om uw aanvraag aan te vullen met:<br/>
+        {$content->stage2->firstAssessmentRequestedComplementNote|breakLines}
+    </p>
     <p>&nbsp;</p>
 
     <h2>Termijn</h2>
-    <p>Ik ontvang de informatie graag binnen 2 weken na dagtekening van deze brief, dus uiterlijk *DocumentDatum+14dagen*. U kunt deze toevoegen aan uw aanvraag door het door u ingevulde aanvraagformulier te heropenen in Mijn DUS-I.</p>
-    <p>Als de gevraagde gegevens niet binnen de gestelde termijn van 2 weken door mij zijn ontvangne, of onvoldoende zijn voor de beoordeling, kan ik niet op tijd een besluit nemen op uw aanvraag.</p>
+    <p>
+        Ik ontvang de informatie graag binnen 2 weken na dagtekening van deze brief, dus uiterlijk {$content->createdAt->addDays(14)|date:"d-m-Y"}.
+    </p>
+    <p>
+        U kunt de ontbrekende informatie aan uw aanvraag toevoegen door het door u ingevulde aanvraagformulier te heropenen in Mijn DUS-I.
+    </p>
+    <p>
+        Als de gevraagde gegevens niet binnen 2 weken door mij zijn ontvangen, of onvoldoende zijn voor verdere beoordeling, dan kan uw aanvraag niet verder worden behandeld.
+    </p>
     <p>&nbsp;</p>
 {/block}

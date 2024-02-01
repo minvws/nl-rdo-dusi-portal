@@ -122,7 +122,7 @@ abstract class AbstractSubsidyAggregateManager
         return $this->subsidyStages[$stage];
     }
 
-    public function createSubsidyStageTransaction(
+    public function createSubsidyStageTransition(
         int $current,
         ?int $target,
         array $transitionAttributes

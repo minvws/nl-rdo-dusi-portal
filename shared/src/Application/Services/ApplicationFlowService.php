@@ -65,6 +65,7 @@ class ApplicationFlowService
             throw new ApplicationFlowException('No matching transition found for submit!');
         }
 
+        $stage->application->touch();
         return $this->performTransitionForApplicationStage($transition, $stage);
     }
 
