@@ -341,7 +341,8 @@ class ApplicationRepositoryTest extends TestCase
             'application_id' => $application->id,
             'subsidy_stage_id' => $this->subsidyStage->id,
             'sequence_number' => 1,
-            'is_current' => false
+            'is_current' => false,
+            'is_submitted' => true
         ]);
 
         Answer::factory()->create([

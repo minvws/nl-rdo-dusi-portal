@@ -8,11 +8,13 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
@@ -26,6 +28,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
@@ -248,6 +251,12 @@ class ApplicationRepository
             $stage->application->applicationStages()
                 ->with('subsidyStage')
                 ->where('sequence_number', '<=', $stage->sequence_number)
+                ->where(
+                    fn ($query) =>
+                        $query
+                            ->where('is_submitted', '=', true)
+                            ->orWhere('id', '=', $stage->id)
+                )
                 ->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage)
                 ->orderBy('sequence_number')
                 ->get();
@@ -281,13 +290,21 @@ class ApplicationRepository
         return new AnswersByApplicationStage(stages: $stages);
     }
 
-    public function getApplicantApplicationStage(Application $application, bool $includeAnswers): ?ApplicationStage
-    {
+    public function getCurrentApplicantApplicationStage(
+        Application $application,
+        bool $includeAnswers
+    ): ?ApplicationStage {
         $query =
             $application
                 ->applicationStages()
                 ->whereRelation('subsidyStage', 'stage', '=', 1)
                 ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
+                ->where(
+                    fn ($query) =>
+                        $query
+                            ->where('is_current', '=', true)
+                            ->orWhere('is_submitted', '=', true)
+                )
                 ->orderBy('sequence_number', 'desc')
                 ->limit(1);
 
@@ -301,7 +318,7 @@ class ApplicationRepository
     /**
      * @return array<ApplicationStage>
      */
-    public function getOrderedApplicationStagesForSubsidyStage(
+    public function getOrderedSubmittedApplicationStagesForSubsidyStage(
         Application $application,
         SubsidyStage $subsidyStage
     ): array {
@@ -309,12 +326,13 @@ class ApplicationRepository
             $application
                 ->applicationStages()
                 ->where('subsidy_stage_id', '=', $subsidyStage->id)
+                ->where('is_submitted', '=', true)
                 ->orderBy('sequence_number')
                 ->get()
                 ->all();
     }
 
-    public function getLatestApplicationStageForSubsidyStage(
+    public function getLatestSubmittedApplicationStageForSubsidyStage(
         Application $application,
         SubsidyStage $subsidyStage
     ): ?ApplicationStage {
@@ -324,6 +342,30 @@ class ApplicationRepository
                 ->where('subsidy_stage_id', '=', $subsidyStage->id)
                 ->orderBy('sequence_number', 'desc')
                 ->first();
+    }
+
+    /**
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
+     * @return Collection<int, ApplicationStage>
+     */
+    public function getExpiredApplicationStages(): Collection
+    {
+        return
+            ApplicationStage::query()
+                ->where('is_current', '=', true)
+                ->where('expires_at', '<=', CarbonImmutable::now())
+                ->whereExists(
+                    SubsidyStageTransition::query()
+                        ->select(DB::raw(1))
+                        ->whereColumn(
+                            'current_subsidy_stage_id',
+                            '=',
+                            'application_stages.subsidy_stage_id'
+                        )
+                        ->where('evaluation_trigger', '=', EvaluationTrigger::Expiration)
+                )
+                ->get();
     }
 
     public function cloneApplicationStageAnswers(ApplicationStage $source, ApplicationStage $target): void

@@ -29,6 +29,7 @@ use MinVWS\DUSi\Shared\User\Models\User;
  * @property HsmEncryptedData $encrypted_key
  * @property DateTime $created_at
  * @property DateTime $updated_at
+ * @property ?DateTime $expires_at
  * @property bool $is_submitted
  * @property DateTime $submitted_at
  * @property-read Application $application
@@ -47,7 +48,8 @@ class ApplicationStage extends Model
         'assessor_decision' => ApplicationStageDecision::class,
         'encrypted_key' => HsmEncryptedData::class,
         'is_submitted' => 'bool',
-        'submitted_at' => 'datetime'
+        'submitted_at' => 'datetime',
+        'expires_at' => 'datetime'
     ];
 
     protected $fillable = [

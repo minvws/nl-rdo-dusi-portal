@@ -15,6 +15,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 
@@ -43,11 +44,30 @@ class ApplicationFlowService
      */
     public function submitApplicationStage(ApplicationStage $stage): ?ApplicationStage
     {
-        return DB::transaction(fn () => $this->doSubmitApplicationStage($stage));
+        return $this->evaluateApplicationStage($stage, EvaluationTrigger::Submit);
     }
 
-    private function doSubmitApplicationStage(ApplicationStage $stage): ?ApplicationStage
-    {
+    /**
+     * Transitions the given application stage to the next stage based on the given evaluation trigger
+     * and conditions based on the stage data.
+     *
+     * @param ApplicationStage $stage Current stage.
+     *
+     * @return ApplicationStage|null Next stage (null if finished).
+     *
+     * @throws ApplicationFlowException
+     */
+    public function evaluateApplicationStage(
+        ApplicationStage $stage,
+        EvaluationTrigger $evaluationTrigger
+    ): ?ApplicationStage {
+        return DB::transaction(fn () => $this->doEvaluateApplicationStage($stage, $evaluationTrigger));
+    }
+
+    private function doEvaluateApplicationStage(
+        ApplicationStage $stage,
+        EvaluationTrigger $evaluationTrigger
+    ): ?ApplicationStage {
         if ($stage->isDirty()) {
             $stage->save();
         }
@@ -58,28 +78,42 @@ class ApplicationFlowService
             throw new ApplicationFlowException('Given stage is not the current stage!');
         }
 
-        $this->closeCurrentApplicationStage($stage);
-
-        $transition = $this->evaluateTransitionsForApplicationStage($stage);
+        $transition = $this->evaluateTransitionsForApplicationStage($stage, $evaluationTrigger);
         if ($transition === null) {
             throw new ApplicationFlowException('No matching transition found for submit!');
         }
 
+        $this->closeCurrentApplicationStage($stage, $evaluationTrigger);
+
         $stage->application->touch();
+
         return $this->performTransitionForApplicationStage($transition, $stage);
     }
 
-    private function closeCurrentApplicationStage(ApplicationStage $stage): void
+    private function closeCurrentApplicationStage(ApplicationStage $stage, EvaluationTrigger $evaluationTrigger): void
     {
-        $stage->is_submitted = true;
+        $stage->is_submitted = $evaluationTrigger === EvaluationTrigger::Submit;
         $stage->submitted_at = Carbon::now();
         $stage->is_current = false;
         $this->applicationRepository->saveApplicationStage($stage);
+
+        // delete answers and files if the user did not explicitly submit
+        if ($evaluationTrigger !== EvaluationTrigger::Submit) {
+            $this->applicationRepository->deleteAnswersByStage($stage);
+            $this->applicationFileManager->deleteFiles($stage);
+        }
     }
 
-    public function evaluateTransitionsForApplicationStage(ApplicationStage $stage): ?SubsidyStageTransition
-    {
-        $transitions = $stage->subsidyStage->subsidyStageTransitions;
+    public function evaluateTransitionsForApplicationStage(
+        ApplicationStage $stage,
+        EvaluationTrigger $evaluationTrigger
+    ): ?SubsidyStageTransition {
+        $transitions =
+            $stage->subsidyStage->subsidyStageTransitions
+                ->filter(
+                    fn (SubsidyStageTransition $transition) =>
+                        $transition->evaluation_trigger === $evaluationTrigger
+                );
         foreach ($transitions as $transition) {
             if ($this->evaluateTransitionForApplicationStage($transition, $stage)) {
                 return $transition;
@@ -168,7 +202,7 @@ class ApplicationFlowService
         // 1. Take the first submit date from the applicant.
         // 2. Add the review period.
         // 3. Add any subsequent stages where the application was returned to the applicant.
-        $stages = $this->applicationRepository->getOrderedApplicationStagesForSubsidyStage(
+        $stages = $this->applicationRepository->getOrderedSubmittedApplicationStagesForSubsidyStage(
             $application,
             $transition->currentSubsidyStage
         );
@@ -250,16 +284,21 @@ class ApplicationFlowService
 
         $previousInstanceOfTargetStage = null;
         if ($transition->clone_data || $transition->assign_to_previous_assessor) {
-            $previousInstanceOfTargetStage = $this->applicationRepository->getLatestApplicationStageForSubsidyStage(
-                $currentStage->application,
-                $targetSubsidyStage
-            );
+            $previousInstanceOfTargetStage =
+                $this->applicationRepository->getLatestSubmittedApplicationStageForSubsidyStage(
+                    $currentStage->application,
+                    $targetSubsidyStage
+                );
         }
+
+        $expiresAt =
+            $transition->expiration_period === null ? null : Carbon::now()->addDays($transition->expiration_period);
 
         $stage = $this->applicationRepository->makeApplicationStage($currentStage->application, $targetSubsidyStage);
         $stage->sequence_number = $currentStage->sequence_number + 1;
         $stage->is_submitted = false;
         $stage->is_current = true;
+        $stage->expires_at = $expiresAt;
         [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
         $stage->encrypted_key = $encryptedKey;
 
@@ -295,59 +334,4 @@ class ApplicationFlowService
             $newApplicationStatus
         );
     }
-
-    // TEMP FOR HOTFIX
-    public function forceTransitionForApplicationStage(
-        ApplicationStage $currentStage,
-        SubsidyStageTransition $subsidyStageTransition,
-        bool $resetClonedDataOfCurrentStage
-    ): ?ApplicationStage {
-        return DB::transaction(
-            fn () =>
-                $this->doForceTransitionForApplicationStage(
-                    $currentStage,
-                    $subsidyStageTransition,
-                    $resetClonedDataOfCurrentStage
-                )
-        );
-    }
-
-    private function resetClonedDataForStage(ApplicationStage $stage): void
-    {
-        $previousInstanceOfStage =
-            $stage->application
-                ->applicationStages()
-                ->where('subsidy_stage_id', '=', $stage->subsidyStage->id)
-                ->where('sequence_number', '<', $stage->sequence_number)
-                ->orderBy('sequence_number', 'desc')
-                ->first();
-
-        if (! $previousInstanceOfStage instanceof ApplicationStage) {
-            throw new \RuntimeException('Resetting cloned data not possible if there is no previous instance of stage');
-        }
-
-        $stage->answers()->delete();
-        $this->applicationFileManager->deleteFiles($stage);
-
-        $this->cloneApplicationStageData($previousInstanceOfStage, $stage);
-    }
-
-    private function doForceTransitionForApplicationStage(
-        ApplicationStage $currentStage,
-        SubsidyStageTransition $subsidyStageTransition,
-        bool $resetClonedDataOfCurrentStage
-    ): ?ApplicationStage {
-        $currentStage->is_current = false;
-        // We do update the submitted at, but don't set is_submitted to true as if was not the user that submitted this
-        // data. We should probably revise the naming of these columns to make this distinction more clear when
-        // implementing this properly.
-        $currentStage->submitted_at = Carbon::now();
-        $currentStage->is_submitted = false;
-        if ($resetClonedDataOfCurrentStage) {
-            $this->resetClonedDataForStage($currentStage);
-        }
-        $this->applicationRepository->saveApplicationStage($currentStage);
-        return $this->performTransitionForApplicationStage($subsidyStageTransition, $currentStage);
-    }
-    // EOF TEMP FOR HOTFIX
 }

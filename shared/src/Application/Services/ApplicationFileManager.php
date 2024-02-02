@@ -95,7 +95,6 @@ class ApplicationFileManager
         $this->fileRepository->deleteFile($file . self::KEYINFO_FILE_EXTENSION);
     }
 
-    // TEMP FOR HOTFIX
     public function deleteFiles(ApplicationStage $stage): void
     {
         $directory = $this->getStageDirectory($stage);
@@ -104,7 +103,6 @@ class ApplicationFileManager
             $this->fileRepository->deleteFile($file);
         }
     }
-    // EOF TEMP FOR HOTFIX
 
     public function copyFiles(ApplicationStage $sourceStage, ApplicationStage $targetStage): bool
     {

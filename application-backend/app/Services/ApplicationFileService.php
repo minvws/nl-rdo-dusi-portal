@@ -157,7 +157,7 @@ readonly class ApplicationFileService
         $identity = $this->loadIdentity($params->identity);
         $application = $this->loadApplication($identity, $params->applicationReference);
 
-        $applicationStage = $this->applicationRepository->getApplicantApplicationStage($application, true);
+        $applicationStage = $this->applicationRepository->getCurrentApplicantApplicationStage($application, true);
         assert($applicationStage !== null);
 
         $field = $this->loadField($applicationStage, $params->fieldCode);

@@ -78,7 +78,7 @@ readonly class ApplicationMutationService
         ?ValidationResultDTO $validationResult,
         ClientPublicKey $publicKey
     ): EncryptedResponse {
-        $stage = $this->applicationRepository->getApplicantApplicationStage($application, true);
+        $stage = $this->applicationRepository->getCurrentApplicantApplicationStage($application, true);
         $data = $stage !== null ? $this->applicationDataService->getApplicationStageData($stage) : null;
 
         $dto = $this->applicationMapper->mapApplicationToApplicationDTO(
