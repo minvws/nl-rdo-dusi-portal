@@ -26,7 +26,7 @@ trait CreateField
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
         DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
-        bool $exclude_from_clone_data = false
+        bool $excludeFromCloneData = false
     ): string {
         $id = Uuid::uuid4()->toString();
 
@@ -41,7 +41,7 @@ trait CreateField
             'is_required' => $isRequired && $requiredCondition === null,
             'required_condition' => $this->getRequiredCondition($requiredCondition),
             'retention_period_on_approval' => $retentionPeriod,
-            'exclude_from_clone_data' => $exclude_from_clone_data,
+            'exclude_from_clone_data' => $excludeFromCloneData,
         ]);
 
         return $id;
@@ -134,7 +134,7 @@ trait CreateField
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
             retentionPeriod: $retentionPeriod,
-            exclude_from_clone_data: $exclude_from_clone_data,
+            excludeFromCloneData: $exclude_from_clone_data,
         );
     }
 
@@ -148,6 +148,7 @@ trait CreateField
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
         DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
+        bool $exclude_from_clone_data = false
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -159,6 +160,7 @@ trait CreateField
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
             retentionPeriod: $retentionPeriod,
+            excludeFromCloneData: $exclude_from_clone_data,
         );
     }
 
