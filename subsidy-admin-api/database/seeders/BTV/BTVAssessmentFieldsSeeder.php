@@ -7,6 +7,8 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 
 use Illuminate\Database\Seeder;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
@@ -46,13 +48,17 @@ class BTVAssessmentFieldsSeeder extends Seeder
                                 'De verklaring van de arts met de vermelding van de type behandeling is ondertekend en voorzien van een naamstempel',
                                 'De type behandeling voldoet aan de voorwaarden conform de subsidieregeling'
                             ],
+            isRequired: false,
         );
 
         $this->createSelectField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
             code:           'amount',
             title:          'Bedrag',
-            options:        ['€ 3.830', '€ 13.720']
+            options:        ['€ 3.830', '€ 13.720'],
+            requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
+            isRequired:     false,
+            exclude_from_clone_data: true
         );
 
         $this->createSelectField(
@@ -158,14 +164,6 @@ class BTVAssessmentFieldsSeeder extends Seeder
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             code: 'internalAssessmentInternalNote',
             title: 'Interne notitie',
-            isRequired: false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
-        $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
-            code: 'internalAssessmentReasonForRejection',
-            title: 'Reden van afkeuring',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );

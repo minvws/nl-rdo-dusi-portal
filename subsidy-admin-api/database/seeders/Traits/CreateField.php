@@ -148,6 +148,7 @@ trait CreateField
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
         DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
+        bool $exclude_from_clone_data = false
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -159,6 +160,7 @@ trait CreateField
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
             retentionPeriod: $retentionPeriod,
+            exclude_from_clone_data: $exclude_from_clone_data,
         );
     }
 
