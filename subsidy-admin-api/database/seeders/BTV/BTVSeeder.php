@@ -55,7 +55,7 @@ class BTVSeeder extends Seeder
             'version' => 1,
             'status' => VersionStatus::Published,
             'created_at' => '2019-02-01',
-            'subsidy_page_url' => 'https://www.dus-i.nl/subsidies',
+            'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/borstprothesen-transvrouwen',
             'contact_mail_address' => 'btv@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
