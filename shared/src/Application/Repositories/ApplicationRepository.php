@@ -340,6 +340,7 @@ class ApplicationRepository
             $application
                 ->applicationStages()
                 ->where('subsidy_stage_id', '=', $subsidyStage->id)
+                ->where('is_submitted', '=', true)
                 ->orderBy('sequence_number', 'desc')
                 ->first();
     }

@@ -95,12 +95,13 @@ class ApplicationFlowService
         $stage->is_submitted = $evaluationTrigger === EvaluationTrigger::Submit;
         $stage->submitted_at = Carbon::now();
         $stage->is_current = false;
+        $stage->expires_at = null;
         $this->applicationRepository->saveApplicationStage($stage);
 
         // delete answers and files if the user did not explicitly submit
         if ($evaluationTrigger !== EvaluationTrigger::Submit) {
             $this->applicationRepository->deleteAnswersByStage($stage);
-            $this->applicationFileManager->deleteFiles($stage);
+            $this->applicationFileManager->deleteDirectory($stage);
         }
     }
 

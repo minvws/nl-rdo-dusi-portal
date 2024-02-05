@@ -95,13 +95,10 @@ class ApplicationFileManager
         $this->fileRepository->deleteFile($file . self::KEYINFO_FILE_EXTENSION);
     }
 
-    public function deleteFiles(ApplicationStage $stage): void
+    public function deleteDirectory(ApplicationStage $stage): void
     {
         $directory = $this->getStageDirectory($stage);
-        $files = $this->fileRepository->getFiles($directory, true);
-        foreach ($files as $file) {
-            $this->fileRepository->deleteFile($file);
-        }
+        $this->fileRepository->deleteDirectory($directory);
     }
 
     public function copyFiles(ApplicationStage $sourceStage, ApplicationStage $targetStage): bool
