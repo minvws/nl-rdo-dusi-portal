@@ -919,5 +919,5 @@ UPDATE public.subsidy_stage_transition_messages SET subsidy_stage_transition_id 
 {block sidebar}
     {include parent}
 {/block}
-', created_at = '2024-02-06 09:05:32', updated_at = null
+', created_at = '2024-02-06 09:05:32', updated_at = now()
 WHERE id = '9c2ad81e-cf52-41a3-966f-fc9757de15c9';

@@ -35,6 +35,10 @@
         subsidie borstprothesen transvrouwen.
     </p>
 
+    {if $content->stage2->firstAssessmentApprovedNote}
+        <p>{$content->stage2->firstAssessmentApprovedNote|breakLines}</p>
+    {/if}
+
     <h2>Waar moet u aan voldoen?</h2>
     <p>U moet voldoen aan de verplichtingen in de wet- en regelgeving die van toepassing zijn op de subsidie en aan al
         hetgeen in deze beschikking is opgenomen.</p>
