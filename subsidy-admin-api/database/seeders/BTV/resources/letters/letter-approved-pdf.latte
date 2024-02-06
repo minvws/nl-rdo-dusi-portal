@@ -31,9 +31,12 @@
 
     <h2>Motivering bij besluit</h2>
     <p>
-        Op grond van uw aanvraag en de verklaring stel ik vast dat u voldoet aan de voorwaarden van de
-        subsidie borstprothesen transvrouwen.
+        Op grond van uw aanvraag en de verklaring ken ik u de subsidie borstprothesen transvrouwen toe.
     </p>
+
+    {if $content->stage2->firstAssessmentApprovedNote}
+        <p>{$content->stage2->firstAssessmentApprovedNote|breakLines}</p>
+    {/if}
 
     <h2>Waar moet u aan voldoen?</h2>
     <p>U moet voldoen aan de verplichtingen in de wet- en regelgeving die van toepassing zijn op de subsidie en aan al

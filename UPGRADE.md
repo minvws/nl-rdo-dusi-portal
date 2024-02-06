@@ -30,6 +30,10 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-1119: Hardheidsclausule
+
+This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1197>
+
 ### DUSI-1169: More BTV fixes
 
 This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1198>

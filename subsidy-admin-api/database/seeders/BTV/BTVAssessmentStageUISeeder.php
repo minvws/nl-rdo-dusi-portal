@@ -171,6 +171,28 @@ class BTVAssessmentStageUISeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentApprovedNote",
+                                    "options" => [
+                                        "format" => "textarea",
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "const" => "Goedgekeurd"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentInternalNote",
                                     "options" => [
                                         "format" => "textarea"

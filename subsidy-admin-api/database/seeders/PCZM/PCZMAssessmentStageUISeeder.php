@@ -395,6 +395,28 @@ class PCZMAssessmentStageUISeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
+                                    "scope" => "#/properties/firstAssessmentApprovedNote",
+                                    "options" => [
+                                        "format" => "textarea",
+                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                                    ],
+                                    "rule" => [
+                                        "effect" => "SHOW",
+                                        "condition" =>  [
+                                            "scope" => "#/properties/firstAssessment",
+                                            "schema" =>  [
+                                                "const" => "Goedgekeurd"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
                                     "scope" => "#/properties/firstAssessmentInternalNote",
                                     "options" => [
                                         "format" => "textarea"
@@ -611,23 +633,6 @@ class PCZMAssessmentStageUISeeder extends Seeder
                                             "scope" => "#/properties/implementationCoordinatorAssessment",
                                             "schema" =>  [
                                                 "const" => "Afgekeurd"
-                                            ]
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    "type" => "CustomControl",
-                                    "scope" => "#/properties/coordinatorImplementationApprovalNote",
-                                    "options" => [
-                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager.",
-                                        "format" => "textarea"
-                                    ],
-                                    "rule" => [
-                                        "effect" => "SHOW",
-                                        "condition" =>  [
-                                            "scope" => "#/properties/implementationCoordinatorAssessment",
-                                            "schema" =>  [
-                                                "const" => "Goedgekeurd"
                                             ]
                                         ]
                                     ]
