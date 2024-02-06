@@ -203,6 +203,10 @@ class SubsidyStageDataSchemaBuilder
             return null;
         }
 
+        if ($field->required_condition->stage === 1) {
+            return null;
+        }
+
         return [
             'if' => [
                 'properties' => [
