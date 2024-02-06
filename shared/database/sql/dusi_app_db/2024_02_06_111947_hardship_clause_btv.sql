@@ -1,7 +1,7 @@
 INSERT INTO public.fields (id, title, description, type,
                            params, is_required, code, source, subsidy_stage_id,
                            required_condition, retention_period_on_approval, exclude_FROM_clone_data)
-VALUES ('b81b666a-207d-4d28-8781-ea4e0d1cc389', 'Motivatie van goedkeuring', null, 'text',
+VALUES ('2260d9cf-2a1e-4350-a90e-1906b0db011b', 'Motivatie van goedkeuring', null, 'text',
         '{"maxLength": null}', false, 'firstAssessmentApprovedNote', 'user', '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c',
         null, 'short', false);
 
