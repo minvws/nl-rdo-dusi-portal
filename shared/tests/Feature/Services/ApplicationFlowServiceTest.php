@@ -118,7 +118,7 @@ class ApplicationFlowServiceTest extends TestCase
             ->for($this->subsidyStage1, 'currentSubsidyStage')
             ->for($this->subsidyStage2, 'targetSubsidyStage')
             ->create([
-                'target_application_status' => ApplicationStatus::Submitted,
+                'target_application_status' => ApplicationStatus::Pending,
                 'condition' => null,
             ]);
 
@@ -126,7 +126,7 @@ class ApplicationFlowServiceTest extends TestCase
             ->for($this->subsidyStage1, 'currentSubsidyStage')
             ->for($this->subsidyStage2, 'targetSubsidyStage')
             ->create([
-                'target_application_status' => ApplicationStatus::Submitted,
+                'target_application_status' => ApplicationStatus::Pending,
                 'condition' => null,
                 'clone_data' => true,
                 'assign_to_previous_assessor' => true,
@@ -289,7 +289,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertEquals($this->now, $this->applicationStage1->submitted_at);
         $this->assertEquals($this->now, $this->applicationStage1->closed_at);
 
-        $this->assertEquals(ApplicationStatus::Submitted, $this->application->status);
+        $this->assertEquals(ApplicationStatus::Pending, $this->application->status);
         $this->assertNotNull($this->application->final_review_deadline);
         $this->assertEquals(
             $this->now->addDays(self::REVIEW_PERIOD)->endOfDay()->floorSecond(),
@@ -646,7 +646,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertEquals($this->applicationStage1->id, $transition->previousApplicationStage->id);
         $this->assertEquals(ApplicationStatus::Draft, $transition->previous_application_status);
         $this->assertEquals($stage2->id, $transition->newApplicationStage->id);
-        $this->assertEquals(ApplicationStatus::Submitted, $transition->new_application_status);
+        $this->assertEquals(ApplicationStatus::Pending, $transition->new_application_status);
     }
 
     public function testUpdatedAtOfApplicationIsUpdatedAfterApplicationStageSubmit(): void
@@ -750,7 +750,7 @@ class ApplicationFlowServiceTest extends TestCase
         );
 
         $this->application->refresh();
-        $this->assertEquals(ApplicationStatus::Submitted, $this->application->status);
+        $this->assertEquals(ApplicationStatus::Pending, $this->application->status);
         // the time the user was able to make changes should be take into account for the final review deadline
         $this->assertEquals($initialDeadline->addDays(14), $this->application->final_review_deadline);
 

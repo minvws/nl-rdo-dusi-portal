@@ -64,7 +64,7 @@ class BankAccountDuplicatesServiceTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::tomorrow(),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create(

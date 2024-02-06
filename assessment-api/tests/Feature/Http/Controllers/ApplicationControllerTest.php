@@ -101,7 +101,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]
         );
         $this->application1Stage1 = ApplicationStage::factory()
@@ -150,7 +150,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]
         );
         $this->application3Stage1 = ApplicationStage::factory()
@@ -182,7 +182,7 @@ class ApplicationControllerTest extends TestCase
                     'updated_at' => Carbon::today(),
                     'created_at' => Carbon::today(),
                     'final_review_deadline' => Carbon::today(),
-                    'status' => ApplicationStatus::Submitted,
+                    'status' => ApplicationStatus::Pending,
                 ]
             );
         $this->application4Stage1 = ApplicationStage::factory()
@@ -391,7 +391,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
-                'status' => ApplicationStatus::Submitted
+                'status' => ApplicationStatus::Pending
             ]
         );
 

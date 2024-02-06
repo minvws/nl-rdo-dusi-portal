@@ -22,6 +22,7 @@ use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
@@ -149,7 +150,7 @@ class PCZMApplicationSeeder extends Seeder
                 'judgement' => 'pending',
                 'final_review_deadline' => now()->addMonth(),
                 'subsidy_version_id' => self::PCZM_VERSION_UUID,
-                'status' => 'submitted'
+                'status' => ApplicationStatus::Pending
             ]
         )->for($this->createIdentifier())
             ->count($count)

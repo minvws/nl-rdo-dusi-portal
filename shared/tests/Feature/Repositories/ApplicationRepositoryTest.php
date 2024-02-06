@@ -62,7 +62,7 @@ class ApplicationRepositoryTest extends TestCase
                 'updated_at' => new \DateTime('now'),
                 'created_at' => new \DateTime('now'),
                 'final_review_deadline' => new \DateTime('now'),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
                 ]
             );
 
@@ -84,7 +84,7 @@ class ApplicationRepositoryTest extends TestCase
                 ->createFromFormat('U', (string)strtotime('yesterday')),
             'date_final_review_deadline_to' => (new \DateTime())
                 ->createFromFormat('U', (string)strtotime('tomorrow')),
-            'status' => [ApplicationStatus::Submitted],
+            'status' => [ApplicationStatus::Pending],
             'subsidy' => ['SST'],
         ];
         $appFilter = ApplicationsFilter::fromArray($filter);
@@ -129,7 +129,7 @@ class ApplicationRepositoryTest extends TestCase
             ->for($this->subsidyVersion)
             ->withApplicantStage($this->subsidyStage)
             ->create([
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         $user = User::factory()->create();
@@ -171,7 +171,7 @@ class ApplicationRepositoryTest extends TestCase
             ->for($this->subsidyVersion)
             ->withApplicantStage($this->subsidyStage)
             ->create([
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         $user = User::factory()->create();
@@ -460,7 +460,7 @@ class ApplicationRepositoryTest extends TestCase
                 'application_title' => 'First Application',
                 'final_review_deadline' => Carbon::now()->addDays(1)->startOfDay(),
                 'updated_at' => Carbon::now(),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         $secondApplication = Application::factory()
@@ -471,7 +471,7 @@ class ApplicationRepositoryTest extends TestCase
                 'application_title' => 'Second Application',
                 'final_review_deadline' => Carbon::now()->addDays(2)->startOfDay(),
                 'updated_at' => Carbon::now(),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         $user = User::factory()->create();

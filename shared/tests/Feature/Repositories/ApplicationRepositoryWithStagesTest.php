@@ -102,7 +102,7 @@ class ApplicationRepositoryWithStagesTest extends TestCase
                 'updated_at' => new DateTime('now'),
                 'created_at' => new DateTime('now'),
                 'final_review_deadline' => new DateTime('now'),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         // Create application stages
@@ -146,7 +146,7 @@ class ApplicationRepositoryWithStagesTest extends TestCase
                 'updated_at' => new DateTime('now'),
                 'created_at' => new DateTime('now'),
                 'final_review_deadline' => new DateTime('now'),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         // Create application stages
@@ -200,7 +200,7 @@ class ApplicationRepositoryWithStagesTest extends TestCase
                 'updated_at' => new DateTime('now'),
                 'created_at' => new DateTime('now'),
                 'final_review_deadline' => new DateTime('now'),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         // Create application stages
@@ -264,7 +264,7 @@ class ApplicationRepositoryWithStagesTest extends TestCase
                 'updated_at' => new DateTime('now'),
                 'created_at' => new DateTime('now'),
                 'final_review_deadline' => new DateTime('now'),
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]);
 
         // Create application stages

@@ -39,7 +39,7 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Aanvraag ingediend',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
-            'target_application_status' => ApplicationStatus::Submitted,
+            'target_application_status' => ApplicationStatus::Pending,
             'condition' => null,
             'send_message' => false,
             'assign_to_previous_assessor' => true,
