@@ -30,6 +30,12 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-1169: More BTV fixes
+
+This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1198>
+
+## Release 2.1.1
+
 ### DUSI-1169: BTV fixes
 
 This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1170>

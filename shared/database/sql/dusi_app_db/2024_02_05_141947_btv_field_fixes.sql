@@ -7,7 +7,6 @@ where field_id = (select id
 delete from public.fields
 where code = 'internalAssessmentReasonForRejection' and subsidy_stage_id = 'e456e790-1919-4a2b-b3d5-337d0053abe3';
 
-
 UPDATE public.fields
 SET
     is_required                  = false,
