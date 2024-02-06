@@ -281,6 +281,14 @@ class PCZMAssessmentFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
+            code: 'firstAssessmentApprovedNote',
+            title: 'Motivatie van goedkeuring',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'firstAssessmentInternalNote',
             title: 'Interne notitie',
             isRequired: false,

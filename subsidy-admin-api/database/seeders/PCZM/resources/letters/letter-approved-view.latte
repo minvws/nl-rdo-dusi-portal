@@ -12,6 +12,12 @@
         leed en uw getoonde inzet in de zorg tijdens de uitzonderlijke situatie van de eerste golf in de
         COVID-pandemie.</p>
 
+    {if $content->stage2->firstAssessmentApprovedNote}
+        <h2>Motivering bij het besluit</h2>
+        <p>{$content->stage2->firstAssessmentApprovedNote|breakLines}</p>
+        <p>&nbsp;</p>
+    {/if}
+
     <h2>Wanneer ontvangt u de financiële ondersteuning?</h2>
     <p>Het bedrag van {$content->stage2->amount} wordt in één keer uitbetaald. Wij streven ernaar de financiële
         ondersteuning binnen 10 werkdagen uit te keren.</p>
