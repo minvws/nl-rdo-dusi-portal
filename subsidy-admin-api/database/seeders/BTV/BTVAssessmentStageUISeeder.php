@@ -337,28 +337,6 @@ class BTVAssessmentStageUISeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/internalAssessmentReasonForRejection",
-                                    "options" => [
-                                        "format" => "textarea",
-                                        "tip" => "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
-                                    ],
-                                    "rule" => [
-                                        "effect" => "SHOW",
-                                        "condition" =>  [
-                                            "scope" => "#/properties/internalAssessment",
-                                            "schema" =>  [
-                                                "const" => "Afgekeurd"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
                                     "scope" => "#/properties/internalAssessmentInternalNote",
                                     "options" => [
                                         "format" => "textarea"
