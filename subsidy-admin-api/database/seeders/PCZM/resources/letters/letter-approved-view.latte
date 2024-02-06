@@ -4,7 +4,6 @@
         Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de 'Regeling {$content->subsidyTitle}' met referentienummer {$content->reference}.
         Met deze brief beslis ik op uw aanvraag.
     </p>
-    <p>&nbsp;</p>
 
     <h2>Besluit</h2>
     <p>Namens het kabinet verleen ik u hierbij de financiële ondersteuning van {$content->stage2->amount} volgens de ‘Regeling
@@ -15,7 +14,6 @@
     {if $content->stage2->firstAssessmentApprovedNote}
         <h2>Motivering bij het besluit</h2>
         <p>{$content->stage2->firstAssessmentApprovedNote|breakLines}</p>
-        <p>&nbsp;</p>
     {/if}
 
     <h2>Wanneer ontvangt u de financiële ondersteuning?</h2>
