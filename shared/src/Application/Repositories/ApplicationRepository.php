@@ -318,7 +318,7 @@ class ApplicationRepository
     /**
      * @return array<ApplicationStage>
      */
-    public function getOrderedSubmittedApplicationStagesForSubsidyStage(
+    public function getOrderedClosedApplicationStagesForSubsidyStage(
         Application $application,
         SubsidyStage $subsidyStage
     ): array {
@@ -326,7 +326,7 @@ class ApplicationRepository
             $application
                 ->applicationStages()
                 ->where('subsidy_stage_id', '=', $subsidyStage->id)
-                ->where('is_submitted', '=', true)
+                ->where('is_current', '=', false)
                 ->orderBy('sequence_number')
                 ->get()
                 ->all();

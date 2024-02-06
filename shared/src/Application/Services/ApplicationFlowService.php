@@ -92,10 +92,15 @@ class ApplicationFlowService
 
     private function closeCurrentApplicationStage(ApplicationStage $stage, EvaluationTrigger $evaluationTrigger): void
     {
-        $stage->is_submitted = $evaluationTrigger === EvaluationTrigger::Submit;
-        $stage->submitted_at = Carbon::now();
+        $stage->closed_at = Carbon::now();
         $stage->is_current = false;
         $stage->expires_at = null;
+
+        if ($evaluationTrigger === EvaluationTrigger::Submit) {
+            $stage->is_submitted = true;
+            $stage->submitted_at = $stage->closed_at;
+        }
+
         $this->applicationRepository->saveApplicationStage($stage);
 
         // delete answers and files if the user did not explicitly submit
@@ -200,22 +205,24 @@ class ApplicationFlowService
         assert($application->subsidyVersion->review_period !== null);
 
         // Calculate final review deadline:
-        // 1. Take the first submit date from the applicant.
+        // 1. Take the first closed date from the applicant.
         // 2. Add the review period.
         // 3. Add any subsequent stages where the application was returned to the applicant.
-        $stages = $this->applicationRepository->getOrderedSubmittedApplicationStagesForSubsidyStage(
+        $stages = $this->applicationRepository->getOrderedClosedApplicationStagesForSubsidyStage(
             $application,
             $transition->currentSubsidyStage
         );
 
         assert(count($stages) > 0);
-        assert($stages[0]->submitted_at !== null);
+        $firstStage = array_shift($stages);
+        assert($firstStage->closed_at !== null);
 
-        $deadline = Carbon::instance(array_shift($stages)->submitted_at)
+        $deadline = Carbon::instance($firstStage->closed_at)
             ->addDays($application->subsidyVersion->review_period);
 
         foreach ($stages as $stage) {
-            $timeAtApplicant = Carbon::instance($stage->created_at)->diff($stage->submitted_at);
+            assert($stage->closed_at !== null);
+            $timeAtApplicant = Carbon::instance($stage->created_at)->diff($stage->closed_at);
             $deadline->add($timeAtApplicant);
         }
 

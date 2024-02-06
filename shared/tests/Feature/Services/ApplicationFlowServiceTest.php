@@ -249,6 +249,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertTrue($this->applicationStage1->is_current);
         $this->assertFalse($this->applicationStage1->is_submitted);
         $this->assertNull($this->applicationStage1->submitted_at);
+        $this->assertNull($this->applicationStage1->closed_at);
         $this->assertEquals(ApplicationStatus::Draft, $this->application->status);
         $this->assertNull($this->application->final_review_deadline);
 
@@ -286,6 +287,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertFalse($this->applicationStage1->is_current);
         $this->assertTrue($this->applicationStage1->is_submitted);
         $this->assertEquals($this->now, $this->applicationStage1->submitted_at);
+        $this->assertEquals($this->now, $this->applicationStage1->closed_at);
 
         $this->assertEquals(ApplicationStatus::Submitted, $this->application->status);
         $this->assertNotNull($this->application->final_review_deadline);
@@ -298,6 +300,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertTrue($stage2->is_current);
         $this->assertFalse($stage2->is_submitted);
         $this->assertNull($stage2->submitted_at);
+        $this->assertNull($stage2->closed_at);
         $this->assertEquals($this->subsidyStage2->id, $stage2->subsidy_stage_id);
     }
 
@@ -320,6 +323,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertFalse($stage2->is_current);
         $this->assertTrue($stage2->is_submitted);
         $this->assertEquals($this->now, $stage2->submitted_at);
+        $this->assertEquals($this->now, $stage2->closed_at);
 
         // should not have changed
         $this->assertEquals($applicationStatus, $this->application->status);
@@ -329,6 +333,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertTrue($stage3->is_current);
         $this->assertFalse($stage3->is_submitted);
         $this->assertNull($stage3->submitted_at);
+        $this->assertNull($stage3->closed_at);
         $this->assertEquals($this->subsidyStage3->id, $stage3->subsidy_stage_id);
     }
 
@@ -348,6 +353,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertFalse($stage3->is_current);
         $this->assertTrue($stage3->is_submitted);
         $this->assertEquals($this->now, $stage3->submitted_at);
+        $this->assertEquals($this->now, $stage3->closed_at);
 
         $this->assertEquals(ApplicationStatus::RequestForChanges, $this->application->status);
         $this->assertEquals(null, $this->application->final_review_deadline);
@@ -357,6 +363,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertTrue($nextStage->is_current);
         $this->assertFalse($nextStage->is_submitted);
         $this->assertNull($nextStage->submitted_at);
+        $this->assertNull($nextStage->closed_at);
         $this->assertCount(2, $nextStage->answers);
         $this->assertEquals($this->applicationStage1->encrypted_key, $nextStage->encrypted_key);
         $this->assertEquals(
@@ -407,6 +414,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertFalse($stage3->is_current);
         $this->assertTrue($stage3->is_submitted);
         $this->assertEquals($this->now, $stage3->submitted_at);
+        $this->assertEquals($this->now, $stage3->closed_at);
 
         $this->assertEquals($applicationStatus, $this->application->status);
         $this->assertEquals($applicationFinalReviewDeadline, $this->application->final_review_deadline);
@@ -416,6 +424,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertTrue($nextStage->is_current);
         $this->assertFalse($nextStage->is_submitted);
         $this->assertNull($nextStage->submitted_at);
+        $this->assertNull($nextStage->closed_at);
         $this->assertCount(0, $nextStage->answers);
     }
 
@@ -448,6 +457,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertFalse($stage3->is_current);
         $this->assertTrue($stage3->is_submitted);
         $this->assertEquals($this->now, $stage3->submitted_at);
+        $this->assertEquals($this->now, $stage3->closed_at);
 
         $this->assertEquals($expectedStatus, $this->application->status);
         $this->assertNull($nextStage);
@@ -481,7 +491,6 @@ class ApplicationFlowServiceTest extends TestCase
         $this->flowService->submitApplicationStage($newStage1);
 
         $this->application->refresh();
-
         $this->assertEquals(
             3,
             Carbon::instance($initialDeadline)
@@ -670,6 +679,9 @@ class ApplicationFlowServiceTest extends TestCase
         $stage2 = $this->flowService->submitApplicationStage($this->applicationStage1);
         $this->assertNotNull($stage2);
 
+        $this->application->refresh();
+        $initialDeadline = new CarbonImmutable($this->application->final_review_deadline);
+
         $this->createAnswer($stage2, $this->subsidyStage2Field, self::VALUE_REQ_CHANGES);
         $stage3 = $this->flowService->submitApplicationStage($stage2);
 
@@ -726,7 +738,8 @@ class ApplicationFlowServiceTest extends TestCase
         $reviseStage->refresh();
         $this->assertFalse($reviseStage->is_current);
         $this->assertFalse($reviseStage->is_submitted);
-        $this->assertNotNull($reviseStage->submitted_at);
+        $this->assertNull($reviseStage->submitted_at);
+        $this->assertNotNull($reviseStage->closed_at);
         $this->assertCount(0, $reviseStage->answers);
         $this->assertFalse(
             $this->fileRepository->fileExists(
@@ -738,12 +751,15 @@ class ApplicationFlowServiceTest extends TestCase
 
         $this->application->refresh();
         $this->assertEquals(ApplicationStatus::Submitted, $this->application->status);
+        // the time the user was able to make changes should be take into account for the final review deadline
+        $this->assertEquals($initialDeadline->addDays(14), $this->application->final_review_deadline);
 
         $this->assertNotNull($assessmentStage);
         $this->assertEquals($this->subsidyStage2->id, $assessmentStage->subsidy_stage_id);
         $this->assertTrue($assessmentStage->is_current);
         $this->assertFalse($assessmentStage->is_submitted);
         $this->assertNull($assessmentStage->submitted_at);
+        $this->assertNull($assessmentStage->closed_at);
         $this->assertCount(1, $assessmentStage->answers);
 
         $stages = $appRepository->getLatestApplicationStagesUpToIncluding($assessmentStage);
