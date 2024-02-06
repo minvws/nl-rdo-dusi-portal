@@ -34,7 +34,7 @@ CHECK (previous_application_status IN ('draft', 'pending', 'approved', 'rejected
 ALTER TABLE public.application_stage_transitions
 DROP CONSTRAINT application_stage_transitions_new_application_status_check;
 
-UPDATE application_stage_transitions
+UPDATE public.application_stage_transitions
 SET new_application_status = 'pending'
 WHERE new_application_status = 'submitted';
 
