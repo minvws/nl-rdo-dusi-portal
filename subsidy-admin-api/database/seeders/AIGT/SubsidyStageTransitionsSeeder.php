@@ -132,7 +132,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
         // volledig beoordeeld worden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_4_TO_2,
-            'description' => 'Interne beoordeling oneens met eerste beoordeling',
+            'description' => 'Implementatie coordinator beoordeling oneens met eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             'condition' => $encoder->encode(
@@ -152,7 +152,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
         // afgekeurd en wordt de afkeuringsbrief verzonden.
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_4_TO_REJECTED,
-            'description' => 'Implementatie coordinator beoording eens met afkeuring',
+            'description' => 'Implementatie coordinator beoordeling eens met afkeuring',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Rejected,

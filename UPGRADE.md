@@ -35,7 +35,25 @@ DUSI-632: Create AIGT subsidy
 A signature needs to be added:  
 assessment-api/storage/subsidy-files/cb91d7d4-6261-4cd6-96e8-d09c86a670b7/vws_dusi_signature.jpg
 
-Run the dus_app_db migration up to version 1.4.0. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1118>
+This feature contains a dusi_app_db migration.  See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1118>
+
+## Release 2.1.3
+
+### DUSI-1119: Hardheidsclausule
+
+This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1197>
+
+### DUSI-1169: More BTV fixes
+
+This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1198>
+
+## Release 2.1.1
+
+### DUSI-1169: BTV fixes
+
+This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1170>
+
+## Release 2.1.0
 
 ### DUSI-1041: BTV updates
 

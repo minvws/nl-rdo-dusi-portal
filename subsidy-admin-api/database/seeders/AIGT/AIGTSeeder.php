@@ -54,7 +54,7 @@ class AIGTSeeder extends Seeder
             'status' => VersionStatus::Published,
             'created_at' => 'now()',
             'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/opleidingsactiviteiten-arts-internationale-gezondheid-en-tropengeneeskunde',
-            'contact_mail_address' => 'dienstpostbus@minvws.nl',
+            'contact_mail_address' => 'aigt@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
             'review_period' => 7 * 13 // 13 weeks
