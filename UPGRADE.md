@@ -30,6 +30,12 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-1119: Hardheidsclausule letter typo
+
+This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1201>
+
+## Release 2.1.3
+
 ### DUSI-1119: Hardheidsclausule
 
 This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1197>
