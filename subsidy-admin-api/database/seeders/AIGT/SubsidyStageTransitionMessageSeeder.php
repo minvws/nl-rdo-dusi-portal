@@ -12,7 +12,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 class SubsidyStageTransitionMessageSeeder extends Seeder
 {
     public const TRANSITION_STAGE_2_TO_1_MESSAGE = 'c6410597-cbc0-45f4-aa0c-3d8631d661f2';
-    public const TRANSITION_STAGE_3_TO_REJECTED_MESSAGE = 'b135a0f1-c584-4f69-bbad-e9db91a0de6d';
+    public const TRANSITION_STAGE_4_TO_REJECTED_MESSAGE = 'b135a0f1-c584-4f69-bbad-e9db91a0de6d';
     public const TRANSITION_STAGE_4_TO_APPROVED_MESSAGE = 'ef41a929-6556-4dec-975e-5d75f5a48a64';
 
     public function run(): void
@@ -29,8 +29,8 @@ class SubsidyStageTransitionMessageSeeder extends Seeder
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
-           'id' => self::TRANSITION_STAGE_3_TO_REJECTED_MESSAGE,
-           'subsidy_stage_transition_id' => SubsidyStageTransitionsSeeder::TRANSITION_STAGE_3_TO_REJECTED,
+           'id' => self::TRANSITION_STAGE_4_TO_REJECTED_MESSAGE,
+           'subsidy_stage_transition_id' => SubsidyStageTransitionsSeeder::TRANSITION_STAGE_4_TO_REJECTED,
            'version' => 1,
            'status' => VersionStatus::Published->value,
            'created_at' => Carbon::now(),

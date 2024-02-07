@@ -19,23 +19,6 @@
                 "readonly": true,
                 "format": "textarea"
             }
-        },
-        {
-            "type": "CustomControl",
-            "scope": "#/properties/implementationCoordinatorReasonForRejection",
-            "options": {
-                "readonly": true,
-                "format": "textarea"
-            },
-            "rule": {
-                "effect": "SHOW",
-                "condition": {
-                    "scope": "#/properties/implementationCoordinatorAssessment",
-                    "schema": {
-                        "const": "Oneens met de eerste beoordeling"
-                    }
-                }
-            }
         }
     ]
 }

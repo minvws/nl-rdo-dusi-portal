@@ -144,19 +144,25 @@ insert into public.fields ("id", "subsidy_stage_id", "code", "title", "descripti
 values ('e5531a2e-4ac3-444a-b02d-92ac620927ed', '7075fcad-7d92-42f6-b46c-7733869019e0', 'firstAssessmentChecklist',
         'Gecontroleerd', null, 'multiselect',
         '{"options":["Valt de aanvrager onder de WSNP\/bewindvoering?","Is de aanvraag tijdig ingediend?","Is het aanvraagformulier volledig ingevuld?","Is het aanvraagformulier juist ondertekend?","Bevat de aanvraag alle vereiste documenten?","Hebben alle ingediende documenten betrekking op de juiste persoon?","Zijn het inschrijvingsbewijs RGS en het opleidingsbewijs OIGT correct ondertekend?","Staat de zakenpartner correct in SAP met het juiste bankrekeningnummer?","Is de einddatum van de buitenlandstage duidelijk?","Komt dit overeen met de opgave van de OIGT?","Komt de aanvrager voor in het M&O-register?"]}',
-        true, null, 'short', false);
+        false, null, 'short', false);
 
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
                       "required_condition", "retention_period_on_approval", "exclude_from_clone_data")
 values ('85cf5008-c6fd-46ee-9b4f-13fa56c27478', '7075fcad-7d92-42f6-b46c-7733869019e0', 'subsidyAwardedBefore',
         'Reeds eerder subsidie verleend aan dezelfde persoon voor de buitenlandstage?', null, 'select',
-        '{"options":["Niet eerder subsidie verstrekt","Wel eerder subsidie verstrekt"],"default":null}', true, null,
+        '{"options":["Niet eerder subsidie verstrekt","Wel eerder subsidie verstrekt"],"default":null}', false, null,
         'short', false);
 
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
                       "required_condition", "retention_period_on_approval", "exclude_from_clone_data")
 values ('8aacf268-69fd-4c40-b10b-637c1dce1677', '7075fcad-7d92-42f6-b46c-7733869019e0', 'amount', 'Bedrag', null,
-        'select', '{"options":["\u20ac 17.000"],"default":"\u20ac 17.000"}', false, null, 'short', false);
+        'select', '{"options":["\u20ac 17.000"],"default":"\u20ac 17.000"}', false, '{
+        "type": "comparison",
+        "stage": 2,
+        "value": "Goedgekeurd",
+        "operator": "===",
+        "fieldCode": "firstAssessment"
+    }', 'short', true);
 
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
                       "required_condition", "retention_period_on_approval", "exclude_from_clone_data")

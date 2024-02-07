@@ -13,7 +13,6 @@ class AIGTSeeder extends Seeder
     public const SUBSIDY_UUID = 'cb91d7d4-6261-4cd6-96e8-d09c86a670b7';
     public const SUBSIDY_VERSION_UUID = '2aaac0da-d265-40bb-bde6-ac20d77e6bca';
 
-
     /**
      * Run the database seeds.
      */
