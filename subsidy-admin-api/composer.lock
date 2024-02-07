@@ -4842,12 +4842,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/MyIntervals/PHP-CSS-Parser.git",
-                "reference": "4a3d572b0f8b28bb6fd016ae8bbfc445facef152"
+                "reference": "4e9a54c2a368fcd73ecc6b45f98c7714b54a7db0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/4a3d572b0f8b28bb6fd016ae8bbfc445facef152",
-                "reference": "4a3d572b0f8b28bb6fd016ae8bbfc445facef152",
+                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/4e9a54c2a368fcd73ecc6b45f98c7714b54a7db0",
+                "reference": "4e9a54c2a368fcd73ecc6b45f98c7714b54a7db0",
                 "shasum": ""
             },
             "require": {
@@ -4897,7 +4897,7 @@
             ],
             "support": {
                 "issues": "https://github.com/MyIntervals/PHP-CSS-Parser/issues",
-                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.5.1"
+                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/8.5.0"
             },
             "time": "2024-02-15T16:41:13+00:00"
         },
@@ -9094,6 +9094,72 @@
                 "source": "https://github.com/maximebf/php-debugbar/tree/v1.20.2"
             },
             "time": "2024-02-15T10:49:09+00:00"
+        },
+        {
+            "name": "minvws/laravel-sql-exporter",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:minvws/nl-rdo-laravel-sql-export.git",
+                "reference": "527a9a252eacc8d0ce71a9dc6225cd54db2d03ed"
+            },
+            "require": {
+                "laravel/framework": "^10",
+                "nesbot/carbon": "^2.66",
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.5 || ^10.0",
+                "slevomat/coding-standard": "^8.8",
+                "squizlabs/php_codesniffer": "^3.7",
+                "vimeo/psalm": "^5.8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MinVWS\\SqlExporter\\SqlExporterServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MinVWS\\SqlExporter\\": "src/"
+                },
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "MinVWS\\SqlExporter\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpcs",
+                    "vendor/bin/phpunit",
+                    "vendor/bin/phpstan analyse",
+                    "vendor/bin/psalm"
+                ]
+            },
+            "license": [
+                "EUPL"
+            ],
+            "authors": [
+                {
+                    "name": "Ministerie van Volksgezondheid, Welzijn en Sport"
+                }
+            ],
+            "description": "Laravel SQL Exporter",
+            "keywords": [
+                "export",
+                "laravel",
+                "sql"
+            ],
+            "time": "2024-01-08T15:46:00+00:00"
         },
         {
             "name": "minvws/laravel-sql-exporter",
