@@ -18,8 +18,8 @@ SET condition = '{
 WHERE id = '03c4d9ba-6b82-42da-9ac2-2504f9319a91';
 
 UPDATE public.subsidy_stage_transitions
-SET description                   = 'Interne beoording eens met eerste beoordeling',
-    condition                     = '{
+SET description                 = 'Interne beoording eens met eerste beoordeling',
+    condition                   = '{
         "type": "and",
         "conditions": [
             {
@@ -79,3 +79,6 @@ VALUES ('0be7031b-c841-4c27-8104-2d2676d32cff', 'e456e790-1919-4a2b-b3d5-337d005
         "value": "Oneens met de eerste beoordeling"
     }', false, true, true, 'Interne beoordeling oneens met eerste beoordeling');
 
+UPDATE public.subsidy_stage_transitions
+SET description = 'Tweede beoordeling oneens met eerste beoordeling'
+WHERE id = '79a4eb8b-d42e-4f49-8f96-ff3433fb75c0';

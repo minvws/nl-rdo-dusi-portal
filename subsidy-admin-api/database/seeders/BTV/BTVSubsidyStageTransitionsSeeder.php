@@ -105,7 +105,7 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
         // Bij een beoordeeloptie 'Eens met de eerste beoordeling', wordt de aanvraag doorgezet naar de IC.
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_3_TO_4,
-            'description' => 'Tweede beoordeling eens met goedkeuring eerste beoordeling',
+            'description' => 'Tweede beoordeling eens met eerste beoordeling',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_3_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             'condition' => $encoder->encode(
