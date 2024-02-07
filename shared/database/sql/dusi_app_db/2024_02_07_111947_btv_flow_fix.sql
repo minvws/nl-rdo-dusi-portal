@@ -1,11 +1,11 @@
-DELETE
-FROM public.subsidy_stage_transitions
-where id = '602b66cf-9062-4191-b00f-9530f6a3f87a';
-
 UPDATE public.subsidy_stage_transition_messages
 SET subsidy_stage_transition_id = '3a293e03-1de4-47bf-917b-841b7c0a1fff',
     updated_at                  = now()
 WHERE id = 'c3b32e69-e093-4f0f-9318-7cc771114f2d';
+
+DELETE
+FROM public.subsidy_stage_transitions
+where id = '602b66cf-9062-4191-b00f-9530f6a3f87a';
 
 UPDATE public.subsidy_stage_transitions
 SET condition = '{
@@ -38,11 +38,11 @@ SET description                   = 'Interne beoording eens met eerste beoordeli
             }
         ]
     }',
-    'target_subsidy_stage_id'     = null,
-    'send_message'                = true,
-    'assign_to_previous_assessor' = false,
-    'clone_data'                  = false,
-    'target_application_status'   = 'rejected'
+    target_subsidy_stage_id     = null,
+    send_message                = true,
+    assign_to_previous_assessor = false,
+    clone_data                  = false,
+    target_application_status   = 'rejected'
 WHERE id = '3a293e03-1de4-47bf-917b-841b7c0a1fff';
 
 UPDATE public.subsidy_stage_transitions
