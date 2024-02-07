@@ -102,8 +102,7 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'clone_data' => true
         ]);
 
-        // Bij een beoordeeloptie 'Eens met de eerste beoordeling', wordt de aanvraag als volgt doorgezet:
-        // - Eerste beoordeling = goedgekeurd; aanvraag gaat naar de IC
+        // Bij een beoordeeloptie 'Eens met de eerste beoordeling', wordt de aanvraag doorgezet naar de IC.
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_3_TO_4,
             'description' => 'Tweede beoordeling eens met goedkeuring eerste beoordeling',
