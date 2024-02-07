@@ -102,29 +102,20 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'clone_data' => true
         ]);
 
-        // Bij een beoordeeloptie 'Eens met de eerste beoordeling', wordt de aanvraag als volgt doorgezet:
-        // - Eerste beoordeling = goedgekeurd; aanvraag gaat naar de IC
+        // Bij een beoordeeloptie 'Eens met de eerste beoordeling' gaat de aanvraag gaat naar de IC
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_3_TO_4,
-            'description' => 'Interne beoordeling eens met goedkeuring eerste beoordeling',
+            'description' => 'Interne beoordeling eens met eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
-            'condition' => $encoder->encode(
-                new AndCondition([
-                    new ComparisonCondition(
-                        2,
-                        'firstAssessment',
-                        Operator::Identical,
-                        'Goedgekeurd'
-                    ),
+            'condition' => $encoder->encode([
                     new ComparisonCondition(
                         3,
                         'internalAssessment',
                         Operator::Identical,
                         'Eens met de eerste beoordeling'
                     )
-                ])
-            ),
+            ]),
             'send_message' => false
         ]);
 

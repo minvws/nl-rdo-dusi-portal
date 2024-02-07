@@ -1235,24 +1235,13 @@ INSERT INTO public.subsidy_stage_transitions (id, current_subsidy_stage_id, targ
                                               assign_to_previous_assessor, description)
 VALUES ('d5a683bb-23bc-4c14-8ae2-2b2e62d378bb', '0838f8a9-b2ff-4669-9d42-1c51a1134a34',
         'e5da8f2e-db87-45df-8967-ea3dceb2b207', null, '{
-        "type": "and",
-        "conditions": [
-            {
-                "type": "comparison",
-                "stage": 2,
-                "fieldCode": "firstAssessment",
-                "operator": "===",
-                "value": "Goedgekeurd"
-            },
-            {
                 "type": "comparison",
                 "stage": 3,
                 "fieldCode": "internalAssessment",
                 "operator": "===",
                 "value": "Eens met de eerste beoordeling"
-            }
-        ]
-    }', false, false, false, 'Interne beoordeling eens met goedkeuring eerste beoordeling');
+            }',
+        false, false, false, 'Interne beoordeling eens met eerste beoordeling');
 INSERT INTO public.subsidy_stage_transitions (id, current_subsidy_stage_id, target_subsidy_stage_id,
                                               target_application_status, condition, send_message, clone_data,
                                               assign_to_previous_assessor, description)
