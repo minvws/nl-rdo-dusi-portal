@@ -15,7 +15,8 @@
         "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/laravel-logging": "^2.1",
         "xenolope/quahog": "^3.0",
-        "laravel/fortify": "^1.18"
+        "laravel/fortify": "^1.18",
+        "ext-redis": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

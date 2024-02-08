@@ -19,7 +19,8 @@
         "minvws/dusi-shared": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
         "xenolope/quahog": "^3.0",
-        "minvws/laravel-sql-exporter": "^1.0"
+        "minvws/laravel-sql-exporter": "^1.0",
+        "ext-redis": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

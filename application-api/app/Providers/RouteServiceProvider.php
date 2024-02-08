@@ -37,6 +37,10 @@ class RouteServiceProvider extends ServiceProvider
                     ->prefix('api')
                     ->as('api.')
                     ->group(base_path('routes/api.php'));
+                Route::middleware('noc')
+                    ->prefix('noc')
+                    ->as('noc.')
+                    ->group(base_path('routes/noc.php'));
             }
         );
     }
@@ -60,6 +64,13 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for(
             'api',
             function (Request $request) {
+                return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            }
+        );
+
+        RateLimiter::for(
+            'noc',
+            static function (Request $request) {
                 return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
             }
         );
