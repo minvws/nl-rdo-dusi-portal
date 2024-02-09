@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\DTO;
 
-use Illuminate\Support\Facades\Redis as RedisFacade;
+use Illuminate\Contracts\Redis\Connection;
 use Redis;
 
 class SurepayServiceHealth extends AbstractServiceHealth
@@ -12,9 +12,14 @@ class SurepayServiceHealth extends AbstractServiceHealth
     private const SUREPAY_FAILED_COUNTER_KEY = 'surepay_failed_counter';
     private const SUREPAY_FAIL_EXPIRY_MINUTES = 15;
 
+    public function __construct(string $name, private readonly Connection $connection)
+    {
+        parent::__construct($name);
+    }
+
     protected function checkHealth(): void
     {
-        $surePayFailedCounter = RedisFacade::get(self::SUREPAY_FAILED_COUNTER_KEY);
+        $surePayFailedCounter = $this->connection->get(self::SUREPAY_FAILED_COUNTER_KEY);
 
         $this->isHealthy = $surePayFailedCounter < 1;
 
@@ -25,9 +30,9 @@ class SurepayServiceHealth extends AbstractServiceHealth
         }
     }
 
-    public static function updateSurePayFailedCounter(): void
+    public static function increaseSurePayFailedCounter(Connection $connection): void
     {
-        RedisFacade::transaction(static function (Redis $redis) {
+        $connection->transaction(static function (Redis $redis) {
             $expire = self::SUREPAY_FAIL_EXPIRY_MINUTES * 60;
 
             $redis->incr(self::SUREPAY_FAILED_COUNTER_KEY, 1);

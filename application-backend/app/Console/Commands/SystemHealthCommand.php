@@ -19,13 +19,13 @@ class SystemHealthCommand extends Command
         parent::__construct();
     }
 
-    public function handle(): void
+    public function handle(): int
     {
-        $state = json_encode(
-            $this->systemHealthService->getSystemHealthStatus(),
-            JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT
-        );
+        $systemHealthStatus = $this->systemHealthService->getSystemHealthStatus();
+        $state = json_encode($systemHealthStatus, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 
         $this->info($state);
+
+        return !$systemHealthStatus['healthy'] ? self::FAILURE : self::SUCCESS;
     }
 }

@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use MinVWS\DUSi\Application\Backend\DTO\SurepayServiceHealth;
+use Illuminate\Contracts\Redis\Connection;
+use MinVWS\DUSi\Shared\Application\DTO\SurepayServiceHealth;
 use MinVWS\DUSi\Shared\Application\DTO\RedisServiceHealth;
 
 class SystemHealthService
 {
+    public function __construct(private readonly Connection $connection)
+    {
+
+    }
     public function getSystemHealthStatus(): array
     {
         $services = $this->collectServicesHealth();
@@ -32,12 +37,12 @@ class SystemHealthService
     {
         $services = [];
 
-        $redisHealth = new RedisServiceHealth('redis');
+        $redisHealth = new RedisServiceHealth('redis', $this->connection);
 
         $services[] = $redisHealth;
 
         if ($redisHealth->isHealthy()) {
-            $services[] = new SurepayServiceHealth('surepay');
+            $services[] = new SurepayServiceHealth('surepay', $this->connection);
         }
 
         return $services;

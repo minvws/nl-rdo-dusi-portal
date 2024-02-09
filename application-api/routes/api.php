@@ -69,6 +69,4 @@ Route::middleware('auth')->group(
     }
 );
 
-Route::get('health', [SystemHealthController::class, 'index']);
-
 Route::get('btv', [MockedResourceController::class, 'btv']);

@@ -52,12 +52,8 @@ class Kernel extends HttpKernel
 
         'noc' => [
             \MinVWS\DUSi\Application\API\Http\Middleware\EnforceJson::class,
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \MinVWS\DUSi\Application\API\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
         ],
     ];
 

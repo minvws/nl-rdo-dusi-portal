@@ -39,7 +39,7 @@ abstract class AbstractServiceHealth implements JsonSerializable, ServiceHealth
     {
         $status = [
             'service' => $this->name,
-            'isHealthy' => $this->isHealthy,
+            'healthy' => $this->isHealthy,
         ];
 
         if ($this->getDetails()) {

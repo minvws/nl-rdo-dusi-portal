@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories\BankAccount;
 
+use Illuminate\Contracts\Redis\Connection;
 use MinVWS\DUSi\Shared\Application\DTO\SurepayServiceHealth;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayMaxRetryException;
@@ -15,6 +16,7 @@ class SurePayRepository implements BankAccountRepository
 {
     public function __construct(
         protected SurePayClient $surePayClient,
+        protected Connection $redisConnection,
     ) {
     }
 
@@ -35,7 +37,7 @@ class SurePayRepository implements BankAccountRepository
         try {
             return $this->surePayClient->checkOrganisationsAccount($accountOwner, $accountNumber, $accountType);
         } catch (SurePayMaxRetryException $e) {
-            SurepayServiceHealth::updateSurePayFailedCounter();
+            SurepayServiceHealth::increaseSurePayFailedCounter($this->redisConnection);
 
             throw $e;
         }
