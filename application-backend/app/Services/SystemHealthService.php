@@ -37,7 +37,6 @@ class SystemHealthService
         $services[] = $redisHealth;
 
         if ($redisHealth->isHealthy()) {
-//            SurepayServiceHealth::updateSurePayFailedCounter();
             $services[] = new SurepayServiceHealth('surepay');
         }
 
