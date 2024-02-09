@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyStageTransitionFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 
 /**
  * @property string $id
@@ -27,6 +28,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
  * @property bool $send_message
  * @property bool $clone_data
  * @property bool $assign_to_previous_assessor
+ * @property EvaluationTrigger $evaluation_trigger
+ * @property ?int $expiration_period
  * @property-read Collection<int, SubsidyStageTransitionMessage> $subsidyStageTransitionMessages
  * @property-read SubsidyStageTransitionMessage|null $publishedSubsidyStageTransitionMessage
  */
@@ -43,7 +46,8 @@ class SubsidyStageTransition extends Model
         'target_application_status' => ApplicationStatus::class,
         'condition' => Condition::class,
         'send_letter' => 'bool',
-        'assign_to_previous_assessor' => 'bool'
+        'assign_to_previous_assessor' => 'bool',
+        'evaluation_trigger' => EvaluationTrigger::class
     ];
 
     public function currentSubsidyStage(): BelongsTo

@@ -43,6 +43,11 @@ class ApplicationFileRepository
         return $this->filesystem->makeDirectory($filePath);
     }
 
+    public function deleteDirectory(string $directoryPath): bool
+    {
+        return $this->filesystem->deleteDirectory($directoryPath);
+    }
+
     public function copyFiles(string $sourceDirectory, string $targetDirectory): bool
     {
         if (!$this->filesystem->directoryExists($sourceDirectory)) {

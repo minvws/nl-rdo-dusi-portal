@@ -109,7 +109,7 @@ readonly class ApplicationRetrievalService
 
         $data = null;
         if ($params->includeData) {
-            $appStage = $this->applicationRepository->getApplicantApplicationStage($app, true);
+            $appStage = $this->applicationRepository->getCurrentApplicantApplicationStage($app, true);
             $data = $appStage !== null ? $this->applicationDataService->getApplicationStageData($appStage) : null;
         }
 

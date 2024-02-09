@@ -76,6 +76,7 @@ class Application extends Model
                     ->where('application_id', '=', $attrs['id'])
                     ->whereRelation('subsidyStage', 'stage', '=', 1)
                     ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
+                    ->where('is_submitted', '=', true)
                     ->orderBy('sequence_number')
                     ->limit(1)
                     ->first(['submitted_at'])

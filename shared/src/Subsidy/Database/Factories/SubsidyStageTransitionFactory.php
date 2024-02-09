@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 
@@ -30,7 +31,8 @@ class SubsidyStageTransitionFactory extends Factory
             'target_application_status' => null,
             'condition' => null,
             'clone_data' => false,
-            'assign_to_previous_assessor' => false
+            'assign_to_previous_assessor' => false,
+            'evaluation_trigger' => EvaluationTrigger::Submit
         ];
     }
 }

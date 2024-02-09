@@ -32,7 +32,7 @@ class ApplicationStageTransitionFactory extends Factory
             'previous_application_stage_id' => fn () => ApplicationStage::factory(),
             'new_application_stage_id' => fn () => ApplicationStage::factory(),
             'previous_application_status' => ApplicationStatus::Draft,
-            'new_application_status' => ApplicationStatus::Submitted,
+            'new_application_status' => ApplicationStatus::Pending,
             'created_at' => $this->faker->dateTimeBetween('-1 month')
         ];
     }

@@ -13,10 +13,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\InCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 
 class PCZMSubsidyStageTransitionsSeeder extends Seeder
 {
     public const PZCM_TRANSITION_STAGE_1_TO_2 = '7ac879d1-63cb-478d-8745-737313f1643e';
+    public const PZCM_TRANSITION_STAGE_1_TO_2_TIMEOUT = '5b8b3dcb-717d-4ff0-9698-800120285298';
     public const PZCM_TRANSITION_STAGE_2_TO_1 = '870bc38a-0d50-40a9-b49e-d56db5ead6b7';
     public const PZCM_TRANSITION_STAGE_2_TO_3 = 'dd630ec0-50d1-45f5-b014-415e6359389e';
     public const PZCM_TRANSITION_STAGE_3_TO_REJECTED = 'c2080b04-1389-42d1-9aca-33141f01a3bc';
@@ -41,13 +43,26 @@ class PCZMSubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Aanvraag ingediend',
             'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
-            'target_application_status' => ApplicationStatus::Submitted,
+            'target_application_status' => ApplicationStatus::Pending,
             'condition' => null,
             'send_message' => false,
             'assign_to_previous_assessor' => true,
             'clone_data' => true
         ]);
 
+        // User did not respond in time.
+        DB::table('subsidy_stage_transitions')->insert([
+            'id' => self::PZCM_TRANSITION_STAGE_1_TO_2_TIMEOUT,
+            'description' => 'Geen aanvulling ingediend binnen gestelde termijn',
+            'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
+            'target_application_status' => ApplicationStatus::Pending,
+            'condition' => null,
+            'send_message' => false,
+            'assign_to_previous_assessor' => true,
+            'evaluation_trigger' => EvaluationTrigger::Expiration->value,
+            'clone_data' => true // clones data of previous assessment
+        ]);
 
         // Eerste beoordeling = Aanvulling nodig; aanvraag wordt teruggezet naar de aanvrager om te laten aanvullen
         DB::table('subsidy_stage_transitions')->insert([
@@ -65,7 +80,8 @@ class PCZMSubsidyStageTransitionsSeeder extends Seeder
                 )
             ),
             'send_message' => true,
-            'clone_data' => true
+            'clone_data' => true,
+            'expiration_period' => 14
         ]);
 
         // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling

@@ -41,9 +41,11 @@ class ApplicationStageFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (ApplicationStage $applicationStage) {
+            $closedAt = $this->faker->dateTimeBetween($applicationStage->created_at);
             $applicationStage->update([
-                'submitted_at' => $applicationStage->is_submitted ?
-                    $this->faker->dateTimeBetween($applicationStage->created_at) : null,
+                'closed_at' => $applicationStage->is_submitted ? $closedAt : null,
+                'submitted_at' => $applicationStage->is_submitted ? $closedAt : null,
+                'is_current' => $applicationStage->is_current && !$applicationStage->is_submitted
             ]);
         });
     }

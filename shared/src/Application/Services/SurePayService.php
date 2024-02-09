@@ -45,7 +45,7 @@ class SurePayService
             return null;
         }
 
-        $stage = $this->applicationRepository->getApplicantApplicationStage($application, true);
+        $stage = $this->applicationRepository->getCurrentApplicantApplicationStage($application, true);
         if ($stage === null) {
             Log::error('SurePay check not possible, no applicant stage for application ' . $application->id);
             return null;

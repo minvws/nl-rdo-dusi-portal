@@ -127,7 +127,7 @@ class ComplexSubsidyAggregateManager extends AbstractSubsidyAggregateManager
     {
         $this->createSubsidyStageTransition(1, 2, [
             'description' => 'Aanvraag ingediend',
-            'target_application_status' => ApplicationStatus::Submitted,
+            'target_application_status' => ApplicationStatus::Pending,
             'assign_to_previous_assessor' => true,
             'clone_data' => true,
             'condition' => null,

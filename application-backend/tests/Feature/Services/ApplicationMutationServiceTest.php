@@ -107,7 +107,7 @@ class ApplicationMutationServiceTest extends TestCase
         SubsidyStageTransition::factory()
             ->for($this->subsidyStage1, 'currentSubsidyStage')
             ->for($this->subsidyStage2, 'targetSubsidyStage')
-            ->create(['target_application_status' => ApplicationStatus::Submitted]);
+            ->create(['target_application_status' => ApplicationStatus::Pending]);
 
         $this->identity = Identity::factory()->create();
 
@@ -210,7 +210,7 @@ class ApplicationMutationServiceTest extends TestCase
             Application::factory()
                 ->for($this->identity)
                 ->for($this->subsidyVersion)
-                ->create(['status' => ApplicationStatus::Submitted]);
+                ->create(['status' => ApplicationStatus::Pending]);
         $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
@@ -299,7 +299,7 @@ class ApplicationMutationServiceTest extends TestCase
     {
         return [
             [false, ApplicationStatus::Draft],
-            [true, ApplicationStatus::Submitted]
+            [true, ApplicationStatus::Pending]
         ];
     }
 

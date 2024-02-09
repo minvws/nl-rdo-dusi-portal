@@ -301,7 +301,9 @@ readonly class ApplicationDataService
         Application $application,
         string $encryptedValue
     ): string {
-        $applicantApplicationStage = $this->applicationRepository->getApplicantApplicationStage($application, false);
+        $applicantApplicationStage =
+            $this->applicationRepository
+                ->getCurrentApplicantApplicationStage($application, false);
 
         if (is_null($applicantApplicationStage)) {
             throw new LogicException(sprintf('No Applicant stage found for Application: %s', $application->id));

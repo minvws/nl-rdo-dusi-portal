@@ -79,7 +79,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
         SubsidyStageTransition::factory()
             ->for($this->subsidyStage1, 'currentSubsidyStage')
             ->for($this->subsidyStage2, 'targetSubsidyStage')
-            ->create(['target_application_status' => ApplicationStatus::Submitted]);
+            ->create(['target_application_status' => ApplicationStatus::Pending]);
 
         $this->identity = Identity::factory()->create();
 

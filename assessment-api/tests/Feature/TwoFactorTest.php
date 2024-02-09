@@ -51,7 +51,7 @@ class TwoFactorTest extends TestCase
         $this->application = Application::factory()->create(
             [
                 'subsidy_version_id' => $this->subsidyVersion->id,
-                'status' => ApplicationStatus::Submitted,
+                'status' => ApplicationStatus::Pending,
             ]
         );
         $this->applicationStage = ApplicationStage::factory()->create(
