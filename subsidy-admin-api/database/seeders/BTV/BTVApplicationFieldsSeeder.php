@@ -129,7 +129,7 @@ class BTVApplicationFieldsSeeder extends Seeder
         $this->createUploadField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
             code:           'extractPopulationRegisterDocument',
-            title:          'Uittreksel bevolkingsregister niet ouder dan 3 maanden',
+            title:          'Uittreksel bevolkingsregister',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
