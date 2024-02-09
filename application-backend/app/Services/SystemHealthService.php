@@ -37,7 +37,7 @@ class SystemHealthService
     {
         $services = [];
 
-        $redisHealth = new RedisServiceHealth('redis', $this->connection);
+        $redisHealth = new RedisServiceHealth('redis');
 
         $services[] = $redisHealth;
 

@@ -12,7 +12,6 @@ use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\UserController;
 use MinVWS\DUSi\Application\API\Http\Middleware\RequireClientPublicKey;
-use MinVWS\DUSi\Application\API\Http\Controllers\SystemHealthController;
 
 /*
 |--------------------------------------------------------------------------
