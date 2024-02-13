@@ -114,12 +114,12 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'condition' => $encoder->encode(
-                new ComparisonCondition(
-                    3,
-                    'internalAssessment',
-                    Operator::Identical,
-                    'Eens met de eerste beoordeling'
-                )
+                    new ComparisonCondition(
+                        3,
+                        'internalAssessment',
+                        Operator::Identical,
+                        'Eens met de eerste beoordeling'
+                    )
             ),
             'send_message' => false
         ]);
