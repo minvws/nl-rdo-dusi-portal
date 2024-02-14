@@ -197,7 +197,7 @@ insert into public.fields ("id", "subsidy_stage_id", "code", "title", "descripti
                       "required_condition", "retention_period_on_approval", "exclude_from_clone_data")
 values ('1e5e519f-bbe7-421f-ae07-0faacfcbc84b', '0838f8a9-b2ff-4669-9d42-1c51a1134a34', 'internalAssessment',
         'Beoordeling', null, 'select',
-        '{"options":["Oneens met de eerste beoordeling","Eens met de eerste beoordeling"],"default":null}', true, null,
+        '{"options":["Eens met de eerste beoordeling","Oneens met de eerste beoordeling"],"default":null}', true, null,
         'short', false);
 
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
@@ -209,7 +209,7 @@ insert into public.fields ("id", "subsidy_stage_id", "code", "title", "descripti
                       "required_condition", "retention_period_on_approval", "exclude_from_clone_data")
 values ('f3a7bc3e-2571-4af0-9744-3c1c782567e7', 'e5da8f2e-db87-45df-8967-ea3dceb2b207',
         'implementationCoordinatorAssessment', 'Beoordeling', null, 'select',
-        '{"options":["Oneens met de eerste beoordeling","Eens met de eerste beoordeling"],"default":null}', true, null,
+        '{"options":["Eens met de eerste beoordeling","Oneens met de eerste beoordeling"],"default":null}', true, null,
         'short', false);
 
 insert into public.fields ("id", "subsidy_stage_id", "code", "title", "description", "type", "params", "is_required",
