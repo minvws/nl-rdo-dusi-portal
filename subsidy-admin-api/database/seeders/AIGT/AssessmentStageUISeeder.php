@@ -12,6 +12,10 @@ class AssessmentStageUISeeder extends Seeder
     public const SUBSIDY_STAGE2_UI_UUID = '4aa24ca1-0fa8-45d3-a632-15fd788fbc6e';
     public const SUBSIDY_STAGE3_UI_UUID = '8f7b2a5f-050e-4dd2-9d05-4e1d20f3929a';
     public const SUBSIDY_STAGE4_UI_UUID = '6a669ec1-e949-40d8-bbc4-946665553fb1';
+    public const SUBSIDY_STAGE5_UI_UUID = '6b9e3359-8c44-4bfd-a593-baa5c4b8d19d';
+    public const SUBSIDY_STAGE6_UI_UUID = '2a227775-700d-4f59-9322-900bb326afff';
+    public const SUBSIDY_STAGE7_UI_UUID = '9b0a617b-25dd-474c-bc0a-912c503a35e8';
+    public const SUBSIDY_STAGE8_UI_UUID = '9fb35125-318e-4426-8857-facefdd94fee';
 
     public function run(): void
     {
@@ -345,6 +349,38 @@ class AssessmentStageUISeeder extends Seeder
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::SUBSIDY_STAGE4_UI_UUID,
             'subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::SUBSIDY_STAGE5_UI_UUID,
+            'subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::SUBSIDY_STAGE6_UI_UUID,
+            'subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::SUBSIDY_STAGE7_UI_UUID,
+            'subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_7_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::SUBSIDY_STAGE8_UI_UUID,
+            'subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($input_ui),

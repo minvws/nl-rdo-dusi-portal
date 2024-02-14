@@ -19,11 +19,11 @@ return new class extends Migration
             $table->foreignUuid('new_application_stage_id')->nullable()->constrained('application_stages');
             $table->enum(
                 'previous_application_status',
-                ['draft', 'submitted', 'approved', 'rejected', 'requestForChanges']
+                ['draft', 'submitted', 'approved', 'allocated', 'rejected', 'requestForChanges']
             );
             $table->enum(
                 'new_application_status',
-                ['draft', 'submitted', 'approved', 'rejected', 'requestForChanges']
+                ['draft', 'submitted', 'approved', 'allocated', 'rejected', 'requestForChanges']
             );
             $table->timestamp('created_at');
             $table->unique(['application_id', 'previous_application_stage_id']);

@@ -162,7 +162,7 @@ class ApplicationPolicy
         $applicationStages =
             $this->applicationRepository->getLatestApplicationStagesUpToIncluding($currentApplicationStage);
         foreach ($applicationStages as $applicationStage) {
-            if ($applicationStage->assessor_user_id === $user->id) {
+            if (!$subsidyStage->allow_duplicate_assessors && $applicationStage->assessor_user_id === $user->id) {
                 Log::debug('User already assessed a stage', ['stageId' => $currentApplicationStage->id]);
                 return false;
             }
