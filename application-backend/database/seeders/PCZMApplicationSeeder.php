@@ -52,14 +52,14 @@ class PCZMApplicationSeeder extends Seeder
         string $subsidyStageId,
         bool $isCurrent
     ) {
-        [$encrypted_key] = $this->encryptionService->generateEncryptionKey();
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
         return ApplicationStage::factory()->create(
             [
                 'application_id' => $application->id,
                 'sequence_number' => $sequence,
                 'is_submitted' => $isSubmitted,
                 'subsidy_stage_id' => $subsidyStageId,
-                'encrypted_key' => $encrypted_key,
+                'encrypted_key' => $encryptedKey,
                 'is_current' => $isCurrent,
             ]
         );
@@ -68,28 +68,34 @@ class PCZMApplicationSeeder extends Seeder
     /**
      * @throws Exception
      */
-    private function writeFields($app_stage): void
+    private function writeFields($appStage): void
     {
         // IDs are hardcoded because they are provided in pczmApplicationData.json
-        $this->writeField($app_stage, 'Gewaarmerkt verzekeringsbericht', '739cecda-0aa3-4692-a5e7-040984d5ff2a');
-        $this->writeField($app_stage, 'WIA-Beslissing', '337016e7-20e8-4d5e-9f20-1999980d4b5c');
-        $this->writeField($app_stage, 'Toekenningsbrief', '1dbbc21d-8c2b-4075-bf1e-7bd208006117');
-        $this->writeField($app_stage, 'Bewijs dienstverband', 'dbef8055-7c3e-4025-89fb-a1e5e1a73f98');
-        $this->writeField($app_stage, 'Medisch onderzoeksverslag', '89040bab-5f11-40ec-9a2c-57081acbeb4c');
+        $this->writeField($appStage, 'certifiedEmploymentDocument', '739cecda-0aa3-4692-a5e7-040984d5ff2a');
+        $this->writeField($appStage, 'wiaDecisionDocument', '337016e7-20e8-4d5e-9f20-1999980d4b5c');
+        $this->writeField($appStage, 'wiaDecisionPostponedLetter', '1dbbc21d-8c2b-4075-bf1e-7bd208006117');
+        $this->writeField($appStage, 'employmentContract', 'dbef8055-7c3e-4025-89fb-a1e5e1a73f98');
+        $this->writeField($appStage, 'socialMedicalAssessment', '89040bab-5f11-40ec-9a2c-57081acbeb4c');
     }
 
     /**
      * @throws Exception
      */
-    private function writeField($app_stage, $title, $fileId): void
+    private function writeField($appStage, $fieldCode, $fileId): void
     {
         $content = file_get_contents(__DIR__ . "/resources/nvt.pdf");
 
-        $field = $app_stage->subsidyStage->fields->filter(function ($field) use ($title) {
-            return $field->type === FieldType::Upload && $field->title === $title;
-        })->first();
+        $field = $appStage->subsidyStage->fields()
+            ->where('code', $fieldCode)
+            ->where('type', FieldType::Upload)
+            ->first();
+
+        if ($field === null) {
+            throw new Exception("Field $fieldCode not found in subsidy stage {$appStage->subsidy_stage_id}");
+        }
+
         $this->fileManager->writeFile(
-            $app_stage,
+            $appStage,
             $field,
             $fileId,
             $content
@@ -143,7 +149,7 @@ class PCZMApplicationSeeder extends Seeder
      */
     public function run($count = 1): void
     {
-        $application_data = $this->readApplicationDataFromFile();
+        $applicationData = $this->readApplicationDataFromFile();
         Application::factory(
             [
                 'application_title' => 'DUSi Subsidie Admin API',
@@ -155,9 +161,9 @@ class PCZMApplicationSeeder extends Seeder
         )->for($this->createIdentifier())
             ->count($count)
             ->create()
-            ->each(function ($application) use ($application_data) {
-                $application_data->bankAccountNumber = Arr::random(MockedBankAccountRepository::allValid());
-                $this->createApplicationData($application, $application_data);
+            ->each(function ($application) use ($applicationData) {
+                $applicationData->bankAccountNumber = Arr::random(MockedBankAccountRepository::allValid());
+                $this->createApplicationData($application, $applicationData);
 
                 // Random updated_at and final_review_deadline to test sorting
                 $application->final_review_deadline = now()->addDays(rand(0, 30))->startOfDay();
@@ -188,6 +194,4 @@ class PCZMApplicationSeeder extends Seeder
 
         ApplicationSurePayResult::factory()->for($application)->create($applicationSurepayResult);
     }
-
-
 }
