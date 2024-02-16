@@ -1,10 +1,3 @@
-ALTER TABLE public.subsidy_stage_transitions
-DROP CONSTRAINT subsidy_stage_transitions_target_application_status_check;
-
-ALTER TABLE public.subsidy_stage_transitions
-    ADD CONSTRAINT subsidy_stage_transitions_target_application_status_check
-        CHECK (target_application_status IN ('draft', 'pending', 'approved', 'rejected', 'requestForChanges'));
-
 insert into public.subsidies ("id", "title", "reference_prefix", "code", "description", "valid_from", "valid_to")
 values ('cb91d7d4-6261-4cd6-96e8-d09c86a670b7',
         'Opleidingsactiviteiten arts internationale gezondheid en tropengeneeskunde', 'AIGT', 'AIGT',
@@ -1201,7 +1194,7 @@ INSERT INTO public.subsidy_stage_transitions (id, current_subsidy_stage_id, targ
                                               target_application_status, condition, send_message, clone_data,
                                               assign_to_previous_assessor, description)
 VALUES ('24a47df1-fc9d-4557-9012-d51738e5bdec', 'a0f9ed92-c553-42d9-aef6-707bdfadd2d1',
-        '7075fcad-7d92-42f6-b46c-7733869019e0', 'submitted', null, false, true, true, 'Aanvraag ingediend');
+        '7075fcad-7d92-42f6-b46c-7733869019e0', 'pending', null, false, true, true, 'Aanvraag ingediend');
 INSERT INTO public.subsidy_stage_transitions (id, current_subsidy_stage_id, target_subsidy_stage_id,
                                               target_application_status, condition, send_message, clone_data,
                                               assign_to_previous_assessor, description)
