@@ -1,3 +1,10 @@
+ALTER TABLE public.subsidy_stage_transitions
+DROP CONSTRAINT subsidy_stage_transitions_target_application_status_check;
+
+ALTER TABLE public.subsidy_stage_transitions
+    ADD CONSTRAINT subsidy_stage_transitions_target_application_status_check
+        CHECK (target_application_status IN ('draft', 'pending', 'approved', 'rejected', 'requestForChanges'));
+
 insert into public.subsidies ("id", "title", "reference_prefix", "code", "description", "valid_from", "valid_to")
 values ('cb91d7d4-6261-4cd6-96e8-d09c86a670b7',
         'Opleidingsactiviteiten arts internationale gezondheid en tropengeneeskunde', 'AIGT', 'AIGT',
