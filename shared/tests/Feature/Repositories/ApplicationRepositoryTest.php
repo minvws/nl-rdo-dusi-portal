@@ -450,7 +450,7 @@ class ApplicationRepositoryTest extends TestCase
 
     public function testGetAllApplicationsSorted()
     {
-        Carbon::setTestNow();
+        Carbon::setTestNow(Carbon::now());
 
         $firstApplication = Application::factory()
             ->for($this->identity)

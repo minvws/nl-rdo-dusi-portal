@@ -153,7 +153,7 @@ class ApplicationExportControllerTest extends TestCase
         $user->attachRole(RoleEnum::DataExporter, $this->subsidy->id);
 
         $firstApplication = Application::orderBy('created_at')->first();
-        CarbonImmutable::setTestNow();
+        CarbonImmutable::setTestNow(CarbonImmutable::now());
         $currentTime = CarbonImmutable::now();
 
         $response = $this
