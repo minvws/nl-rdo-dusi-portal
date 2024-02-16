@@ -264,6 +264,18 @@ VALUES ('491a4071-c401-4041-97fd-39b8c3aa70c8', 'a0f9ed92-c553-42d9-aef6-707bdfa
                     "elements": [
                         {
                             "type": "Group",
+                            "elements": [
+                                {
+                                    "type": "FormNotification",
+                                    "options": {
+                                        "displayAs": "explanation",
+                                        "message": "U moet ouder zijn dan 18 jaar (artikel 4 van de regeling)."
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Group",
                             "label": "Persoonlijke informatie",
                             "elements": [
                                 {
@@ -456,7 +468,8 @@ VALUES ('491a4071-c401-4041-97fd-39b8c3aa70c8', 'a0f9ed92-c553-42d9-aef6-707bdfa
                     "phoneNumber",
                     "email",
                     "bankAccountHolder",
-                    "bankAccountNumber"
+                    "bankAccountNumber",
+                    "abroadCourseComponentStartDate"
                 ],
                 "allOf": []
             }
@@ -484,10 +497,10 @@ VALUES ('491a4071-c401-4041-97fd-39b8c3aa70c8', 'a0f9ed92-c553-42d9-aef6-707bdfa
                                             "label": "Bewijs van inschrijving",
                                             "options": {
                                                 "accept": "image\/jpeg,image\/png,.pdf",
-                                                "maxFileSize": 20971520,
+                                                "maxFileSize": 5242880,
                                                 "minItems": 1,
                                                 "maxItems": 20,
-                                                "tip": "Upload de brief met het besluit van de Registratiecommissie Geneeskundig Specialisten (RGS) waarin wordt bevestigd dat u bent ingeschreven in het opleidingsregister voor het specialisme profielregister Internationale Gezondheidszorg en Tropengeneeskunde.\nDe bijlage bij de brief moet u niet indienen. Het overzicht met registratiegegevens verwerken wij namelijk niet bij de behandeling van de aanvraag. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                                                "tip": "Upload de brief met het besluit van de Registratiecommissie Geneeskundig Specialisten (RGS) waarin wordt bevestigd dat u bent ingeschreven in het opleidingsregister voor het specialisme profielregister Internationale Gezondheidszorg en Tropengeneeskunde.\nDe bijlage bij de brief moet u niet indienen. Het overzicht met registratiegegevens verwerken wij namelijk niet bij de behandeling van de aanvraag. Toegestane bestandstypen: pdf, jpg, jpeg, png, Maximale bestandsgrootte: 20 MB."
                                             }
                                         }
                                     ]
@@ -501,10 +514,10 @@ VALUES ('491a4071-c401-4041-97fd-39b8c3aa70c8', 'a0f9ed92-c553-42d9-aef6-707bdfa
                                             "label": "Start opleidingsonderdeel buitenland",
                                             "options": {
                                                 "accept": "image\/jpeg,image\/png,.pdf",
-                                                "maxFileSize": 20971520,
+                                                "maxFileSize": 5242880,
                                                 "minItems": 1,
                                                 "maxItems": 20,
-                                                "tip": "Upload een ondertekende verklaring van het Opleidingsinstituut Internationale Gezondheidszorg en Tropengeneeskunde (OIGT) waarin wordt bevestigd dat u in opleiding bent tot Arts IGT-KNMG en dat u het opleidingsonderdeel \u2018Buitenland\u2019 volgt of heeft gevolgd. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                                                "tip": "Upload een ondertekende verklaring van het Opleidingsinstituut Internationale Gezondheidszorg en Tropengeneeskunde (OIGT) waarin wordt bevestigd dat u in opleiding bent tot Arts IGT-KNMG en dat u het opleidingsonderdeel \u2018Buitenland\u2019 volgt of heeft gevolgd. Toegestane bestandstypen: pdf, jpg, jpeg, png, Maximale bestandsgrootte: 20 MB."
                                             }
                                         }
                                     ]
@@ -516,7 +529,6 @@ VALUES ('491a4071-c401-4041-97fd-39b8c3aa70c8', 'a0f9ed92-c553-42d9-aef6-707bdfa
             ],
             "options": {
                 "required": [
-                    "abroadCourseComponentStartDate",
                     "proofOfRegistrationDocument",
                     "educationalInstituteDeclarationDocument"
                 ],
