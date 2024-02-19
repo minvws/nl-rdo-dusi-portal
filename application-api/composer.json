@@ -12,7 +12,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "minvws/dusi-shared": "@dev",
-        "minvws/openid-connect-php-laravel": "^0.1.0",
+        "minvws/openid-connect-php-laravel": "^0.1.1",
         "minvws/php-rmq-rpc-bridge": "@dev"
     },
     "require-dev": {
@@ -81,10 +81,6 @@
         {
             "type": "git",
             "url": "git@github.com:minvws/nl-rdo-laravel-logging.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@github.com:minvws/nl-rdo-openid-connect-php-laravel.git"
         },
         {
             "type": "path",
