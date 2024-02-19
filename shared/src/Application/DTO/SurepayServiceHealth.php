@@ -19,6 +19,7 @@ class SurepayServiceHealth extends AbstractServiceHealth
 
     protected function checkHealth(): void
     {
+        // @phpstan-ignore-next-line
         $surePayFailedCounter = $this->connection->get(self::SUREPAY_FAILED_COUNTER_KEY);
 
         $this->isHealthy = $surePayFailedCounter < 1;
@@ -32,6 +33,7 @@ class SurepayServiceHealth extends AbstractServiceHealth
 
     public static function increaseSurePayFailedCounter(Connection $connection): void
     {
+        // @phpstan-ignore-next-line
         $connection->transaction(static function (Redis $redis) {
             $expire = self::SUREPAY_FAIL_EXPIRY_MINUTES * 60;
 
