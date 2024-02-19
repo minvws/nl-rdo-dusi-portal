@@ -43,7 +43,7 @@ readonly class ApplicationDataService
         private ApplicationFileManager $applicationFileManager,
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
-        private readonly SubsidyStashFieldHasher $subsidyStashFieldHasher,
+        private SubsidyStashFieldHasher $subsidyStashFieldHasher,
     ) {
     }
 
