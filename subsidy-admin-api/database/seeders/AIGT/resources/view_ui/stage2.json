@@ -1,0 +1,144 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "FormGroupControl",
+            "label": "Eerste beoordeling",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/firstAssessmentChecklist",
+                    "options": {
+                        "readonly": true,
+                        "format": "checkbox-group"
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/subsidyAwardedBefore",
+                    "options": {
+                        "readonly": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Uitkering",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/amount",
+                    "options": {
+                        "readonly": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Eerste beoordeling",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/firstAssessment",
+                    "options": {
+                        "readonly": true,
+                        "format": "radio"
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/firstAssessmentRequestedComplementReason",
+                    "options": {
+                        "readonly": true,
+                        "format": "radio"
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/firstAssessment",
+                            "schema": {
+                                "const": "Aanvulling nodig"
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/firstAssessmentRequestedComplementNote",
+                    "options": {
+                        "readonly": true,
+                        "format": "textarea"
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/firstAssessment",
+                            "schema": {
+                                "const": "Aanvulling nodig"
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/firstAssessmentRejectedNote",
+                    "options": {
+                        "readonly": true,
+                        "format": "textarea"
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/firstAssessment",
+                            "schema": {
+                                "const": "Afgekeurd"
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/firstAssessmentApprovedNote",
+                    "options": {
+                        "readonly": true,
+                        "format": "textarea"
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/firstAssessment",
+                            "schema": {
+                                "const": "Goedgekeurd"
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/firstAssessmentInternalNote",
+                    "options": {
+                        "readonly": true,
+                        "format": "textarea"
+                    }
+                }
+            ]
+        }
+    ]
+}

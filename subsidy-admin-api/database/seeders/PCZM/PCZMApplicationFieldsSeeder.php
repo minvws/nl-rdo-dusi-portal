@@ -308,7 +308,7 @@ class PCZMApplicationFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'truthfullyCompleted',
             title: '',
-            exclude_from_clone_data: true,
+            excludeFromCloneData: true,
             retentionPeriod: DataRetentionPeriod::Short
         );
     }

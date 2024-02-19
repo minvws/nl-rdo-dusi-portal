@@ -59,7 +59,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             options:        ['€ 3.830', '€ 13.720'],
             requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
             isRequired:     false,
-            exclude_from_clone_data: true
+            excludeFromCloneData: true
         );
 
         $this->createSelectField(

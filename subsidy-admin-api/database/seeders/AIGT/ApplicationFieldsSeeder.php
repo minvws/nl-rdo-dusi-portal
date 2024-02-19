@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection, PhpUnusedPrivateMethodInspection, SpellCheckingInspection, PhpSameParameterValueInspection, PhpNamedArgumentsWithChangedOrderInspection */
 
-namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
+namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMSubsidyStagesSeeder;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
-class BTVApplicationFieldsSeeder extends Seeder
+class ApplicationFieldsSeeder extends Seeder
 {
     use CreateField;
 
-    public const SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID = '70609201-1301-455c-942b-654236221970';
+    public const SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID = 'c47536b4-b44a-4621-b677-f61ce34997d5';
 
     /**
      * Run the database seeds.
@@ -30,45 +29,39 @@ class BTVApplicationFieldsSeeder extends Seeder
     public function createFields(): void
     {
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'firstName',
             title:          'Voornaam',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'infix',
             title:          'Tussenvoegsel',
             isRequired:     false,
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'lastName',
             title:          'Achternaam',
         );
 
-        $this->createDateField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
-            code:           'dateOfBirth',
-            title:          'Geboortedatum',
-        );
-
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'street',
             title:          'Straat',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'houseNumber',
             title:          'Huisnummer',
             inputMode:      'numeric',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'houseNumberSuffix',
             title:          'Huisnummer toevoeging',
             maxLength:      10,
@@ -76,27 +69,27 @@ class BTVApplicationFieldsSeeder extends Seeder
         );
 
         $this->createPostalCodeField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'postalCode',
             title:          'Postcode',
             isRequired:     false,
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'city',
             title:          'Plaats',
             maxLength:      100,
         );
 
         $this->createCountryField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'country',
             title:          'Land',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'phoneNumber',
             title:          'Telefoonnummer',
             inputMode:      'tel',
@@ -105,7 +98,7 @@ class BTVApplicationFieldsSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'email',
             title:          'E-mailadres',
             inputMode:      'email',
@@ -114,22 +107,28 @@ class BTVApplicationFieldsSeeder extends Seeder
         );
 
         $this->createBankAccountField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'bankAccountNumber',
             title:          'IBAN',
         );
 
         $this->createTextField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'bankAccountHolder',
             title:          'Naam rekeninghouder',
             maxLength:      50,
         );
 
+        $this->createDateField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code:           'abroadCourseComponentStartDate',
+            title:          'Start opleidingsonderdeel buitenland',
+        );
+
         $this->createUploadField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
-            code:           'extractPopulationRegisterDocument',
-            title:          'Uittreksel bevolkingsregister',
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code:           'proofOfRegistrationDocument',
+            title:          'Bewijs van inschrijving',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
@@ -137,19 +136,9 @@ class BTVApplicationFieldsSeeder extends Seeder
         );
 
         $this->createUploadField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
-            code:           'proofOfMedicalTreatmentDocument',
-            title:          'Verklaring behandeltraject',
-            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
-            minItems:       1,
-            maxItems:       20,
-            maxFileSize:    20971520
-        );
-
-        $this->createUploadField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
-            code:           'proofOfTypeOfMedicalTreatmentDocument',
-            title:          'Verklaring type behandeling',
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code:           'educationalInstituteDeclarationDocument',
+            title:          'Verklaring van opleidingsinstituut',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
@@ -157,7 +146,7 @@ class BTVApplicationFieldsSeeder extends Seeder
         );
 
         $this->createCheckboxField(
-            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'truthfullyCompleted',
             title:          '',
             excludeFromCloneData: true
@@ -169,7 +158,7 @@ class BTVApplicationFieldsSeeder extends Seeder
     {
         DB::table('subsidy_stage_hashes')->insert([
             'id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
-            'subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            'subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             'name' => 'Bank account',
             'description' => 'Bank account duplicate reporting',
             'created_at' => now(),
@@ -178,7 +167,7 @@ class BTVApplicationFieldsSeeder extends Seeder
 
         /** @var Field $bankAccountNumber */
         $bankAccountNumber = DB::table('fields')
-            ->where('subsidy_stage_id', BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID)
+            ->where('subsidy_stage_id', SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID)
             ->where('code', 'bankAccountNumber')
             ->where('title', 'IBAN')
             ->first();

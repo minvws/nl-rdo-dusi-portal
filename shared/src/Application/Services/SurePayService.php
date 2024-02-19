@@ -20,6 +20,7 @@ class SurePayService
 {
     private const SUBSIDY_PZCM_ID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
     private const SUBSIDY_BTV_UUID = '00f26400-7232-475f-922c-6b569b7e421a';
+    private const SUBSIDY_AIGT_UUID = 'cb91d7d4-6261-4cd6-96e8-d09c86a670b7';
 
     public function __construct(
         private readonly BankAccountRepository $bankAccountRepository,
@@ -33,7 +34,8 @@ class SurePayService
     {
         // temporary until we have generalized this
         return $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID ||
-            $application->subsidyVersion->subsidy_id === self::SUBSIDY_BTV_UUID;
+            $application->subsidyVersion->subsidy_id === self::SUBSIDY_BTV_UUID ||
+            $application->subsidyVersion->subsidy_id === self::SUBSIDY_AIGT_UUID;
     }
 
     /**
