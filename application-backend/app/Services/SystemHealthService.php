@@ -12,8 +12,8 @@ class SystemHealthService
 {
     public function __construct(private readonly Connection $connection)
     {
-
     }
+
     public function getSystemHealthStatus(): array
     {
         $services = $this->collectServicesHealth();

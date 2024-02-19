@@ -13,13 +13,7 @@ class SystemHealthCommand extends Command
 
     protected $description = 'Returns overall health of backend';
 
-    public function __construct(
-        private readonly SystemHealthService $systemHealthService
-    ) {
-        parent::__construct();
-    }
-
-    public function handle(): int
+    public function handle(SystemHealthService $systemHealthService): int
     {
         $systemHealthStatus = $this->systemHealthService->getSystemHealthStatus();
         $state = json_encode($systemHealthStatus, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
