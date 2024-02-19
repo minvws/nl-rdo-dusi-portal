@@ -15,7 +15,7 @@ class SystemHealthCommand extends Command
 
     public function handle(SystemHealthService $systemHealthService): int
     {
-        $systemHealthStatus = $this->systemHealthService->getSystemHealthStatus();
+        $systemHealthStatus = $systemHealthService->getSystemHealthStatus();
         $state = json_encode($systemHealthStatus, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 
         $this->info($state);
