@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Application\API\Http\Controllers\ActionableController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationFileController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MessageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MockedResourceController;
-use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyController;
+use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Application\API\Http\Middleware\RequireClientPublicKey;
 
 /*

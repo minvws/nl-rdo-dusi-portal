@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Repositories\BankAccount;
 
+use Illuminate\Contracts\Redis\Connection;
+use MinVWS\DUSi\Shared\Application\DTO\SurepayServiceHealth;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayMaxRetryException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\SurePayClient;
 use RuntimeException;
@@ -13,11 +16,13 @@ class SurePayRepository implements BankAccountRepository
 {
     public function __construct(
         protected SurePayClient $surePayClient,
+        protected Connection $redisConnection,
     ) {
     }
 
     /**
      * @throws SurePayRepositoryException
+     * @throws SurePayMaxRetryException
      */
     public function checkOrganisationsAccount(
         string $accountOwner,
@@ -29,6 +34,12 @@ class SurePayRepository implements BankAccountRepository
             throw new RuntimeException('surePayClient is not set');
         }
 
-        return $this->surePayClient->checkOrganisationsAccount($accountOwner, $accountNumber, $accountType);
+        try {
+            return $this->surePayClient->checkOrganisationsAccount($accountOwner, $accountNumber, $accountType);
+        } catch (SurePayMaxRetryException $e) {
+            SurepayServiceHealth::increaseSurePayFailedCounter($this->redisConnection);
+
+            throw $e;
+        }
     }
 }
