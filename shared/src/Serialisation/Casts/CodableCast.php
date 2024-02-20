@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
-use Illuminate\Support\Facades\Log;
 
 /**
  * @template T of Codable

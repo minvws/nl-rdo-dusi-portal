@@ -44,7 +44,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Aanvraag ingediend',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            'target_application_status' => ApplicationStatus::Submitted,
+            'target_application_status' => ApplicationStatus::Pending,
             'condition' => null,
             'send_message' => false,
             'assign_to_previous_assessor' => true,
@@ -58,7 +58,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Aanvulling gevraagd',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            'target_application_status' => ApplicationStatus::RequestForChanges->value,
+            'target_application_status' => ApplicationStatus::RequestForChanges,
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     2,
@@ -180,7 +180,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Implementatie coordinator beoordeling eens met goedkeuring',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
-            'target_application_status' => ApplicationStatus::Allocated->value,
+            'target_application_status' => ApplicationStatus::Allocated,
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(
@@ -285,7 +285,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Implementatie coordinator beoordeling eens met goedkeuring',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
             'target_subsidy_stage_id' => null,
-            'target_application_status' => ApplicationStatus::Approved->value,
+            'target_application_status' => ApplicationStatus::Approved,
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(

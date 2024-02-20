@@ -29,15 +29,15 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_1_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Aanvraag',
-            'subject_role' => SubjectRole::Applicant->value,
+            'subject_role' => SubjectRole::Applicant,
             'stage' => 1,
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::SUBSIDY_STAGE_2_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Eerste beoordeling',
-            'subject_role' => SubjectRole::Assessor->value,
-            'assessor_user_role' => Role::Assessor->value,
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::Assessor,
             'stage' => 2,
             'internal_note_field_code' => 'firstAssessmentInternalNote'
         ]);
@@ -45,8 +45,8 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_3_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Interne controle',
-            'subject_role' => SubjectRole::Assessor->value,
-            'assessor_user_role' => Role::InternalAuditor->value,
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::InternalAuditor,
             'stage' => 3,
             'internal_note_field_code' => 'interalAssessmentInternalNote'
         ]);
@@ -54,8 +54,8 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_4_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Uitvoeringscoördinator controle',
-            'subject_role' => SubjectRole::Assessor->value,
-            'assessor_user_role' => Role::ImplementationCoordinator->value,
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::ImplementationCoordinator,
             'stage' => 4,
             'allow_duplicate_assessors' => true,
             'internal_note_field_code' => 'InternalNote'
@@ -64,8 +64,8 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_5_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Vaststelling timeout',
-            'subject_role' => SubjectRole::Assessor->value,
-            'assessor_user_role' => Role::Assessor->value,
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::Assessor,
             'stage' => 5,
             'allow_duplicate_assessors' => true,
             'internal_note_field_code' => 'InternalNote'
@@ -74,8 +74,8 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_6_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Vaststellings controle',
-            'subject_role' => SubjectRole::Assessor->value,
-            'assessor_user_role' => Role::Assessor->value,
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::Assessor,
             'stage' => 6,
             'allow_duplicate_assessors' => true,
             'internal_note_field_code' => 'InternalNote'
@@ -84,8 +84,8 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_7_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Interne vaststellings controle',
-            'subject_role' => SubjectRole::Assessor->value,
-            'assessor_user_role' => Role::InternalAuditor->value,
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::InternalAuditor,
             'stage' => 7,
             'allow_duplicate_assessors' => true,
             'internal_note_field_code' => 'InternalNote'
@@ -94,8 +94,8 @@ class SubsidyStagesSeeder extends Seeder
             'id' => self::SUBSIDY_STAGE_8_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
             'title' => 'Uitvoeringscoördinator vaststellings controle',
-            'subject_role' => SubjectRole::Assessor->value,
-            'assessor_user_role' => Role::ImplementationCoordinator->value,
+            'subject_role' => SubjectRole::Assessor,
+            'assessor_user_role' => Role::ImplementationCoordinator,
             'stage' => 8,
             'allow_duplicate_assessors' => true,
             'internal_note_field_code' => 'InternalNote'

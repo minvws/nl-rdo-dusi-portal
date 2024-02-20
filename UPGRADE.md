@@ -30,7 +30,7 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
-DUSI-632: Create AIGT subsidy
+### DUSI-632: Create AIGT subsidy
 
 A signature needs to be added:  
 assessment-api/storage/subsidy-files/cb91d7d4-6261-4cd6-96e8-d09c86a670b7/vws_dusi_signature.jpg
@@ -42,6 +42,15 @@ This feature contains a dusi_app_db migration.  See <https://github.com/minvws/n
 ### DUSI-1169 BTV flow update
 
 This feature contains a dusi_app_db migration.  See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1199>
+
+### DUSI-1218: Update BTV firstAssessmentChecklist
+
+The `2024_02_18_000000_update_btv_first_assessment_checklist.sql` SQL update needs to run to update the firstAssmentChecklist.
+PR <https://github.com/minvws/nl-rdo-dusi-portal/pull/1223>
+
+### DUSI-1119: Hardheidsclausule letter typo
+
+This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1201>
 
 ## Release 2.1.3
 

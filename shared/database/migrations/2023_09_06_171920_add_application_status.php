@@ -17,7 +17,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->enum('status', ['draft', 'submitted', 'approved', 'allocated', 'rejected', 'requestForChanges'])
+            $table->enum('status', ['draft', 'submitted', 'approved', 'rejected', 'requestForChanges'])
                 ->default('draft');
         });
     }

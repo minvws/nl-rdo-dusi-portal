@@ -196,42 +196,6 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'send_message' => true,
         ]);
 
-        // Bij een beoordeeloptie 'Oneens met de eerste beoordeling' gaat de aanvraag terug naar de eerste beoordelaar
-        DB::table('subsidy_stage_transitions')->insert([
-            'id' => self::TRANSITION_STAGE_4_TO_REJECTED,
-            'description' => 'Interne beoording oneens met eerste beoordeling',
-            'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
-            'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
-            'condition' => $encoder->encode(
-                new ComparisonCondition(
-                    4,
-                    'internalAssessment',
-                    Operator::Identical,
-                    'Oneens met de eerste beoordeling'
-                )
-            ),
-            'send_message' => false,
-            'assign_to_previous_assessor' => true,
-            'clone_data' => true
-        ]);
 
-        // Bij een beoordeeloptie 'Goedgekeurd' wordt de aanvraag definitief goedgekeurd en wordt een
-        // toekenningsbrief verzonden
-        DB::table('subsidy_stage_transitions')->insert([
-            'id' => self::TRANSITION_STAGE_4_TO_APPROVED,
-            'description' => 'Interne beoordeling eens met eerste beoordeling',
-            'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
-            'target_subsidy_stage_id' => null,
-            'target_application_status' => ApplicationStatus::Approved->value,
-            'condition' => $encoder->encode(
-                new ComparisonCondition(
-                    4,
-                    'internalAssessment',
-                    Operator::Identical,
-                    'Eens met de eerste beoordeling'
-                )
-            ),
-            'send_message' => true,
-        ]);
     }
 }

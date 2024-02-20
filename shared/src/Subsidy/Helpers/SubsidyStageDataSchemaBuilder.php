@@ -9,14 +9,11 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use Illuminate\Support\Facades\Log;
-
 
 class SubsidyStageDataSchemaBuilder
 {
     public function buildDataSchema(SubsidyStage $subsidyStage): array
     {
-        Log::warning("hier!!?!??, SubsidyStageDataSchemaBuilder");
         $result = [];
         $result['type'] = 'object';
         $result['properties'] = [];
@@ -41,7 +38,7 @@ class SubsidyStageDataSchemaBuilder
         if (count($requiredConditions) > 0) {
             $result['allOf'] = $requiredConditions;
         }
-        Log::info("result", $result);
+
         return $result;
     }
 

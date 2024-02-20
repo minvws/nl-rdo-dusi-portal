@@ -27,7 +27,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->enum(
                 'target_application_status',
-                ['draft', 'submitted', 'approved', 'allocated', 'rejected', 'requestForChanges']
+                ['draft', 'submitted', 'approved', 'rejected', 'requestForChanges']
             )->nullable();
             $table->json('condition')->nullable();
             $table->boolean('send_message')->default(false);

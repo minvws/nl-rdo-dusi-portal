@@ -51,11 +51,11 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                         "email",
                         "bankAccountHolder",
                         "bankAccountNumber",
-                        "abroadCourseComponentStartDate",
                     ]
                 ),
                 $this->buildInputUiStep(
-                    3, 'Documenten toevoegen', [
+                    3, 'Opleidingsgegevens', [
+                        "abroadCourseComponentStartDate",
                         "proofOfRegistrationDocument",
                         "educationalInstituteDeclarationDocument",
                     ]
