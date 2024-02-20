@@ -162,7 +162,7 @@ class PCZMAssessmentFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'healthcareProviderSBICode',
             title: 'SBI-code zorgaanbieder',
-            maxLength: 100,
+            params:         ['maxLength' => 100],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
@@ -171,7 +171,7 @@ class PCZMAssessmentFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_2_UUID,
             code: 'healthcareProviderAGBCode',
             title: 'AGB-code zorgaanbieder',
-            maxLength: 100,
+            params:         ['maxLength' => 100],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );

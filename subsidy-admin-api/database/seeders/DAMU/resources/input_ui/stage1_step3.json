@@ -1,0 +1,82 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Documenten",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/IB60Document",
+                            "label": "IB60 formulier",
+                            "options": {
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 5242880,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "In het formulier wordt het bruto jaarinkomen gevraagd van beide ouders of wettelijk vertegenwoordigers. Ook als u niet duurzaam samenleeft. Bij een eenoudergezin geldt dit uiteraard niet.<br/></br/>De inkomensverklaring kunt u downloaden in Mijn Belastingdienst onder het tabblad Inkomstenbelasting. U kunt de verklaring ook gratis aanvragen bij de Belastingdienst via het telefoonnummer 0800 0543."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/ANWBRouteCard",
+                            "label": "ANWB routeplanner",
+                            "options": {
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 5242880,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "Gebruik de ANWB-routeplanner met de optie ‘snelste route’. U mag geen andere routeplanner gebruiken. Kies als route het woonadres naar de Damu-school. Schakel de optie 'Route op basis van actueel verkeer' uit en klik op 'Herbereken route'."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/proofOfRegistrationDAMUSchool",
+                            "label": "Inschrijfbewijs DAMU school",
+                            "options": {
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 5242880,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": ""
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/proofOfRegistrationRegularSchool",
+                            "label": "Inschrijfbewijs reguliere school",
+                            "options": {
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 5242880,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": ""
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

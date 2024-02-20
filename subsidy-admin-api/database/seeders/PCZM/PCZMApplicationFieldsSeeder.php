@@ -80,7 +80,7 @@ class PCZMApplicationFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'houseNumberSuffix',
             title: 'Huisnummer toevoeging',
-            maxLength: 10,
+            params:         ['maxLength' => 10],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
@@ -97,7 +97,7 @@ class PCZMApplicationFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'city',
             title: 'Plaats',
-            maxLength: 100,
+            params:         ['maxLength' => 100],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -113,7 +113,7 @@ class PCZMApplicationFieldsSeeder extends Seeder
             code: 'phoneNumber',
             title: 'Telefoonnummer',
             inputMode: 'tel',
-            maxLength: 20,
+            params:         ['maxLength' => 20],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
@@ -123,7 +123,7 @@ class PCZMApplicationFieldsSeeder extends Seeder
             code: 'email',
             title: 'E-mailadres',
             inputMode: 'email',
-            maxLength: 300,
+            params:         ['maxLength' => 300],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
@@ -139,7 +139,7 @@ class PCZMApplicationFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'bankAccountHolder',
             title: 'Naam rekeninghouder',
-            maxLength: 50,
+            params:         ['maxLength' => 50],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -228,7 +228,7 @@ class PCZMApplicationFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'otherEmploymentFunction',
             title: 'Andere functie',
-            maxLength: 300,
+            params:         ['maxLength' => 300],
             requiredCondition: new ComparisonCondition(1, 'employmentFunction', Operator::Identical, 'Anders'),
             retentionPeriod: DataRetentionPeriod::Short
         );
@@ -268,7 +268,7 @@ class PCZMApplicationFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'BIGNumberJudicialInstitution',
             title: 'BIG-nummer',
-            maxLength: 11,
+            params:         ['maxLength' => 11],
             requiredCondition: new ComparisonCondition(1, 'hasBeenWorkingAtJudicialInstitution', Operator::Identical, 'Ja'),
             retentionPeriod: DataRetentionPeriod::Short
         );

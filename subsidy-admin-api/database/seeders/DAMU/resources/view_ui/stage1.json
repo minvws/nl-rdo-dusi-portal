@@ -1,0 +1,179 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "FormGroupControl",
+            "label": "Persoonlijke informatie",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Voornaam": "{firstName}",
+                            "Tussenvoegsel": "{infix}",
+                            "Achternaam": "{lastName}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Adres",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Land": "{country}",
+                            "Straatnaam": "{street}",
+                            "Huisnummer": "{houseNumber}",
+                            "Huisnummer toevoeging": "{houseNumberSuffix}",
+                            "Postcode": "{postalCode}",
+                            "Plaatsnaam": "{city}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Contact",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Telefoonnummer": "{phoneNumber}",
+                            "E-mailadres": "{email}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Bank",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "IBAN": "{bankAccountNumber}",
+                            "Naam rekeninghouder": "{bankAccountHolder}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Inkomen",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Is er sprake van een eenoudergezin": "{isSingleParentFamily}",
+                            "Alimentatie": "{hasAlimony}",
+                            "Alimentatiebedrag": "{alimonyAmount}",
+                            "Jaarinkomen ouder 1": "{yearlyIncomeParent1}",
+                            "Jaarinkomen ouder 2": "{yearlyIncomeParent2}",
+                            "Gezamelijk inkomen": "{jointIncome}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Gegevens kind",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Naam": "{childName}",
+                            "Straat": "{residentialStreet}",
+                            "Huisnummer": "{residentialHouseNumber}",
+                            "Huisnummer toevoeging": "{residentialHouseNumberSuffix}",
+                            "Postcode": "{residentialPostalCode}",
+                            "Plaatsnaam": "{residentialCity}",
+                            "Damu School primary": "{damuSchoolPrimary}",
+                            "Damu School secundary": "{damuSchoolSecundary}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Subsidie",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Reisafstand enkele reis": "{travelDistanceSingleTrip}",
+                            "Totaal aantal kilometers": "{totalDistance}",
+                            "Kilometervergoeding": "{travelExpenseReimbursement}",
+                            "Gevraagd subsidiebrdrag": "{requestedSubsidyAmount}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Bestanden",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "IB60 formulier": "{IB60Document}",
+                            "ANWB routeplanner": "{ANWBRouteCard}",
+                            "Inschrijfbewijs DAMU school": "{proofOfRegistrationDAMUSchool}",
+                            "Inschrijfbewijs reguliere school": "{proofOfRegistrationRegularSchool}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
