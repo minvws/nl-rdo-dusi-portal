@@ -44,6 +44,7 @@ readonly class ApplicationDataService
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
         private SubsidyStashFieldHasher $subsidyStashFieldHasher,
+        private ApplicationFieldHookService $applicationFieldHookService,
     ) {
     }
 
@@ -82,9 +83,12 @@ readonly class ApplicationDataService
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
 
+        $fieldValues = $this->applicationFieldHookService->findAndExecuteHooks($fieldValues, $applicationStage);
+
         // Validate, throws a ValidationException on error
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
         $validationResult = $validator->validate();
+
         $this->updateAnswersForApplicationStage($applicationStage, $fieldValues);
 
         return $validationResult;

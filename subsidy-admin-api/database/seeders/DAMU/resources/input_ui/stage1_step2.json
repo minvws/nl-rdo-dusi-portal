@@ -180,7 +180,8 @@
                             "label": "Alimentatie",
                             "options": {
                                 "format": "radio",
-                                "placeholder": ""
+                                "placeholder": "",
+                                "validation": ["onChange"]
                             }
                         },
                         {
@@ -188,7 +189,8 @@
                             "scope": "#/properties/alimonyAmount",
                             "label": "Alimentatiebedrag",
                             "options": {
-                                "placeholder": ""
+                                "placeholder": "",
+                                "validation": ["onBlur"]
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -203,7 +205,8 @@
                             "scope": "#/properties/yearlyIncomeParent1",
                             "label": "Jaarinkomen ouder 1",
                             "options": {
-                                "placeholder": ""
+                                "placeholder": "",
+                                "validation": ["onBlur"]
                             }
                         },
                         {
@@ -211,7 +214,8 @@
                             "scope": "#/properties/yearlyIncomeParent2",
                             "label": "Jaarinkomen ouder 2",
                             "options": {
-                                "placeholder": ""
+                                "placeholder": "",
+                                "validation": ["onBlur"]
                             }
                         },
                         {
