@@ -57,36 +57,6 @@ class AssessmentStageUISeeder extends Seeder
                                     ]
                                 ]
                             ]
-                        ],
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
-                                    "scope" => "#/properties/subsidyAwardedBefore",
-                                    "options" => [
-                                        "format" => "radio"
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                [
-                    "type" => "Group",
-                    "label" => "Uitkering",
-                    "elements" => [
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
-                                    "scope" => "#/properties/amount",
-                                    "options" => [
-                                        "format" => "radio"
-                                    ]
-                                ]
-                            ]
                         ]
                     ]
                 ],
@@ -226,9 +196,64 @@ class AssessmentStageUISeeder extends Seeder
         ]);
     }
 
-    public function internalAssessment(): void
+    public function implementationAssessment(): void
     {
         $view_ui = $this->buildViewSchema(3);
+
+        $input_ui = [
+            "type" => "FormGroupControl",
+            "options" => [
+                "section" => true,
+                "group" => true
+            ],
+            "elements" => [
+                [
+                    "type" => "CustomControl",
+                    "scope" => "#/properties/amount",
+                    "options" => [
+                    ]
+                ],
+                [
+                    "type" => "CustomControl",
+                    "scope" => "#/properties/implementationCoordinatorAssessment",
+                    "options" => [
+                        "format" => "radio"
+                    ]
+                ],
+                [
+                    "type" => "Group",
+                    "label" => "Toelichting",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/implementationCoordinatorAssessmentInternalNote",
+                                    "options" => [
+                                        "format" => "textarea"
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ]
+                ],
+            ]
+        ];
+
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::SUBSIDY_STAGE3_UI_UUID,
+            'subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+    }
+
+    public function internalAssessment(): void
+    {
+        $view_ui = $this->buildViewSchema(4);
 
         $input_ui = [
             "type" => "FormGroupControl",
@@ -246,9 +271,9 @@ class AssessmentStageUISeeder extends Seeder
                             "elements" => [
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/firstAssessorMotivatedValid",
+                                    "scope" => "#/properties/internalAssessmentChecklist",
                                     "options" => [
-                                        "format" => "checkbox"
+                                        "format" => "select"
                                     ]
                                 ]
                             ]
@@ -279,66 +304,6 @@ class AssessmentStageUISeeder extends Seeder
                         ]
                     ]
                 ]
-            ]
-        ];
-
-        DB::table('subsidy_stage_uis')->insert([
-            'id' => self::SUBSIDY_STAGE3_UI_UUID,
-            'subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
-            'version' => 1,
-            'status' => 'published',
-            'input_ui' => json_encode($input_ui),
-            'view_ui' => json_encode($view_ui)
-        ]);
-    }
-
-    public function implementationAssessment(): void
-    {
-        $view_ui = $this->buildViewSchema(4);
-
-        $input_ui = [
-            "type" => "FormGroupControl",
-            "options" => [
-                "section" => true,
-                "group" => true
-            ],
-            "elements" => [
-                [
-                    "type" => "Group",
-                    "label" => "Status",
-                    "elements" => [
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
-                                    "scope" => "#/properties/implementationCoordinatorAssessment",
-                                    "options" => [
-                                        "format" => "radio"
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                [
-                    "type" => "Group",
-                    "label" => "Toelichting",
-                    "elements" => [
-                        [
-                            "type" => "VerticalLayout",
-                            "elements" => [
-                                [
-                                    "type" => "CustomControl",
-                                    "scope" => "#/properties/implementationCoordinatorAssessmentInternalNote",
-                                    "options" => [
-                                        "format" => "textarea"
-                                    ]
-                                ]
-                            ]
-                        ],
-                    ]
-                ],
             ]
         ];
 

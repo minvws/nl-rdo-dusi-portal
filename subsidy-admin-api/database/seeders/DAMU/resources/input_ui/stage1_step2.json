@@ -216,8 +216,8 @@
                         },
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/jointIncome",
-                            "label": "Gezamelijk inkomen",
+                            "scope": "#/properties/yearlyIncomeTotal",
+                            "label": "Jaarinkomen totaal",
                             "options": {
                                 "readonly": true
                             }
@@ -243,8 +243,8 @@
                         },
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/childName",
-                            "label": "Naam kind",
+                            "scope": "#/properties/dateOfBirth",
+                            "label": "Geboortedatum",
                             "options": {
                                 "placeholder": ""
                             }
@@ -316,7 +316,7 @@
                         },
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/damuSchoolSecundary",
+                            "scope": "#/properties/damuSchoolSecondary",
                             "label": "DAMU school",
                             "options": {
                                 "format": "select",

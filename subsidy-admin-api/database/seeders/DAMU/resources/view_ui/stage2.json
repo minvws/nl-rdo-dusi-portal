@@ -19,30 +19,6 @@
                         "readonly": true,
                         "format": "checkbox-group"
                     }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/subsidyAwardedBefore",
-                    "options": {
-                        "readonly": true
-                    }
-                }
-            ]
-        },
-        {
-            "type": "FormGroupControl",
-            "label": "Uitkering",
-            "options": {
-                "section": true,
-                "headingLevel": "2"
-            },
-            "elements": [
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/amount",
-                    "options": {
-                        "readonly": true
-                    }
                 }
             ]
         },

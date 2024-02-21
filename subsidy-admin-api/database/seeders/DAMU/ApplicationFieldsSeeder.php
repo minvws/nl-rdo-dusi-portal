@@ -159,7 +159,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'yearlyIncomeTotal',
-            title:          'Jaarkinkome totaal',
+            title:          'Jaarinkomen totaal',
             inputMode:      'numeric',
             params:         ['readonly' => true],
             isRequired:     false,
@@ -246,14 +246,6 @@ class ApplicationFieldsSeeder extends Seeder
                 'Venlo - Valuas College',
             ],
             isRequired: false,
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'primarySchool',
-            title:          'DAMU School',
-            options:        ['Primair onderwijs', 'Voortgezet onderwijs'],
-            isRequired:     false,
         );
 
         $this->createTextField(

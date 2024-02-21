@@ -6,14 +6,14 @@
     "elements": [
         {
             "type": "CustomControl",
-            "scope": "#/properties/firstAssessorMotivatedValid",
+            "scope": "#/properties/amount",
             "options": {
                 "readonly": true
             }
         },
         {
             "type": "CustomControl",
-            "scope": "#/properties/internalAssessment",
+            "scope": "#/properties/implementationCoordinatorAssessment",
             "options": {
                 "readonly": true,
                 "format": "radio"
@@ -21,7 +21,7 @@
         },
         {
             "type": "CustomControl",
-            "scope": "#/properties/interalAssessmentInternalNote",
+            "scope": "#/properties/implementationCoordinatorAssessmentInternalNote",
             "options": {
                 "readonly": true,
                 "format": "textarea"

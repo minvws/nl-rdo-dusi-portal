@@ -12,7 +12,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\InCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
-use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 
 class BTVSubsidyStageTransitionsSeeder extends Seeder
 {

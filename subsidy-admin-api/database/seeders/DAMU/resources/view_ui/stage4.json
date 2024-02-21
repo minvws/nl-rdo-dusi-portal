@@ -6,7 +6,14 @@
     "elements": [
         {
             "type": "CustomControl",
-            "scope": "#/properties/implementationCoordinatorAssessment",
+            "scope": "#/properties/internalAssessmentChecklist",
+            "options": {
+                "readonly": true
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/internalAssessment",
             "options": {
                 "readonly": true,
                 "format": "radio"
@@ -14,7 +21,7 @@
         },
         {
             "type": "CustomControl",
-            "scope": "#/properties/implementationCoordinatorAssessmentInternalNote",
+            "scope": "#/properties/interalAssessmentInternalNote",
             "options": {
                 "readonly": true,
                 "format": "textarea"
@@ -22,3 +29,4 @@
         }
     ]
 }
+

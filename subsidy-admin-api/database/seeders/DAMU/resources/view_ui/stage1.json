@@ -102,7 +102,7 @@
                             "Alimentatiebedrag": "{alimonyAmount}",
                             "Jaarinkomen ouder 1": "{yearlyIncomeParent1}",
                             "Jaarinkomen ouder 2": "{yearlyIncomeParent2}",
-                            "Gezamelijk inkomen": "{jointIncome}"
+                            "Jaarinkomen totaal": "{yearlyIncomeTotal}"
                         }
                     }
                 }
@@ -127,7 +127,7 @@
                             "Postcode": "{residentialPostalCode}",
                             "Plaatsnaam": "{residentialCity}",
                             "Damu School primary": "{damuSchoolPrimary}",
-                            "Damu School secundary": "{damuSchoolSecundary}"
+                            "Damu School secundary": "{damuSchoolSecondary}"
                         }
                     }
                 }

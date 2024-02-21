@@ -34,38 +34,10 @@ class AssessmentFieldsSeeder extends Seeder
             code:           'firstAssessmentChecklist',
             title:          'Gecontroleerd',
             options:        [
-                                'Valt de aanvrager onder de WSNP/bewindvoering?',
-                                'Is de aanvraag tijdig ingediend?',
-                                'Is het aanvraagformulier volledig ingevuld?',
-                                'Is het aanvraagformulier juist ondertekend?',
-                                'Bevat de aanvraag alle vereiste documenten?',
-                                'Hebben alle ingediende documenten betrekking op de juiste persoon?',
-                                'Zijn het inschrijvingsbewijs RGS en het opleidingsbewijs OIGT correct ondertekend?',
-                                'Staat de zakenpartner correct in SAP met het juiste bankrekeningnummer?',
-                                'Is de einddatum van de buitenlandstage duidelijk?',
-                                'Komt dit overeen met de opgave van de OIGT?',
-                                'Komt de aanvrager voor in het M&O-register?'
+                                'ToDo?',
+                                'To be done?',
                             ],
             isRequired:     false,
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            code:           'subsidyAwardedBefore',
-            title:          'Reeds eerder subsidie verleend aan dezelfde persoon voor de buitenlandstage?',
-            options:        ['Niet eerder subsidie verstrekt', 'Wel eerder subsidie verstrekt'],
-            isRequired:     false,
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            code:           'amount',
-            title:          'Bedrag',
-            options:        ['€ 17.000'],
-            default:        '€ 17.000',
-            isRequired:     false,
-            requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
-            excludeFromCloneData: true,
         );
 
         $this->createSelectField(
@@ -117,38 +89,18 @@ class AssessmentFieldsSeeder extends Seeder
         );
     }
 
-    public function internalAssessmentFields(): void
-    {
-        //interne controle
-        $this->createCheckboxField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
-            code: 'firstAssessorMotivatedValid',
-            title: 'De motivatie van de eerste behandelaar is duidelijk en correct',
-            isRequired: false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
-            code: 'internalAssessment',
-            title: 'Beoordeling',
-            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
-            code: 'internalAssessmentInternalNote',
-            title: 'Interne notitie',
-            isRequired: false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-    }
-
     public function coordinatorImplementationFields(): void
     {
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
+            code:           'amount',
+            title:          'Bedrag',
+            isRequired:     false,
+            requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
+        );
+
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code: 'implementationCoordinatorAssessment',
             title: 'Beoordeling',
             options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
@@ -156,8 +108,39 @@ class AssessmentFieldsSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code: 'implementationCoordinatorAssessmentInternalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+    }
+
+    public function internalAssessmentFields(): void
+    {
+        //interne controle
+        $this->createMultiSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
+            code:           'internalAssessmentChecklist',
+            title:          'Gecontroleerd',
+            options:        [
+                'ToDo?',
+                'To be done?',
+            ],
+            isRequired:     false,
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            code: 'internalAssessment',
+            title: 'Is de verplichting goedgekeurd?',
+            options: ['Ja', 'Nee', 'Nvt'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            code: 'internalAssessmentInternalNote',
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
