@@ -136,7 +136,11 @@ class ApplicationRepository
             ->whereExists($filteredQuery)
             ->when(
                 value: $user->hasRole(Role::LegalSpecialist),
-                callback: fn($q) => $q->where('status', ApplicationStatus::Rejected),
+                callback: fn(Builder $q) => $q->where(function (Builder $q) {
+                    $q
+                        ->where('status', ApplicationStatus::Approved)
+                        ->orWhere('status', ApplicationStatus::Rejected);
+                }),
             );
         $this->applyFilters($query, $filter);
         $this->applySort($query, $sortOptions);
