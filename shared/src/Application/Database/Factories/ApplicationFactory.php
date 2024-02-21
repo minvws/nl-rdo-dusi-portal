@@ -9,6 +9,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
@@ -25,16 +26,22 @@ class ApplicationFactory extends Factory
      */
     public function definition(): array
     {
-        $subsidyVersion = SubsidyVersion::factory()->create();
-
         return [
             'id' => $this->faker->uuid,
-            'subsidy_version_id' => $subsidyVersion,
-            'reference' => sprintf(
-                '%s-%s',
-                $subsidyVersion->subsidy()->get()->first()->reference_prefix,
-                $this->faker->unique()->regexify('[0-9]{8}')
-            ),
+            'subsidy_version_id' => SubsidyVersion::factory(),
+            'reference' => function (array $attributes) {
+                $subsidyVersion = SubsidyVersion::findOrFail($attributes['subsidy_version_id']);
+                assert($subsidyVersion instanceof SubsidyVersion);
+
+                $subsidy = $subsidyVersion->subsidy()->first();
+                assert($subsidy instanceof Subsidy);
+
+                return sprintf(
+                    '%s-%s',
+                    $subsidy->reference_prefix,
+                    $this->faker->unique()->regexify('[0-9]{8}')
+                );
+            },
             'created_at' => $this->faker->dateTimeBetween('-3 month'),
             'identity_id' => Identity::factory(),
             'application_title' => $this->faker->words(3, true),
