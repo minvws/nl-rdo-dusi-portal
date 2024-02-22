@@ -248,7 +248,7 @@ class ApplicationRepository
      *
      * @return array<int, ApplicationStage> Application stages indexed by stage number.
      */
-    public function getLatestApplicationStagesUpToIncluding(ApplicationStage $stage): array
+    public function getLatestApplicationStagesUpToIncluding(ApplicationStage $stage, bool $readOnly = false): array
     {
         /** @var array<ApplicationStage> $matchingStages */
         $matchingStages =
@@ -259,7 +259,7 @@ class ApplicationRepository
                     fn ($query) =>
                         $query
                             ->where('is_submitted', '=', true)
-                            ->orWhere('id', '=', $stage->id)
+                            ->when(!$readOnly, fn ($query) => $query->orWhere('id', '=', $stage->id))
                 )
                 ->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage)
                 ->orderBy('sequence_number')
@@ -276,9 +276,10 @@ class ApplicationRepository
     }
 
     public function getAnswersForApplicationStagesUpToIncluding(
-        ApplicationStage $stage
+        ApplicationStage $stage,
+        bool $readOnly = false,
     ): AnswersByApplicationStage {
-        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage);
+        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage, $readOnly);
 
         $stages = [];
         foreach ($uniqueStages as $currentStage) {

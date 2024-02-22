@@ -160,9 +160,14 @@ readonly class ApplicationDataService
      *
      * @return array<int, ApplicationStageData>
      */
-    public function getApplicationStageDataUpToIncluding(ApplicationStage $applicationStage): array
-    {
-        $answersByStage = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($applicationStage);
+    public function getApplicationStageDataUpToIncluding(
+        ApplicationStage $applicationStage,
+        bool $readOnly = false
+    ): array {
+        $answersByStage = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding(
+            $applicationStage,
+            $readOnly
+        );
 
         $result = [];
         foreach ($answersByStage->stages as $stageAnswers) {

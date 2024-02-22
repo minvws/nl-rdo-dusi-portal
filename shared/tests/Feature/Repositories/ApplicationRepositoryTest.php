@@ -510,4 +510,82 @@ class ApplicationRepositoryTest extends TestCase
         $this->assertSame($firstApplication->application_title, $applications[1]->application_title);
         $this->assertSame($secondApplication->application_title, $applications[0]->application_title);
     }
+
+
+    public function testGetAnswersForApplicationStagesUpToIncludingWithReadOnly(): void
+    {
+        $stage1Field1 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
+        $stage1Field2 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
+
+        $subsidyStage2 = SubsidyStage::factory()->create(
+            [
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'stage' => 2,
+            ]
+        );
+
+        $stage2Field1 = Field::factory()->create(['subsidy_stage_id' => $subsidyStage2->id]);
+
+        $application = Application::factory()->create(
+            [
+                'identity_id' => $this->identity->id,
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+            ]
+        );
+
+        $applicationStage1 = ApplicationStage::factory()->create(
+            [
+                'application_id' => $application->id,
+                'subsidy_stage_id' => $this->subsidyStage->id,
+                'sequence_number' => 1,
+                'is_current' => false,
+                'is_submitted' => true,
+            ]
+        );
+
+        Answer::factory()->create(
+            [
+                'application_stage_id' => $applicationStage1->id,
+                'field_id' => $stage1Field1->id,
+            ]
+        );
+
+        Answer::factory()->create(
+            [
+                'application_stage_id' => $applicationStage1->id,
+                'field_id' => $stage1Field2->id,
+            ]
+        );
+
+        $applicationStage2 = ApplicationStage::factory()->create(
+            [
+                'application_id' => $application->id,
+                'subsidy_stage_id' => $subsidyStage2->id,
+                'sequence_number' => 2,
+                'is_current' => true,
+            ]
+        );
+
+        Answer::factory()->create(
+            [
+                'application_stage_id' => $applicationStage2->id,
+                'field_id' => $stage2Field1->id,
+                'encrypted_answer' => json_encode('this should not be visible'),
+            ]
+        );
+
+        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage1);
+        $this->assertCount(1, $answers->stages);
+        $this->assertCount(2, $answers->stages[0]->answers);
+        $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);
+
+        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage2, true);
+        $this->assertCount(1, $answers->stages);
+        $this->assertCount(2, $answers->stages[0]->answers);
+        $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);
+        $this->assertArrayNotHasKey(1, $answers->stages);
+    }
 }
