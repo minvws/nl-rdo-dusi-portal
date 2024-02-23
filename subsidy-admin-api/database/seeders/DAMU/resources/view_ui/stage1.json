@@ -126,8 +126,8 @@
                             "Huisnummer toevoeging": "{residentialHouseNumberSuffix}",
                             "Postcode": "{residentialPostalCode}",
                             "Plaatsnaam": "{residentialCity}",
-                            "Damu School primary": "{damuSchoolPrimary}",
-                            "Damu School secundary": "{damuSchoolSecondary}"
+                            "Damu School primair onderwijs": "{damuSchoolPrimary}",
+                            "Damu School voorgezet onderwijs": "{damuSchoolSecondary}"
                         }
                     }
                 }

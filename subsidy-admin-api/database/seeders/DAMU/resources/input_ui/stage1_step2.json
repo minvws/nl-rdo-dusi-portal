@@ -303,7 +303,9 @@
                             "label": "Gaat naar het",
                             "options": {
                                 "format": "radio",
-                                "placeholder": ""
+                                "placeholder": "",
+                                "validation": ["onBlur"],
+                                "remoteAction": ["onBlur"]
                             }
                         },
                         {
@@ -354,7 +356,9 @@
                             "scope": "#/properties/travelDistanceSingleTrip",
                             "label": "Reisafstand enkele reis",
                             "options": {
-                                "placeholder": ""
+                                "placeholder": "",
+                                "validation": ["onBlur"],
+                                "remoteAction": ["onBlur"]
                             }
                         },
                         {

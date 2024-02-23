@@ -7,7 +7,7 @@ namespace MinVWS\DUSi\Shared\Application\Services\FieldHooks;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 
-class YearlyIncomeTotal implements FieldHook
+class TotalDistance implements FieldHook
 {
     private const SUBSIDY_DAMU_UUID = '7b9f1318-4c38-4fe5-881b-074729d95abf';
 
@@ -18,8 +18,8 @@ class YearlyIncomeTotal implements FieldHook
 
     public function run(FieldValue $fieldValue, array $fieldValues, ApplicationStage $applicationStage): FieldValue
     {
-        $yearlyIncomeTotal = YearlyIncomeCalculator::calculate($fieldValues);
+        $totalDistance = TotalDistanceCalculator::calculate($fieldValues['travelDistanceSingleTrip']);
 
-        return new FieldValue($fieldValue->field, $yearlyIncomeTotal);
+        return new FieldValue($fieldValue->field, $totalDistance);
     }
 }

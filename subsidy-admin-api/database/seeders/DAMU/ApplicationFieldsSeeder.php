@@ -252,7 +252,7 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'travelDistanceSingleTrip',
             title:          'Reisafstand enkele reis',
-            inputMode:      'numeric',
+            inputMode:      'float',
             params:         ['minimum' => 1, 'maximum' => 9999],
         );
 
@@ -260,7 +260,7 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'totalDistance',
             title:          'Totaal aantal kilometers',
-            inputMode:      'numeric',
+            inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
         );
@@ -269,7 +269,7 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'travelExpenseReimbursement',
             title:          'Kilometervergoeding',
-            inputMode:      'numeric',
+            inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
         );
@@ -278,7 +278,7 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'requestedSubsidyAmount',
             title:          'Gevraagde subsidie bedrag',
-            inputMode:      'numeric',
+            inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
         );
