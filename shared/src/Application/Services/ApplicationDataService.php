@@ -11,6 +11,7 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 use Exception;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use League\CommonMark\Exception\LogicException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
@@ -81,7 +82,10 @@ readonly class ApplicationDataService
         bool $submit
     ): array {
         // Decode received form data
+        Log::debug(json_encode($data));
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
+
+        Log::debug('fieldValues', $fieldValues);
 
         $fieldValues = $this->applicationFieldHookService->findAndExecuteHooks($fieldValues, $applicationStage);
 

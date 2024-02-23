@@ -49,6 +49,7 @@ readonly class FormDecodingService
     {
         $type = match ($field->type) {
             FieldType::TextNumeric => 'int',
+            FieldType::TextFloat => 'float',
             FieldType::Checkbox => 'bool',
             FieldType::Upload => FileList::class,
             FieldType::Multiselect => 'array',
@@ -83,6 +84,15 @@ readonly class FormDecodingService
 
         if (is_array($value) && count($value) === 0) {
             return null;
+        }
+
+        if ($valueType === 'float') {
+            $container = new DecodingContainer(
+                value: (float)$value,
+                context: $container->getContext(),
+                parent: $container->getParent(),
+                key: $container->getKey(),
+            );
         }
 
         return $container->decodeIfPresent($valueType);

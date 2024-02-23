@@ -96,6 +96,10 @@ class SubsidyStageDataSchemaBuilder
                 $result['minimum'] = 0;
                 $result = array_merge($result, $this->getNumberValidationOptions($field));
                 break;
+            case FieldType::TextFloat:
+                $result['step'] = 0.01;
+                $result = array_merge($result, $this->getNumberValidationOptions($field));
+                break;
             case FieldType::TextUrl:
                 // Currently nothing extra
                 break;
@@ -119,6 +123,7 @@ class SubsidyStageDataSchemaBuilder
     {
         $type = match ($field->type) {
             FieldType::TextNumeric => 'integer',
+            FieldType::TextFloat => 'number',
             FieldType::Checkbox => 'boolean',
             FieldType::Upload => 'array',
             FieldType::Multiselect => 'array',

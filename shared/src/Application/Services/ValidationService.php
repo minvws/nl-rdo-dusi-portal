@@ -72,6 +72,7 @@ class ValidationService
             FieldType::TextEmail => ['email:strict,dns', ...$this->getTextFieldRules($field)],
             FieldType::TextTel => [...$this->getTextFieldRules($field)],
             FieldType::TextNumeric => [...$this->getNumericFieldRules($field)],
+            FieldType::TextFloat => [...$this->getFloatFieldRules($field)],
             FieldType::TextUrl => [],
             FieldType::Upload => [new FileUploadRule($field)],
         }];
@@ -156,6 +157,29 @@ class ValidationService
 
         $rules = [
             'integer'
+        ];
+
+        $maxLength = $field->params['minimum'] ?? null;
+        if (!empty($maxLength)) {
+            $rules[] = 'min:' . $field->params['minimum'];
+        }
+
+        $maxLength = $field->params['maximum'] ?? null;
+        if (!empty($maxLength)) {
+            $rules[] = 'max:' . $field->params['maximum'];
+        }
+
+        return $rules;
+    }
+
+    protected function getFloatFieldRules(Field $field): array
+    {
+        if ($field->type !== FieldType::TextFloat) {
+            return [];
+        }
+
+        $rules = [
+            'numeric'
         ];
 
         $maxLength = $field->params['minimum'] ?? null;
