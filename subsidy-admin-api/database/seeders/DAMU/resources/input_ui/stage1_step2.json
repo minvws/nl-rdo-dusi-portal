@@ -181,7 +181,8 @@
                             "options": {
                                 "format": "radio",
                                 "placeholder": "",
-                                "validation": ["onChange"]
+                                "validation": ["onChange"],
+                                "remoteAction": ["onChange"]
                             }
                         },
                         {
@@ -190,7 +191,8 @@
                             "label": "Alimentatiebedrag",
                             "options": {
                                 "placeholder": "",
-                                "validation": ["onBlur"]
+                                "validation": ["onBlur"],
+                                "remoteAction": ["onBlur"]
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -206,7 +208,8 @@
                             "label": "Jaarinkomen ouder 1",
                             "options": {
                                 "placeholder": "",
-                                "validation": ["onBlur"]
+                                "validation": ["onBlur"],
+                                "remoteAction": ["onBlur"]
                             }
                         },
                         {
@@ -215,7 +218,8 @@
                             "label": "Jaarinkomen ouder 2",
                             "options": {
                                 "placeholder": "",
-                                "validation": ["onBlur"]
+                                "validation": ["onBlur"],
+                                "remoteAction": ["onBlur"]
                             }
                         },
                         {
