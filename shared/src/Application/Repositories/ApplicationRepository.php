@@ -351,6 +351,12 @@ class ApplicationRepository
     }
 
     /**
+     * Returns all the expired application stages that have a transition with the expiration trigger.
+     *
+     * The expires_at is the date that the application stage expires. The user can still submit the application
+     * on this date, the next day, the application stage is expired. This is why we use CarbonImmutable::yesterday()
+     * to get the stages that are expired.
+     *
      * @psalm-suppress InvalidReturnStatement
      * @psalm-suppress InvalidReturnType
      * @return Collection<int, ApplicationStage>
@@ -360,7 +366,7 @@ class ApplicationRepository
         return
             ApplicationStage::query()
                 ->where('is_current', '=', true)
-                ->where('expires_at', '<=', CarbonImmutable::now())
+                ->where('expires_at', '<=', CarbonImmutable::yesterday())
                 ->whereExists(
                     SubsidyStageTransition::query()
                         ->select(DB::raw(1))
