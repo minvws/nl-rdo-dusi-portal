@@ -26,7 +26,9 @@ class TravelExpenseReimbursement implements FieldHook
             return new FieldValue(
                 $fieldValue->field,
                 round(
-                    TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues), 2)
+                    TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues),
+                    2
+                )
             );
         }
 
@@ -34,7 +36,9 @@ class TravelExpenseReimbursement implements FieldHook
             return new FieldValue(
                 $fieldValue->field,
                 round(
-                    TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues), 2)
+                    TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues),
+                    2
+                )
             );
         }
 

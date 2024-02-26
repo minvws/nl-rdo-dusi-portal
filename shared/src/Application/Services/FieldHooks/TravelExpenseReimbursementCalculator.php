@@ -26,15 +26,11 @@ class TravelExpenseReimbursementCalculator
             return self::TRAVEL_REIMBURSEMENT_PER_KILOMETER_LOW_INCOME_PRIMARY_EDUCATION;
         }
 
-        if (
-            $totalIncome > self::YEARLY_INCOME_LIMIT_LOW && $totalIncome <= self::YEARLY_INCOME_LIMIT_MIDDLE
-        ) {
+        if ($totalIncome <= self::YEARLY_INCOME_LIMIT_MIDDLE) {
             return self::TRAVEL_REIMBURSEMENT_PER_KILOMETER_MIDDLE_INCOME_PRIMARY_EDUCATION;
         }
 
-        if (
-            $totalIncome > self::YEARLY_INCOME_LIMIT_MIDDLE && $totalIncome <= self::YEARLY_INCOME_LIMIT_HIGH
-        ) {
+        if ($totalIncome <= self::YEARLY_INCOME_LIMIT_HIGH) {
             return self::TRAVEL_REIMBURSEMENT_PER_KILOMETER_HIGH_INCOME_PRIMARY_EDUCATION;
         }
 
@@ -48,15 +44,11 @@ class TravelExpenseReimbursementCalculator
             return self::TRAVEL_REIMBURSEMENT_PER_KILOMETER_LOW_INCOME_SECONDARY_EDUCATION;
         }
 
-        if (
-            $totalIncome > self::YEARLY_INCOME_LIMIT_LOW && $totalIncome <= self::YEARLY_INCOME_LIMIT_MIDDLE
-        ) {
+        if ($totalIncome <= self::YEARLY_INCOME_LIMIT_MIDDLE) {
             return self::TRAVEL_REIMBURSEMENT_PER_KILOMETER_MIDDLE_INCOME_SECONDARY_EDUCATION;
         }
 
-        if (
-            $totalIncome > self::YEARLY_INCOME_LIMIT_MIDDLE && $totalIncome <= self::YEARLY_INCOME_LIMIT_HIGH
-        ) {
+        if ($totalIncome <= self::YEARLY_INCOME_LIMIT_HIGH) {
             return self::TRAVEL_REIMBURSEMENT_PER_KILOMETER_HIGH_INCOME_SECONDARY_EDUCATION;
         }
 

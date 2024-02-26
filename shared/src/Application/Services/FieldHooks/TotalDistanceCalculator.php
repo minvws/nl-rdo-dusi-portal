@@ -12,6 +12,10 @@ class TotalDistanceCalculator
 
     public static function calculate(FieldValue $travelDistanceSingleTrip): float
     {
+        if (!is_numeric($travelDistanceSingleTrip->value)) {
+            return 0.00;
+        }
+
         $totalDistance = (!empty($travelDistanceSingleTrip->value) ?
             $travelDistanceSingleTrip->value * self::YEARLY_TRIPS_BOTH_WAYS : 0);
 
