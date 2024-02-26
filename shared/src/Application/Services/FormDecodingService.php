@@ -86,7 +86,7 @@ readonly class FormDecodingService
             return null;
         }
 
-        if ($valueType === 'float') {
+        if ($valueType === 'float' && is_int($value)) {
             $container = new DecodingContainer(
                 value: (float)$value,
                 context: $container->getContext(),
