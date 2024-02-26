@@ -20,6 +20,6 @@ class TotalDistance implements FieldHook
     {
         $totalDistance = TotalDistanceCalculator::calculate($fieldValues['travelDistanceSingleTrip']);
 
-        return new FieldValue($fieldValue->field, $totalDistance);
+        return new FieldValue($fieldValue->field, round($totalDistance, 2));
     }
 }

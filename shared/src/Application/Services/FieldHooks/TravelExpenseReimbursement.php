@@ -25,14 +25,16 @@ class TravelExpenseReimbursement implements FieldHook
         if ($fieldValues['educationType']->value === 'Primair onderwijs') {
             return new FieldValue(
                 $fieldValue->field,
-                TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues)
+                round(
+                    TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues), 2)
             );
         }
 
         if ($fieldValues['educationType']->value === 'Voortgezet onderwijs') {
             return new FieldValue(
                 $fieldValue->field,
-                TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues)
+                round(
+                    TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues), 2)
             );
         }
 

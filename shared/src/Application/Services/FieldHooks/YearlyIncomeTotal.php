@@ -20,6 +20,6 @@ class YearlyIncomeTotal implements FieldHook
     {
         $yearlyIncomeTotal = YearlyIncomeCalculator::calculate($fieldValues);
 
-        return new FieldValue($fieldValue->field, $yearlyIncomeTotal);
+        return new FieldValue($fieldValue->field, round($yearlyIncomeTotal, 2));
     }
 }
