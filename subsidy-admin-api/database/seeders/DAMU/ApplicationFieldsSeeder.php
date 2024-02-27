@@ -143,14 +143,14 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'yearlyIncomeParent1',
+            code:           'annualIncomeParent1',
             title:          'Jaarinkomen ouder 1',
             inputMode:      'numeric',
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'yearlyIncomeParent2',
+            code:           'annualIncomeParent2',
             title:          'Jaarinkomen ouder 2',
             inputMode:      'numeric',
             isRequired:     false,
@@ -158,7 +158,7 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'yearlyIncomeTotal',
+            code:           'annualJointIncome',
             title:          'Jaarinkomen totaal',
             inputMode:      'numeric',
             params:         ['readonly' => true],

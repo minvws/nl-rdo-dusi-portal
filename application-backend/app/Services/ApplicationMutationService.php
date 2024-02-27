@@ -327,7 +327,7 @@ readonly class ApplicationMutationService
             try {
                 $validationResult = $this->applicationDataService->validateFieldValues(
                     $applicationStage,
-                    (object)$data,
+                    $fieldValues,
                     false
                 );
             } catch (ValidationErrorException $e) {

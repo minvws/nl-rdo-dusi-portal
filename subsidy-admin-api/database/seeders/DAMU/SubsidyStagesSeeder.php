@@ -53,7 +53,7 @@ class SubsidyStagesSeeder extends Seeder
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::InternalAuditor->value,
             'stage' => 4,
-            'internal_note_field_code' => 'interalAssessmentInternalNote'
+            'internal_note_field_code' => 'internalAssessmentInternalNote'
         ]);
     }
 }

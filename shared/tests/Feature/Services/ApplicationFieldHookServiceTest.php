@@ -54,7 +54,7 @@ class ApplicationFieldHookServiceTest extends TestCase
             ->create();
     }
 
-    public static function fieldHookTotalIncomeDataProvider(): array
+    public static function fieldHookJointIncomeDataProvider(): array
     {
         return [
             'hasAlimony: Ja, Alimony: 1000, income1: 1000, income2: 2000, expectedIncome: 4000' => [
@@ -83,9 +83,9 @@ class ApplicationFieldHookServiceTest extends TestCase
 
     /**
      * @group field-hook-service
-     * @dataProvider fieldHookTotalIncomeDataProvider
+     * @dataProvider fieldHookJointIncomeDataProvider
      */
-    public function testCalculateIncomeField(
+    public function testCalculateJointIncomeField(
         string $hasAlimony,
         ?int $alimonyAmount,
         int $income1,
@@ -114,29 +114,29 @@ class ApplicationFieldHookServiceTest extends TestCase
                     ]),
                 value: $alimonyAmount,
             ),
-            'yearlyIncomeParent1' => new FieldValue(
+            'annualIncomeParent1' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'yearlyIncomeParent1',
+                       'code' => 'annualIncomeParent1',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: $income1,
             ),
-            'yearlyIncomeParent2' => new FieldValue(
+            'annualIncomeParent2' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'yearlyIncomeParent2',
+                       'code' => 'annualIncomeParent2',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: $income2,
             ),
-            'yearlyIncomeTotal' => new FieldValue(
+            'annualJointIncome' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'yearlyIncomeTotal',
+                       'code' => 'annualJointIncome',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: null
@@ -145,7 +145,7 @@ class ApplicationFieldHookServiceTest extends TestCase
 
         $processedFieldValues = $this->fieldHookService->findAndExecuteHooks($fieldValues, $this->applicationStage);
 
-        $this->assertEquals($expectedIncome, $processedFieldValues['yearlyIncomeTotal']->value);
+        $this->assertEquals($expectedIncome, $processedFieldValues['annualJointIncome']->value);
     }
     public static function fieldHookReimbursementDataProvider(): array
     {
@@ -201,20 +201,20 @@ class ApplicationFieldHookServiceTest extends TestCase
                     ]),
                 value: 'Nee',
             ),
-            'yearlyIncomeParent1' => new FieldValue(
+            'annualIncomeParent1' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'yearlyIncomeParent1',
+                       'code' => 'annualIncomeParent1',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: $income1,
             ),
-            'yearlyIncomeParent2' => new FieldValue(
+            'annualIncomeParent2' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'yearlyIncomeParent2',
+                       'code' => 'annualIncomeParent2',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: $income2,

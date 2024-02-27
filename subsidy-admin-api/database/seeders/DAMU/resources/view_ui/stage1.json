@@ -100,9 +100,9 @@
                             "Is er sprake van een eenoudergezin": "{isSingleParentFamily}",
                             "Alimentatie": "{hasAlimony}",
                             "Alimentatiebedrag": "{alimonyAmount}",
-                            "Jaarinkomen ouder 1": "{yearlyIncomeParent1}",
-                            "Jaarinkomen ouder 2": "{yearlyIncomeParent2}",
-                            "Jaarinkomen totaal": "{yearlyIncomeTotal}"
+                            "Jaarinkomen ouder 1": "{annualIncomeParent1}",
+                            "Jaarinkomen ouder 2": "{annualIncomeParent2}",
+                            "Jaarinkomen totaal": "{annualJointIncome}"
                         }
                     }
                 }

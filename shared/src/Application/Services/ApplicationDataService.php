@@ -103,11 +103,11 @@ readonly class ApplicationDataService
 
     public function validateFieldValues(
         ApplicationStage $applicationStage,
-        object $data,
+        array $fieldValues,
         bool $submit
     ): array {
         // Decode received form data
-        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
+        //$fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
 
         return $validator->validate();

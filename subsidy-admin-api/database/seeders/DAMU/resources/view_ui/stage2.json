@@ -19,6 +19,65 @@
                         "readonly": true,
                         "format": "checkbox-group"
                     }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/isMinimumTavelDistanceMet",
+                    "options": {
+                        "readonly": true,
+                        "format": "radio"
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/travelDistanceAccordingToAssessor",
+                    "options": {
+                        "readonly": true
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/isSubmittedYearlyIncomeCorrect",
+                    "options": {
+                        "readonly": true,
+                        "format": "radio"
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/actualAnnualJointIncome",
+                    "options": {
+                        "readonly": true
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/actualTravelExpenseReimbursement",
+                    "options": {
+                        "readonly": true
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/actualRequestedSubsidyAmount",
+                    "options": {
+                        "readonly": true
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/businessPartnerNumber",
+                    "options": {
+                        "readonly": true
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/decisionCategory",
+                    "options": {
+                        "readonly": true,
+                        "format": "radio"
+                    }
                 }
             ]
         },

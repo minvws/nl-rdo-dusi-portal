@@ -19,6 +19,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRep
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
+use MinVWS\DUSi\Shared\Application\Services\FormDecodingService;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\SubsidyStashFieldHasher;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
@@ -57,7 +58,7 @@ class ApplicationDataServiceTest extends TestCase
     private string $keyPair;
     private ClientPublicKey $publicKey;
     private ResponseEncryptionService $responseEncryptionService;
-
+    private FormDecodingService $decodingService;
 
     protected function setUp(): void
     {
@@ -85,6 +86,8 @@ class ApplicationDataServiceTest extends TestCase
             ->create(['target_application_status' => ApplicationStatus::Pending]);
 
         $this->identity = Identity::factory()->create();
+
+        $this->decodingService = $this->app->get(FormDecodingService::class);
     }
 
     public static function validateFieldsPerTypeDataProvider()
@@ -130,10 +133,12 @@ class ApplicationDataServiceTest extends TestCase
             ]
         );
 
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $body->data);
+
         try {
             $this->app->get(ApplicationDataService::class)->validateFieldValues(
                 $applicationStage,
-                $body->data,
+                $fieldValues,
                 submit: true,
             );
         } catch (ValidationErrorException $e) {
@@ -169,9 +174,11 @@ class ApplicationDataServiceTest extends TestCase
             ]
         );
 
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $body->data);
+
         $validationResult = $this->app->get(ApplicationDataService::class)->validateFieldValues(
             $applicationStage,
-            $body->data,
+            $fieldValues,
             submit: false,
         );
         $this->assertEmpty($validationResult);
@@ -201,9 +208,11 @@ class ApplicationDataServiceTest extends TestCase
             ]
         );
 
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $body->data);
+
         $validationResult = $this->app->get(ApplicationDataService::class)->validateFieldValues(
             $applicationStage,
-            $body->data,
+            $fieldValues,
             submit: false,
         );
         $this->assertEmpty($validationResult);
@@ -233,9 +242,11 @@ class ApplicationDataServiceTest extends TestCase
             ]
         );
 
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $body->data);
+
         $validationResult = $this->app->get(ApplicationDataService::class)->validateFieldValues(
             $applicationStage,
-            $body->data,
+            $fieldValues,
             submit: true,
         );
         $this->assertEmpty($validationResult);
@@ -301,11 +312,12 @@ class ApplicationDataServiceTest extends TestCase
             (object) $params
         );
 
+        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $body->data);
 
         try {
             $this->app->get(ApplicationDataService::class)->validateFieldValues(
                 $applicationStage,
-                $body->data,
+                $fieldValues,
                 submit: true,
             );
         } catch (ValidationErrorException $e) {
