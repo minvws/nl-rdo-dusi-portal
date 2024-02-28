@@ -1,0 +1,2 @@
+ALTER TABLE public.application_stage_transitions
+DROP CONSTRAINT IF EXISTS application_stage_transitions_application_id_previous_application_stage_id_unique;
