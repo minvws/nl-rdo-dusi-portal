@@ -6,18 +6,6 @@
     "elements": [
         {
             "type": "Group",
-            "elements": [
-                {
-                    "type": "FormNotification",
-                    "options": {
-                        "displayAs": "explanation",
-                        "message": "U moet ouder zijn dan 18 jaar (artikel 4 van de regeling)."
-                    }
-                }
-            ]
-        },
-        {
-            "type": "Group",
             "label": "Persoonlijke informatie",
             "elements": [
                 {
