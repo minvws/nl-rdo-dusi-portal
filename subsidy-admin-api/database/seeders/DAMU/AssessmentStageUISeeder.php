@@ -55,6 +55,59 @@ class AssessmentStageUISeeder extends Seeder
                                     "options" => [
                                         "format" => "checkbox-group"
                                     ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/isMinimumTavelDistanceMet",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/travelDistanceAccordingToAssessor",
+                                    "options" => [
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/isSubmittedYearlyIncomeCorrect",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/actualAnnualJointIncome",
+                                    "options" => [
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/actualTravelExpenseReimbursement",
+                                    "options" => [
+                                        "readonly" => true
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/actualRequestedSubsidyAmount",
+                                    "options" => [
+                                        "readonly" => true
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/businessPartnerNumber",
+                                    "options" => [
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/decisionCategory",
+                                    "options" => [
+                                        "format" => "radio"
+                                    ]
                                 ]
                             ]
                         ]
@@ -209,15 +262,24 @@ class AssessmentStageUISeeder extends Seeder
             "elements" => [
                 [
                     "type" => "CustomControl",
-                    "scope" => "#/properties/amount",
+                    "scope" => "#/properties/implementationCoordinatorAssessment",
                     "options" => [
+                        "format" => "radio"
                     ]
                 ],
                 [
                     "type" => "CustomControl",
-                    "scope" => "#/properties/implementationCoordinatorAssessment",
+                    "scope" => "#/properties/amount",
                     "options" => [
-                        "format" => "radio"
+                    ],
+                    "rule" => [
+                        "effect" => "SHOW",
+                        "condition" => [
+                            "scope" => "#/properties/implementationCoordinatorAssessment",
+                            "schema" => [
+                                "const" => "Eens met de eerste beoordeling"
+                            ]
+                        ]
                     ]
                 ],
                 [
@@ -273,7 +335,14 @@ class AssessmentStageUISeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/internalAssessmentChecklist",
                                     "options" => [
-                                        "format" => "select"
+                                        "format" => "checkbox-group"
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/subsidyObligationApproved",
+                                    "options" => [
+                                        "format" => "radio"
                                     ]
                                 ]
                             ]

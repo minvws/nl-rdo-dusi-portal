@@ -13,7 +13,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\InCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\DAMU\SubsidyStagesSeeder;
 
 class SubsidyStageTransitionsSeeder extends Seeder
 {
@@ -22,9 +21,10 @@ class SubsidyStageTransitionsSeeder extends Seeder
     public const TRANSITION_STAGE_2_TO_1 = '1047e69c-9107-47bc-bfe4-78464e6fb8d3';
     public const TRANSITION_STAGE_2_TO_3 = '8c66d02a-9ef7-41ff-a1b6-6c747dcadd0c';
     public const TRANSITION_STAGE_3_TO_2 = 'da58c18a-0645-4404-bbe4-a186babc01e2';
+    public const TRANSITION_STAGE_3_TO_REJECTED = '5e938249-b011-4b82-a700-1a4a55170492';
     public const TRANSITION_STAGE_3_TO_4 = '1c375d68-d9bb-4343-b14e-692ce893b64c';
     public const TRANSITION_STAGE_4_TO_APPROVED = '7c2c08be-5216-4abb-b8ba-fe08ac922f90';
-    public const TRANSITION_STAGE_4_TO_REJECTED = '5e938249-b011-4b82-a700-1a4a55170492';
+    public const TRANSITION_STAGE_4_DISAPPROVED = '3efa8e65-6860-4246-943d-695cecdfa104';
 
     /**
      * Run the database seeds.
@@ -117,29 +117,11 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'clone_data' => true
         ]);
 
-        // Bij een beoordeeloptie 'Eens met de eerste beoordeling' gaat de aanvraag gaat naar de IC
-        DB::table('subsidy_stage_transitions')->insert([
-            'id' => self::TRANSITION_STAGE_3_TO_4,
-            'description' => 'Interne beoordeling eens met eerste beoordeling',
-            'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
-            'condition' => $encoder->encode(
-                    new ComparisonCondition(
-                        3,
-                        'implementationCoordinatorAssessment',
-                        Operator::Identical,
-                        'Eens met de eerste beoordeling'
-                    )
-            ),
-            'send_message' => false
-        ]);
-
-
         // Bij een beoordeeloptie 'Eens met de eerste beoordeling' en 'Afgekeurd', wordt de aanvraag definitief
         // afgekeurd en wordt de afkeuringsbrief verzonden.
         DB::table('subsidy_stage_transitions')->insert([
-            'id' => self::TRANSITION_STAGE_4_TO_REJECTED,
-            'description' => 'Implementatie coordinator beoordeling eens met afkeuring',
+            'id' => self::TRANSITION_STAGE_3_TO_REJECTED,
+            'description' => 'Interne auditor eens met afkeuring',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Rejected,
@@ -160,15 +142,31 @@ class SubsidyStageTransitionsSeeder extends Seeder
                 ])
             ),
             'send_message' => true,
-            'assign_to_previous_assessor' => false,
-            'clone_data' => false
         ]);
 
-        // Bij een beoordeeloptie 'Goedgekeurd' wordt de aanvraag definitief goedgekeurd en wordt een
+
+        // Bij een beoordeeloptie 'Eens met de eerste beoordeling' gaat de aanvraag gaat naar de IC
+        DB::table('subsidy_stage_transitions')->insert([
+            'id' => self::TRANSITION_STAGE_3_TO_4,
+            'description' => 'Interne beoordeling eens met eerste beoordeling',
+            'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
+            'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            'condition' => $encoder->encode(
+                    new ComparisonCondition(
+                        3,
+                        'implementationCoordinatorAssessment',
+                        Operator::Identical,
+                        'Eens met de eerste beoordeling'
+                    )
+            ),
+            'send_message' => false
+        ]);
+
+        // Bij een beoordeeloptie 'Eens met de eerste beoordeling' wordt de aanvraag definitief goedgekeurd en wordt een
         // toekenningsbrief verzonden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_4_TO_APPROVED,
-            'description' => 'Implementatie coordinator beoordeling eens met goedkeuring',
+            'description' => 'Interne auditor eens met goedkeuring',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Approved,
@@ -182,13 +180,40 @@ class SubsidyStageTransitionsSeeder extends Seeder
                     ),
                     new ComparisonCondition(
                         4,
-                        'implementationCoordinatorAssessment',
+                        'internalAssessment',
                         Operator::Identical,
                         'Eens met de eerste beoordeling'
                     )
                 ])
             ),
             'send_message' => true,
+        ]);
+
+        // Bij een beoordeeloptie 'Oneens met de eerste beoordeling' blijft de aanvraag in dit stage en wijzigt de
+        // status niet
+        DB::table('subsidy_stage_transitions')->insert([
+            'id' => self::TRANSITION_STAGE_4_DISAPPROVED,
+            'description' => 'Interne auditor oneens met goedkeuring',
+            'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
+            'target_application_status' => ApplicationStatus::Pending,
+            'condition' => $encoder->encode(
+                new AndCondition([
+                    new ComparisonCondition(
+                        2,
+                        'firstAssessment',
+                        Operator::Identical,
+                        'Goedgekeurd'
+                    ),
+                    new ComparisonCondition(
+                        4,
+                        'internalAssessment',
+                        Operator::Identical,
+                        'Oneens met de eerste beoordeling'
+                    )
+                ])
+            ),
+            'send_message' => false,
         ]);
     }
 }

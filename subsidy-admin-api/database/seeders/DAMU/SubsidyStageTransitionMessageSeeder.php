@@ -30,7 +30,7 @@ class SubsidyStageTransitionMessageSeeder extends Seeder
 
         DB::table('subsidy_stage_transition_messages')->insert([
            'id' => self::TRANSITION_STAGE_4_TO_REJECTED_MESSAGE,
-           'subsidy_stage_transition_id' => SubsidyStageTransitionsSeeder::TRANSITION_STAGE_4_TO_REJECTED,
+           'subsidy_stage_transition_id' => SubsidyStageTransitionsSeeder::TRANSITION_STAGE_3_TO_REJECTED,
            'version' => 1,
            'status' => VersionStatus::Published->value,
            'created_at' => Carbon::now(),

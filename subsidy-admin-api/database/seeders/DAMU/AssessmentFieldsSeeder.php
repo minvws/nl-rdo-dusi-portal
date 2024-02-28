@@ -10,7 +10,6 @@ use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT\SubsidyStagesSeeder;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
 class AssessmentFieldsSeeder extends Seeder
@@ -166,20 +165,20 @@ class AssessmentFieldsSeeder extends Seeder
 
     public function coordinatorImplementationFields(): void
     {
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
-            code:           'amount',
-            title:          'Bedrag',
-            isRequired:     false,
-            requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
-        );
-
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code: 'implementationCoordinatorAssessment',
             title: 'Beoordeling',
             options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
             retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
+            code:           'amount',
+            title:          'Bedrag',
+            isRequired:     true,
+            requiredCondition: new ComparisonCondition(3, 'implementationCoordinatorAssessment', Operator::Identical, 'Goedgekeurd'),
         );
 
         $this->createTextField(
@@ -195,7 +194,7 @@ class AssessmentFieldsSeeder extends Seeder
     {
         //interne controle
         $this->createMultiSelectField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             code: 'internalAssessmentChecklist',
             title: 'Gecontroleerd',
             options: [
@@ -216,7 +215,7 @@ class AssessmentFieldsSeeder extends Seeder
         );
 
         $this->createSelectField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             code: 'internalAssessment',
             title: 'Beoordeling',
             options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
