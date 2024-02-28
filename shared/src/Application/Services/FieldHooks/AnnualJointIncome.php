@@ -18,6 +18,10 @@ class AnnualJointIncome implements FieldHook
 
     public function run(FieldValue $fieldValue, array $fieldValues, ApplicationStage $applicationStage): FieldValue
     {
+        if (!is_numeric($fieldValues['annualIncomeParent1']->value)) {
+            return  new FieldValue($fieldValue->field, null);
+        }
+
         $annualJointIncome = AnnualJointIncomeCalculator::calculate($fieldValues);
 
         return new FieldValue($fieldValue->field, round($annualJointIncome, 2));

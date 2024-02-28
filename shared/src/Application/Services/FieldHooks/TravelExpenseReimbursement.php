@@ -18,7 +18,7 @@ class TravelExpenseReimbursement implements FieldHook
 
     public function run(FieldValue $fieldValue, array $fieldValues, ApplicationStage $applicationStage): FieldValue
     {
-        if ($fieldValues['educationType']->value === null || $fieldValues['travelDistanceSingleTrip']->value === '') {
+        if ($fieldValues['educationType']->value === null || $fieldValues['travelDistanceSingleTrip']->value === null) {
             return new FieldValue($fieldValue->field, null);
         }
 

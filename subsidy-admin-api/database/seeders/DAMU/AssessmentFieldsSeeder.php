@@ -45,14 +45,6 @@ class AssessmentFieldsSeeder extends Seeder
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            code: 'actualEducationType',
-            title: 'Gaat naar het:',
-            options: ['Primair onderwijs', 'Voortgezet onderwijs'],
-            isRequired: false,
-        );
-
-        $this->createSelectField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code: 'isMinimumTravelDistanceMet',
             title: 'Is voldaan aan de minimale reisafstand tussen het woonadres en de DAMU school, volgens de ANWB routeplanner?',
             options: ['Ja', 'Nee'],

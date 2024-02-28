@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Services\FieldHooks;
 
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 
 class ActualTravelExpenseReimbursement extends TravelExpenseReimbursement
 {
     public function run(FieldValue $fieldValue, array $fieldValues, ApplicationStage $applicationStage): FieldValue
     {
+        $applicantEducationType = $this->getApplicantEducationType($applicationStage);
         if (
-            $fieldValues['actualEducationType']->value === null ||
-            $fieldValues['actualTravelDistanceSingleTrip']->value === '' ||
-            $fieldValues['actualAnnualJointIncome']->value === ''
+            $applicantEducationType === null ||
+            $fieldValues['actualTravelDistanceSingleTrip']->value === null ||
+            $fieldValues['actualAnnualJointIncome']->value === null
         ) {
             return new FieldValue($fieldValue->field, null);
         }
 
-        if ($fieldValues['actualEducationType']->value === 'Primair onderwijs') {
+        if ($applicantEducationType === 'Primair onderwijs') {
             return new FieldValue(
                 $fieldValue->field,
                 round(
@@ -31,7 +34,7 @@ class ActualTravelExpenseReimbursement extends TravelExpenseReimbursement
             );
         }
 
-        if ($fieldValues['actualEducationType']->value === 'Voortgezet onderwijs') {
+        if ($applicantEducationType === 'Voortgezet onderwijs') {
             return new FieldValue(
                 $fieldValue->field,
                 round(
@@ -44,5 +47,18 @@ class ActualTravelExpenseReimbursement extends TravelExpenseReimbursement
         }
 
         return new FieldValue($fieldValue->field, null);
+    }
+
+    public function getApplicantEducationType(ApplicationStage $currentApplicationStage): ?string
+    {
+        /** @var ApplicationDataService $applicationDataService */
+        $applicationDataService = app(ApplicationDataService::class);
+
+        /** @var ApplicationStageData $applicantApplicationStageData */
+        $applicantApplicationStageData = $applicationDataService->getApplicantApplicationStageData(
+            $currentApplicationStage->application
+        );
+
+        return $applicantApplicationStageData?->educationType;
     }
 }

@@ -58,14 +58,6 @@ class AssessmentStageUISeeder extends Seeder
                                 ],
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/actualEducationType",
-                                    "options" => [
-                                        "format" => "radio",
-                                        "remoteAction" => ["onBlur"]
-                                    ]
-                                ],
-                                [
-                                    "type" => "CustomControl",
                                     "scope" => "#/properties/isMinimumTravelDistanceMet",
                                     "options" => [
                                         "format" => "radio"

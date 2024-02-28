@@ -126,10 +126,45 @@
                             "Huisnummer toevoeging": "{residentialHouseNumberSuffix}",
                             "Postcode": "{residentialPostalCode}",
                             "Plaatsnaam": "{residentialCity}",
-                            "Damu School primair onderwijs": "{damuSchoolPrimary}",
-                            "Damu School voorgezet onderwijs": "{damuSchoolSecondary}"
+                            "Gaat naar het:": "{educationType}"
                         }
                     }
+                },
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Damu School primair onderwijs": "{damuSchoolPrimary}"
+                        }
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/educationType",
+                            "schema": {
+                                "const": "Primair onderwijs"
+                            }
+                        }
+                    }
+
+                },
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Damu School primair onderwijs": "{damuSchoolSecondary}"
+                        }
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/educationType",
+                            "schema": {
+                                "const": "Voortgezet onderwijs"
+                            }
+                        }
+                    }
+
                 }
             ]
         },
