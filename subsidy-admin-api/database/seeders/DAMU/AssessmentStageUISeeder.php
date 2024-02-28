@@ -58,15 +58,24 @@ class AssessmentStageUISeeder extends Seeder
                                 ],
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/isMinimumTavelDistanceMet",
+                                    "scope" => "#/properties/actualEducationType",
+                                    "options" => [
+                                        "format" => "radio",
+                                        "remoteAction" => ["onBlur"]
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/isMinimumTravelDistanceMet",
                                     "options" => [
                                         "format" => "radio"
                                     ]
                                 ],
                                 [
                                     "type" => "CustomControl",
-                                    "scope" => "#/properties/travelDistanceAccordingToAssessor",
+                                    "scope" => "#/properties/actualTravelDistanceSingleTrip",
                                     "options" => [
+                                        "remoteAction" => ["onBlur"]
                                     ]
                                 ],
                                 [
@@ -80,6 +89,7 @@ class AssessmentStageUISeeder extends Seeder
                                     "type" => "CustomControl",
                                     "scope" => "#/properties/actualAnnualJointIncome",
                                     "options" => [
+                                        "remoteAction" => ["onBlur"]
                                     ]
                                 ],
                                 [

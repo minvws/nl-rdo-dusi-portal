@@ -22,7 +22,7 @@
                 },
                 {
                     "type": "CustomControl",
-                    "scope": "#/properties/isMinimumTavelDistanceMet",
+                    "scope": "#/properties/isMinimumTravelDistanceMet",
                     "options": {
                         "readonly": true,
                         "format": "radio"
@@ -30,7 +30,7 @@
                 },
                 {
                     "type": "CustomControl",
-                    "scope": "#/properties/travelDistanceAccordingToAssessor",
+                    "scope": "#/properties/actualTravelDistanceSingleTrip",
                     "options": {
                         "readonly": true
                     }

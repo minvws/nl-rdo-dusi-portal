@@ -19,9 +19,8 @@ class TravelExpenseReimbursementCalculator
     private const TRAVEL_REIMBURSEMENT_PER_KILOMETER_HIGH_INCOME_SECONDARY_EDUCATION = 0.10;
 
 
-    public static function calculateForPrimaryEducation(array $fieldValues): float
+    public static function calculateForPrimaryEducation(int $totalIncome): float
     {
-        $totalIncome = AnnualJointIncomeCalculator::calculate($fieldValues);
         if ($totalIncome <= self::YEARLY_INCOME_LIMIT_LOW) {
             return self::TRAVEL_REIMBURSEMENT_PER_KILOMETER_LOW_INCOME_PRIMARY_EDUCATION;
         }
@@ -37,9 +36,8 @@ class TravelExpenseReimbursementCalculator
         return 0;
     }
 
-    public static function calculateForSecondaryEducation(array $fieldValues): float
+    public static function calculateForSecondaryEducation(int $totalIncome): float
     {
-        $totalIncome = AnnualJointIncomeCalculator::calculate($fieldValues);
         if ($totalIncome <= self::YEARLY_INCOME_LIMIT_LOW) {
             return self::TRAVEL_REIMBURSEMENT_PER_KILOMETER_LOW_INCOME_SECONDARY_EDUCATION;
         }

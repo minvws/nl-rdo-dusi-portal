@@ -7,39 +7,36 @@ namespace MinVWS\DUSi\Shared\Application\Services\FieldHooks;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 
-class TravelExpenseReimbursement implements FieldHook
+class ActualTravelExpenseReimbursement extends TravelExpenseReimbursement
 {
-    private const SUBSIDY_DAMU_UUID = '7b9f1318-4c38-4fe5-881b-074729d95abf';
-
-    public function isHookActive(ApplicationStage $applicationStage): bool
-    {
-        return $applicationStage->subsidyStage->subsidyVersion->subsidy_id === self::SUBSIDY_DAMU_UUID;
-    }
-
     public function run(FieldValue $fieldValue, array $fieldValues, ApplicationStage $applicationStage): FieldValue
     {
-        if ($fieldValues['educationType']->value === null || $fieldValues['travelDistanceSingleTrip']->value === '') {
+        if (
+            $fieldValues['actualEducationType']->value === null ||
+            $fieldValues['actualTravelDistanceSingleTrip']->value === '' ||
+            $fieldValues['actualAnnualJointIncome']->value === ''
+        ) {
             return new FieldValue($fieldValue->field, null);
         }
 
-        if ($fieldValues['educationType']->value === 'Primair onderwijs') {
+        if ($fieldValues['actualEducationType']->value === 'Primair onderwijs') {
             return new FieldValue(
                 $fieldValue->field,
                 round(
                     TravelExpenseReimbursementCalculator::calculateForPrimaryEducation(
-                        AnnualJointIncomeCalculator::calculate($fieldValues)
+                        (int)$fieldValues['actualAnnualJointIncome']->value
                     ),
                     2
                 )
             );
         }
 
-        if ($fieldValues['educationType']->value === 'Voortgezet onderwijs') {
+        if ($fieldValues['actualEducationType']->value === 'Voortgezet onderwijs') {
             return new FieldValue(
                 $fieldValue->field,
                 round(
                     TravelExpenseReimbursementCalculator::calculateForSecondaryEducation(
-                        AnnualJointIncomeCalculator::calculate($fieldValues)
+                        (int)$fieldValues['actualAnnualJointIncome']->value
                     ),
                     2
                 )

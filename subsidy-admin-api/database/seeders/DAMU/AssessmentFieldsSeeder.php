@@ -45,7 +45,15 @@ class AssessmentFieldsSeeder extends Seeder
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            code: 'isMinimumTavelDistanceMet',
+            code: 'actualEducationType',
+            title: 'Gaat naar het:',
+            options: ['Primair onderwijs', 'Voortgezet onderwijs'],
+            isRequired: false,
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
+            code: 'isMinimumTravelDistanceMet',
             title: 'Is voldaan aan de minimale reisafstand tussen het woonadres en de DAMU school, volgens de ANWB routeplanner?',
             options: ['Ja', 'Nee'],
             isRequired: false,
@@ -53,7 +61,7 @@ class AssessmentFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            code: 'travelDistanceAccordingToAssessor',
+            code: 'actualTravelDistanceSingleTrip',
             title: 'Reisafstand volgens de ANWB routeplanner',
             inputMode: 'float',
             params: ['minimum' => 1, 'maximum' => 9999],
@@ -73,14 +81,14 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code: 'actualAnnualJointIncome',
             title: 'Werkelijk gezamenlijk jaarinkomen',
-            inputMode: 'float',
+            inputMode: 'numeric',
             params: ['minimum' => 0],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code:           'actualTravelExpenseReimbursement',
             title:          'Werkelijke klilometervergoeding',
             inputMode:      'float',
@@ -89,7 +97,7 @@ class AssessmentFieldsSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code:           'actualRequestedSubsidyAmount',
             title:          'Werkelijjk aangevraagd subsidie bedrag',
             inputMode:      'float',
@@ -98,7 +106,7 @@ class AssessmentFieldsSeeder extends Seeder
         );
 
         $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code:           'businessPartnerNumber',
             title:          'ZP-nummer',
             inputMode:      'numeric',

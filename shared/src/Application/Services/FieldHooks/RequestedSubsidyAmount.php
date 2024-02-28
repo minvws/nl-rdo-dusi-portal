@@ -25,16 +25,20 @@ class RequestedSubsidyAmount implements FieldHook
         if ($fieldValues['educationType']->value === 'Primair onderwijs') {
             return new FieldValue(
                 $fieldValue->field,
-                round(TravelExpenseReimbursementCalculator::calculateForPrimaryEducation($fieldValues) *
-                TotalDistanceCalculator::calculate($fieldValues['travelDistanceSingleTrip']), 2)
+                round(TravelExpenseReimbursementCalculator::calculateForPrimaryEducation(
+                    AnnualJointIncomeCalculator::calculate($fieldValues)
+                ) *
+                    TotalDistanceCalculator::calculate($fieldValues['travelDistanceSingleTrip']), 2)
             );
         }
 
         if ($fieldValues['educationType']->value === 'Voortgezet onderwijs') {
             return new FieldValue(
                 $fieldValue->field,
-                round(TravelExpenseReimbursementCalculator::calculateForSecondaryEducation($fieldValues) *
-                TotalDistanceCalculator::calculate($fieldValues['travelDistanceSingleTrip']), 2)
+                round(TravelExpenseReimbursementCalculator::calculateForSecondaryEducation(
+                    AnnualJointIncomeCalculator::calculate($fieldValues)
+                ) *
+                    TotalDistanceCalculator::calculate($fieldValues['travelDistanceSingleTrip']), 2)
             );
         }
 

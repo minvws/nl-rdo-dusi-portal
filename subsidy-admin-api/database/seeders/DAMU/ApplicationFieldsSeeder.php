@@ -8,6 +8,8 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\DAMU;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
@@ -139,6 +141,8 @@ class ApplicationFieldsSeeder extends Seeder
             code:           'alimonyAmount',
             title:          'Alimentatiebedrag',
             inputMode:      'numeric',
+            isRequired:     false,
+            requiredCondition: new ComparisonCondition(1, 'hasAlimony', Operator::Identical, 'Ja'),
         );
 
         $this->createTextField(

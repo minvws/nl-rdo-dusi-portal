@@ -53,7 +53,6 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                         "bankAccountNumber",
                         "isSingleParentFamily",
                         "hasAlimony",
-                        "alimonyAmount",
                         "annualIncomeParent1",
                         "childName",
                         "dateOfBirth",
