@@ -274,15 +274,6 @@ class AssessmentStageUISeeder extends Seeder
                     "scope" => "#/properties/amount",
                     "options" => [
                     ],
-                    "rule" => [
-                        "effect" => "SHOW",
-                        "condition" => [
-                            "scope" => "#/properties/implementationCoordinatorAssessment",
-                            "schema" => [
-                                "const" => "Eens met de eerste beoordeling"
-                            ]
-                        ]
-                    ]
                 ],
                 [
                     "type" => "Group",

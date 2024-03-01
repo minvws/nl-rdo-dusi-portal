@@ -8,6 +8,7 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\DAMU;
 
 use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
@@ -178,7 +179,10 @@ class AssessmentFieldsSeeder extends Seeder
             code:           'amount',
             title:          'Bedrag',
             isRequired:     true,
-            requiredCondition: new ComparisonCondition(3, 'implementationCoordinatorAssessment', Operator::Identical, 'Goedgekeurd'),
+            requiredCondition: new AndCondition([
+                new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
+                new ComparisonCondition(3, 'implementationCoordinatorAssessment', Operator::Identical, 'Eens met de eerste beoordeling'),
+            ])
         );
 
         $this->createTextField(
