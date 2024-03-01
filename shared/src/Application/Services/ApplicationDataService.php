@@ -177,12 +177,16 @@ readonly class ApplicationDataService
         return $result;
     }
 
-    public function getApplicantApplicationStageData(Application $application): object
+    public function getApplicantApplicationStageData(Application $application): ?object
     {
         $applicantApplicationStage = $this->applicationRepository->getCurrentApplicantApplicationStage(
             $application,
             true
         );
+
+        if ($applicantApplicationStage === null) {
+            return null;
+        }
 
         return $this->getApplicationStageData($applicantApplicationStage);
     }

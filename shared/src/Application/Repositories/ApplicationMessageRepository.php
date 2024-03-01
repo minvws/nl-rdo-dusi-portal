@@ -13,7 +13,6 @@ class ApplicationMessageRepository
     public function getMyMessage(Identity $identity, mixed $id): ?ApplicationMessage
     {
         $message = $identity->applicationMessages()->find($id);
-        /* @phpstan-ignore-next-line */
         assert($message === null || $message instanceof ApplicationMessage);
 
         if ($message?->is_new) {

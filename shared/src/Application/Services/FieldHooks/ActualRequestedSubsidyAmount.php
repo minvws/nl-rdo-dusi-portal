@@ -56,6 +56,11 @@ class ActualRequestedSubsidyAmount extends RequestedSubsidyAmount
             $currentApplicationStage->application
         );
 
-        return $applicantApplicationStageData?->educationType;
+        if (is_null($applicantApplicationStageData)) {
+            return null;
+        }
+
+        /** @psalm-suppress UndefinedPropertyFetch */
+        return $applicantApplicationStageData?->educationType; // @phpstan-ignore-line
     }
 }
