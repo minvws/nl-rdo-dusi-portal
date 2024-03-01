@@ -53,7 +53,7 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                         "bankAccountNumber",
                         "isSingleParentFamily",
                         "hasAlimony",
-                        "annualIncomeParent1",
+                        "annualIncomeParentA",
                         "childName",
                         "dateOfBirth",
                         "residentialStreet",
@@ -67,7 +67,7 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                 ),
                 $this->buildInputUiStep(
                     3, 'Documenten toevoegen', [
-                        "IB60Document",
+                        "IBDocument",
                         "ANWBRouteCard",
                         "proofOfRegistrationDAMUSchool",
                         "proofOfRegistrationRegularSchool",

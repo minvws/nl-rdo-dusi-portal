@@ -13,7 +13,7 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/IB60Document",
+                            "scope": "#/properties/IBDocument",
                             "label": "IB60 formulier",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",

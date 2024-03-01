@@ -114,20 +114,20 @@ class ApplicationFieldHookServiceTest extends TestCase
                     ]),
                 value: $alimonyAmount,
             ),
-            'annualIncomeParent1' => new FieldValue(
+            'annualIncomeParentA' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'annualIncomeParent1',
+                       'code' => 'annualIncomeParentA',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: $income1,
             ),
-            'annualIncomeParent2' => new FieldValue(
+            'annualIncomeParentB' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'annualIncomeParent2',
+                       'code' => 'annualIncomeParentB',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: $income2,
@@ -201,20 +201,20 @@ class ApplicationFieldHookServiceTest extends TestCase
                     ]),
                 value: 'Nee',
             ),
-            'annualIncomeParent1' => new FieldValue(
+            'annualIncomeParentA' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'annualIncomeParent1',
+                       'code' => 'annualIncomeParentA',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: $income1,
             ),
-            'annualIncomeParent2' => new FieldValue(
+            'annualIncomeParentB' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                       'code' => 'annualIncomeParent2',
+                       'code' => 'annualIncomeParentB',
                        'type' => FieldType::TextNumeric,
                     ]),
                 value: $income2,

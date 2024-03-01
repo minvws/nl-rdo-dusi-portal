@@ -147,14 +147,14 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'annualIncomeParent1',
+            code:           'annualIncomeParentA',
             title:          'Jaarinkomen ouder 1',
             inputMode:      'numeric',
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'annualIncomeParent2',
+            code:           'annualIncomeParentB',
             title:          'Jaarinkomen ouder 2',
             inputMode:      'numeric',
             isRequired:     false,
@@ -289,7 +289,7 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'IB60Document',
+            code:           'IBDocument',
             title:          'IB60 formulier',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,

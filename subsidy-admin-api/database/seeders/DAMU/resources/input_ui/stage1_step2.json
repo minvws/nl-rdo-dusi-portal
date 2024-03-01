@@ -204,7 +204,7 @@
                         },
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/annualIncomeParent1",
+                            "scope": "#/properties/annualIncomeParentA",
                             "label": "Jaarinkomen ouder 1",
                             "options": {
                                 "placeholder": "",
@@ -214,7 +214,7 @@
                         },
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/annualIncomeParent2",
+                            "scope": "#/properties/annualIncomeParentB",
                             "label": "Jaarinkomen ouder 2",
                             "options": {
                                 "placeholder": "",

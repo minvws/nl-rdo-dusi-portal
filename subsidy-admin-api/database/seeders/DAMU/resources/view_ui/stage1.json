@@ -100,8 +100,8 @@
                             "Is er sprake van een eenoudergezin": "{isSingleParentFamily}",
                             "Alimentatie": "{hasAlimony}",
                             "Alimentatiebedrag": "{alimonyAmount}",
-                            "Jaarinkomen ouder 1": "{annualIncomeParent1}",
-                            "Jaarinkomen ouder 2": "{annualIncomeParent2}",
+                            "Jaarinkomen ouder 1": "{annualIncomeParentA}",
+                            "Jaarinkomen ouder 2": "{annualIncomeParentB}",
                             "Jaarinkomen totaal": "{annualJointIncome}"
                         }
                     }
@@ -201,7 +201,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "IB60 formulier": "{IB60Document}",
+                            "IB60 formulier": "{IBDocument}",
                             "ANWB routeplanner": "{ANWBRouteCard}",
                             "Inschrijfbewijs DAMU school": "{proofOfRegistrationDAMUSchool}",
                             "Inschrijfbewijs reguliere school": "{proofOfRegistrationRegularSchool}"
