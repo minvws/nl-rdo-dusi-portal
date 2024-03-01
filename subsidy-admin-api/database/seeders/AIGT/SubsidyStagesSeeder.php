@@ -63,7 +63,7 @@ class SubsidyStagesSeeder extends Seeder
         DB::table('subsidy_stages')->insert([
             'id' => self::SUBSIDY_STAGE_5_UUID,
             'subsidy_version_id' => AIGTSeeder::SUBSIDY_VERSION_UUID,
-            'title' => 'Vaststelling timeout',
+            'title' => 'Wachten op vaststelling',
             'subject_role' => SubjectRole::Assessor,
             'assessor_user_role' => Role::Assessor,
             'stage' => 5,

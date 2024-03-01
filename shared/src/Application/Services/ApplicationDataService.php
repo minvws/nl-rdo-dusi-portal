@@ -163,13 +163,13 @@ readonly class ApplicationDataService
     public function getApplicationStageDataUpToIncluding(ApplicationStage $applicationStage): array
     {
         $answersByStage = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($applicationStage);
-
         $result = [];
         foreach ($answersByStage->stages as $stageAnswers) {
+//            $result[$stageAnswers->stage->sequence_number] =
+//                $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
             $result[$stageAnswers->stage->subsidyStage->stage] =
                 $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
         }
-
         return $result;
     }
 

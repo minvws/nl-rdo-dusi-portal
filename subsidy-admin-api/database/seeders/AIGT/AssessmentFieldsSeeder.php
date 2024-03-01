@@ -22,12 +22,12 @@ class AssessmentFieldsSeeder extends Seeder
     public function run(): void
     {
         $this->firstAssessmentFields();
-        $this->internalAssessmentFields();
-        $this->coordinatorImplementationFields();
-        $this->coordinatorImplementationFields5();
-        $this->coordinatorImplementationFields6();
-        $this->coordinatorImplementationFields7();
-        $this->coordinatorImplementationFields8();
+        $this->auditAssessmentFields();
+        $this->implementationAssessmentFields();
+        $this->assignationDelayPeriodFields();
+        $this->assignationAssessmentFields();
+        $this->assignationAuditAssessmentFields();
+        $this->assignationImplementationAssessmentFields();
     }
 
     public function firstAssessmentFields(): void
@@ -121,7 +121,7 @@ class AssessmentFieldsSeeder extends Seeder
         );
     }
 
-    public function internalAssessmentFields(): void
+    public function auditAssessmentFields(): void
     {
         //interne controle
         $this->createCheckboxField(
@@ -149,7 +149,7 @@ class AssessmentFieldsSeeder extends Seeder
         );
     }
 
-    public function coordinatorImplementationFields(): void
+    public function implementationAssessmentFields(): void
     {
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
@@ -161,83 +161,83 @@ class AssessmentFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
-            code: 'implementationCoordinatorAssessmentInternalNote',
+            code: 'internalNote',
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
     }
 
-    public function coordinatorImplementationFields5(): void
+    public function assignationDelayPeriodFields(): void
     {
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
-            code: 'implementationCoordinatorAssessment',
+            code: 'assessment',
             title: 'Beoordeling',
-            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
+            options: ['Vaststellen', 'Vorderen', 'Uitstellen'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
-            code: 'implementationCoordinatorAssessmentInternalNote',
+            code: 'internalNote',
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
     }
 
-    public function coordinatorImplementationFields6(): void
+    public function assignationAssessmentFields(): void
     {
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
-            code: 'implementationCoordinatorAssessment',
+            code: 'assessment',
             title: 'Beoordeling',
-            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
+            options: ['Vaststellen', 'Vorderen', 'Uitstellen'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
-            code: 'implementationCoordinatorAssessmentInternalNote',
+            code: 'internalNote',
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
     }
 
-    public function coordinatorImplementationFields7(): void
+    public function assignationAuditAssessmentFields(): void
     {
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_7_UUID,
-            code: 'implementationCoordinatorAssessment',
+            code: 'assessment',
             title: 'Beoordeling',
-            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
+            options: ['Eens met de beoordeling op de vaststelling', 'Oneens met de beoordeling op de vaststelling'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_7_UUID,
-            code: 'implementationCoordinatorAssessmentInternalNote',
+            code: 'internalNote',
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
     }
 
-    public function coordinatorImplementationFields8(): void
+    public function assignationImplementationAssessmentFields(): void
     {
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
-            code: 'implementationCoordinatorAssessment',
+            code: 'assessment',
             title: 'Beoordeling',
-            options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
+            options: ['Eens met de beoordeling op de vaststelling', 'Oneens met de beoordeling op de vaststelling'],
             retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
-            code: 'implementationCoordinatorAssessmentInternalNote',
+            code: 'internalNote',
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short

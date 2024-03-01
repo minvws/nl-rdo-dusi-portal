@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $enumValues = ['draft', 'submitted', 'approved', 'allocated', 'rejected', 'requestForChanges'];
+        $enumValues = ['draft', 'pending', 'approved', 'allocated', 'rejected', 'requestForChanges', 'reclaimed'];
         $this->updateEnumConstraint('applications', 'status', $enumValues);
         $this->updateEnumConstraint('subsidy_stage_transitions', 'target_application_status', $enumValues);
         $this->updateEnumConstraint('application_stage_transitions', 'previous_application_status', $enumValues);

@@ -11,6 +11,8 @@ enum ApplicationStatus: string
     case Approved = 'approved';
     case Allocated = 'allocated';
     case Rejected = 'rejected';
+    case Reclaimed = 'reclaimed';
+
     case RequestForChanges = 'requestForChanges';
 
     public function isEditableForApplicant(): bool
@@ -25,6 +27,6 @@ enum ApplicationStatus: string
 
     public function isNewApplicationAllowed(): bool
     {
-        return $this === ApplicationStatus::Rejected;
+        return $this === ApplicationStatus::Rejected || $this === ApplicationStatus::Reclaimed;
     }
 }
