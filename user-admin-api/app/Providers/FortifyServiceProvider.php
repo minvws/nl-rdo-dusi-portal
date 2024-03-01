@@ -45,10 +45,6 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
 
-        // TODO: Discus how we want the password reset functionality
-        // TODO: Overwrite the default password PasswordUpdateResponseContract with a specific return message
-//        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
-
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->email;
 
