@@ -84,15 +84,15 @@ readonly class ApplicationAssessorService
     public function getAssessorPool(Application $application, string|null $search): AnonymousResourceCollection
     {
         $previousAssessorIds = [];
-        if(!$application->currentApplicationStage->subsidyStage->allow_duplicate_assessors){
+        if ($application->currentApplicationStage === null) {
+            return AssessorPoolUserResource::collection([]);
+        }
+
+        if (!$application->currentApplicationStage->subsidyStage->allow_duplicate_assessors) {
             $previousAssessorIds = $application->applicationStages
                 ->pluck('assessor_user_id')
                 ->filter()
                 ->toArray();
-        }
-
-        if ($application->currentApplicationStage === null) {
-            return AssessorPoolUserResource::collection([]);
         }
 
         $users = $this->userRepository->getPotentialUsersWithSpecificRole(

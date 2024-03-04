@@ -139,7 +139,7 @@ class ApplicationFlowService
 
         $data = array_map(
             fn (ApplicationStageData $stageData) => $stageData->data,
-            $this->applicationDataService->getApplicationStageDataUpToIncluding($stage)
+            $this->applicationDataService->getApplicationStageDataUniqueByStageUpToIncluding($stage)
         );
 
         return $transition->condition->evaluate($data);
@@ -269,7 +269,10 @@ class ApplicationFlowService
             return;
         }
 
-        $stages = $this->applicationRepository->getLatestApplicationStagesUpToIncluding($target);
+        $stages = $this->applicationRepository->getLatestApplicationStagesUpToIncluding(
+            $target,
+            fn ($stage) => $stage->subsidyStage->stage
+        );
         foreach ($stages as $stage) {
             if ($stage->assessor_user_id === $previousAssessor->id) {
                 // assessor already picked up an earlier (active!) stage, not allowed to assess 2 stages

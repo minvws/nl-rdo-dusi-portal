@@ -175,7 +175,7 @@ readonly class LetterService
 
     private function collectGenericDataForTemplate(ApplicationStage $stage): LetterData
     {
-        $answers = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($stage);
+        $answers = $this->applicationRepository->getAnswersForApplicationStagesUniqueByStageUpToIncluding($stage);
         $data = $this->convertAnswersToTemplateData($answers);
         $submittedAt = $stage->application->submitted_at;
         $submittedAt = $submittedAt ?? CarbonImmutable::now(); // preview doesn't have a submit timestamp

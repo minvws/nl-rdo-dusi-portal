@@ -160,7 +160,10 @@ class ApplicationPolicy
 
         // 4-ogen principe; user can't assess more than 1 stage
         $applicationStages =
-            $this->applicationRepository->getLatestApplicationStagesUpToIncluding($currentApplicationStage);
+            $this->applicationRepository->getLatestApplicationStagesUpToIncluding(
+                $currentApplicationStage,
+                fn ($stage) => $stage->subsidyStage->stage
+            );
         foreach ($applicationStages as $applicationStage) {
             if (!$subsidyStage->allow_duplicate_assessors && $applicationStage->assessor_user_id === $user->id) {
                 Log::debug('User already assessed a stage', ['stageId' => $currentApplicationStage->id]);

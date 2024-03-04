@@ -29,6 +29,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHashField;
 use stdClass;
 use Throwable;
+use Closure;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -160,14 +161,42 @@ readonly class ApplicationDataService
      *
      * @return array<int, ApplicationStageData>
      */
-    public function getApplicationStageDataUpToIncluding(ApplicationStage $applicationStage): array
+    public function getApplicationStageDataUniqueByStageUpToIncluding(ApplicationStage $applicationStage): array
     {
-        $answersByStage = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding($applicationStage);
+        return $this->getApplicationStageDataUpToIncluding(
+            $applicationStage,
+            fn($stage) => $stage->subsidyStage->stage
+        );
+    }
+
+    /**
+     * @param ApplicationStage $applicationStage
+     *
+     * @return array<int, ApplicationStageData>
+     */
+    public function getApplicationStageDataUniqueBySequenceUpToIncluding(ApplicationStage $applicationStage): array
+    {
+        return $this->getApplicationStageDataUpToIncluding(
+            $applicationStage,
+            fn($stage) => $stage->sequence_number
+        );
+    }
+
+    /**
+     * @param ApplicationStage $applicationStage
+     * @param Closure(ApplicationStage):int $groupingKey
+     *
+     * @return array<int, ApplicationStageData>
+     */
+    private function getApplicationStageDataUpToIncluding(
+        ApplicationStage $applicationStage,
+        Closure $groupingKey
+    ): array {
+        $answersByStage = $this->applicationRepository
+            ->getAnswersForApplicationStagesUpToIncluding($applicationStage, $groupingKey);
         $result = [];
         foreach ($answersByStage->stages as $stageAnswers) {
-//            $result[$stageAnswers->stage->sequence_number] =
-//                $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
-            $result[$stageAnswers->stage->subsidyStage->stage] =
+            $result[$groupingKey($stageAnswers->stage)] =
                 $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
         }
         return $result;

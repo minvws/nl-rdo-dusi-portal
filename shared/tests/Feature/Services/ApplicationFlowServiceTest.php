@@ -762,7 +762,10 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertNull($assessmentStage->closed_at);
         $this->assertCount(1, $assessmentStage->answers);
 
-        $stages = $appRepository->getLatestApplicationStagesUpToIncluding($assessmentStage);
+        $stages = $appRepository->getLatestApplicationStagesUpToIncluding(
+            $assessmentStage,
+            fn ($stage) => $stage->subsidyStage->stage
+        );
         $this->assertCount(2, $stages);
         $this->assertEquals($this->applicationStage1->id, $stages[1]->id); // the revise stage should be ignored
         $this->assertEquals($assessmentStage->id, $stages[2]->id);

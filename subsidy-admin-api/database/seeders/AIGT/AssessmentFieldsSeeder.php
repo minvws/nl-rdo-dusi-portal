@@ -185,6 +185,16 @@ class AssessmentFieldsSeeder extends Seeder
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );
+
+        $this->createUploadField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            code:           'proofOfRegistrationDocument',
+            title:          'Bewijs van inschrijving',
+            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            minItems:       1,
+            maxItems:       20,
+            maxFileSize:    20971520
+        );
     }
 
     public function assignationAssessmentFields(): void
@@ -203,6 +213,16 @@ class AssessmentFieldsSeeder extends Seeder
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createUploadField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
+            code:           'proofOfRegistrationDocument',
+            title:          'Bewijs van inschrijving',
+            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            minItems:       1,
+            maxItems:       20,
+            maxFileSize:    20971520
         );
     }
 

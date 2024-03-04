@@ -32,6 +32,18 @@
                     "elements": [
                         {
                             "type": "CustomControl",
+                            "scope": "#/properties/proofOfRegistrationDocument",
+                            "label": "Bewijs",
+                            "options": {
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "Bewijs. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
                             "scope": "#\/properties\/internalNote",
                             "options": {
                                 "format": "textarea"

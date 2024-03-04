@@ -19,6 +19,7 @@ use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMSubsidyStagesSeeder;
 class SubsidyStageTransitionsSeeder extends Seeder
 {
     public const TRANSITION_STAGE_1_TO_2 = '24a47df1-fc9d-4557-9012-d51738e5bdec';
+    public const TRANSITION_STAGE_1_TO_2_TIMEOUT = '25aa10ea-6da7-43f0-8b61-10d3fe2bb54f';
     public const TRANSITION_STAGE_2_TO_1 = '2f2e080d-0a05-467a-aaa5-292a95a6d361';
     public const TRANSITION_STAGE_2_TO_3 = '38957187-d17f-4e77-b4b2-90797f76b521';
     public const TRANSITION_STAGE_3_TO_2 = '04811943-3e98-4532-940f-5b49908a193d';
@@ -38,6 +39,8 @@ class SubsidyStageTransitionsSeeder extends Seeder
     public const TRANSITION_STAGE_8_TO_RECLAIM = '66d64304-b165-4ada-9cf0-eb28b2772e47';
 
     public const TRANSITION_STAGE_8_TO_6 = 'b4387d82-1c34-4434-9e8b-aa4a5048f8d4';
+
+    public const ASCERTAIN_TIMEMOUT = 7 * 52;
     /**
      * Run the database seeds.
      */
@@ -59,6 +62,20 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'clone_data' => true
         ]);
 
+        // User did not respond in time.
+        DB::table('subsidy_stage_transitions')->insert([
+            'id' => self::TRANSITION_STAGE_1_TO_2_TIMEOUT,
+            'description' => 'Geen aanvulling ingediend binnen gestelde termijn',
+            'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
+            'target_application_status' => ApplicationStatus::Pending,
+            'condition' => null,
+            'send_message' => false,
+            'assign_to_previous_assessor' => true,
+            'evaluation_trigger' => EvaluationTrigger::Expiration->value,
+            'clone_data' => true // clones data of previous assessment
+        ]);
+
 
         // Eerste beoordeling = Aanvulling nodig; aanvraag wordt teruggezet naar de aanvrager om te laten aanvullen
         DB::table('subsidy_stage_transitions')->insert([
@@ -76,7 +93,8 @@ class SubsidyStageTransitionsSeeder extends Seeder
                 )
             ),
             'send_message' => true,
-            'clone_data' => true
+            'clone_data' => true,
+            'expiration_period' => 14
         ]);
 
         // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling
@@ -122,12 +140,12 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'condition' => $encoder->encode(
-                    new ComparisonCondition(
-                        3,
-                        'internalAssessment',
-                        Operator::Identical,
-                        'Eens met de eerste beoordeling'
-                    )
+                new ComparisonCondition(
+                    3,
+                    'internalAssessment',
+                    Operator::Identical,
+                    'Eens met de eerste beoordeling'
+                )
             ),
             'send_message' => false
         ]);
@@ -206,6 +224,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
                 ])
             ),
             'send_message' => true,
+            'expiration_period' => self::ASCERTAIN_TIMEMOUT
         ]);
 
         // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling
@@ -267,7 +286,8 @@ class SubsidyStageTransitionsSeeder extends Seeder
             ),
             'send_message' => false,
             'assign_to_previous_assessor' => true,
-            'clone_data' => true
+            'clone_data' => true,
+            'expiration_period' => self::ASCERTAIN_TIMEMOUT
         ]);
 
         DB::table('subsidy_stage_transitions')->insert([

@@ -40,6 +40,7 @@ use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\Shared\User\Enums\Role;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
+use Closure;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -237,14 +238,18 @@ class ApplicationRepository
         $answer->save();
     }
 
+
     /**
      * Returns a list of application stages up to (and including) the given stage. If an application
      * has gone through certain stages multiple times only the latest instance of the stages
      * will be returned.
      *
+     * @param ApplicationStage $stage
+     * @param Closure(ApplicationStage):int $groupingKey
+     *
      * @return array<int, ApplicationStage> Application stages indexed by stage number.
      */
-    public function getLatestApplicationStagesUpToIncluding(ApplicationStage $stage): array
+    public function getLatestApplicationStagesUpToIncluding(ApplicationStage $stage, Closure $groupingKey): array
     {
         /** @var array<ApplicationStage> $matchingStages */
         $matchingStages =
@@ -252,10 +257,9 @@ class ApplicationRepository
                 ->with('subsidyStage')
                 ->where('sequence_number', '<=', $stage->sequence_number)
                 ->where(
-                    fn ($query) =>
-                        $query
-                            ->where('is_submitted', '=', true)
-                            ->orWhere('id', '=', $stage->id)
+                    fn($query) => $query
+                        ->where('is_submitted', '=', true)
+                        ->orWhere('id', '=', $stage->id)
                 )
                 ->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage)
                 ->orderBy('sequence_number')
@@ -263,18 +267,36 @@ class ApplicationRepository
 
         $uniqueStages = [];
         foreach ($matchingStages as $currentStage) {
-            // newer "versions" of stages will overwrite previous ones
-            $stageNumber = $currentStage->subsidyStage->stage;
-            $uniqueStages[$stageNumber] = $currentStage;
+            // stages will be unique by the provided $groupingKey closure.
+            $uniqueStages[$groupingKey($currentStage)] = $currentStage;
         }
 
         return $uniqueStages;
     }
 
-    public function getAnswersForApplicationStagesUpToIncluding(
+    /**
+     * @param ApplicationStage $stage
+     * @return AnswersByApplicationStage
+     */
+    public function getAnswersForApplicationStagesUniqueByStageUpToIncluding(
         ApplicationStage $stage
     ): AnswersByApplicationStage {
-        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage);
+        return $this->getAnswersForApplicationStagesUpToIncluding(
+            $stage,
+            fn ($stage) => $stage->subsidyStage->stage
+        );
+    }
+
+    /**
+     * @param ApplicationStage $stage
+     * @param Closure(ApplicationStage):int $groupingKey
+     * @return AnswersByApplicationStage
+     */
+    public function getAnswersForApplicationStagesUpToIncluding(
+        ApplicationStage $stage,
+        Closure $groupingKey
+    ): AnswersByApplicationStage {
+        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage, $groupingKey);
 
         $stages = [];
         foreach ($uniqueStages as $currentStage) {
