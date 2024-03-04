@@ -25,11 +25,6 @@ class Role extends Model
     public $incrementing = false;
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
     protected $fillable = [
         'name',
         'view_all_stages',
