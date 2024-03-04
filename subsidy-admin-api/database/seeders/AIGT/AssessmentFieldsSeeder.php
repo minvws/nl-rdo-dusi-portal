@@ -218,7 +218,7 @@ class AssessmentFieldsSeeder extends Seeder
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
             code:           'proofOfRegistrationDocument',
-            title:          'Bewijs van inschrijving',
+            title:          'Bewijsstukken',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,

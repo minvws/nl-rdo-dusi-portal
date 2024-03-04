@@ -54,7 +54,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'id' => self::TRANSITION_STAGE_1_TO_2,
             'description' => 'Aanvraag ingediend',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             'target_application_status' => ApplicationStatus::Allocated,
             'condition' => null,
             'send_message' => false,
@@ -233,13 +233,13 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Vaststellings beoordeling voltooid',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_7_UUID,
-//            'condition' => $encoder->encode(
-//                new InCondition(
-//                    2,
-//                    'firstAssessment',
-//                    ['Goedgekeurd', 'Afgekeurd']
-//                )
-//            ),
+            'condition' => $encoder->encode(
+                new InCondition(
+                    2,
+                    'firstAssessment',
+                    ['Goedgekeurd', 'Afgekeurd']
+                )
+            ),
             'send_message' => false
         ]);
 
