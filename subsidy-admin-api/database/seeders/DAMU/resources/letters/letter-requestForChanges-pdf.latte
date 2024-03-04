@@ -17,7 +17,6 @@
         Ik verzoek u om uw aanvraag aan te vullen met:<br/>
         {$content->stage2->firstAssessmentRequestedComplementNote|breakLines}
     </p>
-    <p>&nbsp;</p>
 
     <h2>Termijn</h2>
     <p>
@@ -29,25 +28,24 @@
     <p>
         Als de gevraagde gegevens niet binnen 2 weken door mij zijn ontvangen, of onvoldoende zijn voor verdere beoordeling, dan kan uw aanvraag niet verder worden behandeld.
     </p>
-    <p>&nbsp;</p>
 {/block}
 
 {block signature}
     <p>
         Met vriendelijke groet,<br/>
         <br/>
-        de Minister voor Langdurige Zorg en Sport,<br/>
+        de minister van Onderwijs, Cultuur en Wetenschap,<br/>
         namens deze,<br/>
-        het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
+        afdelingshoofd Dienst Uitvoering Subsidies aan Instellingen,<br/>
         <br/>
         <img class="signature" alt="handtekening" src="{$content->getSignature('vws_dusi_signature.jpg')|dataStream}" />
         <br/>
-        L. van der Weij
+        C.H. van der Schaaf
     </p>
 {/block}
+
+{block objectionFooter}{/block}
 
 {block sidebar}
     {include parent}
 {/block}
-
-{block objectionFooter}{/block}

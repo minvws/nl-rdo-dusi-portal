@@ -54,7 +54,7 @@ class DAMUSeeder extends Seeder
             'status' => VersionStatus::Published,
             'created_at' => 'now()',
             'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/reiskosten-damu-leerlingen-primair-onderwijs',
-            'contact_mail_address' => 'damu@minvws.nl',
+            'contact_mail_address' => 'damu.dus-i@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
             'review_period' => 7 * 13 // 13 weeks
