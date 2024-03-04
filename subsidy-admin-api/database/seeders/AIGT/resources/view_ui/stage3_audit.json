@@ -21,7 +21,7 @@
         },
         {
             "type": "CustomControl",
-            "scope": "#/properties/interalAssessmentInternalNote",
+            "scope": "#/properties/internalAssessmentInternalNote",
             "options": {
                 "readonly": true,
                 "format": "textarea"

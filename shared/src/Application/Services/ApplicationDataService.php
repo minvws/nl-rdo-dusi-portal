@@ -161,11 +161,14 @@ readonly class ApplicationDataService
      *
      * @return array<int, ApplicationStageData>
      */
-    public function getApplicationStageDataUniqueByStageUpToIncluding(ApplicationStage $applicationStage): array
-    {
+    public function getApplicationStageDataUniqueByStageUpToIncluding(
+        ApplicationStage $applicationStage,
+        bool $readOnly = false
+    ): array {
         return $this->getApplicationStageDataUpToIncluding(
             $applicationStage,
-            fn($stage) => $stage->subsidyStage->stage
+            fn($stage) => $stage->subsidyStage->stage,
+            $readOnly
         );
     }
 
@@ -174,11 +177,15 @@ readonly class ApplicationDataService
      *
      * @return array<int, ApplicationStageData>
      */
-    public function getApplicationStageDataUniqueBySequenceUpToIncluding(ApplicationStage $applicationStage): array
+    public function getApplicationStageDataUniqueBySequenceUpToIncluding(
+        ApplicationStage $applicationStage,
+        bool $readOnly = false
+    ): array
     {
         return $this->getApplicationStageDataUpToIncluding(
             $applicationStage,
-            fn($stage) => $stage->sequence_number
+            fn($stage) => $stage->sequence_number,
+            $readOnly
         );
     }
 
@@ -190,10 +197,11 @@ readonly class ApplicationDataService
      */
     private function getApplicationStageDataUpToIncluding(
         ApplicationStage $applicationStage,
-        Closure $groupingKey
+        Closure $groupingKey,
+        bool $readOnly = false
     ): array {
         $answersByStage = $this->applicationRepository
-            ->getAnswersForApplicationStagesUpToIncluding($applicationStage, $groupingKey);
+            ->getAnswersForApplicationStagesUpToIncluding($applicationStage, $groupingKey, $readOnly);
         $result = [];
         foreach ($answersByStage->stages as $stageAnswers) {
             $result[$groupingKey($stageAnswers->stage)] =

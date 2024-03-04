@@ -12,11 +12,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\InCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
-use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 
 class BTVSubsidyStageTransitionsSeeder extends Seeder
 {
     public const TRANSITION_STAGE_1_TO_2 = '7a766078-8b8e-45c8-b04c-4a8de1fae275';
+    public const TRANSITION_STAGE_1_TO_2_TIMEOUT = '335b7ffc-b439-40a2-9b71-9b3df210216c';
     public const TRANSITION_STAGE_2_TO_1 = 'fc076d68-f51a-4aa7-b190-be0c584d0fca';
     public const TRANSITION_STAGE_2_TO_3 = '78014bba-1b91-4417-a8b7-cc97014487c8';
     public const TRANSITION_STAGE_3_TO_2 = '79a4eb8b-d42e-4f49-8f96-ff3433fb75c0';
@@ -46,6 +47,20 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'clone_data' => true
         ]);
 
+        // User did not respond in time.
+        DB::table('subsidy_stage_transitions')->insert([
+            'id' => self::TRANSITION_STAGE_1_TO_2_TIMEOUT,
+            'description' => 'Geen aanvulling ingediend binnen gestelde termijn',
+            'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_1_UUID,
+            'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
+            'target_application_status' => ApplicationStatus::Pending,
+            'condition' => null,
+            'send_message' => false,
+            'assign_to_previous_assessor' => true,
+            'evaluation_trigger' => EvaluationTrigger::Expiration,
+            'clone_data' => true // clones data of previous assessment
+        ]);
+
 
         // Eerste beoordeling = Aanvulling nodig; aanvraag wordt teruggezet naar de aanvrager om te laten aanvullen
         DB::table('subsidy_stage_transitions')->insert([
@@ -63,7 +78,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
                 )
             ),
             'send_message' => true,
-            'clone_data' => true
+            'clone_data' => true,
+            'expiration_period' => 14,
         ]);
 
         // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling

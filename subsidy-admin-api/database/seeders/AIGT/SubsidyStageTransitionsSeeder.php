@@ -19,7 +19,7 @@ use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMSubsidyStagesSeeder;
 class SubsidyStageTransitionsSeeder extends Seeder
 {
     public const TRANSITION_STAGE_1_TO_2 = '24a47df1-fc9d-4557-9012-d51738e5bdec';
-    public const TRANSITION_STAGE_1_TO_2_TIMEOUT = '25aa10ea-6da7-43f0-8b61-10d3fe2bb54f';
+    public const TRANSITION_STAGE_1_TO_2_TIMEOUT = '947e5c57-a4bc-4613-b41f-f440e52f154c';
     public const TRANSITION_STAGE_2_TO_1 = '2f2e080d-0a05-467a-aaa5-292a95a6d361';
     public const TRANSITION_STAGE_2_TO_3 = '38957187-d17f-4e77-b4b2-90797f76b521';
     public const TRANSITION_STAGE_3_TO_2 = '04811943-3e98-4532-940f-5b49908a193d';
@@ -55,7 +55,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Aanvraag ingediend',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
-            'target_application_status' => ApplicationStatus::Allocated,
+            'target_application_status' => ApplicationStatus::Pending,
             'condition' => null,
             'send_message' => false,
             'assign_to_previous_assessor' => true,
@@ -72,10 +72,9 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'condition' => null,
             'send_message' => false,
             'assign_to_previous_assessor' => true,
-            'evaluation_trigger' => EvaluationTrigger::Expiration->value,
+            'evaluation_trigger' => EvaluationTrigger::Expiration,
             'clone_data' => true // clones data of previous assessment
         ]);
-
 
         // Eerste beoordeling = Aanvulling nodig; aanvraag wordt teruggezet naar de aanvrager om te laten aanvullen
         DB::table('subsidy_stage_transitions')->insert([
@@ -94,7 +93,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             ),
             'send_message' => true,
             'clone_data' => true,
-            'expiration_period' => 14
+            'expiration_period' => 14,
         ]);
 
         // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling
@@ -251,7 +250,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
             'condition' => null,
             'send_message' => false,
-            'evaluation_trigger' => EvaluationTrigger::Expiration->value,
+            'evaluation_trigger' => EvaluationTrigger::Expiration,
         ]);
 
 

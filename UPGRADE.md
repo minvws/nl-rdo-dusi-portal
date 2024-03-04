@@ -30,6 +30,11 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-1265: Add timout transition for BTV and AIGT subsidies
+
+The `2024_02_19_000000_add_stage_timout_transitions_for_btv_aigt_subsidies.sql` SQL update needs to run to add the timeout transitions for BTV and AIGT subsidies.
+PR <https://github.com/minvws/nl-rdo-dusi-portal/pull/1266>
+
 ### DUSI-632: Create AIGT subsidy
 
 A signature needs to be added:  
@@ -37,20 +42,22 @@ assessment-api/storage/subsidy-files/cb91d7d4-6261-4cd6-96e8-d09c86a670b7/vws_du
 
 This feature contains a dusi_app_db migration.  See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1118>
 
-## Release 2.1.4
-
-### DUSI-1169 BTV flow update
-
-This feature contains a dusi_app_db migration.  See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1199>
-
 ### DUSI-1218: Update BTV firstAssessmentChecklist
 
 The `2024_02_18_000000_update_btv_first_assessment_checklist.sql` SQL update needs to run to update the firstAssmentChecklist.
 PR <https://github.com/minvws/nl-rdo-dusi-portal/pull/1223>
 
+## Release 2.1.5
+
 ### DUSI-1119: Hardheidsclausule letter typo
 
 This feature contains app-DB migrations. See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1201>
+
+## Release 2.1.4
+
+### DUSI-1169 BTV flow update
+
+This feature contains a dusi_app_db migration.  See <https://github.com/minvws/nl-rdo-dusi-portal/pull/1199>
 
 ## Release 2.1.3
 

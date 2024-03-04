@@ -137,7 +137,11 @@ class ApplicationRepository
             ->whereExists($filteredQuery)
             ->when(
                 value: $user->hasRole(Role::LegalSpecialist),
-                callback: fn($q) => $q->where('status', ApplicationStatus::Rejected),
+                callback: fn(Builder $q) => $q->where(function (Builder $q) {
+                    $q
+                        ->where('status', ApplicationStatus::Approved)
+                        ->orWhere('status', ApplicationStatus::Rejected);
+                }),
             );
         $this->applyFilters($query, $filter);
         $this->applySort($query, $sortOptions);
@@ -249,17 +253,21 @@ class ApplicationRepository
      *
      * @return array<int, ApplicationStage> Application stages indexed by stage number.
      */
-    public function getLatestApplicationStagesUpToIncluding(ApplicationStage $stage, Closure $groupingKey): array
-    {
+    public function getLatestApplicationStagesUpToIncluding(
+        ApplicationStage $stage,
+        Closure $groupingKey,
+        bool $readOnly = false
+    ): array {
         /** @var array<ApplicationStage> $matchingStages */
         $matchingStages =
             $stage->application->applicationStages()
                 ->with('subsidyStage')
                 ->where('sequence_number', '<=', $stage->sequence_number)
                 ->where(
-                    fn($query) => $query
-                        ->where('is_submitted', '=', true)
-                        ->orWhere('id', '=', $stage->id)
+                    fn ($query) =>
+                        $query
+                            ->where('is_submitted', '=', true)
+                            ->when(!$readOnly, fn ($query) => $query->orWhere('id', '=', $stage->id))
                 )
                 ->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage)
                 ->orderBy('sequence_number')
@@ -279,11 +287,13 @@ class ApplicationRepository
      * @return AnswersByApplicationStage
      */
     public function getAnswersForApplicationStagesUniqueByStageUpToIncluding(
-        ApplicationStage $stage
+        ApplicationStage $stage,
+        bool $readOnly = false
     ): AnswersByApplicationStage {
         return $this->getAnswersForApplicationStagesUpToIncluding(
             $stage,
-            fn ($stage) => $stage->subsidyStage->stage
+            fn ($stage) => $stage->subsidyStage->stage,
+            $readOnly
         );
     }
 
@@ -294,9 +304,10 @@ class ApplicationRepository
      */
     public function getAnswersForApplicationStagesUpToIncluding(
         ApplicationStage $stage,
-        Closure $groupingKey
+        Closure $groupingKey,
+        bool $readOnly = false
     ): AnswersByApplicationStage {
-        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage, $groupingKey);
+        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage, $groupingKey, $readOnly);
 
         $stages = [];
         foreach ($uniqueStages as $currentStage) {
@@ -368,6 +379,12 @@ class ApplicationRepository
     }
 
     /**
+     * Returns all the expired application stages that have a transition with the expiration trigger.
+     *
+     * The expires_at is the date that the application stage expires. The user can still submit the application
+     * on this date, the next day, the application stage is expired. This is why we use CarbonImmutable::yesterday()
+     * to get the stages that are expired.
+     *
      * @psalm-suppress InvalidReturnStatement
      * @psalm-suppress InvalidReturnType
      * @return Collection<int, ApplicationStage>
@@ -377,7 +394,7 @@ class ApplicationRepository
         return
             ApplicationStage::query()
                 ->where('is_current', '=', true)
-                ->where('expires_at', '<=', CarbonImmutable::now())
+                ->where('expires_at', '<=', CarbonImmutable::yesterday())
                 ->whereExists(
                     SubsidyStageTransition::query()
                         ->select(DB::raw(1))

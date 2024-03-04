@@ -121,8 +121,8 @@ class ApplicationExportService
     private function applyFilters(Builder $query, ApplicationsFilter $filter): void
     {
         $filterValues = [
-            'dateFrom' => 'createdAtFrom',
-            'dateTo' => 'createdAtTo',
+            'dateFrom' => 'updatedAtFrom',
+            'dateTo' => 'updatedAtTo',
             'status' => 'status',
             'subsidy' => 'subsidyCode',
         ];

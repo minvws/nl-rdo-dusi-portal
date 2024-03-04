@@ -722,8 +722,10 @@ class ApplicationFlowServiceTest extends TestCase
         $this->assertCount(0, $expiredStages);
 
         $this->now = CarbonImmutable::now()->addDays(14);
-        Carbon::setTestNow($this->now);
-        CarbonImmutable::setTestNow($this->now);
+
+        $nextDay = $this->now->addDay();
+        Carbon::setTestNow($nextDay);
+        CarbonImmutable::setTestNow($nextDay);
 
         $expiredStages = $appRepository->getExpiredApplicationStages();
         $this->assertCount(1, $expiredStages);
@@ -752,7 +754,7 @@ class ApplicationFlowServiceTest extends TestCase
         $this->application->refresh();
         $this->assertEquals(ApplicationStatus::Pending, $this->application->status);
         // the time the user was able to make changes should be take into account for the final review deadline
-        $this->assertEquals($initialDeadline->addDays(14), $this->application->final_review_deadline);
+        $this->assertEquals($initialDeadline->addDays(15), $this->application->final_review_deadline);
 
         $this->assertNotNull($assessmentStage);
         $this->assertEquals($this->subsidyStage2->id, $assessmentStage->subsidy_stage_id);

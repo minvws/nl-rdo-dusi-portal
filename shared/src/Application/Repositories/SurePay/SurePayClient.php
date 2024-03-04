@@ -18,6 +18,7 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccessTokenResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsRequest;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayInvalidAccessTokenResponse;
+use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayMaxRetryException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
 use Psr\Log\LoggerInterface;
 
@@ -141,6 +142,7 @@ class SurePayClient
      * @param string $accountType
      * @return CheckOrganisationsAccountResponse
      * @throws SurePayRepositoryException
+     * @throws SurePayMaxRetryException
      * @throws Exception
      */
     public function checkOrganisationsAccount(
@@ -230,9 +232,10 @@ class SurePayClient
             }
         }
 
-        throw new SurePayRepositoryException(
-            message: 'Max retries exceeded for Checking SurePay IBAN without successful response',
-            previous: $latestException
+        throw new SurePayMaxRetryException(
+            message:  'Max retries exceeded for Checking SurePay IBAN without successful response',
+            previous: $latestException,
+            retries:  $maxRetries,
         );
     }
 
