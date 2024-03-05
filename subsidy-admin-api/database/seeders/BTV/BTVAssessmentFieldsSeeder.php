@@ -34,22 +34,47 @@ class BTVAssessmentFieldsSeeder extends Seeder
             code:           'firstAssessmentChecklist',
             title:          'Gecontroleerd',
             options:        [
-                                'Uittreksel van het BRP is opgestuurd',
+                                'De aanvrager heeft niet eerder een BTV-subsidieaanvraag ingediend',
+                                'De aanvrager komt niet voor in het M&O register',
+                                'De persoonsgegevens zijn door de aanvrager juist ingevuld (NAW-gegevens, IBAN)',
+                                'Uittreksel van het BRP is opgestuurd (< 12 maanden)',
                                 'De aanvrager is een ingezetene (> 4 maanden) in Nederland',
                                 'De aanvrager is ouder dan 18 jaar',
-                                'Zijn het IBAN en het SurePay resultaat akkoord?',
-                                'De verklaring van de arts over het behandeltraject is opgestuurd',
+                                'De ingevoerde persoonsgegevens zijn conform het BRP uittreksel',
+                                'De medische verklaringen zijn volledig ingevuld en op naam van de aanvrager',
                                 'De verklaring van de arts over het behandeltraject is minder dan 2 maanden oud',
                                 'De verklaring van de arts over het behandeltraject is ondertekend en voorzien van een naamstempel',
                                 'Het opgegeven BIG-nummer komt overeen met het BIG-register',
-                                'De operatie heeft nog niet plaatsgevonden',
                                 'De aanvrager heeft genderdysforie',
                                 'De aanvrager heeft minimaal een jaar voor de aanvraag hormoonbehandeling ondergaan, of is hiermee vanwege medische redenen gestopt of kon deze om medische redenen niet ondergaan',
-                                'De verklaring van de arts met de vermelding van de type behandeling is opgestuurd',
+                                'De verklaring van de arts met de vermelding van het type behandeling is opgestuurd (<12 maanden oud)',
                                 'De verklaring van de arts met de vermelding van de type behandeling is ondertekend en voorzien van een naamstempel',
-                                'De type behandeling voldoet aan de voorwaarden conform de subsidieregeling'
+                                'De type behandeling voldoet aan de voorwaarden conform de subsidieregeling',
+                                'Het opgegeven IBAN is correct',
+                                'De verificatiebevestiging met betrekking tot de verklaring over het behandeltraject is ontvangen',
+                                'De verificatiebevestiging met betrekking tot de verklaring over het type behandeling is ontvangen',
                             ],
             isRequired: false,
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
+            code:            'businessPartnerNumber',
+            title:           'Zakenpartnernummer',
+            inputMode:       'numeric',
+            maxLength:       20,
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
+            code:            'liabilitiesNumber',
+            title:           'Verplichtingennummer',
+            inputMode:       'numeric',
+            maxLength:       20,
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createSelectField(
@@ -149,12 +174,14 @@ class BTVAssessmentFieldsSeeder extends Seeder
             title: 'Controlevragen',
             options: [
                 'Valt de aanvrager onder de WSNP/bewindvoering?',
-                'Is er een relatienummer bekend in SAP?',
-                'Komen de NAW-gegevens overeen tussen SAP en Mijn DUS-I?',
-                'Komt het IBAN/rekeningnummer overeen tussen SAP en Mijn DUS-I?',
-                'Zijn alle benodigde documenten aangeleverd?',
-                'Klopt het subsidiebedrag met de gekozen behandeling in de aangeleverde medische verklaring?',
-                'Is het subsidiebedrag juist vermeld in Mijn DUS-I en in de verplichting in SAP?',
+                'Alle benodigde documenten zijn aangeleverd',
+                'Het subsidiebedrag klopt met de gekozen behandeling',
+                'De aanvraag kan verleend worden',
+                'Het subsidiebedrag is juist vermeld in het Portaal en in de verplichting in SAP',
+                'Het IBAN is juist vermeld in het Portaal en in de verplichting in SAP',
+                'De verplichting is juist in SAP geboekt',
+                'De verplichting is in SAP goedgekeurd',
+                'De verleningsbeschikking mag verzonden worden',
             ],
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short

@@ -24,6 +24,32 @@
         },
         {
             "type": "FormGroupControl",
+            "label": "Financiële afhandeling",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/businessPartnerNumber",
+                    "label": "Zakenpartnernummer",
+                    "options": {
+                        "readonly": true
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/liabilitiesNumber",
+                    "label": "Verplichtingennummer",
+                    "options": {
+                        "readonly": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
             "label": "Uitkering",
             "options": {
                 "section": true,
