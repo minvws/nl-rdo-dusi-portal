@@ -1,11 +1,11 @@
 INSERT INTO public.fields (id, title, description, type, params, is_required, code, source, subsidy_stage_id,
-                           required_condition, retention_period_on_approval, exclude_FROM_clone_data)
+                           required_condition, retention_period_on_approval, exclude_from_clone_data)
 VALUES ('69700e65-fec0-4846-aa6d-ea8e850220b8', 'Zakenpartnernummer', null, 'text:numeric',
         '{"maxLength": 20}', false, 'businessPartnerNumber', 'user', '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c',
         null, 'short', false);
 
 INSERT INTO public.fields (id, title, description, type, params, is_required, code, source, subsidy_stage_id,
-                           required_condition, retention_period_on_approval, exclude_FROM_clone_data)
+                           required_condition, retention_period_on_approval, exclude_from_clone_data)
 VALUES ('8d180a3f-61f6-4904-97e8-2a0ca4017374', 'Verplichtingennummer', null, 'text:numeric',
         '{"maxLength": 20}', false, 'liabilitiesNumber', 'user', '6bcd59ab-2ba6-43bb-a1a1-9fb995f0e59c',
         null, 'short', false);
