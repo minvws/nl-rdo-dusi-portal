@@ -38,9 +38,9 @@
             </dl>
 
             @if (!$userRoles->isEmpty())
-                <h4>@lang("Authorizations")</h4>
                 <div class="horizontal-scroll">
                     <table id="user-overview-table">
+                        <caption>@lang("Authorizations")</caption>
                         <thead>
                         <tr>
                             <th scope="col">@lang('Roles')</th>
