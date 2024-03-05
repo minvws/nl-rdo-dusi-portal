@@ -142,7 +142,11 @@ class ApplicationRepository
                         ->orWhere('status', ApplicationStatus::Rejected);
                 }),
             );
+
+        $this->hideFinished($query, $filter);
+
         $this->applyFilters($query, $filter);
+
         $this->applySort($query, $sortOptions);
 
         return $query;
@@ -512,5 +516,17 @@ class ApplicationRepository
         foreach ($sortOptions->getSortColumns() as $column) {
             $query->orderBy($column->getColumn(), $column->getDirection());
         }
+    }
+
+    private function hideFinished(Builder $query, ApplicationsFilter $filter): void
+    {
+        //When we search on the Application reference we don't filter on finished applications (approved/rejected).
+        if (isset($filter->reference)) {
+            return;
+        }
+
+        $query
+            ->where('status', '<>', ApplicationStatus::Approved)
+            ->where('status', '<>', ApplicationStatus::Rejected);
     }
 }
