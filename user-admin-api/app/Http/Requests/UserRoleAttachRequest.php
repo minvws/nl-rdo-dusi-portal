@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\User\Admin\API\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 use MinVWS\DUSi\Shared\User\Enums\Role;
 
