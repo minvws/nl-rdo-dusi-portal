@@ -180,8 +180,7 @@ readonly class ApplicationDataService
     public function getApplicationStageDataUniqueBySequenceUpToIncluding(
         ApplicationStage $applicationStage,
         bool $readOnly = false
-    ): array
-    {
+    ): array {
         return $this->getApplicationStageDataUpToIncluding(
             $applicationStage,
             fn($stage) => $stage->sequence_number,
