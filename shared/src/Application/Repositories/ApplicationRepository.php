@@ -242,7 +242,6 @@ class ApplicationRepository
         $answer->save();
     }
 
-
     /**
      * Returns a list of application stages up to (and including) the given stage. If an application
      * has gone through certain stages multiple times only the latest instance of the stages

@@ -36,14 +36,14 @@ readonly class ApplicationAssessorService
         }
         $applicationStages = $application->applicationStages;
 
-        $allow_duplicate_assessors = $applicationStages
+        $allowDuplicateAssessors = $applicationStages
             ->filter(fn($as) => $as->is_current)
             ->firstOrFail()
             ->subsidyStage
             ->allow_duplicate_assessors;
 
         foreach ($applicationStages as $applicationStage) {
-            if (!$allow_duplicate_assessors && $applicationStage->assessor_user_id === $user->id) {
+            if (!$allowDuplicateAssessors && $applicationStage->assessor_user_id === $user->id) {
                 Log::debug('User already assessed a stage');
                 throw new InvalidAssignmentException();
             }
@@ -83,17 +83,20 @@ readonly class ApplicationAssessorService
 
     public function getAssessorPool(Application $application, string|null $search): AnonymousResourceCollection
     {
-        $previousAssessorIds = [];
         if ($application->currentApplicationStage === null) {
             return AssessorPoolUserResource::collection([]);
         }
 
-        if (!$application->currentApplicationStage->subsidyStage->allow_duplicate_assessors) {
-            $previousAssessorIds = $application->applicationStages
+        $allowDuplicateAssessors = $application
+            ->currentApplicationStage
+            ->subsidyStage
+            ->allow_duplicate_assessors;
+
+        $previousAssessorIds = $allowDuplicateAssessors ? [] :
+            $application->applicationStages
                 ->pluck('assessor_user_id')
                 ->filter()
                 ->toArray();
-        }
 
         $users = $this->userRepository->getPotentialUsersWithSpecificRole(
             $application->currentApplicationStage->subsidyStage,
