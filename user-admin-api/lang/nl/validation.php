@@ -153,5 +153,11 @@ return [
         'role' => "rol",
         "subsidy" => "subsidieregeling",
         "password" => "wachtwoord",
+        'subsidy_id' => 'subsidieregeling',
     ],
+    'values' => [
+        'role' => [
+            'userAdmin' => 'gebruikersbeheerder',
+        ],
+    ]
 ];

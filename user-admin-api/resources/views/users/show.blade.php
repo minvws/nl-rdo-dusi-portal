@@ -37,6 +37,32 @@
                 </div>
             </dl>
 
+            @if (!$userRoles->isEmpty())
+                <h4>@lang("Authorizations")</h4>
+                <div class="horizontal-scroll">
+                    <table id="user-overview-table">
+                        <thead>
+                        <tr>
+                            <th scope="col">@lang('Roles')</th>
+                            <th scope="col"> @lang('Subsidy') </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($userRoles as $role)
+                            <tr>
+                                <td>
+                                    {{ __($role->name->value) }}
+                                </td>
+                                <td>
+                                    {{ $subsidies[$role->pivot->subsidy_id] ?? __('Every subsidy') }}
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
             <form method=POST action="{{ route("users.update", $user->id)}}" class="horizontal-view">
                 @csrf
                 @method('PUT')

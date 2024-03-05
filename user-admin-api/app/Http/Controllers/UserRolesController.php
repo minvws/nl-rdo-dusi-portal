@@ -15,6 +15,7 @@ use MinVWS\DUSi\User\Admin\API\Events\Logging\DeleteUserAuthorizationEvent;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserRoleAttachRequest;
 use MinVWS\DUSi\Shared\User\Models\Role;
 use MinVWS\DUSi\Shared\User\Models\User;
+use MinVWS\DUSi\User\Admin\API\Http\Requests\UserRoleDetachRequest;
 use MinVWS\Logging\Laravel\LogService;
 
 class UserRolesController extends Controller
@@ -68,7 +69,7 @@ class UserRolesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UserRoleAttachRequest $request, User $user): RedirectResponse
+    public function destroy(UserRoleDetachRequest $request, User $user): RedirectResponse
     {
         $user->detachRole(
             role: RoleEnum::from($request->validated('role')),

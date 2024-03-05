@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\User\Admin\API\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
+use MinVWS\DUSi\Shared\User\Enums\Role;
 
 class UserRoleAttachRequest extends FormRequest
 {
@@ -27,7 +28,7 @@ class UserRoleAttachRequest extends FormRequest
     {
         return [
             'role' => ['required', 'string', 'exists:roles,name'],
-            'subsidy_id' => ['nullable', 'string', 'exists:' . Connection::APPLICATION . '.subsidies,id'],
+            'subsidy_id' => ['required_unless:role,' . Role::UserAdmin->value, 'nullable', 'string', 'exists:' . Connection::APPLICATION . '.subsidies,id'],
         ];
     }
 }
