@@ -28,7 +28,12 @@ class UserRoleAttachRequest extends FormRequest
     {
         return [
             'role' => ['required', 'string', 'exists:roles,name'],
-            'subsidy_id' => ['required_unless:role,' . Role::UserAdmin->value, 'nullable', 'string', 'exists:' . Connection::APPLICATION . '.subsidies,id'],
+            'subsidy_id' => [
+                'required_unless:role,' . Role::UserAdmin->value,
+                'nullable',
+                'string',
+                'exists:' . Connection::APPLICATION . '.subsidies,id',
+            ],
         ];
     }
 }

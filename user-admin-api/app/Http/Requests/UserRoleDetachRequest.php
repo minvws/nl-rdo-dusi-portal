@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\User\Admin\API\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use MinVWS\DUSi\Shared\Subsidy\Models\Connection;
 
@@ -14,6 +15,11 @@ class UserRoleDetachRequest extends FormRequest
         return $this->user()?->can('update', $this->route('user')) ?? false;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [

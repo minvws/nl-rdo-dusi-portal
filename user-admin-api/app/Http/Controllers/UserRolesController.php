@@ -18,6 +18,9 @@ use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserRoleDetachRequest;
 use MinVWS\Logging\Laravel\LogService;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class UserRolesController extends Controller
 {
     public function __construct(
