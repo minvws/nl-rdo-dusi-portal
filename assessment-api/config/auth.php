@@ -66,11 +66,6 @@ return [
             'driver' => 'assessment-user-provider',
             'model' => \MinVWS\DUSi\Shared\User\Models\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
