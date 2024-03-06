@@ -63,6 +63,33 @@ class BTVAssessmentStageUISeeder extends Seeder
                 ],
                 [
                     "type" => "Group",
+                    "label" => "Financiële afhandeling",
+                    "elements" => [
+                        [
+                            "type" => "VerticalLayout",
+                            "elements" => [
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/businessPartnerNumber",
+                                    "label" => 'Zakenpartnernummer',
+                                    "options" => [
+                                        "placeholder" => "",
+                                    ]
+                                ],
+                                [
+                                    "type" => "CustomControl",
+                                    "scope" => "#/properties/liabilitiesNumber",
+                                    "label" => 'Verplichtingennummer',
+                                    "options" => [
+                                        "placeholder" => "",
+                                    ]
+                                ],
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "Group",
                     "label" => "Uitkering",
                     "elements" => [
                         [
