@@ -268,7 +268,6 @@ class ApplicationRepository
                             ->where('is_submitted', '=', true)
                             ->when(!$readOnly, fn ($query) => $query->orWhere('id', '=', $stage->id))
                 )
-                ->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage)
                 ->orderBy('sequence_number')
                 ->get();
 

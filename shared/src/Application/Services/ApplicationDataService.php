@@ -199,10 +199,10 @@ readonly class ApplicationDataService
         Closure $groupingKey,
         bool $readOnly = false
     ): array {
-        $answersByStage = $this->applicationRepository
+        $answersByGrouping = $this->applicationRepository
             ->getAnswersForApplicationStagesUpToIncluding($applicationStage, $groupingKey, $readOnly);
         $result = [];
-        foreach ($answersByStage->stages as $stageAnswers) {
+        foreach ($answersByGrouping->stages as $stageAnswers) {
             $result[$groupingKey($stageAnswers->stage)] =
                 $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
         }
