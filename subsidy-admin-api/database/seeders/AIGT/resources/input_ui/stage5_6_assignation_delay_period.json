@@ -32,7 +32,7 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/proofOfRegistrationDocument",
+                            "scope": "#/properties/proof",
                             "label": "Bewijs",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",

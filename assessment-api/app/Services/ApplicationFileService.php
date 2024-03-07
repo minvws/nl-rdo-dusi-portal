@@ -52,6 +52,30 @@ class ApplicationFileService
         );
     }
 
+    public function writeApplicationFile(
+        Application $application,
+        string $applicationStageId,
+        string $fieldCode,
+        string $fileId,
+        string $content
+    ): Response {
+        //TODO GB: Test this service
+        $applicationStage = $application->applicationStages()->findOrFail($applicationStageId);
+        assert($applicationStage instanceof ApplicationStage);
+
+        $field = $applicationStage->subsidyStage->fields->where('code', $fieldCode)->firstOrFail();
+        $this->applicationFileManager->writeFile(
+            $applicationStage,
+            $field,
+            $fileId,
+            $content
+        );
+
+        return new Response(
+            status: 201,
+        );
+    }
+
     public function getMessageFile(ApplicationMessage $message, MessageDownloadFormat $format): Response
     {
         $content = match ($format) {

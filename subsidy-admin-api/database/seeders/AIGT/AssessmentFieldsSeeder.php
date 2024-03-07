@@ -188,9 +188,10 @@ class AssessmentFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
-            code:           'proofOfRegistrationDocument',
-            title:          'Bewijs van inschrijving',
+            code:           'proof',
+            title:          'Bewijsstukken',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            isRequired:     false,
             minItems:       1,
             maxItems:       20,
             maxFileSize:    20971520
@@ -217,12 +218,13 @@ class AssessmentFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
-            code:           'proofOfRegistrationDocument',
+            code:           'proof',
             title:          'Bewijsstukken',
+            isRequired:     false,
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize:    20971520,
             minItems:       1,
-            maxItems:       20,
-            maxFileSize:    20971520
+            maxItems:       20
         );
     }
 

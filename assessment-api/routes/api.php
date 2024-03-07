@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             ->controller(ApplicationFileController::class)
             ->group(function () {
                 Route::get('{application}/stages/{applicationStageId}/fields/{fieldCode}/files/{id}', 'show');
+                Route::post('{application}/stages/{applicationStageId}/fields/{fieldCode}/files', 'uploadFile');
             });
 
 
