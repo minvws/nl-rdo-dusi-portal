@@ -181,7 +181,6 @@
                             "options": {
                                 "format": "radio",
                                 "placeholder": "",
-                                "validation": ["onChange"],
                                 "remoteAction": ["onChange"]
                             }
                         },
@@ -191,7 +190,6 @@
                             "label": "Alimentatiebedrag",
                             "options": {
                                 "placeholder": "",
-                                "validation": ["onBlur"],
                                 "remoteAction": ["onBlur"]
                             },
                             "rule": {
@@ -208,7 +206,6 @@
                             "label": "Jaarinkomen ouder 1",
                             "options": {
                                 "placeholder": "",
-                                "validation": ["onBlur"],
                                 "remoteAction": ["onBlur"]
                             }
                         },
@@ -218,7 +215,6 @@
                             "label": "Jaarinkomen ouder 2",
                             "options": {
                                 "placeholder": "",
-                                "validation": ["onBlur"],
                                 "remoteAction": ["onBlur"]
                             }
                         },
@@ -304,7 +300,6 @@
                             "options": {
                                 "format": "radio",
                                 "placeholder": "",
-                                "validation": ["onBlur"],
                                 "remoteAction": ["onBlur"]
                             }
                         },
@@ -357,7 +352,6 @@
                             "label": "Reisafstand enkele reis",
                             "options": {
                                 "placeholder": "",
-                                "validation": ["onBlur"],
                                 "remoteAction": ["onBlur"]
                             }
                         },
