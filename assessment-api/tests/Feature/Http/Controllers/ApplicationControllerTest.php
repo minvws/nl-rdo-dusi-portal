@@ -45,6 +45,9 @@ class ApplicationControllerTest extends TestCase
     private Application $application5;
     private ApplicationStage $application5Stage1;
 
+    private Application $application6;
+    private ApplicationStage $application6Stage1;
+
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
     private SubsidyStage $subsidyStage1;
@@ -218,6 +221,21 @@ class ApplicationControllerTest extends TestCase
                     'sequence_number' => 1,
                 ]
             );
+
+        $this->application6 = Application::factory()->create(
+            [
+                'application_title' => 'application 6',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Approved,
+            ]
+        );
+        $this->application6Stage1 = ApplicationStage::factory()
+            ->for($this->subsidyStage1)
+            ->for($this->application6)
+            ->create();
     }
 
     public function testFilterForImplementationCoordinator(): void
@@ -289,6 +307,11 @@ class ApplicationControllerTest extends TestCase
         // Don't show draft
         $response->assertJsonMissing([
          'application_title' => $this->application5->application_title,
+        ]);
+
+        // Don't show approved
+        $response->assertJsonMissing([
+         'application_title' => $this->application6->application_title,
         ]);
     }
 
@@ -549,7 +572,7 @@ class ApplicationControllerTest extends TestCase
         ]);
     }
 
-    public function testListAllApplicationsAsLegalSpecialist(): void
+    public function testAsLegalSpecialistListApplications(): void
     {
         $user = User::factory()->create();
         $user->attachRole(RoleEnum::LegalSpecialist, $this->subsidy->id);
@@ -574,18 +597,50 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(0, 'data');
+    }
+
+    public function testAsLegalSpecialistListApplicationByReference(): void
+    {
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::LegalSpecialist, $this->subsidy->id);
+
+        $application = Application::factory()->create(
+            [
+                'application_title' => 'application rejected',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Rejected,
+            ]
+        );
+        ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage1)
+            ->create();
+
+        $response = $this
+            ->be($user)
+            ->json('GET', '/api/applications?reference=' . $application->reference);
+
+        $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
 
         $this->assertJsonFragment($response, $application, ['show']);
+    }
 
-        // Don't show other applications than rejected
-        $response->assertJsonMissing([
-            'application_title' => $this->application1->application_title,
-        ]);
+    public function testAsLegalSpecialistListApplicationByReferenceGivesNoResultWhenApplicationInNotFinished(): void
+    {
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::LegalSpecialist, $this->subsidy->id);
 
-        $response->assertJsonMissing([
-            'application_title' => $this->application2->application_title,
-        ]);
+        $response = $this
+            ->be($user)
+            ->json('GET', '/api/applications?reference=' . $this->application1->reference);
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(0, 'data');
     }
 
     /**

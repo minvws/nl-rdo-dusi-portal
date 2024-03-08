@@ -325,7 +325,7 @@ class ApplicationRepositoryWithStagesTest extends TestCase
         $this->assertCount(1, $applications);
     }
 
-    public function testImplementationCoordinatorsCanViewApplicationInStage5SelfApproved(): void
+    public function testImplementationCoordinatorsCanNotViewApprovedApplication(): void
     {
         // Test without applications
         $applications = $this->getApplications($this->implementationCoordinatorUser);
@@ -400,90 +400,9 @@ class ApplicationRepositoryWithStagesTest extends TestCase
 
         // Application should be visible
         $applications = $this->getApplications($this->implementationCoordinatorUser);
-        $this->assertCount(1, $applications);
-    }
-
-    public function testImplementationCoordinatorsCanViewApplicationInStage5OtherApproved(): void
-    {
-        // Test without applications
-        $applications = $this->getApplications($this->implementationCoordinatorUser);
         $this->assertCount(0, $applications);
-
-        // Create a test application
-        $application = Application::factory()
-            ->for($this->identity)
-            ->for($this->subsidyVersion)
-            ->create([
-                'application_title' => 'some_application_title',
-                'updated_at' => new DateTime('now'),
-                'created_at' => new DateTime('now'),
-                'final_review_deadline' => new DateTime('now'),
-                'status' => ApplicationStatus::Approved,
-            ]);
-
-        // Create application stages
-        ApplicationStage::factory()
-            ->for($application)
-            ->for($this->subsidyStages->get(1))
-            ->create([
-                'sequence_number' => 1,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
-            ]);
-
-        ApplicationStage::factory()
-            ->for($application)
-            ->for($this->subsidyStages->get(2))
-            ->create([
-                'sequence_number' => 2,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
-            ]);
-
-
-        ApplicationStage::factory()
-            ->for($application)
-            ->for($this->subsidyStages->get(3))
-            ->create([
-                'sequence_number' => 3,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
-            ]);
-
-
-        ApplicationStage::factory()
-            ->for($application)
-            ->for($this->subsidyStages->get(3))
-            ->create([
-                'sequence_number' => 4,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
-            ]);
-
-        $otherImplementationCoordinatorUser = User::factory()
-            ->withRole(Role::ImplementationCoordinator)
-            ->create();
-
-        ApplicationStage::factory()
-            ->for($application)
-            ->for($this->subsidyStages->get(3))
-            ->create([
-                'sequence_number' => 5,
-                'is_current' => false,
-                'is_submitted' => true,
-                'assessor_user_id' => $otherImplementationCoordinatorUser->id,
-                'assessor_decision' => ApplicationStageDecision::Approved,
-                'submitted_at' => new DateTime('now'),
-            ]);
-
-        // Application should be visible
-        $applications = $this->getApplications($this->implementationCoordinatorUser);
-        $this->assertCount(1, $applications);
     }
+
 
     protected function setUpSubsidyWithStages(SubsidyVersion $subsidyVersion): Collection
     {
