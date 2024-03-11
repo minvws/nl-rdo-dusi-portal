@@ -199,7 +199,7 @@ class ApplicationController extends Controller
                     ]));
             }
 
-            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, false);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
         } catch (ValidationErrorException $exception) {
