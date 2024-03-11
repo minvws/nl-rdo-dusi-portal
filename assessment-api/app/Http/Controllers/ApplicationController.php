@@ -213,6 +213,55 @@ class ApplicationController extends Controller
         }
     }
 
+    /**
+     * @throws Throwable
+     */
+    public function validateAssessment(
+        string $applicationId,
+        Authenticatable $user,
+        Request $request,
+    ): ApplicationSubsidyVersionResource {
+        return DB::transaction(fn() => $this->doValidateAssessment($applicationId, $user, $request));
+    }
+
+    /**
+     * @throws AuthorizationException
+     * @throws ApplicationFlowException
+     * @throws ModelNotFoundException
+     */
+    public function doValidateAssessment(
+        string $applicationId,
+        Authenticatable $user,
+        Request $request
+    ): ApplicationSubsidyVersionResource {
+        $application = $this->applicationRepository->getApplication($applicationId, lockForUpdate: true);
+
+        if (is_null($application)) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        $this->authorize('save', $application);
+
+        $submittedData = $request->json()->all();
+        $data = (object)($submittedData['data'] ?? []);
+
+        assert($user instanceof User);
+
+        try {
+            $application = $this->applicationService->saveAssessment($application, $data, false);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, false);
+        } catch (InvalidApplicationSaveException) {
+            abort(Response::HTTP_FORBIDDEN);
+        } catch (ValidationErrorException $exception) {
+            Log::error('ValidationErrorException while processAssessment', [
+                'userId' => $user->id,
+                'applicationId' => $application->id,
+                'validationErrors' => $exception->getValidationResults(),
+            ]);
+            abort(Response::HTTP_BAD_REQUEST);
+        }
+    }
+
     public function previewTransition(
         Application $application,
         Authenticatable $user
