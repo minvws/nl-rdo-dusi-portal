@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Auth;
 
+use Illuminate\Contracts\Auth\StatefulGuard;
 use MinVWS\DUSi\Application\API\Models\PortalUser;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Session\Session;
 
-class PortalUserGuard implements Guard
+class PortalUserGuard implements StatefulGuard
 {
     protected const SESSION_KEY = 'portal_user';
 
@@ -76,5 +76,35 @@ class PortalUserGuard implements Guard
     {
         $this->session->remove(self::SESSION_KEY);
         $this->session->migrate(true);
+    }
+
+    public function attempt(array $credentials = [], $remember = false): void
+    {
+        // TODO: Implement attempt() method.
+    }
+
+    public function once(array $credentials = []): void
+    {
+        // TODO: Implement once() method.
+    }
+
+    public function login(Authenticatable $user, $remember = false): void
+    {
+        // TODO: Implement login() method.
+    }
+
+    public function loginUsingId($id, $remember = false): void
+    {
+        // TODO: Implement loginUsingId() method.
+    }
+
+    public function onceUsingId($id): void
+    {
+        // TODO: Implement onceUsingId() method.
+    }
+
+    public function viaRemember(): void
+    {
+        // TODO: Implement viaRemember() method.
     }
 }

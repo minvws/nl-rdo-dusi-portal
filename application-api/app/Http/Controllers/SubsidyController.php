@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Http\Controllers;
 
+use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
+use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Application\API\Services\SubsidyService;
 use Illuminate\Http\JsonResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 
 class SubsidyController extends Controller
 {
@@ -13,5 +17,23 @@ class SubsidyController extends Controller
     {
         $json = $subsidyService->getActiveSubsidies();
         return JsonResponse::fromJsonString($json);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getSubsidyAndConcepts(
+        string $subsidyCode,
+        ClientPublicKeyHelper $publicKeyHelper,
+        StateService $stateService,
+        SubsidyService $subsidyService
+    ): Response {
+        $params = new SubsidyConceptsParams(
+            $stateService->getEncryptedIdentity(),
+            $publicKeyHelper->getClientPublicKey(),
+            $subsidyCode
+        );
+        $response = $subsidyService->getSubsidyConcepts($params);
+        return $this->encryptedResponse($response);
     }
 }

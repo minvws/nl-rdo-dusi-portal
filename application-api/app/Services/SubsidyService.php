@@ -4,14 +4,23 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\API\Services;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use MinVWS\DUSi\Application\API\Helpers\CacheKeyHelper;
 use MinVWS\DUSi\Application\API\Repositories\CacheRepository;
+use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
+use MinVWS\DUSi\Shared\Bridge\Client\Client;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 class SubsidyService
 {
     public function __construct(
         private readonly CacheRepository $cacheRepository,
-        private readonly CacheKeyHelper $cacheKeyHelper
+        private readonly CacheKeyHelper $cacheKeyHelper,
+        private readonly Client $bridgeClient
     ) {
     }
 
@@ -28,5 +37,10 @@ class SubsidyService
         }
 
         return $subsidies;
+    }
+
+    public function getSubsidyConcepts(SubsidyConceptsParams $params): Subsidy
+    {
+        return $this->bridgeClient->call(RPCMethods::GET_SUBSIDY_CONCEPTS, $params, EncryptedResponse::class);
     }
 }

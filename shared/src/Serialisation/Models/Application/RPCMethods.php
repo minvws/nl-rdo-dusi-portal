@@ -19,4 +19,6 @@ class RPCMethods
     public const GET_APPLICATION_FILE = 'getApplicationFile';
 
     public const GET_ACTIONABLE_COUNTS = 'getActionableCounts';
+
+    public const GET_SUBSIDY_CONCEPTS = 'getSubsidyConcepts';
 }

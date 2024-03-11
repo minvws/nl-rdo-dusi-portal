@@ -219,4 +219,9 @@ class SubsidyRepository
         assert($stage instanceof SubsidyStage);
         return $stage;
     }
+
+    public function getSubsidyByCode(string $code): Subsidy
+    {
+        return Subsidy::query()->where('code', $code)->firstOrFail();
+    }
 }
