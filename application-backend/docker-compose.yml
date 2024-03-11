@@ -80,11 +80,12 @@ services:
         depends_on:
             - pgsql
     hsm-api-service:
-        image: 'ghcr.io/minvws/nl-rdo-hsm-api-service:v0.2.0'
+        image: 'ghcr.io/minvws/nl-rdo-hsm-api-service:v0.2.3'
         environment:
             USER_ID: '${WWWUSER:-1000}'
             GROUP_ID: '${WWWGROUP:-1000}'
         volumes:
+            - 'hsm-tokens:/var/lib/softhsm/tokens'
             - './secrets:/src/secrets'
         ports:
             - '${HSM_PORT:-9104}:8000'
@@ -114,4 +115,6 @@ volumes:
     pgsql:
         driver: local
     sail-redis:
+        driver: local
+    hsm-tokens:
         driver: local

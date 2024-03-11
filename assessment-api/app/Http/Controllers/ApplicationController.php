@@ -61,40 +61,14 @@ class ApplicationController extends Controller
     {
         $this->authorize('filterApplications', [Application::class]);
 
-        $user = $request->user();
-        assert($user !== null);
-
-        $filter = ApplicationsFilter::fromArray($request->validated());
-        $sortOptions = SortOptions::fromString($request->validated('sort'));
-        $paginationOptions = PaginationOptions::fromArray($request->safe(['page', 'per_page']));
-
-        return $this->applicationService->getApplications(
-            user: $user,
-            onlyMyApplications: false,
-            applicationsFilter: $filter,
-            paginationOptions: $paginationOptions,
-            sortOptions: $sortOptions,
-        );
+        return $this->getFilteredApplications(request: $request, onlyMyApplications: false);
     }
 
     public function filterAssignedApplications(ApplicationRequest $request): AnonymousResourceCollection
     {
         $this->authorize('filterAssignedApplications', [Application::class]);
 
-        $user = $request->user();
-        assert($user !== null);
-
-        $filter = ApplicationsFilter::fromArray($request->validated());
-        $sortOptions = SortOptions::fromString($request->validated('sort'));
-        $paginationOptions = PaginationOptions::fromArray($request->safe(['page', 'per_page']));
-
-        return $this->applicationService->getApplications(
-            user: $user,
-            onlyMyApplications: true,
-            applicationsFilter: $filter,
-            paginationOptions: $paginationOptions,
-            sortOptions: $sortOptions,
-        );
+        return $this->getFilteredApplications(request: $request, onlyMyApplications: true);
     }
 
     /**
@@ -303,5 +277,25 @@ class ApplicationController extends Controller
             ]);
             abort(Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    public function getFilteredApplications(
+        ApplicationRequest $request,
+        bool $onlyMyApplications
+    ): AnonymousResourceCollection {
+        $user = $request->user();
+        assert($user !== null);
+
+        $filter = ApplicationsFilter::fromArray($request->validated());
+        $sortOptions = SortOptions::fromString($request->validated('sort'));
+        $paginationOptions = PaginationOptions::fromArray($request->safe(['page', 'per_page']));
+
+        return $this->applicationService->getApplications(
+            user: $user,
+            onlyMyApplications: $onlyMyApplications,
+            applicationsFilter: $filter,
+            paginationOptions: $paginationOptions,
+            sortOptions: $sortOptions,
+        );
     }
 }
