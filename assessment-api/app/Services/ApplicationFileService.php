@@ -72,7 +72,8 @@ class ApplicationFileService
         );
 
         return new Response(
-            status: 201,
+            content: $fileId,
+            status: 201
         );
     }
 

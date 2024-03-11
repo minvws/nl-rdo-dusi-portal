@@ -25,11 +25,9 @@ return new class extends Migration
             return "'".$value."'";
         }, $allowedValues));
 
-        DB::statement("ALTER TABLE $table DROP CONSTRAINT {$table}_{$column}_check");
-        DB::statement("
-            ALTER TABLE $table ADD CONSTRAINT {$table}_{$column}_check
-            CHECK ($column IN ({$values}))
-        ");
+        DB::statement("ALTER TABLE $table DROP CONSTRAINT IF EXISTS {$table}_{$column}_check");
+        DB::statement("ALTER TABLE $table ADD CONSTRAINT {$table}_{$column}_check
+CHECK ($column IN ({$values}))");
     }
 
     public function down(): void

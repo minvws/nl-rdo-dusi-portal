@@ -45,7 +45,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::post('{application}/stages/{applicationStageId}/fields/{fieldCode}/files', 'uploadFile');
             });
 
-
         Route::prefix('applications/{application}/assessor')
             ->controller(ApplicationAssessorController::class)
             ->group(function () {
