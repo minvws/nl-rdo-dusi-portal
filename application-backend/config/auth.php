@@ -64,13 +64,8 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-//            'model' => App\Shared\Models\Definition\User::class,
+            'model' => MinVWS\DUSi\Shared\User\Models\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*

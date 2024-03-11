@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\User\Admin\API\Components\FlashNotification;
 use MinVWS\DUSi\User\Admin\API\Enums\FlashNotificationTypeEnum;
 use MinVWS\DUSi\User\Admin\API\Events\Logging\CreateUserEvent;
@@ -134,6 +135,8 @@ class UserController extends Controller
 
         return view('users.show', [
             'user' => $user,
+            'userRoles' => $user->roles()->paginate(),
+            'subsidies' => Subsidy::query()->pluck('title', 'id'),
             'organisations' => Organisation::query()->pluck('name', 'id')
         ]);
     }

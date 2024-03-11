@@ -43,11 +43,6 @@ class User extends Authenticatable implements LoggableUser
 
     protected $connection = Connection::USER;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
