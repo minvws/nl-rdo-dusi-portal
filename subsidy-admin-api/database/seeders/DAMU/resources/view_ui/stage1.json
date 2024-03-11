@@ -126,7 +126,7 @@
                             "Huisnummer toevoeging": "{residentialHouseNumberSuffix}",
                             "Postcode": "{residentialPostalCode}",
                             "Plaatsnaam": "{residentialCity}",
-                            "Gaat naar het:": "{educationType}"
+                            "Gaat naar het": "{educationType}"
                         }
                     }
                 },
@@ -183,7 +183,7 @@
                             "Reisafstand enkele reis": "{travelDistanceSingleTrip}",
                             "Totaal aantal kilometers": "{totalDistance}",
                             "Kilometervergoeding": "{travelExpenseReimbursement}",
-                            "Gevraagd subsidiebrdrag": "{requestedSubsidyAmount}"
+                            "Gevraagd subsidiebedrag": "{requestedSubsidyAmount}"
                         }
                     }
                 }

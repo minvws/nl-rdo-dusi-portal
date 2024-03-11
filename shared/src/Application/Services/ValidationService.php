@@ -136,8 +136,8 @@ class ValidationService
             'string',
         ];
 
-        $maxLength = $field->params['minLength'] ?? null;
-        if (!empty($maxLength)) {
+        $minLength = $field->params['minLength'] ?? null;
+        if (!empty($minLength)) {
             $rules[] = 'min:' . $field->params['minLength'];
         }
 
@@ -159,13 +159,13 @@ class ValidationService
             'integer'
         ];
 
-        $maxLength = $field->params['minimum'] ?? null;
-        if (!empty($maxLength)) {
+        $minimum = $field->params['minimum'] ?? null;
+        if (!empty($minimum)) {
             $rules[] = 'min:' . $field->params['minimum'];
         }
 
-        $maxLength = $field->params['maximum'] ?? null;
-        if (!empty($maxLength)) {
+        $maximum = $field->params['maximum'] ?? null;
+        if (!empty($maximum)) {
             $rules[] = 'max:' . $field->params['maximum'];
         }
 
@@ -182,13 +182,13 @@ class ValidationService
             'numeric'
         ];
 
-        $maxLength = $field->params['minimum'] ?? null;
-        if (!empty($maxLength)) {
+        $minimum = $field->params['minimum'] ?? null;
+        if (!empty($minimum)) {
             $rules[] = 'min:' . $field->params['minimum'];
         }
 
-        $maxLength = $field->params['maximum'] ?? null;
-        if (!empty($maxLength)) {
+        $maximum = $field->params['maximum'] ?? null;
+        if (!empty($maximum)) {
             $rules[] = 'max:' . $field->params['maximum'];
         }
 
