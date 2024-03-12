@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\API\Providers;
 
 use MinVWS\DUSi\Application\API\Services\Exceptions\SubsidyStageNotFoundException;
-use MinVWS\DUSi\Application\API\Services\SubsidyService;
 use MinVWS\DUSi\Application\API\Services\SubsidyStageService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
