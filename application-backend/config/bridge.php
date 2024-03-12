@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyController;
 use MinVWS\DUSi\Application\Backend\Services\ActionableService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;

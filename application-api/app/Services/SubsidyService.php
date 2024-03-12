@@ -10,7 +10,6 @@ use MinVWS\DUSi\Shared\Bridge\Client\Client;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
-use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 
 class SubsidyService
 {
@@ -36,7 +35,7 @@ class SubsidyService
         return $subsidies;
     }
 
-    public function getSubsidyConcepts(SubsidyConceptsParams $params): Subsidy
+    public function getSubsidyConcepts(SubsidyConceptsParams $params): EncryptedResponse
     {
         return $this->bridgeClient->call(RPCMethods::GET_SUBSIDY_CONCEPTS, $params, EncryptedResponse::class);
     }

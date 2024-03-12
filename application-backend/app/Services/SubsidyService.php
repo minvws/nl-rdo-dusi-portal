@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Facades\Log;
+use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
@@ -17,19 +19,20 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 //use MinVWS\Logging\Laravel\Loggers\LoggerInterface;
 use Ramsey\Uuid\Uuid;
-use stdClass;
 
 class SubsidyService
 {
     use LoadIdentity;
 
     public function __construct(
+        private ApplicationRepository $applicationRepository,
+        private ApplicationMapper $applicationMapper,
         private ApplicationStageEncryptionService $applicationEncryptionService,
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private SubsidyRepository $subsidyRepository,
         private EncryptedResponseExceptionHelper $exceptionHelper,
-//        private LoggerInterface $logger,
+        //        private LoggerInterface $logger,
     ) {
     }
 
@@ -51,21 +54,12 @@ class SubsidyService
 
         $identity = $this->identityService->findOrCreateIdentity($params->identity, lockForUpdate: true);
 
-        $concepts = new stdClass();
-        $concepts->concepts = [
-            [
-                'name' => 'John',
-                'lastName' => 'Doe',
-            ],
-            [
-                'name' => 'Jane',
-                'lastName' => 'Doe',
-            ]
-        ];
-        $concepts->identity = $identity;
+        $apps = $this->applicationRepository->getMyApplications($identity);
+        $concepts = $this->applicationMapper->mapApplicationArrayToApplicationListDTO($apps);
+
         $dto = new SubsidyConcepts($subsidy, $concepts);
 
-        //Log::debug(json_encode($dto));
+        Log::debug(json_encode($dto));
 
         return $this->responseEncryptionService->encryptCodable(EncryptedResponseStatus::OK, $dto, $params->publicKey);
     }

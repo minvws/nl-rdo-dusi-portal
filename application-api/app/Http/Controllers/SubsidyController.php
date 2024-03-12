@@ -8,6 +8,7 @@ use MinVWS\DUSi\Application\API\Http\Helpers\ClientPublicKeyHelper;
 use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Application\API\Services\SubsidyService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 
 class SubsidyController extends Controller
