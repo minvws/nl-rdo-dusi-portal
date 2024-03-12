@@ -23,7 +23,7 @@ class ActualRequestedSubsidyAmount extends RequestedSubsidyAmount
             return new FieldValue($fieldValue->field, null);
         }
 
-        if ($applicantEducationType === 'Primair onderwijs') {
+        if ($applicantEducationType === EducationType::PRIMARY_EDUCATION) {
             return new FieldValue(
                 $fieldValue->field,
                 round(TravelExpenseReimbursementCalculator::calculateForPrimaryEducation(
@@ -33,7 +33,7 @@ class ActualRequestedSubsidyAmount extends RequestedSubsidyAmount
             );
         }
 
-        if ($applicantEducationType === 'Voortgezet onderwijs') {
+        if ($applicantEducationType === EducationType::SECONDARY_EDUCATION) {
             return new FieldValue(
                 $fieldValue->field,
                 round(TravelExpenseReimbursementCalculator::calculateForSecondaryEducation(

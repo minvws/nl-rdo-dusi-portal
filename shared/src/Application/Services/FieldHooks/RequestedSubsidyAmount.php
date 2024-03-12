@@ -25,7 +25,7 @@ class RequestedSubsidyAmount implements FieldHook
             return new FieldValue($fieldValue->field, null);
         }
 
-        if ($fieldValues['educationType']->value === 'Primair onderwijs') {
+        if ($fieldValues['educationType']->value === EducationType::PRIMARY_EDUCATION) {
             return new FieldValue(
                 $fieldValue->field,
                 round(TravelExpenseReimbursementCalculator::calculateForPrimaryEducation(
@@ -35,7 +35,7 @@ class RequestedSubsidyAmount implements FieldHook
             );
         }
 
-        if ($fieldValues['educationType']->value === 'Voortgezet onderwijs') {
+        if ($fieldValues['educationType']->value === EducationType::SECONDARY_EDUCATION) {
             return new FieldValue(
                 $fieldValue->field,
                 round(TravelExpenseReimbursementCalculator::calculateForSecondaryEducation(

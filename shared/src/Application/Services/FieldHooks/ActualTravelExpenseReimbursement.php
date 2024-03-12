@@ -22,7 +22,7 @@ class ActualTravelExpenseReimbursement extends TravelExpenseReimbursement
             return new FieldValue($fieldValue->field, null);
         }
 
-        if ($applicantEducationType === 'Primair onderwijs') {
+        if ($applicantEducationType === EducationType::PRIMARY_EDUCATION) {
             return new FieldValue(
                 $fieldValue->field,
                 round(
@@ -34,7 +34,7 @@ class ActualTravelExpenseReimbursement extends TravelExpenseReimbursement
             );
         }
 
-        if ($applicantEducationType === 'Voortgezet onderwijs') {
+        if ($applicantEducationType === EducationType::SECONDARY_EDUCATION) {
             return new FieldValue(
                 $fieldValue->field,
                 round(
