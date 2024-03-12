@@ -97,8 +97,7 @@ class SubsidyStageDataSchemaBuilder
                 $result = array_merge($result, $this->getNumberValidationOptions($field));
                 break;
             case FieldType::TextFloat:
-                $result['step'] = 0.01;
-                $result = array_merge($result, $this->getNumberValidationOptions($field));
+                $result = array_merge(['step' => 0.01], $result, $this->getNumberValidationOptions($field));
                 break;
             case FieldType::TextUrl:
                 // Currently nothing extra
