@@ -22,7 +22,7 @@ class TravelExpenseReimbursement implements FieldHook
             return new FieldValue($fieldValue->field, null);
         }
 
-        if ($fieldValues['educationType']->value === EducationType::PRIMARY_EDUCATION) {
+        if ($fieldValues['educationType']->value === EducationalType::PRIMARY_EDUCATION) {
             return new FieldValue(
                 $fieldValue->field,
                 round(
@@ -34,7 +34,7 @@ class TravelExpenseReimbursement implements FieldHook
             );
         }
 
-        if ($fieldValues['educationType']->value === EducationType::SECONDARY_EDUCATION) {
+        if ($fieldValues['educationType']->value === EducationalType::SECONDARY_EDUCATION) {
             return new FieldValue(
                 $fieldValue->field,
                 round(

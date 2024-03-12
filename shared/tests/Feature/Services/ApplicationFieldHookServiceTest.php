@@ -9,7 +9,7 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFieldHookService;
-use MinVWS\DUSi\Shared\Application\Services\FieldHooks\EducationType;
+use MinVWS\DUSi\Shared\Application\Services\FieldHooks\EducationalType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -154,14 +154,14 @@ class ApplicationFieldHookServiceTest extends TestCase
             'income1: 1000, income2: 2000, education: Primair, travel distance: 29.1, expectedReimbursement: 4000' => [
                 'income1' => 10000,
                 'income2' => 20000,
-                'educationType' => EducationType::PRIMARY_EDUCATION->value,
+                'educationType' => EducationalType::PRIMARY_EDUCATION,
                 'travelDistanceSingleTripe' => 29.4,
                 'expectedReimbursement' => 1333.58,
             ],
             'income1: 2000, income2: 2000, education: Primair, travel distance: 29.1, expectedReimbursement: 4000' => [
                 'income1' => 20000,
                 'income2' => 20000,
-                'educationType' => EducationType::PRIMARY_EDUCATION->value,
+                'educationType' => EducationalType::PRIMARY_EDUCATION,
                 'travelDistanceSingleTripe' => 29.4,
                 'expectedReimbursement' => 1111.32,
             ],
@@ -169,7 +169,7 @@ class ApplicationFieldHookServiceTest extends TestCase
              travel distance: 29.1, expectedReimbursement: 4000' => [
                 'income1' => 20000,
                 'income2' => 20000,
-                'educationType' => EducationType::SECONDARY_EDUCATION->value,
+                'educationType' => EducationalType::SECONDARY_EDUCATION,
                 'travelDistanceSingleTripe' => 29.4,
                 'expectedReimbursement' => 1222.45,
             ],
@@ -227,7 +227,7 @@ class ApplicationFieldHookServiceTest extends TestCase
                        'code' => 'educationType',
                        'type' => FieldType::Select,
                         'params' => [
-                            'options' => [EducationType::PRIMARY_EDUCATION, EducationType::SECONDARY_EDUCATION]
+                            'options' => [EducationalType::PRIMARY_EDUCATION, EducationalType::SECONDARY_EDUCATION]
                         ]
                     ]),
                 value: $educationType
