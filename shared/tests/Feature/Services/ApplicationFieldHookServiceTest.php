@@ -154,14 +154,14 @@ class ApplicationFieldHookServiceTest extends TestCase
             'income1: 1000, income2: 2000, education: Primair, travel distance: 29.1, expectedReimbursement: 4000' => [
                 'income1' => 10000,
                 'income2' => 20000,
-                'educationType' => EducationType::PRIMARY_EDUCATION,
+                'educationType' => EducationType::PRIMARY_EDUCATION->value,
                 'travelDistanceSingleTripe' => 29.4,
                 'expectedReimbursement' => 1333.58,
             ],
             'income1: 2000, income2: 2000, education: Primair, travel distance: 29.1, expectedReimbursement: 4000' => [
                 'income1' => 20000,
                 'income2' => 20000,
-                'educationType' => EducationType::PRIMARY_EDUCATION,
+                'educationType' => EducationType::PRIMARY_EDUCATION->value,
                 'travelDistanceSingleTripe' => 29.4,
                 'expectedReimbursement' => 1111.32,
             ],
@@ -169,7 +169,7 @@ class ApplicationFieldHookServiceTest extends TestCase
              travel distance: 29.1, expectedReimbursement: 4000' => [
                 'income1' => 20000,
                 'income2' => 20000,
-                'educationType' => EducationType::SECONDARY_EDUCATION,
+                'educationType' => EducationType::SECONDARY_EDUCATION->value,
                 'travelDistanceSingleTripe' => 29.4,
                 'expectedReimbursement' => 1222.45,
             ],
