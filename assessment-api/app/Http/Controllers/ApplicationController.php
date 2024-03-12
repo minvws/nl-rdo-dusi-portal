@@ -168,7 +168,7 @@ class ApplicationController extends Controller
      * @throws ApplicationFlowException
      * @throws ModelNotFoundException
      */
-    public function doSaveAssessment(
+    private function doSaveAssessment(
         string $applicationId,
         Authenticatable $user,
         Request $request
@@ -226,10 +226,9 @@ class ApplicationController extends Controller
 
     /**
      * @throws AuthorizationException
-     * @throws ApplicationFlowException
      * @throws ModelNotFoundException
      */
-    public function doValidateAssessment(
+    private function doValidateAssessment(
         string $applicationId,
         Authenticatable $user,
         Request $request
@@ -328,7 +327,7 @@ class ApplicationController extends Controller
         }
     }
 
-    public function getFilteredApplications(
+    private function getFilteredApplications(
         ApplicationRequest $request,
         bool $onlyMyApplications
     ): AnonymousResourceCollection {
