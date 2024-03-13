@@ -20,11 +20,14 @@ use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Jobs\CheckSurePayJob;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFieldHookService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
+use MinVWS\DUSi\Shared\Application\Services\FormDecodingService;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
@@ -37,6 +40,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidatedAndProcessedDataDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\Logging\Laravel\LogService;
@@ -69,25 +73,27 @@ readonly class ApplicationMutationService
         private EncryptedResponseExceptionHelper $exceptionHelper,
         private LoggerInterface $logger,
         private LogService $logService,
+        private FormDecodingService $decodingService,
+        private ApplicationFieldHookService $applicationFieldHookService,
     ) {
     }
 
-    private function applicationResponse(
-        EncryptedResponseStatus $status,
-        Application $application,
-        ?ValidationResultDTO $validationResult,
-        ClientPublicKey $publicKey
-    ): EncryptedResponse {
-        $stage = $this->applicationRepository->getCurrentApplicantApplicationStage($application, true);
-        $data = $stage !== null ? $this->applicationDataService->getApplicationStageData($stage) : null;
-
-        $dto = $this->applicationMapper->mapApplicationToApplicationDTO(
-            $application,
-            $data,
-            $validationResult
-        );
-
-        return $this->responseEncryptionService->encryptCodable($status, $dto, $publicKey);
+    public function findOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
+    {
+        try {
+            return DB::transaction(
+                fn() => $this->doFindOrCreateApplication($params),
+                self::CREATE_APPLICATION_ATTEMPTS
+            );
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::FIND_OR_CREATE_APPLICATION,
+                $params->publicKey
+            );
+        }
     }
 
     /**
@@ -181,19 +187,34 @@ readonly class ApplicationMutationService
         );
     }
 
-    public function findOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
+    private function applicationResponse(
+        EncryptedResponseStatus $status,
+        Application $application,
+        ?ValidationResultDTO $validationResult,
+        ClientPublicKey $publicKey
+    ): EncryptedResponse {
+        $stage = $this->applicationRepository->getCurrentApplicantApplicationStage($application, true);
+        $data = $stage !== null ? $this->applicationDataService->getApplicationStageData($stage) : null;
+
+        $dto = $this->applicationMapper->mapApplicationToApplicationDTO(
+            $application,
+            $data,
+            $validationResult
+        );
+
+        return $this->responseEncryptionService->encryptCodable($status, $dto, $publicKey);
+    }
+
+    public function saveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse
     {
         try {
-            return DB::transaction(
-                fn () => $this->doFindOrCreateApplication($params),
-                self::CREATE_APPLICATION_ATTEMPTS
-            );
+            return DB::transaction(fn() => $this->doSaveApplication($params));
         } catch (Throwable $e) {
             return $this->exceptionHelper->processException(
                 $e,
                 __CLASS__,
                 __METHOD__,
-                RPCMethods::FIND_OR_CREATE_APPLICATION,
+                RPCMethods::SAVE_APPLICATION,
                 $params->publicKey
             );
         }
@@ -270,7 +291,7 @@ readonly class ApplicationMutationService
                 ]));
 
             // TODO: this should be generalized
-            DB::afterCommit(fn () => CheckSurePayJob::dispatch($application->id));
+            DB::afterCommit(fn() => CheckSurePayJob::dispatch($application->id));
         }
 
         return $this->applicationResponse(
@@ -279,21 +300,6 @@ readonly class ApplicationMutationService
             new ValidationResultDTO($validationResult),
             $params->publicKey
         );
-    }
-
-    public function saveApplication(EncryptedApplicationSaveParams $params): EncryptedResponse
-    {
-        try {
-            return DB::transaction(fn () => $this->doSaveApplication($params));
-        } catch (Throwable $e) {
-            return $this->exceptionHelper->processException(
-                $e,
-                __CLASS__,
-                __METHOD__,
-                RPCMethods::SAVE_APPLICATION,
-                $params->publicKey
-            );
-        }
     }
 
     public function validateApplication(EncryptedApplicationValidationParams $params): EncryptedResponse
@@ -310,24 +316,31 @@ readonly class ApplicationMutationService
             }
             $body = $this->frontendDecryptionService->decryptCodable($params->data, FieldValidationParams::class);
 
+            $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $body->data);
+            $fieldValues = $this->applicationFieldHookService->findAndExecuteHooks($fieldValues, $applicationStage);
+
+            $data = array_map(function (FieldValue $fieldValue) {
+                return $fieldValue->value;
+            }, $fieldValues);
+
             $validationResult = [];
             try {
                 $validationResult = $this->applicationDataService->validateFieldValues(
                     $applicationStage,
-                    $body->data,
+                    $fieldValues,
                     false
                 );
             } catch (ValidationErrorException $e) {
                 return $this->responseEncryptionService->encryptCodable(
                     EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
-                    $this->createValidationResultDTO($e->getValidationResults()),
+                    $this->createValidatedAndProcessedDataDTO($data, $e->getValidationResults()),
                     $params->publicKey
                 );
             }
 
             return $this->responseEncryptionService->encryptCodable(
                 EncryptedResponseStatus::OK,
-                $this->createValidationResultDTO($validationResult),
+                $this->createValidatedAndProcessedDataDTO($data, $validationResult),
                 $params->publicKey
             );
         } catch (Throwable $e) {
@@ -341,9 +354,12 @@ readonly class ApplicationMutationService
         }
     }
 
-    public function createValidationResultDTO(array $validationResults): ValidationResultDTO
-    {
-        return new ValidationResultDTO(
+    public function createValidatedAndProcessedDataDTO(
+        array $data,
+        array $validationResults
+    ): ValidatedAndProcessedDataDTO {
+        return new ValidatedAndProcessedDataDTO(
+            data: $data,
             validationResult: $validationResults,
         );
     }

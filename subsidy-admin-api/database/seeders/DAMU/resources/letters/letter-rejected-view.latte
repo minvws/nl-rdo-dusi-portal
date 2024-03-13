@@ -1,0 +1,49 @@
+{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
+    </p>
+
+    <h2>Besluit</h2>
+    <p>Uw aanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
+
+    <h2>Motivatie</h2>
+
+    {if $content->stage1->eductionType === 'Primair onderwijs'}
+    <p>Uw aanvraag is beoordeeld aan de hand van de criteria uit artikel 6 en 7 van de Regeling. </p>
+    {/if}
+
+    {if $content->stage1->eductionType === 'Voorgezet onderwijs'}
+    <p>Uw aanvraag is beoordeeld aan de hand van de criteria uit artikel 3 en 6 van de Regeling.</p>
+    {/if}
+
+    {if $content->stage2->firstAssessmentRejectedNote}
+    <p>Uw aanvraag voldoet niet aan de volgende voorwaarde(n):<<br/>>
+    {$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
+    {/if}
+{/block}
+
+{block signature}
+    <p>
+        Met vriendelijke groet,<br/>
+        <br/>
+        de minister van Onderwijs, Cultuur en Wetenschap,<br/>
+        namens deze,<br/>
+        afdelingshoofd Dienst Uitvoering Subsidies aan Instellingen,<br/>
+        <br/>
+        <img class="signature" alt="handtekening" src="{$content->getSignature('vws_dusi_signature.jpg')|dataStream}" />
+        <br/>
+        C.H. van der Schaaf
+    </p>
+{/block}
+
+{block objectionFooter}
+<footer>
+    <h2>Bezwaar</h2>
+    <p>Als u belang hebt bij dit besluit, dan kunt u hiertegen binnen 6 weken, gerekend vanaf de verzenddatum, bezwaar
+        maken. Stuur uw bezwaarschrift naar DUO, Postbus 30205, 2500 GE Den Haag. U kunt uw bezwaar ook digitaal
+        indienen via <a href="https://www.duo.nl/zakelijk/oneens-met-duo/bezwaar-maken.jsp" target="_blank">www.duo.nl/zakelijk/oneens-met-duo/bezwaar-maken.jsp</a>.
+    </p>
+</footer>
+{/block}
+

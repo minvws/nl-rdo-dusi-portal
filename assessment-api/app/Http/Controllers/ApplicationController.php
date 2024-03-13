@@ -168,7 +168,7 @@ class ApplicationController extends Controller
      * @throws ApplicationFlowException
      * @throws ModelNotFoundException
      */
-    public function doSaveAssessment(
+    private function doSaveAssessment(
         string $applicationId,
         Authenticatable $user,
         Request $request
@@ -199,7 +199,7 @@ class ApplicationController extends Controller
                     ]));
             }
 
-            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, false);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
         } catch (ValidationErrorException $exception) {
@@ -207,6 +207,54 @@ class ApplicationController extends Controller
                 'userId' => $user->id,
                 'applicationId' => $application->id,
                 'submitAssessment' => $submit,
+                'validationErrors' => $exception->getValidationResults(),
+            ]);
+            abort(Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function validateAssessment(
+        string $applicationId,
+        Authenticatable $user,
+        Request $request,
+    ): ApplicationSubsidyVersionResource {
+        return DB::transaction(fn() => $this->doValidateAssessment($applicationId, $user, $request));
+    }
+
+    /**
+     * @throws AuthorizationException
+     * @throws ModelNotFoundException
+     */
+    private function doValidateAssessment(
+        string $applicationId,
+        Authenticatable $user,
+        Request $request
+    ): ApplicationSubsidyVersionResource {
+        $application = $this->applicationRepository->getApplication($applicationId, lockForUpdate: true);
+
+        if (is_null($application)) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        $this->authorize('save', $application);
+
+        $submittedData = $request->json()->all();
+        $data = (object)($submittedData['data'] ?? []);
+
+        assert($user instanceof User);
+
+        try {
+            $application = $this->applicationService->saveAssessment($application, $data, false);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, false);
+        } catch (InvalidApplicationSaveException) {
+            abort(Response::HTTP_FORBIDDEN);
+        } catch (ValidationErrorException $exception) {
+            Log::error('ValidationErrorException while processAssessment', [
+                'userId' => $user->id,
+                'applicationId' => $application->id,
                 'validationErrors' => $exception->getValidationResults(),
             ]);
             abort(Response::HTTP_BAD_REQUEST);
@@ -279,7 +327,7 @@ class ApplicationController extends Controller
         }
     }
 
-    public function getFilteredApplications(
+    private function getFilteredApplications(
         ApplicationRequest $request,
         bool $onlyMyApplications
     ): AnonymousResourceCollection {

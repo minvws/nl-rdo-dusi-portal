@@ -14,6 +14,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\DUSi\Shared\Tests\TestCase;
 
+/** @group decoding */
 class FormDecodingServiceTest extends TestCase
 {
     /**
@@ -54,6 +55,9 @@ class FormDecodingServiceTest extends TestCase
         return [
             'field type text' => self::getTestDataForFieldExpectSameValue(FieldType::Text, 'tekst'),
             'field type text numeric' => self::getTestDataForFieldExpectSameValue(FieldType::TextNumeric, 1),
+            'field type text float' => self::getTestDataForFieldExpectSameValue(FieldType::TextFloat, 1.1),
+            'field type text float whole value' => self::getTestDataForFieldExpectSameValue(FieldType::TextFloat, 1.0),
+            'field type text float with integer value' => self::getTestDataForField(FieldType::TextFloat, 1, 1.0),
             'field type text email' => self::getTestDataForFieldExpectSameValue(FieldType::TextEmail, 'tekst'),
             'field type text tel' => self::getTestDataForFieldExpectSameValue(FieldType::TextTel, '+31123456'),
             'field type text url' => self::getTestDataForFieldExpectSameValue(

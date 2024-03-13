@@ -300,7 +300,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($encryptedResponseStatus, $encryptedResponse->status);
-        $this->assertEquals(json_encode($responseBody), $encryptedResponse->data);
+        $this->assertJson(json_encode($responseBody), $encryptedResponse->data);
     }
 
     /**
@@ -395,6 +395,6 @@ class ApplicationMutationServiceValidationTest extends TestCase
 
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($encryptedResponseStatus, $encryptedResponse->status);
-        $this->assertEquals(json_encode($responseBody), $encryptedResponse->data);
+        $this->assertJson(json_encode($responseBody), $encryptedResponse->data);
     }
 }

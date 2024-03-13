@@ -1,0 +1,40 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Controleren",
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "label": "Uw gegevens",
+                    "options": {
+                        "fields": {
+                            "Naam": "{firstName} {infix} {lastName}",
+                            "Adres": "{street} {houseNumber}{houseNumberSuffix} {postalCode} {city}",
+                            "Telefoon": "{phoneNumber}",
+                            "E-mailadres": "{email}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Ondertekenen",
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/truthfullyCompleted",
+                    "label": "Inhoud",
+                    "options": {
+                        "description": "Ik verklaar het formulier naar waarheid te hebben ingevuld."
+                    }
+                }
+            ]
+        }
+    ]
+}

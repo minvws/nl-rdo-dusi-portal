@@ -45,6 +45,7 @@ readonly class ApplicationDataService
         private JSONEncoder $jsonEncoder,
         private JSONDecoder $jsonDecoder,
         private SubsidyStashFieldHasher $subsidyStashFieldHasher,
+        private ApplicationFieldHookService $applicationFieldHookService,
     ) {
     }
 
@@ -83,9 +84,11 @@ readonly class ApplicationDataService
         // Decode received form data
         $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
 
+        $fieldValues = $this->applicationFieldHookService->findAndExecuteHooks($fieldValues, $applicationStage);
+
         // Validate, throws a ValidationException on error
-        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
-        $validationResult = $validator->validate();
+        $validationResult = $this->validateFieldValues($applicationStage, $fieldValues, $submit);
+
         $this->updateAnswersForApplicationStage($applicationStage, $fieldValues);
 
         return $validationResult;
@@ -100,11 +103,10 @@ readonly class ApplicationDataService
 
     public function validateFieldValues(
         ApplicationStage $applicationStage,
-        object $data,
+        array $fieldValues,
         bool $submit
     ): array {
         // Decode received form data
-        $fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
 
         return $validator->validate();
@@ -207,6 +209,20 @@ readonly class ApplicationDataService
                 $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
         }
         return $result;
+    }
+
+    public function getApplicantApplicationStageData(Application $application): ?object
+    {
+        $applicantApplicationStage = $this->applicationRepository->getCurrentApplicantApplicationStage(
+            $application,
+            true
+        );
+
+        if ($applicantApplicationStage === null) {
+            return null;
+        }
+
+        return $this->getApplicationStageData($applicantApplicationStage);
     }
 
     /**
