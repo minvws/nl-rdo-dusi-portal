@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -60,6 +61,8 @@ class SubsidyService
 
         $subsidyConcepts = new SubsidyConcepts($subsidyDto, $concepts);
 
+        Log::debug(json_encode($subsidyConcepts));
+
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,
             $subsidyConcepts,
@@ -82,6 +85,8 @@ class SubsidyService
                         $applicationStage->created_at,
                         $applicationStage->updated_at,
                         $applicationStage->expires_at,
+                        $applicationStage->submitted_at,
+                        $application->final_review_deadline,
                         $application->status,
                         $application->status->isEditableForApplicant()
                     );

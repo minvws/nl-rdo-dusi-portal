@@ -19,6 +19,8 @@ class ApplicationConcept implements Codable
         public readonly DateTimeInterface $createdAt,
         public readonly DateTimeInterface $updatedAt,
         public readonly ?DateTimeInterface $expiresAt,
+        public readonly ?DateTimeInterface $submittedAt,
+        public readonly ?DateTimeInterface $finalReviewDeadline,
         public readonly ApplicationStatus $status,
         public readonly bool $isEditable,
     ) {
