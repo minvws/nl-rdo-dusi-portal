@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
-use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -20,6 +19,9 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SubsidyService
 {
     use LoadIdentity;
@@ -56,13 +58,18 @@ class SubsidyService
         $subsidyDto = $this->subsidyMapper->mapSubsidyToSubsidyDTO($subsidy);
         $concepts = $this->mapConceptApplicationsToApplicationConcepts($applications);
 
-        $dto = new SubsidyConcepts($subsidyDto, $concepts);
+        $subsidyConcepts = new SubsidyConcepts($subsidyDto, $concepts);
 
-        Log::debug(json_encode($dto));
-
-        return $this->responseEncryptionService->encryptCodable(EncryptedResponseStatus::OK, $dto, $params->publicKey);
+        return $this->responseEncryptionService->encryptCodable(
+            EncryptedResponseStatus::OK,
+            $subsidyConcepts,
+            $params->publicKey
+        );
     }
 
+    /**
+     * @psalm-suppress InvalidTemplateParam
+     */
     public function mapConceptApplicationsToApplicationConcepts(array $applications): array
     {
         return array_map(function (Application $application) {
