@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Facades\Log;
-use MinVWS\DUSi\Application\Backend\Mappers\ApplicationMapper;
+use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
-use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationConcept;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConcepts;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-//use MinVWS\Logging\Laravel\Loggers\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
 class SubsidyService
@@ -26,13 +26,10 @@ class SubsidyService
 
     public function __construct(
         private ApplicationRepository $applicationRepository,
-        private ApplicationMapper $applicationMapper,
-        private ApplicationStageEncryptionService $applicationEncryptionService,
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
         private SubsidyRepository $subsidyRepository,
-        private EncryptedResponseExceptionHelper $exceptionHelper,
-        //        private LoggerInterface $logger,
+        private SubsidyMapper $subsidyMapper,
     ) {
     }
 
@@ -54,13 +51,35 @@ class SubsidyService
 
         $identity = $this->identityService->findOrCreateIdentity($params->identity, lockForUpdate: true);
 
-        $apps = $this->applicationRepository->getMyApplications($identity);
-        $concepts = $this->applicationMapper->mapApplicationArrayToApplicationListDTO($apps);
+        $applications = $this->applicationRepository->getMyConceptApplications($identity, $subsidy);
 
-        $dto = new SubsidyConcepts($subsidy, $concepts);
+        $subsidyDto = $this->subsidyMapper->mapSubsidyToSubsidyDTO($subsidy);
+        $concepts = $this->mapConceptApplicationsToApplicationConcepts($applications);
+
+        $dto = new SubsidyConcepts($subsidyDto, $concepts);
 
         Log::debug(json_encode($dto));
 
         return $this->responseEncryptionService->encryptCodable(EncryptedResponseStatus::OK, $dto, $params->publicKey);
+    }
+
+    public function mapConceptApplicationsToApplicationConcepts(array $applications): array
+    {
+        return array_map(function (Application $application) {
+            return $application->applicationStages->map(
+                function (ApplicationStage $applicationStage) use ($application) {
+                    return new ApplicationConcept(
+                        $application->reference,
+                        $application->subsidyVersion->subsidy->code,
+                        $applicationStage->subsidy_stage_id,
+                        $applicationStage->created_at,
+                        $applicationStage->updated_at,
+                        $applicationStage->expires_at,
+                        $application->status,
+                        $application->status->isEditableForApplicant()
+                    );
+                }
+            );
+        }, $applications);
     }
 }

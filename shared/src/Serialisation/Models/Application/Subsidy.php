@@ -15,7 +15,7 @@ class Subsidy implements Codable
         public readonly string $code,
         public readonly string $title,
         public readonly string $description,
-        public readonly string $pageUrl
+        public readonly ?string $pageUrl,
     ) {
     }
 }

@@ -19,9 +19,6 @@ class SubsidyController extends Controller
         return JsonResponse::fromJsonString($json);
     }
 
-    /**
-     * @throws Exception
-     */
     public function getSubsidyAndConcepts(
         string $subsidyCode,
         ClientPublicKeyHelper $publicKeyHelper,

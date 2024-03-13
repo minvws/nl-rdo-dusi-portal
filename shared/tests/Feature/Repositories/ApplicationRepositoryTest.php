@@ -208,40 +208,6 @@ class ApplicationRepositoryTest extends TestCase
         $this->repository->getApplication('invalid_application_id');
     }
 
-    public function testGetApplicationStage()
-    {
-        // Create a test application stage
-        $applicationStage = ApplicationStage::factory()->create();
-
-        // Test valid application stage
-        $foundApplicationStage = $this->repository->getApplicationStage($applicationStage->id);
-        $this->assertInstanceOf(ApplicationStage::class, $foundApplicationStage);
-
-        // Test invalid application stage
-        $this->expectException(QueryException::class);
-        $this->repository->getApplicationStage('invalid_application_stage_id');
-    }
-
-    public function testGetAnswer()
-    {
-        // Create test models
-        $field = Field::factory()
-            ->for($this->subsidyStage)
-            ->create();
-
-        $appStage = ApplicationStage::factory()->create();
-        Answer::factory()->create([
-            'application_stage_id' => $appStage->id,
-            'field_id' => $field->id,
-        ]);
-
-        $foundAnswer = $this->repository->getAnswer($appStage, $field);
-        $this->assertInstanceOf(Answer::class, $foundAnswer);
-
-        $field2 = Field::factory()->create(['subsidy_stage_id' => $this->subsidyStage->id]);
-        $this->assertNull($this->repository->getAnswer($appStage, $field2));
-    }
-
     public function testMakeApplicationForSubsidyVersion()
     {
         // Test make application for subsidy version

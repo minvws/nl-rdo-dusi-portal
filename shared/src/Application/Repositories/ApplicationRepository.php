@@ -11,6 +11,8 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -181,24 +183,6 @@ class ApplicationRepository
         $application = Application::query()->when($lockForUpdate, fn($q) => $q->lockForUpdate())->find($appId);
         if ($application instanceof Application) {
             return $application;
-        }
-        return null;
-    }
-
-    public function getApplicationStage(string $applicationStageId): ?ApplicationStage
-    {
-        $applicationStage = ApplicationStage::find($applicationStageId);
-        if ($applicationStage instanceof ApplicationStage) {
-            return $applicationStage;
-        }
-        return null;
-    }
-
-    public function getAnswer(ApplicationStage $appStage, Field $field): ?Answer
-    {
-        $answer = $this->getAnswerQuery($appStage, $field)->first();
-        if ($answer instanceof Answer) {
-            return $answer;
         }
         return null;
     }
@@ -410,6 +394,26 @@ class ApplicationRepository
     public function getMyApplications(Identity $identity): array
     {
         return $identity->applications()->with(['subsidyVersion', 'subsidyVersion.subsidy'])->get()->all();
+    }
+
+    /**
+     * @return array<Application>
+     */
+    public function getMyConceptApplications(Identity $identity, Subsidy $subsidy): array
+    {
+        return $identity->applications()
+            ->with(['subsidyVersion',
+                'subsidyVersion.subsidy'  => function (BelongsTo $query) use ($subsidy) {
+                    $query->where('id', $subsidy->id);
+                },
+                'applicationStages' => function (HasMany $query) {
+                    $query
+                        ->whereRelation('subsidyStage', 'stage', '=', 1)
+                        ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
+                        ->where('is_current', true)
+                        ->where('is_submitted', false);
+                }
+            ])->get()->all();
     }
 
     public function getMyApplication(Identity $identity, string $reference, bool $lockForUpdate = false): ?Application
