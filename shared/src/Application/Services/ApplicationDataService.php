@@ -86,8 +86,7 @@ readonly class ApplicationDataService
         $fieldValues = $this->applicationFieldHookService->findAndExecuteHooks($fieldValues, $applicationStage);
 
         // Validate, throws a ValidationException on error
-        $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
-        $validationResult = $validator->validate();
+        $validationResult = $this->validateFieldValues($applicationStage, $fieldValues, $submit);
 
         $this->updateAnswersForApplicationStage($applicationStage, $fieldValues);
 
