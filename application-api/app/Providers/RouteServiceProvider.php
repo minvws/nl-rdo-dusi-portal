@@ -57,16 +57,6 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
         );
-//        Route::bind(
-//            'subsidyCode',
-//            function (string $code) {
-//                try {
-//                    return app()->get(SubsidyService::class)->getSubsidyByCode($code);
-//                } catch (SubsidyNotFoundException $e) {
-//                    abort(404, $e->getMessage());
-//                }
-//            }
-//        );
     }
 
     protected function configureRateLimiting(): void
