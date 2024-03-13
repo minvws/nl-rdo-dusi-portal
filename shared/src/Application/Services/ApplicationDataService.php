@@ -107,7 +107,6 @@ readonly class ApplicationDataService
         bool $submit
     ): array {
         // Decode received form data
-        //$fieldValues = $this->decodingService->decodeFormValues($applicationStage->subsidyStage, $data);
         $validator = $this->validationService->getValidator($applicationStage, $fieldValues, $submit);
 
         return $validator->validate();
