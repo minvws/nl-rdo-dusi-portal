@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
@@ -73,9 +74,13 @@ class SubsidyService
     /**
      * @psalm-suppress InvalidTemplateParam
      */
-    public function mapConceptApplicationsToApplicationConcepts(array $applications): array
+    private function mapConceptApplicationsToApplicationConcepts(Collection $applications): array
     {
-        return array_map(function (Application $application) {
+        if ($applications->isEmpty()) {
+            return [];
+        }
+
+        return $applications->map(function (Application $application) {
             return $application->applicationStages->map(
                 function (ApplicationStage $applicationStage) use ($application) {
                     return new ApplicationConcept(
@@ -92,6 +97,6 @@ class SubsidyService
                     );
                 }
             );
-        }, $applications);
+        })->toArray();
     }
 }

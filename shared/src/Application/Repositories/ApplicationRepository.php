@@ -399,11 +399,11 @@ class ApplicationRepository
     /**
      * @return array<Application>
      */
-    public function getMyConceptApplications(Identity $identity, Subsidy $subsidy): array
+    public function getMyConceptApplications(Identity $identity, Subsidy $subsidy): Collection
     {
         return $identity->applications()
             ->with(['subsidyVersion',
-                'subsidyVersion.subsidy'  => function (BelongsTo $query) use ($subsidy) {
+                'subsidyVersion.subsidy' => function (BelongsTo $query) use ($subsidy) {
                     $query->where('id', $subsidy->id);
                 },
                 'applicationStages' => function (HasMany $query) {
@@ -413,7 +413,7 @@ class ApplicationRepository
                         ->where('is_current', true)
                         ->where('is_submitted', false);
                 }
-            ])->get()->all();
+            ])->get();
     }
 
     public function getMyApplication(Identity $identity, string $reference, bool $lockForUpdate = false): ?Application
