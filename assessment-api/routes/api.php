@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('{application}/history', 'getApplicationHistory');
                 Route::get('{application}/reviewer', 'getApplicationReviewer');
                 Route::get('{application}/transitions', 'getApplicationTransitions');
+                Route::patch('{application}/validate', 'validateAssessment');
             });
 
         Route::prefix('applications')

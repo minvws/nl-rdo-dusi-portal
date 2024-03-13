@@ -8,6 +8,7 @@ enum FieldType: string
 {
     case Text = 'text';
     case TextNumeric = 'text:numeric';
+    case TextFloat = 'text:float';
     case TextEmail = 'text:email';
     case TextTel = 'text:tel';
     case TextUrl = 'text:url';
