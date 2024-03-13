@@ -11,8 +11,6 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -402,18 +400,19 @@ class ApplicationRepository
     public function getMyConceptApplications(Identity $identity, Subsidy $subsidy): Collection
     {
         return $identity->applications()
-            ->with(['subsidyVersion',
-                'subsidyVersion.subsidy' => function (BelongsTo $query) use ($subsidy) {
-                    $query->where('id', $subsidy->id);
-                },
-                'applicationStages' => function (HasMany $query) {
-                    $query
-                        ->whereRelation('subsidyStage', 'stage', '=', 1)
-                        ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
-                        ->where('is_current', true)
-                        ->where('is_submitted', false);
-                }
-            ])->get();
+            ->join('subsidy_versions', 'applications.subsidy_version_id', '=', 'subsidy_versions.id')
+                ->where('subsidy_versions.subsidy_id', $subsidy->id)
+            ->join('subsidy_stages', 'subsidy_versions.id', '=', 'subsidy_stages.subsidy_version_id')
+                ->where('subsidy_stages.stage', 1)
+                ->where('subsidy_stages.subject_role', '=', SubjectRole::Applicant)
+            ->join('application_stages', function (JoinClause $join) {
+                $join
+                    ->on('applications.id', '=', 'application_stages.application_id')
+                    ->on('subsidy_stages.id', '=', 'application_stages.subsidy_stage_id');
+            })
+                ->where('application_stages.is_current', true)
+                ->where('application_stages.is_submitted', false)
+            ->get();
     }
 
     public function getMyApplication(Identity $identity, string $reference, bool $lockForUpdate = false): ?Application
