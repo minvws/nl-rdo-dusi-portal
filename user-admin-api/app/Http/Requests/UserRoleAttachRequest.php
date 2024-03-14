@@ -28,7 +28,7 @@ class UserRoleAttachRequest extends FormRequest
     {
         $subsidyRules = ['nullable', 'string', 'exists:' . Connection::APPLICATION . '.subsidies,id'];
 
-        if (app()->isProduction()) {
+        if (app()->environment(['production', 'acceptance'])) {
             array_unshift($subsidyRules, 'required_unless:role,' . Role::UserAdmin->value);
         }
 
