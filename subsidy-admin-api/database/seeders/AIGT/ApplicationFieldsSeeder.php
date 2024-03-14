@@ -64,7 +64,7 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'houseNumberSuffix',
             title:          'Huisnummer toevoeging',
-            maxLength:      10,
+            params:         ['maxLength' => 10],
             isRequired:     false,
         );
 
@@ -79,7 +79,7 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'city',
             title:          'Plaats',
-            maxLength:      100,
+            params:         ['maxLength' => 100],
         );
 
         $this->createCountryField(
@@ -93,7 +93,7 @@ class ApplicationFieldsSeeder extends Seeder
             code:           'phoneNumber',
             title:          'Telefoonnummer',
             inputMode:      'tel',
-            maxLength:      20,
+            params:         ['maxLength' => 20],
             isRequired:     false,
         );
 
@@ -102,7 +102,7 @@ class ApplicationFieldsSeeder extends Seeder
             code:           'email',
             title:          'E-mailadres',
             inputMode:      'email',
-            maxLength:      300,
+            params:         ['maxLength' => 300],
             isRequired:     false,
         );
 
@@ -116,7 +116,7 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'bankAccountHolder',
             title:          'Naam rekeninghouder',
-            maxLength:      50,
+            params:         ['maxLength' => 50],
         );
 
         $this->createDateField(

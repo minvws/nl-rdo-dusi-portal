@@ -28,7 +28,7 @@ class TestPdf extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Test basic PDF generation';
 
     public function __construct(protected LetterService $letterService, protected SubsidyFileManager $fileManager)
     {

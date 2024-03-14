@@ -1,0 +1,390 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Persoonlijke informatie aanvrager",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/firstName",
+                            "label": "Voornaam",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/infix",
+                            "label": "Tussenvoegsel",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/lastName",
+                            "label": "Achternaam",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Adres",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/street",
+                            "label": "Straatnaam",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/houseNumber",
+                            "label": "Huisnummer",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/houseNumberSuffix",
+                            "label": "Huisnummer toevoeging",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/postalCode",
+                            "label": "Postcode",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/city",
+                            "label": "Plaatsnaam",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/country",
+                            "label": "Land",
+                            "options": {
+                                "format": "select",
+                                "placeholder": "Selecteer een land"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Contact",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/phoneNumber",
+                            "label": "Telefoonnummer",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/email",
+                            "label": "E-mailadres",
+                            "options": {
+                                "placeholder": "",
+                                "tip": "U wordt via dit e-mailadres geïnformeerd over de status van uw aanvraag. Geef daarom alleen uw eigen e-mailadres door.",
+                                "validation": ["onBlur"]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Bank",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/bankAccountHolder",
+                            "label": "Naam rekeninghouder",
+                            "options": {
+                                "placeholder": "",
+                                "validation": ["onBlur"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/bankAccountNumber",
+                            "label": "IBAN",
+                            "options": {
+                                "placeholder": "",
+                                "tip": "Staat u onder bewind? Vermeld dan het IBAN van uw beheerrekening.",
+                                "validation": ["onValid"]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Inkomen",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/isSingleParentFamily",
+                            "label": "Is er sprake van een eenouder gezin?",
+                            "options": {
+                                "format": "radio",
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hasAlimony",
+                            "label": "Alimentatie",
+                            "options": {
+                                "format": "radio",
+                                "placeholder": "",
+                                "remoteAction": ["onChange"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/alimonyAmount",
+                            "label": "Alimentatiebedrag",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/hasAlimony",
+                                    "schema": { "const": "Ja" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualIncomeParentA",
+                            "label": "Jaarinkomen ouder 1",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualIncomeParentB",
+                            "label": "Jaarinkomen ouder 2",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualJointIncome",
+                            "label": "Jaarinkomen totaal",
+                            "options": {
+                                "readonly": true
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Gegevens kind",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/childName",
+                            "label": "Naam kind",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/dateOfBirth",
+                            "label": "Geboortedatum",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialStreet",
+                            "label": "Straatnaam",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialHouseNumber",
+                            "label": "Huisnummer",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialHouseNumberSuffix",
+                            "label": "Huisnummer toevoeging",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialPostalCode",
+                            "label": "Postcode",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialCity",
+                            "label": "Plaatsnaam",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/educationType",
+                            "label": "Gaat naar het",
+                            "options": {
+                                "format": "radio",
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolPrimary",
+                            "label": "DAMU school",
+                            "options": {
+                                "format": "select",
+                                "placeholder": ""
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Primair onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolSecondary",
+                            "label": "DAMU school",
+                            "options": {
+                                "format": "select",
+                                "placeholder": ""
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Voortgezet onderwijs" }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Subsidie",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/travelDistanceSingleTrip",
+                            "label": "Reisafstand enkele reis",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/totalDistance",
+                            "label": "Totaal aantal kilometers",
+                            "options": {
+                                "readonly": true,
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/travelExpenseReimbursement",
+                            "label": "Kilometervergoeding",
+                            "options": {
+                                "readonly": true,
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/requestedSubsidyAmount",
+                            "label": "Gevraagde subsidiebedrag",
+                            "options": {
+                                "readonly": true,
+                                "placeholder": ""
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -62,7 +62,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             code:            'businessPartnerNumber',
             title:           'Zakenpartnernummer',
             inputMode:       'numeric',
-            maxLength:       20,
+            params:          ['maxLength' => 20],
             isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
         );
@@ -72,7 +72,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             code:            'liabilitiesNumber',
             title:           'Verplichtingennummer',
             inputMode:       'numeric',
-            maxLength:       20,
+            params:          ['maxLength' => 20],
             isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
         );
