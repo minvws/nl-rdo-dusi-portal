@@ -412,7 +412,7 @@ class ApplicationRepository
                     ->on('subsidy_stages.id', '=', 'application_stages.subsidy_stage_id');
             })
                 ->where('application_stages.is_current', true)
-                ->where('application_stages.is_submitted', false)
+                ->where('application_stages.is_submitted', false);
 
         return $query->get();
     }
