@@ -399,7 +399,8 @@ class ApplicationRepository
      */
     public function getMyConceptApplications(Identity $identity, Subsidy $subsidy): Collection
     {
-        return $identity->applications()
+        $query = $identity->applications()
+            ->select('applications.*')
             ->join('subsidy_versions', 'applications.subsidy_version_id', '=', 'subsidy_versions.id')
                 ->where('subsidy_versions.subsidy_id', $subsidy->id)
             ->join('subsidy_stages', 'subsidy_versions.id', '=', 'subsidy_stages.subsidy_version_id')
@@ -412,7 +413,8 @@ class ApplicationRepository
             })
                 ->where('application_stages.is_current', true)
                 ->where('application_stages.is_submitted', false)
-            ->get();
+
+        return $query->get();
     }
 
     public function getMyApplication(Identity $identity, string $reference, bool $lockForUpdate = false): ?Application
