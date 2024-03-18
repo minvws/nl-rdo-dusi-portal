@@ -11,7 +11,7 @@ use MinVWS\DUSi\Application\Backend\Services\SubsidyService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
@@ -29,9 +29,9 @@ $bindings = [
         'paramsClass' => Ping::class,
         'callback' => [PingService::class, 'ping']
     ],
-    RPCMethods::FIND_OR_CREATE_APPLICATION => [
-        'paramsClass' => ApplicationFindOrCreateParams::class,
-        'callback' => [ApplicationMutationService::class, 'findOrCreateApplication']
+    RPCMethods::CREATE_APPLICATION => [
+        'paramsClass' => ApplicationCreateParams::class,
+        'callback' => [ApplicationMutationService::class, 'createApplication']
     ],
     RPCMethods::UPLOAD_APPLICATION_FILE => [
         'paramsClass' => EncryptedApplicationFileUploadParams::class,

@@ -30,7 +30,7 @@ use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Application\Services\FormDecodingService;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
@@ -78,11 +78,11 @@ readonly class ApplicationMutationService
     ) {
     }
 
-    public function findOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
+    public function createApplication(ApplicationCreateParams $params): EncryptedResponse
     {
         try {
             return DB::transaction(
-                fn() => $this->doFindOrCreateApplication($params),
+                fn() => $this->doCreateApplication($params),
                 self::CREATE_APPLICATION_ATTEMPTS
             );
         } catch (Throwable $e) {
@@ -90,19 +90,19 @@ readonly class ApplicationMutationService
                 $e,
                 __CLASS__,
                 __METHOD__,
-                RPCMethods::FIND_OR_CREATE_APPLICATION,
+                RPCMethods::CREATE_APPLICATION,
                 $params->publicKey
             );
         }
     }
 
     /**
-     * @param ApplicationFindOrCreateParams $params
+     * @param ApplicationCreateParams $params
      * @return EncryptedResponse
      * @throws EncryptedResponseException
      * @throws Exceptions\ApplicationReferenceException
      */
-    private function doFindOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
+    private function doCreateApplication(ApplicationCreateParams $params): EncryptedResponse
     {
         if (Uuid::isValid($params->subsidyCode)) {
             // TODO: once frontend uses subsidy code, we can remove this code
@@ -120,32 +120,24 @@ readonly class ApplicationMutationService
 
         $identity = $this->identityService->findOrCreateIdentity($params->identity, lockForUpdate: true);
 
-        $application = $this->applicationRepository->findMyApplicationForSubsidy($identity, $subsidy);
-
         if (
-            !$subsidy->is_open_for_new_applications &&
-            !$application?->status?->isEditableForApplicantAfterClosure()
+            $this->applicationRepository->hasOpenApplicationsForSubsidy($identity, $subsidy) &&
+            $subsidy->allow_multiple_applications === false
         ) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'subsidy_closed_for_new_applications',
+                'subsidy_does_not_allow_multiple_applications',
                 logAsError: false
             );
         }
 
-        if ($application?->is_editable_for_applicant) {
-            return $this->applicationResponse(EncryptedResponseStatus::OK, $application, null, $params->publicKey);
-        }
 
-        if ($application?->status?->isNewApplicationAllowed()) {
-            // ignore existing and create a new one
-            $application = null;
-        }
-
-        if ($application !== null) {
+        if (
+            !$subsidy->is_open_for_new_applications
+        ) {
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::FORBIDDEN,
-                'application_already_exists',
+                'subsidy_closed_for_new_applications',
                 logAsError: false
             );
         }

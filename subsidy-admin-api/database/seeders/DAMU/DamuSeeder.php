@@ -41,7 +41,8 @@ class DAMUSeeder extends Seeder
             'code' => 'DAMU',
             'description' => 'Ouders of verzorgers van een DAMU-leerling op het primair of het voortgezet onderwijs kunnen een tegemoetkoming in de reiskosten aanvragen. Deze reiskosten kunnen namelijk een barrière zijn voor talentvolle leerlingen om een opleiding aan een DAMU-school te volgen.',
             'valid_from' => 'now()',
-            'valid_to' => null
+            'valid_to' => null,
+            'allow_multiple_applications' => true,
         ]);
     }
 

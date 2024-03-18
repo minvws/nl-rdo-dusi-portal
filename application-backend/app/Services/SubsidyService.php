@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Services;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -62,8 +61,6 @@ class SubsidyService
 
         $subsidyConcepts = new SubsidyConcepts($subsidyDto, $concepts);
 
-        Log::debug(json_encode($subsidyConcepts));
-
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,
             $subsidyConcepts,
@@ -73,6 +70,8 @@ class SubsidyService
 
     /**
      * @psalm-suppress InvalidTemplateParam
+     *
+     * @param Collection $applications<array-key, mixed>
      */
     private function mapConceptApplicationsToApplicationConcepts(Collection $applications): array
     {

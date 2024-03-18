@@ -17,7 +17,7 @@ use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
@@ -210,7 +210,7 @@ class ApplicationReferenceServiceTest extends TestCase
 
         $identity = Identity::factory()->create();
 
-        $params = new ApplicationFindOrCreateParams(
+        $params = new ApplicationCreateParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($identity->hashed_identifier, '')
@@ -219,7 +219,7 @@ class ApplicationReferenceServiceTest extends TestCase
             $this->subsidyVersion->subsidy->code
         );
 
-        $encryptedResponse = $mutationService->findOrCreateApplication($params);
+        $encryptedResponse = $mutationService->createApplication($params);
         $this->assertEquals(EncryptedResponseStatus::CREATED, $encryptedResponse->status);
         $encryptionService = $this->app->make(ResponseEncryptionService::class);
         return $encryptionService->decryptCodable($encryptedResponse, ApplicationDTO::class, $keyPair);

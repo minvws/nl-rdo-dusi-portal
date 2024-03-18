@@ -8,6 +8,9 @@ use DateTimeInterface;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ */
 class ApplicationConcept implements Codable
 {
     use CodableSupport;

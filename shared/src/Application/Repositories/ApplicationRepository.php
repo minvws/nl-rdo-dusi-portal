@@ -376,14 +376,15 @@ class ApplicationRepository
         }
     }
 
-    public function findMyApplicationForSubsidy(Identity $identity, Subsidy $subsidy): ?Application
+    public function hasOpenApplicationsForSubsidy(Identity $identity, Subsidy $subsidy): bool
     {
         return
             $identity
                 ->applications()
                 ->whereRelation('subsidyVersion', 'subsidy_id', '=', $subsidy->id)
                 ->orderBy('created_at', 'desc')
-                ->first();
+                ->whereNot('status', ApplicationStatus::Rejected)
+                ->count() !== 0;
     }
 
     /**
@@ -395,7 +396,7 @@ class ApplicationRepository
     }
 
     /**
-     * @return array<Application>
+     * @return Collection<array-key, Application>
      */
     public function getMyConceptApplications(Identity $identity, Subsidy $subsidy): Collection
     {
