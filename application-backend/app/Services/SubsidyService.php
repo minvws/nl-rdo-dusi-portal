@@ -18,7 +18,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConcepts;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -38,12 +37,7 @@ class SubsidyService
 
     public function getSubsidyAndConcepts(SubsidyConceptsParams $params): EncryptedResponse
     {
-        if (Uuid::isValid($params->subsidyCode)) {
-            // TODO: once frontend uses subsidy code, we can remove this code
-            $subsidy = $this->subsidyRepository->getSubsidyStage($params->subsidyCode)?->subsidyVersion?->subsidy;
-        } else {
-            $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
-        }
+        $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
 
         if ($subsidy === null) {
             throw new EncryptedResponseException(
