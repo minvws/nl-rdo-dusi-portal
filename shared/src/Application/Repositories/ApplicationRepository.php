@@ -405,7 +405,6 @@ class ApplicationRepository
             ->join('subsidy_versions', 'applications.subsidy_version_id', '=', 'subsidy_versions.id')
                 ->where('subsidy_versions.subsidy_id', $subsidy->id)
             ->join('subsidy_stages', 'subsidy_versions.id', '=', 'subsidy_stages.subsidy_version_id')
-                ->where('subsidy_stages.stage', 1)
                 ->where('subsidy_stages.subject_role', '=', SubjectRole::Applicant)
             ->join('application_stages', function (JoinClause $join) {
                 $join
