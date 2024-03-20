@@ -122,7 +122,7 @@ class ApplicationMutationServiceTest extends TestCase
         $this->applicationMutationService = $this->app->make(ApplicationMutationService::class);
     }
 
-    public function testFindOrCreateApplicationWhenNoApplicationExists(): void
+    public function testCreateApplicationWhenNoApplicationExists(): void
     {
         $params = new ApplicationCreateParams(
             new EncryptedIdentity(
@@ -238,7 +238,7 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertEquals(ApplicationStatus::Draft, $app->status);
     }
 
-    public static function findOrCreateApplicationChecksIfSubsidyOpenForNewApplicationsProvider(): array
+    public static function createApplicationChecksIfSubsidyOpenForNewApplicationsProvider(): array
     {
         return [
             'no_existing_application_should_return_error' => [
@@ -260,9 +260,9 @@ class ApplicationMutationServiceTest extends TestCase
     }
 
     /**
-     * @dataProvider findOrCreateApplicationChecksIfSubsidyOpenForNewApplicationsProvider
+     * @dataProvider createApplicationChecksIfSubsidyOpenForNewApplicationsProvider
      */
-    public function testFindOrCreateApplicationChecksIfSubsidyOpenForNewApplications(
+    public function testCreateApplicationChecksIfSubsidyOpenForNewApplications(
         ?ApplicationStatus $existingApplicationStatus,
         EncryptedResponseStatus $expectedResponseStatus,
         ?string $expectedErrorCode

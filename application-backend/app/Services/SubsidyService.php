@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
-use MinVWS\DUSi\Shared\Application\Models\Application;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
@@ -73,22 +72,15 @@ class SubsidyService
             return [];
         }
 
-        return $applications->map(function (Application $application) {
-            return $application->applicationStages->map(
-                function (ApplicationStage $applicationStage) use ($application) {
-                    return new ApplicationConcept(
-                        $application->reference,
-                        $application->subsidyVersion->subsidy->code,
-                        $applicationStage->subsidy_stage_id,
-                        $applicationStage->created_at,
-                        $applicationStage->updated_at,
-                        $applicationStage->expires_at,
-                        $applicationStage->submitted_at,
-                        $application->final_review_deadline,
-                        $application->status,
-                        $application->status->isEditableForApplicant()
-                    );
-                }
+        return $applications->map(function ($application) {
+            return new ApplicationConcept(
+                $application->reference,
+                $application->subsidyVersion->subsidy->code,
+                $application->subsidy_stage_id,
+                CarbonImmutable::parse($application->created_at),
+                CarbonImmutable::parse($application->updated_at),
+                $application->expires_at ? CarbonImmutable::parse($application->expires_at) : null,
+                $application->status,
             );
         })->toArray();
     }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Feature\Repositories;
 
+use Carbon\CarbonImmutable;
 use DateTime;
+use DateTimeInterface;
 use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -38,6 +40,7 @@ class ApplicationRepositoryConceptsTest extends TestCase
         $subsidy = Subsidy::factory()->create([
             'title' => 'some_subsidy_title',
             'code' => 'SST',
+            'allow_multiple_applications' => true,
         ]);
         $this->subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create();
         $this->subsidyStages = $this->setUpSubsidyWithStages($this->subsidyVersion);
@@ -190,6 +193,7 @@ class ApplicationRepositoryConceptsTest extends TestCase
         $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount(1, $applications);
     }
+
     public function testGetMyConceptApplicationMultipleApplicationsInDifferentSubsidies(): void
     {
         // Create a test application
@@ -249,6 +253,120 @@ class ApplicationRepositoryConceptsTest extends TestCase
         // Application should be visible
         $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount(1, $applications);
+    }
+
+    public function testGetMyConceptApplicationWhenRequestForChanges(): void
+    {
+        // Create a RequestForChanges application not expired
+        $application1 = Application::factory()
+            ->for($this->identity)
+            ->for($this->subsidyVersion)
+            ->create([
+                'application_title' => 'some_application_title',
+                'updated_at' => new DateTime('now'),
+                'created_at' => new DateTime('now'),
+                'final_review_deadline' => new DateTime('now'),
+                'status' => ApplicationStatus::RequestForChanges,
+            ]);
+
+        // Create application stages
+        ApplicationStage::factory()
+            ->for($application1)
+            ->for($this->subsidyStages->get(1))
+            ->create([
+                'sequence_number' => 1,
+                'is_current' => true,
+                'is_submitted' => false,
+                'submitted_at' => null,
+                'expires_at' => CarbonImmutable::tomorrow(),
+            ]);
+
+        // Create a RequestForChanges application has expired
+        $application2 = Application::factory()
+            ->for($this->identity)
+            ->for($this->subsidyVersion)
+            ->create([
+                'application_title' => 'some_application_title',
+                'updated_at' => new DateTime('now'),
+                'created_at' => new DateTime('now'),
+                'final_review_deadline' => new DateTime('now'),
+                'status' => ApplicationStatus::RequestForChanges,
+            ]);
+
+        // Create application stages
+        ApplicationStage::factory()
+            ->for($application2)
+            ->for($this->subsidyStages->get(1))
+            ->create([
+                'sequence_number' => 1,
+                'is_current' => true,
+                'is_submitted' => false,
+                'submitted_at' => null,
+                'expires_at' => CarbonImmutable::yesterday(),
+            ]);
+
+        // Application should be visible
+        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $this->assertCount(1, $applications);
+    }
+
+    public static function getMyConceptApplicationSubsidyPeriodDataProvider()
+    {
+        return [
+            'When draft outside subsidy period' => [
+                'validTo' => CarbonImmutable::yesterday(),
+                'applicationStatus' => ApplicationStatus::Draft,
+                'resultCount' => 0
+            ],
+            'When draft inside subsidy period which has no end date' => [
+                'validTo' => null,
+                'applicationStatus' => ApplicationStatus::Draft,
+                'resultCount' => 1
+            ],
+            'When RequestForChange outside subsidy period' => [
+                'validTo' => CarbonImmutable::yesterday(),
+                'applicationStatus' => ApplicationStatus::RequestForChanges,
+                'resultCount' => 1
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getMyConceptApplicationSubsidyPeriodDataProvider
+     */
+    public function testGetMyConceptApplicationWhenDraftOutsideSubsidyPeriod(
+        ?DateTimeInterface $validTo,
+        ApplicationStatus $applicationStatus,
+        int $resultCount
+    ): void {
+        $this->subsidyVersion->subsidy->valid_from = CarbonImmutable::now()->subDays(100);
+        $this->subsidyVersion->subsidy->valid_to = $validTo;
+        $this->subsidyVersion->subsidy->save();
+
+        $application = Application::factory()
+            ->for($this->identity)
+            ->for($this->subsidyVersion)
+            ->create([
+                'application_title' => 'some_application_title',
+                'updated_at' => CarbonImmutable::now()->subDays(5),
+                'created_at' => CarbonImmutable::now()->subDays(10),
+                'status' => $applicationStatus,
+            ]);
+
+        ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStages->get(1))
+            ->create([
+                'sequence_number' => 1,
+                'is_current' => true,
+                'is_submitted' => false,
+                'submitted_at' => null,
+                'expires_at' => CarbonImmutable::tomorrow(),
+            ]);
+
+        // Application should be visible
+        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $this->assertCount($resultCount, $applications);
     }
 
     protected function setUpSubsidyWithStages(SubsidyVersion $subsidyVersion): Collection
