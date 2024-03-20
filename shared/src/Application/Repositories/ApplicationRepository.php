@@ -376,7 +376,7 @@ class ApplicationRepository
         }
     }
 
-    public function hasOpenApplicationsForSubsidy(Identity $identity, Subsidy $subsidy): bool
+    public function hasOpenOrApprovedApplicationsForSubsidy(Identity $identity, Subsidy $subsidy): bool
     {
         return
             $identity

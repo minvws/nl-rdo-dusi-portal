@@ -121,7 +121,7 @@ readonly class ApplicationMutationService
         $identity = $this->identityService->findOrCreateIdentity($params->identity, lockForUpdate: true);
 
         if (
-            $this->applicationRepository->hasOpenApplicationsForSubsidy($identity, $subsidy) &&
+            $this->applicationRepository->hasOpenOrApprovedApplicationsForSubsidy($identity, $subsidy) &&
             $subsidy->allow_multiple_applications === false
         ) {
             throw new EncryptedResponseException(
