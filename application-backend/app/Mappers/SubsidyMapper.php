@@ -22,7 +22,10 @@ class SubsidyMapper
             $subsidyVersion->subsidy->code,
             $subsidyVersion->title ?? $subsidyVersion->subsidy->title,
             $subsidyVersion->subsidy->description,
-            $subsidyVersion->subsidy_page_url
+            $subsidyVersion->subsidy_page_url,
+            $subsidyVersion->subsidy->valid_from,
+            $subsidyVersion->subsidy->valid_to,
+            $subsidyVersion->subsidy->allow_multiple_applications,
         );
     }
 
@@ -32,7 +35,10 @@ class SubsidyMapper
             $subsidy->code,
             $subsidy->title,
             $subsidy->description,
-            null
+            null,
+            $subsidy->valid_from,
+            $subsidy->valid_to,
+            $subsidy->allow_multiple_applications,
         );
     }
 
