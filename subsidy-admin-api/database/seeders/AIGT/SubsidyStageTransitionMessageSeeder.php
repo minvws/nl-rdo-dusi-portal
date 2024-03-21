@@ -41,7 +41,7 @@ class SubsidyStageTransitionMessageSeeder extends Seeder
 
         DB::table('subsidy_stage_transition_messages')->insert([
            'id' => self::TRANSITION_STAGE_4_TO_APPROVED_MESSAGE,
-           'subsidy_stage_transition_id' => SubsidyStageTransitionsSeeder::TRANSITION_STAGE_4_TO_APPROVED,
+           'subsidy_stage_transition_id' => SubsidyStageTransitionsSeeder::TRANSITION_STAGE_4_TO_5,
            'version' => 1,
            'status' => VersionStatus::Published,
            'created_at' => Carbon::now(),

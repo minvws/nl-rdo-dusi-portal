@@ -1,0 +1,51 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true,
+        "group": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Status",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessorMotivatedValid",
+                            "options": {
+                                "format": "checkbox"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/internalAssessment",
+                            "options": {
+                                "format": "radio"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/internalAssessmentInternalNote",
+                            "options": {
+                                "format": "textarea"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

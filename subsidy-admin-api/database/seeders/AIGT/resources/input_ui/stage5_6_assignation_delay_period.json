@@ -1,0 +1,57 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true,
+        "group": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Status",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/assessment",
+                            "options": {
+                                "format": "radio"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Toelichting",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/proof",
+                            "label": "Bewijs",
+                            "options": {
+                                "accept": "image/jpeg,image/png,application/pdf",
+                                "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "Upload een of meerdere bewijsstukken. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/internalNote",
+                            "options": {
+                                "format": "textarea"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

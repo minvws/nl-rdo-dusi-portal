@@ -50,7 +50,7 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/educationalInstituteDeclarationDocument",
-                            "label": "Start opleidingsonderdeel buitenland",
+                            "label": "Verklaring van opleidingsinstituut",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,

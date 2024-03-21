@@ -24,7 +24,8 @@
                     "type": "CustomControl",
                     "scope": "#/properties/subsidyAwardedBefore",
                     "options": {
-                        "readonly": true
+                        "readonly": true,
+                        "format": "radio"
                     }
                 }
             ]

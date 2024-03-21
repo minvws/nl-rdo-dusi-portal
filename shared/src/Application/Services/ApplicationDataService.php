@@ -15,6 +15,7 @@ use League\CommonMark\Exception\LogicException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
+use MinVWS\DUSi\Shared\Application\Enums\ApplicationStageGrouping;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -162,21 +163,56 @@ readonly class ApplicationDataService
      *
      * @return array<int, ApplicationStageData>
      */
-    public function getApplicationStageDataUpToIncluding(
+    public function getApplicationStageDataUniqueByStageUpToIncluding(
         ApplicationStage $applicationStage,
         bool $readOnly = false
     ): array {
-        $answersByStage = $this->applicationRepository->getAnswersForApplicationStagesUpToIncluding(
+        return $this->getApplicationStageDataUpToIncluding(
             $applicationStage,
+            ApplicationStageGrouping::ByStageNumber,
             $readOnly
         );
+    }
 
+    /**
+     * @param ApplicationStage $applicationStage
+     *
+     * @return array<int, ApplicationStageData>
+     */
+    public function getApplicationStageDataUniqueBySequenceUpToIncluding(
+        ApplicationStage $applicationStage,
+        bool $readOnly = false
+    ): array {
+        return $this->getApplicationStageDataUpToIncluding(
+            $applicationStage,
+            ApplicationStageGrouping::BySequenceNumber,
+            $readOnly
+        );
+    }
+
+    /**
+     * @param ApplicationStage $applicationStage
+     * @param ApplicationStageGrouping $applicationStageGrouping
+     *
+     * @return array<int, ApplicationStageData>
+     */
+    private function getApplicationStageDataUpToIncluding(
+        ApplicationStage $applicationStage,
+        ApplicationStageGrouping $applicationStageGrouping,
+        bool $readOnly = false
+    ): array {
+        $answersByGrouping = $this->applicationRepository
+            ->getAnswersForApplicationStagesUpToIncluding($applicationStage, $applicationStageGrouping, $readOnly);
         $result = [];
-        foreach ($answersByStage->stages as $stageAnswers) {
-            $result[$stageAnswers->stage->subsidyStage->stage] =
+        foreach ($answersByGrouping->stages as $stageAnswers) {
+            $groupingKey = match ($applicationStageGrouping) {
+                ApplicationStageGrouping::ByStageNumber=> $stageAnswers->stage->subsidyStage->stage,
+                ApplicationStageGrouping::BySequenceNumber=> $stageAnswers->stage->sequence_number
+            };
+
+            $result[$groupingKey] =
                 $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
         }
-
         return $result;
     }
 
