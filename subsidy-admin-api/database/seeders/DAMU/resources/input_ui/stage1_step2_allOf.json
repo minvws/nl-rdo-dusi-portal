@@ -1,12 +1,1 @@
-[{
-    "if": {
-        "properties": {
-            "hasAlimony": {
-                "const": "Ja"
-            }
-        }
-    },
-    "then": {
-        "required": ["alimonyAmount"]
-    }
-}]
+[]

@@ -99,7 +99,6 @@
                         "fields": {
                             "Is er sprake van een eenoudergezin": "{isSingleParentFamily}",
                             "Alimentatie": "{hasAlimony}",
-                            "Alimentatiebedrag": "{alimonyAmount}",
                             "Jaarinkomen ouder 1": "{annualIncomeParentA}",
                             "Jaarinkomen ouder 2": "{annualIncomeParentB}",
                             "Jaarinkomen totaal": "{annualJointIncome}"
@@ -181,7 +180,6 @@
                     "options": {
                         "fields": {
                             "Reisafstand enkele reis": "{travelDistanceSingleTrip}",
-                            "Totaal aantal kilometers": "{totalDistance}",
                             "Kilometervergoeding": "{travelExpenseReimbursement}",
                             "Gevraagd subsidiebedrag": "{requestedSubsidyAmount}"
                         }

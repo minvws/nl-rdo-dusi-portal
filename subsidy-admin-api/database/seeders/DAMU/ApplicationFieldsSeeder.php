@@ -125,7 +125,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'isSingleParentFamily',
-            title:          'Is er sprake van een eenouder gezin?',
+            title:          'Is er sprake van een eenoudergezin?',
             options:        ['Ja', 'Nee'],
         );
 
@@ -134,15 +134,6 @@ class ApplicationFieldsSeeder extends Seeder
             code:           'hasAlimony',
             title:          'Alimentatie?',
             options:        ['Ja', 'Nee'],
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'alimonyAmount',
-            title:          'Alimentatiebedrag',
-            inputMode:      'numeric',
-            isRequired:     false,
-            requiredCondition: new ComparisonCondition(1, 'hasAlimony', Operator::Identical, 'Ja'),
         );
 
         $this->createTextField(
@@ -158,6 +149,7 @@ class ApplicationFieldsSeeder extends Seeder
             title:          'Jaarinkomen ouder 2',
             inputMode:      'numeric',
             isRequired:     false,
+            requiredCondition: new ComparisonCondition(1, 'isSingleParentFamily', Operator::Identical, 'Nee'),
         );
 
         $this->createTextField(
@@ -207,7 +199,6 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'residentialPostalCode',
             title:          'Postcode',
-            isRequired:     false,
         );
 
         $this->createTextField(
@@ -258,15 +249,6 @@ class ApplicationFieldsSeeder extends Seeder
             title:          'Reisafstand enkele reis',
             inputMode:      'float',
             params:         ['minimum' => 1, 'maximum' => 9999],
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'totalDistance',
-            title:          'Totaal aantal kilometers',
-            inputMode:      'float',
-            params:         ['readonly' => true],
-            isRequired:     false,
         );
 
         $this->createTextField(

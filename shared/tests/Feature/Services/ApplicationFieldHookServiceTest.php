@@ -58,23 +58,17 @@ class ApplicationFieldHookServiceTest extends TestCase
     public static function fieldHookJointIncomeDataProvider(): array
     {
         return [
-            'hasAlimony: Ja, Alimony: 1000, income1: 1000, income2: 2000, expectedIncome: 4000' => [
-                'hasAlimony' => 'Ja',
-                'alimonyAmount' => 1000,
-                'income1' => 1000,
-                'income2' => 2000,
-                'expectedIncome' => 4000,
-            ],
-            'hasAlimony: Nee, Alimony: 1000, income1: 1000, income2: 2000, expectedIncome: 3000' => [
-                'hasAlimony' => 'Nee',
-                'alimonyAmount' => 1000,
+            'income1: 1000, income2: 2000, expectedIncome: 4000' => [
                 'income1' => 1000,
                 'income2' => 2000,
                 'expectedIncome' => 3000,
             ],
-            'hasAlimony: Nee, Alimony: null, income1: 1000, income2: null, expectedIncome: 1000' => [
-                'hasAlimony' => 'Nee',
-                'alimonyAmount' => null,
+            'income1: 1000, income2: 2000, expectedIncome: 3000' => [
+                'income1' => 1000,
+                'income2' => 2000,
+                'expectedIncome' => 3000,
+            ],
+            'income1: 1000, income2: null, expectedIncome: 1000' => [
                 'income1' => 1000,
                 'income2' => null,
                 'expectedIncome' => 1000,
@@ -87,34 +81,11 @@ class ApplicationFieldHookServiceTest extends TestCase
      * @dataProvider fieldHookJointIncomeDataProvider
      */
     public function testCalculateJointIncomeField(
-        string $hasAlimony,
-        ?int $alimonyAmount,
         int $income1,
         ?int $income2,
         int $expectedIncome
     ): void {
         $fieldValues = [
-            'hasAlimony' => new FieldValue(
-                Field::factory()
-                    ->for($this->applicationStage->subsidyStage)
-                    ->create([
-                        'code' => 'hasAlimony',
-                        'type' => FieldType::Select,
-                        'params' => [
-                            'options' => ['Ja', 'Nee']
-                        ]
-                    ]),
-                value: $hasAlimony,
-            ),
-            'alimonyAmount' => new FieldValue(
-                Field::factory()
-                    ->for($this->applicationStage->subsidyStage)
-                    ->create([
-                        'code' => 'alimonyAmount',
-                        'type' => FieldType::TextNumeric,
-                    ]),
-                value: $alimonyAmount,
-            ),
             'annualIncomeParentA' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
@@ -190,18 +161,6 @@ class ApplicationFieldHookServiceTest extends TestCase
 
 
         $fieldValues = [
-            'hasAlimony' => new FieldValue(
-                Field::factory()
-                    ->for($this->applicationStage->subsidyStage)
-                    ->create([
-                        'code' => 'hasAlimony',
-                        'type' => FieldType::Select,
-                        'params' => [
-                            'options' => ['Ja', 'Nee']
-                        ]
-                    ]),
-                value: 'Nee',
-            ),
             'annualIncomeParentA' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)

@@ -58,7 +58,6 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                         "dateOfBirth",
                         "residentialStreet",
                         "residentialHouseNumber",
-                        "residentialHouseNumberSuffix",
                         "residentialPostalCode",
                         "residentialCity",
                         "educationType",
