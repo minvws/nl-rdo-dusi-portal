@@ -123,6 +123,23 @@ class AssessmentFieldsSeeder extends Seeder
     public function auditAssessmentFields(): void
     {
         //interne controle
+        $this->createMultiSelectField(
+            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
+            code:            'internalAssessmentChecklist',
+            title:           'Controlevragen',
+            options:         [
+                                 'Valt de aanvrager onder de WSNP/bewindvoering?',
+                                 'Alle benodigde documenten zijn aangeleverd',
+                                 'De aanvraag kan verleend worden',
+                                 'Het IBAN is juist vermeld in het Portaal en in de verplichting in SAP',
+                                 'De verplichting is juist in SAP geboekt',
+                                 'De verplichting is in SAP goedgekeurd',
+                                 'De verleningsbeschikking mag verzonden worden',
+                             ],
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createCheckboxField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code: 'firstAssessorMotivatedValid',

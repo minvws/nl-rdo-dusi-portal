@@ -61,10 +61,6 @@ class TestPdfForApplication extends Command
             return;
         }
 
-        // Override the chroot for local to link the right assets of shared. Default this will resolve to /var/www/html
-        // which fails for the shared folder
-        config(['dompdf.options.chroot' => '/var/www']);
-
         $applications = Application::query();
         $applicationChoices = $applications->pluck('reference', 'id')->toArray();
 

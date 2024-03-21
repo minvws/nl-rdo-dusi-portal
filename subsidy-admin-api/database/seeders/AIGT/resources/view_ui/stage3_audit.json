@@ -6,6 +6,14 @@
     "elements": [
         {
             "type": "CustomControl",
+            "scope": "#/properties/internalAssessmentChecklist",
+            "options": {
+                "readonly": true,
+                "format": "checkbox-group"
+            }
+        },
+        {
+            "type": "CustomControl",
             "scope": "#/properties/firstAssessorMotivatedValid",
             "options": {
                 "readonly": true
