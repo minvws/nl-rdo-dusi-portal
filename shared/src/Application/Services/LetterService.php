@@ -95,12 +95,6 @@ readonly class LetterService
     {
         $html = $this->generateHTMLLetter($template, $data);
 
-        if (app()->isLocal()) {
-            // Override the chroot for local to link the right assets of shared. Default this will resolve to
-            // /var/www/html which fails for the shared folder
-            config(['dompdf.options.chroot' => '/var/www']);
-        }
-
         $pdf = PDFHelper::loadHTML($html);
         $pdf->render();
 
