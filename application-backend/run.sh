@@ -6,17 +6,19 @@ CLEAR=false
 DOWN=false
 FORCE=false
 INSTALL=false
+UPDATE=false
 IGNORE_PLATFORM_REQS=false
 MIGRATE=false
 NOPROMPTS=true
 
 # Function to display script usage
 function display_usage() {
-    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-h|--help]"
+    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-u|--update] [-m|--migrate] [-h|--help]"
     echo "Options:"
     echo "  -c, --clear-env                 Copy the env files from the example files in each repository"
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
+    echo "  -u, --update                    Update packages"
     echo "      --ignore-platform-reqs      Ignore platform requirements during composer install"
     echo "  -f, --force                     Force override of installed packages"
     echo "  -m, --migrate                   Migrate database"
@@ -43,6 +45,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -i | --install)
             INSTALL=true
+            shift
+            ;;
+        -u | --update)
+            UPDATE=true
             shift
             ;;
         --ignore-platform-reqs)
@@ -92,6 +98,15 @@ if $INSTALL ; then
     else
         composer install
     fi
+fi
+
+if $UPDATE ; then
+    if $IGNORE_PLATFORM_REQS ; then
+        composer update --ignore-platform-req=ext-redis --ignore-platform-req=ext-sodium
+    else
+        composer update
+    fi
+    exit 0
 fi
 
 vendor/bin/sail up -d --remove-orphans
