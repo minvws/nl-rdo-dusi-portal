@@ -1,3 +1,9 @@
+delete from public.application_messages where application_stage_transition_id in (select id from public.application_stage_transitions where subsidy_stage_transition_id = 'e4eb01fb-2acf-469c-9ffe-9a0a8be04752');
+delete from public.application_messages where application_stage_transition_id in (select id from public.application_stage_transitions where subsidy_stage_transition_id = '72bc33b6-2fbe-4d05-bd3b-0e9e88adb76a');
+
+delete from public.application_stage_transitions where subsidy_stage_transition_id = 'e4eb01fb-2acf-469c-9ffe-9a0a8be04752';
+delete from public.application_stage_transitions where subsidy_stage_transition_id = '72bc33b6-2fbe-4d05-bd3b-0e9e88adb76a';
+
 delete from public.subsidy_stage_transition_messages where subsidy_stage_transition_id = 'e4eb01fb-2acf-469c-9ffe-9a0a8be04752';
 delete from public.subsidy_stage_transition_messages where subsidy_stage_transition_id = '72bc33b6-2fbe-4d05-bd3b-0e9e88adb76a';
 
