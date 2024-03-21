@@ -35,7 +35,7 @@
                             "scope": "#/properties/proof",
                             "label": "Bewijs",
                             "options": {
-                                "accept": "image/jpeg,image/png,.pdf",
+                                "accept": "image/jpeg,image/png,application/pdf",
                                 "maxFileSize": 20971520,
                                 "minItems": 1,
                                 "maxItems": 20,

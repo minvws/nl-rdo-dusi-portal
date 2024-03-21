@@ -7,15 +7,17 @@ ARGUMENTS="$@"
 DOWN=false
 FORCE=false
 INSTALL=false
+UPDATE=false
 OTHER_ARGUMENT=false
 
 # Function to display script usage
 function display_usage() {
-    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-m|--migrate] [-h|--help]"
+    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-u|--update] [-m|--migrate] [-h|--help]"
     echo "Options:"
     echo "  -c, --clear-env                 Copy the env files from the example files in each repository"
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
+    echo "  -u, --update                    Update packages"
     echo "  -f, --force                     Force override of installed packages"
     echo "      --ignore-platform-reqs      Ignore platform requirements during composer install"
     echo "  -m, --migrate                   Migrate database"
@@ -42,6 +44,10 @@ while [[ $# -gt 0 ]]; do
             INSTALL=true
             shift
             ;;
+        -u | --update)
+            UPDATE=true
+            shift
+            ;;
         -f | --force)
             FORCE=true
             shift
@@ -53,7 +59,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if "$DOWN" && ( "$INSTALL" || "$OTHER_ARGUMENT" ) ; then
+if "$DOWN" && ( "$INSTALL" || "UPDATE" || "$OTHER_ARGUMENT" ) ; then
     echo "Down only works without other arguments. Please run the script again with only the down option."
     exit 1
 fi
@@ -72,6 +78,11 @@ done
 
 if "$DOWN" ; then
     echo "Stopped docker applications"
+    exit 0
+fi
+
+if "$UPDATE" ; then
+    echo "Update packages"
     exit 0
 fi
 

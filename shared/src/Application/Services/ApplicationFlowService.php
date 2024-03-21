@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
+use MinVWS\DUSi\Shared\Application\Enums\ApplicationStageGrouping;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -271,7 +272,7 @@ class ApplicationFlowService
 
         $stages = $this->applicationRepository->getLatestApplicationStagesUpToIncluding(
             $target,
-            fn ($stage) => $stage->subsidyStage->stage
+            ApplicationStageGrouping::ByStageNumber
         );
         foreach ($stages as $stage) {
             if ($stage->assessor_user_id === $previousAssessor->id) {

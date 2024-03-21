@@ -69,7 +69,6 @@ class AssessmentFieldsSeeder extends Seeder
             default:        '€ 17.000',
             isRequired:     false,
             requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
-            excludeFromCloneData: true,
         );
 
         $this->createSelectField(

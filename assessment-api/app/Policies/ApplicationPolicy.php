@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Policies;
 
 use Illuminate\Support\Facades\Log;
+use MinVWS\DUSi\Shared\Application\Enums\ApplicationStageGrouping;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -162,7 +163,7 @@ class ApplicationPolicy
         $applicationStages =
             $this->applicationRepository->getLatestApplicationStagesUpToIncluding(
                 $currentApplicationStage,
-                fn ($stage) => $stage->subsidyStage->stage
+                ApplicationStageGrouping::ByStageNumber
             );
         foreach ($applicationStages as $applicationStage) {
             if (!$subsidyStage->allow_duplicate_assessors && $applicationStage->assessor_user_id === $user->id) {

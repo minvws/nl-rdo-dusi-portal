@@ -32,7 +32,7 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#\/properties\/implementationCoordinatorAssessmentInternalNote",
+                            "scope": "#\/properties\/internalNote",
                             "options": {
                                 "format": "textarea"
                             }

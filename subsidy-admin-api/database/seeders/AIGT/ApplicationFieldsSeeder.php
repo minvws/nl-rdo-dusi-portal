@@ -151,7 +151,6 @@ class ApplicationFieldsSeeder extends Seeder
             title:          '',
             excludeFromCloneData: true
         );
-
     }
 
     private function createSubsidyStageHashes(): void

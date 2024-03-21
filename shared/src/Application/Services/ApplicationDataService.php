@@ -15,6 +15,7 @@ use League\CommonMark\Exception\LogicException;
 use MinVWS\Codable\JSON\JSONDecoder;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
+use MinVWS\DUSi\Shared\Application\Enums\ApplicationStageGrouping;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -29,7 +30,6 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHashField;
 use stdClass;
 use Throwable;
-use Closure;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -169,7 +169,7 @@ readonly class ApplicationDataService
     ): array {
         return $this->getApplicationStageDataUpToIncluding(
             $applicationStage,
-            fn($stage) => $stage->subsidyStage->stage,
+            ApplicationStageGrouping::ByStageNumber,
             $readOnly
         );
     }
@@ -185,27 +185,32 @@ readonly class ApplicationDataService
     ): array {
         return $this->getApplicationStageDataUpToIncluding(
             $applicationStage,
-            fn($stage) => $stage->sequence_number,
+            ApplicationStageGrouping::BySequenceNumber,
             $readOnly
         );
     }
 
     /**
      * @param ApplicationStage $applicationStage
-     * @param Closure(ApplicationStage):int $groupingKey
+     * @param ApplicationStageGrouping $applicationStageGrouping
      *
      * @return array<int, ApplicationStageData>
      */
     private function getApplicationStageDataUpToIncluding(
         ApplicationStage $applicationStage,
-        Closure $groupingKey,
+        ApplicationStageGrouping $applicationStageGrouping,
         bool $readOnly = false
     ): array {
         $answersByGrouping = $this->applicationRepository
-            ->getAnswersForApplicationStagesUpToIncluding($applicationStage, $groupingKey, $readOnly);
+            ->getAnswersForApplicationStagesUpToIncluding($applicationStage, $applicationStageGrouping, $readOnly);
         $result = [];
         foreach ($answersByGrouping->stages as $stageAnswers) {
-            $result[$groupingKey($stageAnswers->stage)] =
+            $groupingKey = match ($applicationStageGrouping) {
+                ApplicationStageGrouping::ByStageNumber=> $stageAnswers->stage->subsidyStage->stage,
+                ApplicationStageGrouping::BySequenceNumber=> $stageAnswers->stage->sequence_number
+            };
+
+            $result[$groupingKey] =
                 $this->mapAnswersToData($stageAnswers->stage, $stageAnswers->answers);
         }
         return $result;

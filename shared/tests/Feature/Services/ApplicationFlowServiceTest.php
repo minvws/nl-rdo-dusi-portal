@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use MinVWS\DUSi\Shared\Application\Enums\ApplicationStageGrouping;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
@@ -766,7 +767,7 @@ class ApplicationFlowServiceTest extends TestCase
 
         $stages = $appRepository->getLatestApplicationStagesUpToIncluding(
             $assessmentStage,
-            fn ($stage) => $stage->subsidyStage->stage
+            ApplicationStageGrouping::ByStageNumber
         );
         $this->assertCount(2, $stages);
         $this->assertEquals($this->applicationStage1->id, $stages[1]->id); // the revise stage should be ignored

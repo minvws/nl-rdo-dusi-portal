@@ -13,6 +13,14 @@
             }
         },
         {
+            "type": "FormResultsTable",
+            "options": {
+                "fields": {
+                    "Bewijs": "{proof}"
+                }
+            }
+        },
+        {
             "type": "CustomControl",
             "scope": "#/properties/internalNote",
             "options": {

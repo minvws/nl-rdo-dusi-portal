@@ -45,12 +45,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
         return [
             'metadata' => [
-                'application' => [
-                    'id' => $this->application->id,
-                    'reference' => $this->application->reference,
-                    'finalReviewDeadline' => $this->application->final_review_deadline,
-                    'status' => $this->application->status->value
-                ],
+                ...$this->applicationMetaData(),
                 'subsidyVersion' => [
                     'id' => $this->application->subsidyVersion->id,
                     'version' => $this->application->subsidyVersion->version
@@ -161,6 +156,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
         return [
             'metadata' => [
+                ...$this->applicationMetaData(),
                 'subsidyStage' => [
                     'id' => $subsidyStage->id,
                     'stage' => $subsidyStage->stage,
@@ -189,5 +185,17 @@ class ApplicationSubsidyVersionResource extends JsonResource
                 $this->application,
                 $this->application->applicationSurePayResult->encrypted_name_suggestion
             ) : "-";
+    }
+
+    protected function applicationMetaData(): array
+    {
+        return [
+            'application' => [
+                'id' => $this->application->id,
+                'reference' => $this->application->reference,
+                'finalReviewDeadline' => $this->application->final_review_deadline,
+                'status' => $this->application->status->value
+            ],
+        ];
     }
 }

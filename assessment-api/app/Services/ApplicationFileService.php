@@ -12,6 +12,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
+use Ramsey\Uuid\Uuid;
 
 class ApplicationFileService
 {
@@ -27,7 +28,6 @@ class ApplicationFileService
         string $fieldCode,
         string $fileId
     ): Response {
-        //TODO GB: Test this service
         $applicationStage = $application->applicationStages()->findOrFail($applicationStageId);
         assert($applicationStage instanceof ApplicationStage);
 
@@ -52,17 +52,15 @@ class ApplicationFileService
         );
     }
 
-    public function writeApplicationFile(
+    public function createApplicationFile(
         Application $application,
         string $applicationStageId,
         string $fieldCode,
-        string $fileId,
         string $content
     ): Response {
-        //TODO GB: Test this service
+        $fileId = Uuid::uuid4()->toString();
         $applicationStage = $application->applicationStages()->findOrFail($applicationStageId);
         assert($applicationStage instanceof ApplicationStage);
-
         $field = $applicationStage->subsidyStage->fields->where('code', $fieldCode)->firstOrFail();
         $this->applicationFileManager->writeFile(
             $applicationStage,
@@ -72,7 +70,7 @@ class ApplicationFileService
         );
 
         return new Response(
-            content: $fileId,
+            content: ["id" => $fileId],
             status: 201
         );
     }
