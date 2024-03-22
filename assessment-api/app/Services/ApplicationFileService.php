@@ -13,6 +13,7 @@ use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryp
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ApplicationFileService
 {
@@ -56,7 +57,7 @@ class ApplicationFileService
         Application $application,
         string $applicationStageId,
         string $fieldCode,
-        string $content
+        UploadedFile $file
     ): Response {
         $fileId = Uuid::uuid4()->toString();
         $applicationStage = $application->applicationStages()->findOrFail($applicationStageId);
@@ -66,7 +67,7 @@ class ApplicationFileService
             $applicationStage,
             $field,
             $fileId,
-            $content
+            $file->getContent(),
         );
 
         return new Response(

@@ -6,9 +6,9 @@ namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewFileEvent;
+use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationFileUploadRequest;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationFileService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\User\Models\User;
@@ -54,13 +54,13 @@ class ApplicationFileController extends Controller
         Application $application,
         string $applicationStageId,
         string $fieldCode,
-        Request $request,
+        ApplicationFileUploadRequest $request,
     ): Response {
         return $this->applicationFileService->createApplicationFile(
             $application,
             $applicationStageId,
             $fieldCode,
-            $request->getContent()
+            $request->validated('file')
         );
     }
 }
