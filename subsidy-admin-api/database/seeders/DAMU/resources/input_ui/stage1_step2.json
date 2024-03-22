@@ -298,10 +298,11 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/damuSchoolPrimary",
-                            "label": "DAMU school",
+                            "label": "DAMU-school",
                             "options": {
                                 "format": "select",
-                                "placeholder": ""
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -314,16 +315,35 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/damuSchoolSecondary",
-                            "label": "DAMU school",
+                            "label": "DAMU-school",
                             "options": {
                                 "format": "select",
-                                "placeholder": ""
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
                             },
                             "rule": {
                                 "effect": "SHOW",
                                 "condition": {
                                     "scope": "#/properties/educationType",
                                     "schema": { "const": "Voortgezet onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolAddress",
+                            "label": "DAMU-school adres",
+                            "options": {
+                                "placeholder": "",
+                                "readonly": true
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#",
+                                    "schema": {
+                                        "required": ["educationType"]
+                                    }
                                 }
                             }
                         }

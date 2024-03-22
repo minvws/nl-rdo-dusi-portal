@@ -48,7 +48,7 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/proofOfRegistrationDAMUSchool",
-                            "label": "Inschrijfbewijs DAMU school",
+                            "label": "Inschrijfbewijs DAMU-school",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 5242880,

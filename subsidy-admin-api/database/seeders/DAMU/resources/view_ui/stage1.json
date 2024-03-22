@@ -133,7 +133,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Damu School primair onderwijs": "{damuSchoolPrimary}"
+                            "DAMU-school primair onderwijs": "{damuSchoolPrimary}"
                         }
                     },
                     "rule": {
@@ -151,7 +151,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Damu School primair onderwijs": "{damuSchoolSecondary}"
+                            "DAMU-school primair onderwijs": "{damuSchoolSecondary}"
                         }
                     },
                     "rule": {
@@ -164,6 +164,14 @@
                         }
                     }
 
+                },
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "DAMU-school adres": "{damuSchoolAddress}"
+                        }
+                    }
                 }
             ]
         },
@@ -201,7 +209,7 @@
                         "fields": {
                             "IB60 formulier": "{IBDocument}",
                             "ANWB routeplanner": "{ANWBRouteCard}",
-                            "Inschrijfbewijs DAMU school": "{proofOfRegistrationDAMUSchool}",
+                            "Inschrijfbewijs DAMU-school": "{proofOfRegistrationDAMUSchool}",
                             "Inschrijfbewijs reguliere school": "{proofOfRegistrationRegularSchool}"
                         }
                     }

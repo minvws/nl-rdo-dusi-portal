@@ -36,7 +36,7 @@ class AssessmentFieldsSeeder extends Seeder
             title: 'Gecontroleerd',
             options: [
                 'Woont de aanvrager niet in Caribisch Nederland?',
-                'Is het inschrijvingsbewijs bij de DAMU school aangeleverd?',
+                'Is het inschrijvingsbewijs bij de DAMU-school aangeleverd?',
                 'Is naam van de leerling op het inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
                 'Is een recente inkomensverklaring (van beide ouders) aangeleverd (maximaal 2 kalenderjaren oud)?',
                 'Zijn onnodige gegevens onleesbaar gemaakt?'
@@ -47,7 +47,7 @@ class AssessmentFieldsSeeder extends Seeder
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code: 'isMinimumTravelDistanceMet',
-            title: 'Is voldaan aan de minimale reisafstand tussen het woonadres en de DAMU school, volgens de ANWB routeplanner?',
+            title: 'Is voldaan aan de minimale reisafstand tussen het woonadres en de DAMU-school, volgens de ANWB routeplanner?',
             options: ['Ja', 'Nee'],
             isRequired: false,
         );

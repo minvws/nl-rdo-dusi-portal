@@ -218,20 +218,20 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'damuSchoolPrimary',
-            title:          'DAMU school',
-            options:        ['Amsterdam - Olympiaschool', 'Den Haag - School voor jong talent', 'Rotterdam - Nieuwe Park Rozenburgschool'],
+            title:          'DAMU-school',
+            options:        ['Amsterdam - Olympiaschool', 'Den Haag - School voor Jong Talent', 'Rotterdam - Nieuwe Park Rozenburgschool'],
             isRequired:     false,
         );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'damuSchoolSecondary',
-            title:          'DAMU school',
+            title:          'DAMU-school',
             options:        [
                 'Amsterdam - Gerrit van der Veen College',
                 'Amsterdam - Individueel Voortgezet Kunstzinnig Onderwijs (IVKO)',
                 'Arnhem - Beekdal Lyceum',
-                'Den Haag - Interfaculteit School voor jong talent',
+                'Den Haag - Interfaculteit School voor Jong Talent',
                 'Enschede - Het Stedelijk Lyceum, locatie Kottenpark',
                 'Haren - Zernike College',
                 'Maastricht - Bonnefanten College',
@@ -241,6 +241,13 @@ class ApplicationFieldsSeeder extends Seeder
                 'Venlo - Valuas College',
             ],
             isRequired: false,
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code:           'damuSchoolAddress',
+            title:          'Adres DAMU-school',
+            isRequired:     false,
         );
 
         $this->createTextField(
@@ -292,7 +299,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'proofOfRegistrationDAMUSchool',
-            title:          'Inschrijfbewijs DAMU school',
+            title:          'Inschrijfbewijs DAMU-school',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
