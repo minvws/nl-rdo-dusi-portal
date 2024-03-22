@@ -26,6 +26,7 @@ class SubsidyMapper
             $subsidyVersion->subsidy->valid_from,
             $subsidyVersion->subsidy->valid_to,
             $subsidyVersion->subsidy->allow_multiple_applications,
+            $subsidyVersion->subsidy->is_open_for_new_applications,
         );
     }
 
@@ -39,6 +40,7 @@ class SubsidyMapper
             $subsidy->valid_from,
             $subsidy->valid_to,
             $subsidy->allow_multiple_applications,
+            $subsidy->is_open_for_new_applications,
         );
     }
 
