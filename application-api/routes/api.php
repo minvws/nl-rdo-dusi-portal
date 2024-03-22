@@ -33,6 +33,8 @@ Route::middleware('auth')->group(
                 ->name('subsidy-and-concepts');
             Route::post('subsidies/{subsidyCode}/applications', [ApplicationController::class, 'create'])
                 ->name('application-create');
+            Route::get('subsidies/{subsidyCode}/form', [SubsidyController::class, 'getSubsidyForm'])
+                ->name('subsidy-form');
 
             Route::get('applications', [ApplicationController::class, 'index'])
                 ->name('application-index');
