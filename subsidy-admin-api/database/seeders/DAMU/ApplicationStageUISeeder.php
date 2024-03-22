@@ -67,9 +67,8 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                 $this->buildInputUiStep(
                     3, 'Documenten toevoegen', [
                         "IBDocument",
-                        "ANWBRouteCard",
                         "proofOfRegistrationDAMUSchool",
-                        "proofOfRegistrationRegularSchool",
+                        "proofOfRegistrationHboCollaborationPartner",
                     ]
                 ),
                 $this->buildInputUiStep(

@@ -253,7 +253,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'travelDistanceSingleTrip',
-            title:          'Reisafstand enkele reis',
+            title:          'Reisafstand enkele reis (in kilometers)',
             inputMode:      'float',
             params:         ['minimum' => 1, 'maximum' => 9999],
         );
@@ -288,16 +288,6 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'ANWBRouteCard',
-            title:          'ANWB routeplanner',
-            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
-            minItems:       1,
-            maxItems:       20,
-            maxFileSize:    20971520
-        );
-
-        $this->createUploadField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'proofOfRegistrationDAMUSchool',
             title:          'Inschrijfbewijs DAMU-school',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
@@ -308,7 +298,7 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'proofOfRegistrationRegularSchool',
+            code:           'proofOfRegistrationHboCollaborationPartner',
             title:          'Inschrijfbewijs reguliere school',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,

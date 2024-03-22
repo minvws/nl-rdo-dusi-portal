@@ -20,24 +20,7 @@
                                 "maxFileSize": 5242880,
                                 "minItems": 1,
                                 "maxItems": 20,
-                                "tip": "In het formulier wordt het bruto jaarinkomen gevraagd van beide ouders of wettelijk vertegenwoordigers. Ook als u niet duurzaam samenleeft. Bij een eenoudergezin geldt dit uiteraard niet.<br/></br/>De inkomensverklaring kunt u downloaden in Mijn Belastingdienst onder het tabblad Inkomstenbelasting. U kunt de verklaring ook gratis aanvragen bij de Belastingdienst via het telefoonnummer 0800 0543."
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/ANWBRouteCard",
-                            "label": "ANWB routeplanner",
-                            "options": {
-                                "accept": "image/jpeg,image/png,.pdf",
-                                "maxFileSize": 5242880,
-                                "minItems": 1,
-                                "maxItems": 20,
-                                "tip": "Gebruik de ANWB-routeplanner met de optie ‘snelste route’. U mag geen andere routeplanner gebruiken. Kies als route het woonadres naar de Damu-school. Schakel de optie 'Route op basis van actueel verkeer' uit en klik op 'Herbereken route'."
+                                "tip": "In het formulier wordt het bruto jaarinkomen gevraagd van beide ouders of wettelijk vertegenwoordigers. Ook als u niet duurzaam samenleeft. Bij een eenoudergezin geldt dit uiteraard niet.<br/></br/>De inkomensverklaring (IB60 formulier) kunt u downloaden in Mijn Belastingdienst onder het tabblad Inkomstenbelasting. U kunt de verklaring ook gratis aanvragen bij de Belastingdienst via het telefoonnummer 0800 0543. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
                     ]
@@ -54,7 +37,7 @@
                                 "maxFileSize": 5242880,
                                 "minItems": 1,
                                 "maxItems": 20,
-                                "tip": ""
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
                     ]
@@ -64,14 +47,14 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/proofOfRegistrationRegularSchool",
-                            "label": "Inschrijfbewijs reguliere school",
+                            "scope": "#/properties/proofOfRegistrationHboCollaborationPartner",
+                            "label": "Inschrijfbewijs HBO samenwerkingspartner",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 5242880,
                                 "minItems": 1,
                                 "maxItems": 20,
-                                "tip": ""
+                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
                             }
                         }
                     ]

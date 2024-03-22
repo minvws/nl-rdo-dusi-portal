@@ -259,7 +259,21 @@ class AssessmentStageUISeeder extends Seeder
             "type" => "FormGroupControl",
             "options" => [
                 "section" => true,
-                "group" => true
+                "group" => true,
+                "allOf" => [
+                    [
+                        "if" => [
+                            "properties" => [
+                                "firstAssessment" => [
+                                    "const" => "Goedgekeurd"
+                                ]
+                            ]
+                        ],
+                        "then" => [
+                            "required" => ["amount"]
+                        ]
+                    ]
+                ]
             ],
             "elements" => [
                 [

@@ -187,7 +187,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Reisafstand enkele reis": "{travelDistanceSingleTrip}",
+                            "Reisafstand enkele reis (in kilometers)": "{travelDistanceSingleTrip}",
                             "Kilometervergoeding": "{travelExpenseReimbursement}",
                             "Gevraagd subsidiebedrag": "{requestedSubsidyAmount}"
                         }
@@ -208,9 +208,8 @@
                     "options": {
                         "fields": {
                             "IB60 formulier": "{IBDocument}",
-                            "ANWB routeplanner": "{ANWBRouteCard}",
                             "Inschrijfbewijs DAMU-school": "{proofOfRegistrationDAMUSchool}",
-                            "Inschrijfbewijs reguliere school": "{proofOfRegistrationRegularSchool}"
+                            "Inschrijfbewijs reguliere school": "{proofOfRegistrationHboCollaborationPartner}"
                         }
                     }
                 }

@@ -36,8 +36,10 @@ class AssessmentFieldsSeeder extends Seeder
             title: 'Gecontroleerd',
             options: [
                 'Woont de aanvrager niet in Caribisch Nederland?',
-                'Is het inschrijvingsbewijs bij de DAMU-school aangeleverd?',
-                'Is naam van de leerling op het inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
+                'Is het inschrijvingsbewijs van de DAMU school aangeleverd?',
+                'Is naam van de leerling op het DAMU inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
+                'Is het inschrijvingsbewijs van de HBO school aangeleverd?',
+                'Is naam van de leerling op het HBO inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
                 'Is een recente inkomensverklaring (van beide ouders) aangeleverd (maximaal 2 kalenderjaren oud)?',
                 'Zijn onnodige gegevens onleesbaar gemaakt?'
             ],
@@ -101,7 +103,7 @@ class AssessmentFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code:           'businessPartnerNumber',
-            title:          'ZP-nummer',
+            title:          'Zakenpartnernummer',
             inputMode:      'numeric',
             isRequired:     false,
             params:         ['minimum' => 0],
@@ -177,7 +179,7 @@ class AssessmentFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code:           'amount',
-            title:          'Bedrag',
+            title:          'Toegekend bedrag',
             isRequired:     true,
             requiredCondition: new AndCondition([
                 new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
