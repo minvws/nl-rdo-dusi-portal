@@ -11,14 +11,14 @@ Betreft: Verlening aanvraag {$content->subsidyTitle}
 </p>
 
 <h2>Besluit</h2>
-<p>Hierbij ken ik uw aanvraag (gedeeltelijk) toe en stel ik de subsidie (aangepast) vast op {$content->stage3->amount}.</p>
+<p>Hierbij ken ik uw aanvraag (gedeeltelijk) toe en stel ik de subsidie (aangepast) vast op € {$content->stage3->amount}. U vroeg een subsidie aan van € {$content->stage1->requestedSubsidyAmount}.</p>
 
-{if $content->stage1->eductionType === 'Primair onderwijs'}
+{if $content->stage1->educationType === 'Primair onderwijs'}
 <p>De subsidie is toegekend op grond van artikel 3 van de Regeling en beoordeeld aan de hand van de criteria uit artikel
     6 en 7 van de Regeling.</p>
 {/if}
 
-{if $content->stage1->eductionType === 'Voorgezet onderwijs'}
+{if $content->stage1->educationType === 'Voorgezet onderwijs'}
 <p>De subsidie is toegekend op grond van artikel 2 van de Regeling en beoordeeld aan de hand van de criteria uit artikel
     3 en 6 van de Regeling.</p>
 {/if}
@@ -51,7 +51,7 @@ Betreft: Verlening aanvraag {$content->subsidyTitle}
     geval melding als de leerling dit subsidiejaar met de opleiding stopt.</p>
 
 <u>Verantwoording</u>
-<p>De subsidie is direct vastgesteld. Dit betekent dat er na afloop van het subsidiejaar geen verantwoordeling van de
+<p>De subsidie is direct vastgesteld. Dit betekent dat er na afloop van het subsidiejaar geen verantwoording van de
     subsidie nodig is.</p>
 
 <u>Wat als u zich niet aan de voorschriften houdt?</u>
@@ -60,7 +60,7 @@ Betreft: Verlening aanvraag {$content->subsidyTitle}
 
 <h2>Wanneer ontvangt u de subsidie?</h2>
 <p>Ik streef ernaar het toegekende subsidiebedrag binnen 10 werkdagen naar u over te maken onder vermelding van het
-    referentienummer Dossiernummer.</p>
+    referentienummer {$content->reference}.</p>
 
 {/block}
 

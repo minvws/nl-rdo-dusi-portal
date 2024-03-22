@@ -16,11 +16,11 @@
 
     <h2>Motivatie</h2>
 
-    {if $content->stage1->eductionType === 'Primair onderwijs'}
-    <p>Uw aanvraag is beoordeeld aan de hand van de criteria uit artikel 6 en 7 van de Regeling. </p>
+    {if $content->stage1->educationType === 'Primair onderwijs'}
+    <p>Uw aanvraag is beoordeeld aan de hand van de criteria uit artikel 6 en 7 van de Regeling.</p>
     {/if}
 
-    {if $content->stage1->eductionType === 'Voorgezet onderwijs'}
+    {if $content->stage1->educationType === 'Voorgezet onderwijs'}
     <p>Uw aanvraag is beoordeeld aan de hand van de criteria uit artikel 3 en 6 van de Regeling.</p>
     {/if}
 

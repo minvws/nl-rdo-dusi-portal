@@ -36,7 +36,7 @@ class AssessmentFieldsSeeder extends Seeder
             title: 'Gecontroleerd',
             options: [
                 'Woont de aanvrager niet in Caribisch Nederland?',
-                'Is het inschrijvingsbewijs van de DAMU school aangeleverd?',
+                'Is het inschrijvingsbewijs van de DAMU-school aangeleverd?',
                 'Is naam van de leerling op het DAMU inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
                 'Is het inschrijvingsbewijs van de HBO school aangeleverd?',
                 'Is naam van de leerling op het HBO inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
