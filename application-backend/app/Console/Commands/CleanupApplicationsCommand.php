@@ -9,10 +9,12 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Application\Backend\Events\Logging\DeleteApplicationEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationReferenceRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\Logging\Laravel\LogService;
 
 class CleanupApplicationsCommand extends Command
 {
@@ -23,7 +25,8 @@ class CleanupApplicationsCommand extends Command
     private bool $dryRun = false;
 
     public function __construct(
-        private readonly ApplicationReferenceRepository $applicationReferenceRepository
+        private readonly ApplicationReferenceRepository $applicationReferenceRepository,
+        private LogService $logService
     ) {
         parent::__construct();
     }
@@ -76,6 +79,8 @@ class CleanupApplicationsCommand extends Command
                 $applicationReference = $application->reference;
                 $this->info(sprintf('%s | Processing', $applicationReference));
 
+
+
                 $identitiesCollection->add($application->identity);
 
                 $this->deleteMessages($application);
@@ -87,6 +92,11 @@ class CleanupApplicationsCommand extends Command
                 if (!$this->dryRun) {
                     $this->applicationReferenceRepository->setReferenceToDeleted($applicationReference);
                     $application->delete();
+
+                    $this->logService->log((new DeleteApplicationEvent())
+                        ->withData([
+                            'reference' => $application->reference,
+                        ]));
                 }
 
                 $this->info(sprintf('%s | Deleted application', $applicationReference));
