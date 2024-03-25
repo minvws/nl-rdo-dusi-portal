@@ -21,6 +21,7 @@ use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswers;
 use MinVWS\DUSi\Shared\Application\DTO\PaginationOptions;
 use MinVWS\DUSi\Shared\Application\DTO\SortOptions;
+use MinVWS\DUSi\Shared\Application\Enums\ApplicationStageGrouping;
 use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationHash;
@@ -44,6 +45,7 @@ use RuntimeException;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ApplicationRepository
 {
@@ -213,7 +215,6 @@ class ApplicationRepository
 
     public function saveApplication(Application $application): void
     {
-
         $application->save();
     }
 
@@ -232,14 +233,28 @@ class ApplicationRepository
      * has gone through certain stages multiple times only the latest instance of the stages
      * will be returned.
      *
+     * @param ApplicationStage $stage
+     * @param ApplicationStageGrouping $applicationStageGrouping
+     *
      * @return array<int, ApplicationStage> Application stages indexed by stage number.
      */
-    public function getLatestApplicationStagesUpToIncluding(ApplicationStage $stage, bool $readOnly = false): array
-    {
+    public function getLatestApplicationStagesUpToIncluding(
+        ApplicationStage $stage,
+        ApplicationStageGrouping $applicationStageGrouping,
+        bool $readOnly = false
+    ): array {
+        $query = $stage->application->applicationStages()
+            ->with('subsidyStage');
+
+        $query = match ($applicationStageGrouping) {
+            ApplicationStageGrouping::ByStageNumber =>
+                $query->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage),
+            ApplicationStageGrouping::BySequenceNumber =>
+                $query->where('sequence_number', '<=', $stage->sequence_number),
+        };
+
         /** @var array<ApplicationStage> $matchingStages */
-        $matchingStages =
-            $stage->application->applicationStages()
-                ->with('subsidyStage')
+        $matchingStages = $query
                 ->where('sequence_number', '<=', $stage->sequence_number)
                 ->where(
                     fn ($query) =>
@@ -247,25 +262,32 @@ class ApplicationRepository
                             ->where('is_submitted', '=', true)
                             ->when(!$readOnly, fn ($query) => $query->orWhere('id', '=', $stage->id))
                 )
-                ->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage)
                 ->orderBy('sequence_number')
                 ->get();
 
         $uniqueStages = [];
         foreach ($matchingStages as $currentStage) {
-            // newer "versions" of stages will overwrite previous ones
-            $stageNumber = $currentStage->subsidyStage->stage;
-            $uniqueStages[$stageNumber] = $currentStage;
+            $groupingKey = match ($applicationStageGrouping) {
+                ApplicationStageGrouping::ByStageNumber => $currentStage->subsidyStage->stage,
+                ApplicationStageGrouping::BySequenceNumber => $currentStage->sequence_number,
+            };
+            $uniqueStages[$groupingKey] = $currentStage;
         }
 
         return $uniqueStages;
     }
 
+    /**
+     * @param ApplicationStage $stage
+     * @param ApplicationStageGrouping $applicationStageGrouping
+     * @return AnswersByApplicationStage
+     */
     public function getAnswersForApplicationStagesUpToIncluding(
         ApplicationStage $stage,
-        bool $readOnly = false,
+        ApplicationStageGrouping $applicationStageGrouping = ApplicationStageGrouping::ByStageNumber,
+        bool $readOnly = false
     ): AnswersByApplicationStage {
-        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage, $readOnly);
+        $uniqueStages = $this->getLatestApplicationStagesUpToIncluding($stage, $applicationStageGrouping, $readOnly);
 
         $stages = [];
         foreach ($uniqueStages as $currentStage) {

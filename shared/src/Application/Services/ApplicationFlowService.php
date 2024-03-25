@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageData;
+use MinVWS\DUSi\Shared\Application\Enums\ApplicationStageGrouping;
 use MinVWS\DUSi\Shared\Application\Events\ApplicationMessageEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -139,7 +140,7 @@ class ApplicationFlowService
 
         $data = array_map(
             fn (ApplicationStageData $stageData) => $stageData->data,
-            $this->applicationDataService->getApplicationStageDataUpToIncluding($stage)
+            $this->applicationDataService->getApplicationStageDataUniqueByStageUpToIncluding($stage)
         );
 
         return $transition->condition->evaluate($data);
@@ -269,7 +270,10 @@ class ApplicationFlowService
             return;
         }
 
-        $stages = $this->applicationRepository->getLatestApplicationStagesUpToIncluding($target);
+        $stages = $this->applicationRepository->getLatestApplicationStagesUpToIncluding(
+            $target,
+            ApplicationStageGrouping::ByStageNumber
+        );
         foreach ($stages as $stage) {
             if ($stage->assessor_user_id === $previousAssessor->id) {
                 // assessor already picked up an earlier (active!) stage, not allowed to assess 2 stages

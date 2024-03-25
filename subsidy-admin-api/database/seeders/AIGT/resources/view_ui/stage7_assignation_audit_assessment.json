@@ -6,7 +6,7 @@
     "elements": [
         {
             "type": "CustomControl",
-            "scope": "#/properties/implementationCoordinatorAssessment",
+            "scope": "#/properties/assessment",
             "options": {
                 "readonly": true,
                 "format": "radio"
@@ -14,7 +14,7 @@
         },
         {
             "type": "CustomControl",
-            "scope": "#/properties/implementationCoordinatorAssessmentInternalNote",
+            "scope": "#/properties/internalNote",
             "options": {
                 "readonly": true,
                 "format": "textarea"

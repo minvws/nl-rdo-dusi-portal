@@ -26,6 +26,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
  * @property SubjectRole $subject_role
  * @property Role|null $assessor_user_role
  * @property string|null $internal_note_field_code
+ * @property boolean $allow_duplicate_assessors
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read Collection<int, SubsidyStageTransition> $subsidyStageTransitions
  * @property-read Collection<int, SubsidyStageHash> $subsidyStagesHashes
@@ -46,7 +47,8 @@ class SubsidyStage extends Model
         'subject_role',
         'assessor_user_role',
         'stage',
-        'internal_note_field_code'
+        'internal_note_field_code',
+        'allow_duplicate_assessors'
     ];
 
     protected $casts = [

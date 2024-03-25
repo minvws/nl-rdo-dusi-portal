@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Shared\Application\Models;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationStageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStageDecision;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\User\Models\User;
 
@@ -36,6 +38,7 @@ use MinVWS\DUSi\Shared\User\Models\User;
  * @property-read Application $application
  * @property-read SubsidyStage $subsidyStage
  * @property-read Collection<array-key, Answer> $answers
+ * @property-read Collection<array-key, Field> $fields
  * @property-read ?User $assessorUser
  */
 class ApplicationStage extends Model
@@ -71,6 +74,18 @@ class ApplicationStage extends Model
     public function subsidyStage(): BelongsTo
     {
         return $this->belongsTo(SubsidyStage::class, 'subsidy_stage_id', 'id');
+    }
+
+    public function fields(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Field::class,
+            SubsidyStage::class,
+            'id',
+            'subsidy_stage_id',
+            'subsidy_stage_id',
+            'id',
+        );
     }
 
     public function answers(): HasMany

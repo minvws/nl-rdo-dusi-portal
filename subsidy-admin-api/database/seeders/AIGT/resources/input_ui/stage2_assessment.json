@@ -1,0 +1,180 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true,
+        "group": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Beoordeling",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessmentChecklist",
+                            "options": {
+                                "format": "checkbox-group"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/subsidyAwardedBefore",
+                            "options": {
+                                "format": "radio"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Uitkering",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/amount",
+                            "options": {
+                                "format": "radio"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Status",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessment",
+                            "options": {
+                                "format": "radio"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Toelichting",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessmentRequestedComplementReason",
+                            "options": {
+                                "format": "radio"
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#\/properties\/firstAssessment",
+                                    "schema": {
+                                        "const": "Aanvulling nodig"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessmentRequestedComplementNote",
+                            "options": {
+                                "format": "textarea",
+                                "tip": "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#\/properties\/firstAssessment",
+                                    "schema": {
+                                        "const": "Aanvulling nodig"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessmentRejectedNote",
+                            "options": {
+                                "format": "textarea",
+                                "tip": "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#\/properties\/firstAssessment",
+                                    "schema": {
+                                        "const": "Afgekeurd"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessmentApprovedNote",
+                            "options": {
+                                "format": "textarea",
+                                "tip": "Deze notitie wordt opgenomen binnen de brief aan de aanvrager."
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#\/properties\/firstAssessment",
+                                    "schema": {
+                                        "const": "Goedgekeurd"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessmentInternalNote",
+                            "options": {
+                                "format": "textarea"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
