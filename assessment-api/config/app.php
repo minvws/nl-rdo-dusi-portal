@@ -208,6 +208,7 @@ return [
         MinVWS\DUSi\Shared\Providers\SurePayServiceProvider::class,
         MinVWS\DUSi\Shared\Providers\LetterServiceProvider::class,
         MinVWS\DUSi\Shared\Providers\UserServiceProvider::class,
+        MinVWS\DUSi\Shared\Providers\ClamAvServiceProvider::class,
     ],
 
     /*

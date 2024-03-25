@@ -30,6 +30,16 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-1470: Add ClamAV file scanning to file uploading on assessment api
+
+ClamAV needs to be added on the Assessment API servers.
+We have the same ClamAV settings available as we already have for
+the backend application.
+
+PR <https://github.com/minvws/nl-rdo-dusi-portal/pull/1470>
+
+## Release 2.3.0
+
 ### DUSI-1265: Add timout transition for BTV and AIGT subsidies
 
 The `2024_02_19_000000_add_stage_timout_transitions_for_btv_aigt_subsidies.sql` SQL update needs to run to add the timeout transitions for BTV and AIGT subsidies.

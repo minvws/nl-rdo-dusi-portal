@@ -8,7 +8,7 @@ use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Validator as LaravelValidator;
-use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\ClamAv\ClamAvService;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ClamAv;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Psr\Log\LoggerInterface;
@@ -23,6 +23,21 @@ readonly class FileValidator
     }
 
     public function getValidator(Field $field, UploadedFile $file): ValidatorContract
+    {
+        $rules = $this->getRules($field);
+
+        return new LaravelValidator(
+            translator: $this->translator,
+            data: [
+                'file' => $file,
+            ],
+            rules: [
+                'file' => $rules,
+            ],
+        );
+    }
+
+    public function getRules(Field $field): array
     {
         $rules = [
             'required',
@@ -42,14 +57,6 @@ readonly class FileValidator
         // Add as last so size and mime type are checked first
         $rules[] = new ClamAv($this->clamAvService, $this->logger);
 
-        return new LaravelValidator(
-            translator: $this->translator,
-            data: [
-                'file' => $file,
-            ],
-            rules: [
-                'file' => $rules,
-            ],
-        );
+        return $rules;
     }
 }

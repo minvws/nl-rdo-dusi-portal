@@ -11,6 +11,8 @@ use MinVWS\DUSi\Assessment\API\Events\Logging\ViewFileEvent;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationFileUploadRequest;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationFileService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\Logging\Laravel\LogService;
 
@@ -27,8 +29,8 @@ class ApplicationFileController extends Controller
      */
     public function show(
         Application $application,
-        string $applicationStageId,
-        string $fieldCode,
+        ApplicationStage $applicationStage,
+        Field $field,
         string $fileId,
         Authenticatable $user
     ): Response {
@@ -38,28 +40,29 @@ class ApplicationFileController extends Controller
             ->withActor($user)
             ->withData([
                 'applicationId' => $application->id,
-                'fieldCode' => $fieldCode,
+                'fieldCode' => $field->code,
                 'fileId' => $fileId,
                 'userId' => $user->getAuthIdentifier(),
             ]));
         return $this->applicationFileService->getApplicationFile(
-            $application,
-            $applicationStageId,
-            $fieldCode,
+            $applicationStage,
+            $field,
             $fileId
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) Application is used for route binding
+     */
     public function uploadFile(
         Application $application,
-        string $applicationStageId,
-        string $fieldCode,
+        ApplicationStage $applicationStage,
+        Field $field,
         ApplicationFileUploadRequest $request,
     ): Response {
         return $this->applicationFileService->createApplicationFile(
-            $application,
-            $applicationStageId,
-            $fieldCode,
+            $applicationStage,
+            $field,
             $request->validated('file')
         );
     }

@@ -6,6 +6,9 @@ namespace MinVWS\DUSi\Assessment\API\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use InvalidArgumentException;
+use MinVWS\DUSi\Shared\Application\Services\Validation\FileValidator;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 class ApplicationFileUploadRequest extends FormRequest
 {
@@ -22,14 +25,22 @@ class ApplicationFileUploadRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules(FileValidator $fileValidator): array
     {
+        $field = $this->getField();
+
         return [
-            'file' => [
-                'required',
-                'file',
-                // TODO: ClamAV virus scan ?
-            ],
+            'file' => $fileValidator->getRules($field),
         ];
+    }
+
+    protected function getField(): Field
+    {
+        $field = $this->route('field');
+        if (! $field instanceof Field) {
+            throw new InvalidArgumentException('Field not found');
+        }
+
+        return $field;
     }
 }

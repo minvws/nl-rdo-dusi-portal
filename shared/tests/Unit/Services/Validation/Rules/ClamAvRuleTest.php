@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Tests\Unit\Services\Validation\Rules;
 
 use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
-use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\ClamAv\ClamAvService;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ClamAv;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;

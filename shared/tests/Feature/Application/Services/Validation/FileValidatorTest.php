@@ -10,7 +10,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Translation\ArrayLoader;
 use Illuminate\Translation\Translator;
-use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\ClamAv\ClamAvService;
 use MinVWS\DUSi\Shared\Application\Services\Validation\FileValidator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Tests\TestCase;

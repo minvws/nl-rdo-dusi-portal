@@ -9,7 +9,7 @@ use Exception;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Translation\PotentiallyTranslatedString;
-use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\ClamAv\ClamAvService;
 use Psr\Log\LoggerInterface;
 
 readonly class ClamAv implements ValidationRule

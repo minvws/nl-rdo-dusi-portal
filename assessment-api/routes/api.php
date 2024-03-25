@@ -41,9 +41,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::prefix('applications')
             ->controller(ApplicationFileController::class)
+            ->scopeBindings()
             ->group(function () {
-                Route::get('{application}/stages/{applicationStageId}/fields/{fieldCode}/files/{id}', 'show');
-                Route::post('{application}/stages/{applicationStageId}/fields/{fieldCode}/files', 'uploadFile');
+                Route::get('{application}/stages/{applicationStage}/fields/{field:code}/files/{id}', 'show');
+                Route::post('{application}/stages/{applicationStage}/fields/{field:code}/files', 'uploadFile');
             });
 
         Route::prefix('applications/{application}/assessor')
