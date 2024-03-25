@@ -59,7 +59,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if "$DOWN" && ( "$INSTALL" || "UPDATE" || "$OTHER_ARGUMENT" ) ; then
+if "$DOWN" && ( "$INSTALL" || "$UPDATE" || "$OTHER_ARGUMENT" ) ; then
     echo "Down only works without other arguments. Please run the script again with only the down option."
     exit 1
 fi
