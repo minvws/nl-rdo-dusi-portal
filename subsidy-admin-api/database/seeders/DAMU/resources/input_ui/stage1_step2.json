@@ -181,8 +181,7 @@
                             "label": "Ontvangt u kinderalimentatie?",
                             "options": {
                                 "format": "radio",
-                                "placeholder": "",
-                                "remoteAction": ["onChange"]
+                                "placeholder": ""
                             }
                         },
                         {
@@ -292,7 +291,7 @@
                             "options": {
                                 "format": "radio",
                                 "placeholder": "",
-                                "remoteAction": ["onBlur"]
+                                "remoteAction": ["onValid"]
                             }
                         },
                         {
@@ -302,7 +301,7 @@
                             "options": {
                                 "format": "select",
                                 "placeholder": "",
-                                "remoteAction": ["onBlur"]
+                                "remoteAction": ["onValid"]
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -319,7 +318,7 @@
                             "options": {
                                 "format": "select",
                                 "placeholder": "",
-                                "remoteAction": ["onBlur"]
+                                "remoteAction": ["onValid"]
                             },
                             "rule": {
                                 "effect": "SHOW",
