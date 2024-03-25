@@ -133,7 +133,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
                         'Goedgekeurd'
                     ),
                     new ComparisonCondition(
-                        4,
+                        3,
                         'implementationCoordinatorAssessment',
                         Operator::Identical,
                         'Eens met de eerste beoordeling'
