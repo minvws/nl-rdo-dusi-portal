@@ -19,8 +19,8 @@ class Subsidy implements Codable
         public readonly ?string $pageUrl,
         public readonly DateTimeInterface $validFrom,
         public readonly ?DateTimeInterface $validTo,
-        public readonly bool $isOpenForNewApplications,
         public readonly bool $allowMultipleApplications,
+        public readonly bool $isOpenForNewApplications,
     ) {
     }
 }
