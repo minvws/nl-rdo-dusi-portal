@@ -118,7 +118,7 @@
                         "fields": {
                             "WIA-Beslissing": "{wiaDecisionDocument}",
                             "WIA-Beslissing uitgesteld": "{isWiaDecisionPostponed}",
-                            "Toekenningsbrief (indien uitgesteld)": "{Toekenningsbrief}"
+                            "Toekenningsbrief (indien uitgesteld)": "{wiaDecisionPostponedLetter}"
                         }
                     }
                 }
