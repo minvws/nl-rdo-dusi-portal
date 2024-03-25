@@ -21,6 +21,7 @@ use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Jobs\CheckSurePayJob;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationReferenceRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
@@ -75,6 +76,7 @@ readonly class ApplicationMutationService
         private LogService $logService,
         private FormDecodingService $decodingService,
         private ApplicationFieldHookService $applicationFieldHookService,
+        private ApplicationReferenceRepository $applicationReferenceRepository,
     ) {
     }
 
@@ -164,6 +166,7 @@ readonly class ApplicationMutationService
             $application->subsidyVersion->subsidy
         );
         $this->applicationRepository->saveApplication($application);
+        $this->applicationReferenceRepository->saveReference($application->reference);
 
         $this->logService->log((new StartApplicationEvent())
             ->withData([

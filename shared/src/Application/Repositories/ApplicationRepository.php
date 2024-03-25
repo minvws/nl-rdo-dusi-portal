@@ -449,11 +449,6 @@ class ApplicationRepository
             ->count();
     }
 
-    public function isReferenceUnique(string $applicationReference): bool
-    {
-        return Application::where('reference', $applicationReference)->count() === 0;
-    }
-
     public function deleteAnswersByStage(ApplicationStage $applicationStage): void
     {
         $this->getAnswerQuery($applicationStage)->delete();
