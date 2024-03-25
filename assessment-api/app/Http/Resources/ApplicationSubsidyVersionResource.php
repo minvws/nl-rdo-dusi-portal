@@ -133,7 +133,10 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
         return array_map(
             fn (ApplicationStageData $applicationStageData) => $this->buildApplicationStage($applicationStageData),
-            $this->applicationDataService->getApplicationStageDataUpToIncluding($stage, $this->readOnly)
+            $this->applicationDataService->getApplicationStageDataUniqueBySequenceUpToIncluding(
+                $stage,
+                $this->readOnly
+            )
         );
     }
 

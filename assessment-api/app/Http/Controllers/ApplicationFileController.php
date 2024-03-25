@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewFileEvent;
+use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationFileUploadRequest;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationFileService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\User\Models\User;
@@ -46,6 +47,20 @@ class ApplicationFileController extends Controller
             $applicationStageId,
             $fieldCode,
             $fileId
+        );
+    }
+
+    public function uploadFile(
+        Application $application,
+        string $applicationStageId,
+        string $fieldCode,
+        ApplicationFileUploadRequest $request,
+    ): Response {
+        return $this->applicationFileService->createApplicationFile(
+            $application,
+            $applicationStageId,
+            $fieldCode,
+            $request->validated('file')
         );
     }
 }

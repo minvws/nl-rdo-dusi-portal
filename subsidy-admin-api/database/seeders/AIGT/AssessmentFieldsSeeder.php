@@ -22,8 +22,12 @@ class AssessmentFieldsSeeder extends Seeder
     public function run(): void
     {
         $this->firstAssessmentFields();
-        $this->internalAssessmentFields();
-        $this->coordinatorImplementationFields();
+        $this->auditAssessmentFields();
+        $this->implementationAssessmentFields();
+        $this->assignationDelayPeriodFields();
+        $this->assignationAssessmentFields();
+        $this->assignationAuditAssessmentFields();
+        $this->assignationImplementationAssessmentFields();
     }
 
     public function firstAssessmentFields(): void
@@ -65,7 +69,6 @@ class AssessmentFieldsSeeder extends Seeder
             default:        '€ 17.000',
             isRequired:     false,
             requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
-            excludeFromCloneData: true,
         );
 
         $this->createSelectField(
@@ -117,9 +120,26 @@ class AssessmentFieldsSeeder extends Seeder
         );
     }
 
-    public function internalAssessmentFields(): void
+    public function auditAssessmentFields(): void
     {
         //interne controle
+        $this->createMultiSelectField(
+            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
+            code:            'internalAssessmentChecklist',
+            title:           'Controlevragen',
+            options:         [
+                                 'Valt de aanvrager onder de WSNP/bewindvoering?',
+                                 'Alle benodigde documenten zijn aangeleverd',
+                                 'De aanvraag kan verleend worden',
+                                 'Het IBAN is juist vermeld in het Portaal en in de verplichting in SAP',
+                                 'De verplichting is juist in SAP geboekt',
+                                 'De verplichting is in SAP goedgekeurd',
+                                 'De verleningsbeschikking mag verzonden worden',
+                             ],
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createCheckboxField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code: 'firstAssessorMotivatedValid',
@@ -145,7 +165,7 @@ class AssessmentFieldsSeeder extends Seeder
         );
     }
 
-    public function coordinatorImplementationFields(): void
+    public function implementationAssessmentFields(): void
     {
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
@@ -157,7 +177,105 @@ class AssessmentFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
-            code: 'implementationCoordinatorAssessmentInternalNote',
+            code: 'internalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+    }
+
+    public function assignationDelayPeriodFields(): void
+    {
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            code: 'assessment',
+            title: 'Beoordeling',
+            options: ['Vaststellen', 'Vorderen', 'Uitstellen'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            code: 'internalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createUploadField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            code:           'proof',
+            title:          'Bewijsstukken',
+            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            isRequired:     false,
+            minItems:       1,
+            maxItems:       20,
+            maxFileSize:    20971520
+        );
+    }
+
+    public function assignationAssessmentFields(): void
+    {
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
+            code: 'assessment',
+            title: 'Beoordeling',
+            options: ['Vaststellen', 'Vorderen', 'Uitstellen'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
+            code: 'internalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createUploadField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
+            code:           'proof',
+            title:          'Bewijsstukken',
+            isRequired:     false,
+            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize:    20971520,
+            minItems:       1,
+            maxItems:       20
+        );
+    }
+
+    public function assignationAuditAssessmentFields(): void
+    {
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_7_UUID,
+            code: 'assessment',
+            title: 'Beoordeling',
+            options: ['Eens met de beoordeling op de vaststelling', 'Oneens met de beoordeling op de vaststelling'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_7_UUID,
+            code: 'internalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+    }
+
+    public function assignationImplementationAssessmentFields(): void
+    {
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
+            code: 'assessment',
+            title: 'Beoordeling',
+            options: ['Eens met de beoordeling op de vaststelling', 'Oneens met de beoordeling op de vaststelling'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
+            code: 'internalNote',
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short

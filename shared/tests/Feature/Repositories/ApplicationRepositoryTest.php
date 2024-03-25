@@ -367,12 +367,16 @@ class ApplicationRepositoryTest extends TestCase
             'field_id' => $stage2Field1->id
         ]);
 
-        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage1);
+        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding(
+            $applicationStage1
+        );
         $this->assertCount(1, $answers->stages);
         $this->assertCount(2, $answers->stages[0]->answers);
         $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);
 
-        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage2);
+        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding(
+            $applicationStage2
+        );
         $this->assertCount(2, $answers->stages);
         $this->assertCount(2, $answers->stages[0]->answers);
         $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);
@@ -577,12 +581,17 @@ class ApplicationRepositoryTest extends TestCase
             ]
         );
 
-        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage1);
+        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding(
+            $applicationStage1
+        );
         $this->assertCount(1, $answers->stages);
         $this->assertCount(2, $answers->stages[0]->answers);
         $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);
 
-        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding($applicationStage2, true);
+        $answers = $this->repository->getAnswersForApplicationStagesUpToIncluding(
+            $applicationStage2,
+            readOnly: true
+        );
         $this->assertCount(1, $answers->stages);
         $this->assertCount(2, $answers->stages[0]->answers);
         $this->assertEquals($applicationStage1->id, $answers->stages[0]->stage->id);

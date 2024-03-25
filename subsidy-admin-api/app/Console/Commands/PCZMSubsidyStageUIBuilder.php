@@ -16,7 +16,7 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
      *
      * @var string
      */
-    protected $signature = 'local:build-pczm-subsidy-stage-ui {--input-ui} {--view-schema}';
+    protected $signature = 'local:build-pczm-subsidy-stage-ui {--input-ui} {--view-ui}';
 
     /**
      * The console command description.
@@ -34,21 +34,21 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
         $seeder = new PCZMApplicationStageUISeeder();
 
         $needsBuildInputUi = $this->option('input-ui');
-        $needsBuildViewSchema = $this->option('view-schema');
+        $needsBuildViewUi = $this->option('view-ui');
 
-        if (!$needsBuildInputUi && !$needsBuildViewSchema) {
+        if (!$needsBuildInputUi && !$needsBuildViewUi) {
             $needsBuildInputUi = true;
-            $needsBuildViewSchema = true;
+            $needsBuildViewUi = true;
         }
 
         $inputUi = $needsBuildInputUi ? $seeder->buildInputUi() : null;
-        $viewSchema = $needsBuildViewSchema ? $seeder->buildViewUI() : null;
+        $viewUi = $needsBuildViewUi ? $seeder->buildViewUI() : null;
 
         $query = implode(PHP_EOL, array_filter([
             "UPDATE public.subsidy_stage_uis",
             implode("," . PHP_EOL, array_filter([
                 $this->getSetQuery('input_ui', $inputUi),
-                $this->getSetQuery('view_schema', $viewSchema),
+                $this->getSetQuery('view_ui', $viewUi),
             ])),
             "WHERE id = '" . PCZMApplicationStageUISeeder::PCZM_STAGE1_V1_UUID . "';",
         ]));
