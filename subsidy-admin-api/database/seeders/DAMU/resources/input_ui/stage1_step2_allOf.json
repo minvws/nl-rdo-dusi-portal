@@ -1,1 +1,12 @@
-[]
+[{
+    "if": {
+        "properties": {
+            "isSingleParentFamily": {
+                "const": "Nee"
+            }
+        }
+    },
+    "then": {
+        "required": ["annualIncomeParentB"]
+    }
+}]
