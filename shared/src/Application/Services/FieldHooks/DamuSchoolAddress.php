@@ -20,8 +20,8 @@ class DamuSchoolAddress implements FieldHook
     {
         if (
             $fieldValues['educationType']->value === null ||
-            $fieldValues['damuSchoolPrimary']->value === null ||
-            $fieldValues['damuSchoolSecondary']->value === null
+            ($fieldValues['damuSchoolPrimary']->value === null &&
+            $fieldValues['damuSchoolSecondary']->value === null)
         ) {
             return  new FieldValue($fieldValue->field, null);
         }
