@@ -15,7 +15,13 @@ class ApplicationReferenceRepository
 
     public function saveReference(string $applicationReference): void
     {
-        ApplicationReference::create(['reference' => $applicationReference]);
+        ApplicationReference::create(
+            [
+                'reference' => $applicationReference,
+                'used' => true,
+                'deleted' => false,
+            ]
+        );
     }
 
     public function setReferenceToDeleted(string $applicationReference): void

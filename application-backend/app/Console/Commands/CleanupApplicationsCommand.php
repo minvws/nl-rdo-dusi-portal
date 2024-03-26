@@ -26,7 +26,7 @@ class CleanupApplicationsCommand extends Command
 
     public function __construct(
         private readonly ApplicationReferenceRepository $applicationReferenceRepository,
-        private LogService $logService
+        private readonly LogService $logService
     ) {
         parent::__construct();
     }
@@ -59,65 +59,65 @@ class CleanupApplicationsCommand extends Command
                         ]
                     );
             })
-            ->get()
-        ;
+            ->chunk(100, function (Collection $applications) {
+                if ($applications->count() === 0) {
+                    $this->error('No applications found to delete');
 
-        if ($applications->count() === 0) {
-            $this->error('No applications found to delete');
-
-            return;
-        }
-
-        DB::transaction(function () use ($applications) {
-            /** @var Collection<int, Identity> $identitiesCollection */
-            $identitiesCollection = new Collection();
-
-            $this->info(sprintf('Start cleanup of %d applications', $applications->count()));
-
-            foreach ($applications as $application) {
-                $applicationReference = $application->reference;
-                $this->info(sprintf('%s | Processing', $applicationReference));
-
-
-
-                $identitiesCollection->add($application->identity);
-
-                $this->deleteMessages($application);
-                $this->deleteApplicationStageTransitions($application);
-                $this->deleteApplicationStages($application);
-                $this->deleteApplicationHashes($application);
-                $this->deleteSurePayResults($application);
-
-                if (!$this->dryRun) {
-                    $this->applicationReferenceRepository->setReferenceToDeleted($applicationReference);
-                    $application->delete();
-
-                    $this->logService->log((new DeleteApplicationEvent())
-                        ->withData([
-                            'reference' => $application->reference,
-                        ]));
+                    return;
                 }
 
-                $this->info(sprintf('%s | Deleted application', $applicationReference));
-                $this->newLine();
-            }
+                DB::transaction(function () use ($applications) {
+                    /** @var Collection<int, Identity> $identitiesCollection */
+                    $identitiesCollection = new Collection();
 
-            $this->info(sprintf('Check %d identities', $identitiesCollection->count()));
+                    $this->info(sprintf('Start cleanup of %d applications', $applications->count()));
 
-            $i = 0;
-            foreach ($identitiesCollection as $identity) {
-                $applicationsForIdentityCount = $identity->applications->count();
+                    foreach ($applications as $application) {
+                        $applicationReference = $application->reference;
+                        $this->info(sprintf('%s | Processing', $applicationReference));
 
-                if ($applicationsForIdentityCount === 0) {
-                    if (!$this->dryRun) {
-                        $identity->delete();
+
+
+                        $identitiesCollection->add($application->identity);
+
+                        $this->deleteMessages($application);
+                        $this->deleteApplicationStageTransitions($application);
+                        $this->deleteApplicationStages($application);
+                        $this->deleteApplicationHashes($application);
+                        $this->deleteSurePayResults($application);
+
+                        if (!$this->dryRun) {
+                            $this->applicationReferenceRepository->setReferenceToDeleted($applicationReference);
+                            $application->delete();
+
+                            $this->logService->log((new DeleteApplicationEvent())
+                                ->withData([
+                                    'reference' => $application->reference,
+                                ]));
+                        }
+
+                        $this->info(sprintf('%s | Deleted application', $applicationReference));
+                        $this->newLine();
                     }
-                    $i++;
-                }
-            }
 
-            $this->info(sprintf('Deleted %d of %d identities', $i, $identitiesCollection->count()));
-        });
+                    $this->info(sprintf('Check %d identities', $identitiesCollection->count()));
+
+                    $i = 0;
+                    foreach ($identitiesCollection as $identity) {
+                        $applicationsForIdentityCount = $identity->applications->count();
+
+                        if ($applicationsForIdentityCount === 0) {
+                            if (!$this->dryRun) {
+                                $identity->delete();
+                            }
+                            $i++;
+                        }
+                    }
+
+                    $this->info(sprintf('Deleted %d of %d identities', $i, $identitiesCollection->count()));
+                });
+            })
+        ;
     }
 
     private function deleteMessages(Application $application): void
