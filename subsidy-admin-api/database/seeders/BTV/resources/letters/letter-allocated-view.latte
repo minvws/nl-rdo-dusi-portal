@@ -1,19 +1,16 @@
-{layout 'letter_layout.latte'}
-
-{block concern}
-    Betreft: Vaststelling subsidie {$content->subsidyTitle}
-{/block}
-
 {block content}
     <p>Beste lezer,</p>
-    <p>Met mijn brief van {$content->stage4->createdAt|date:"d-m-Y"} heb ik u een subsidie verleend van
-        {$content->stage2->amount} voor de regeling {$content->subsidyTitle}. Uit de aan mij ter beschikking
-        gestelde gegevens blijkt dat u inmiddels voldoet aan de vereisten voor deze regeling.
+    <p>
+        Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
+        Met deze brief beslis ik op uw aanvraag.
     </p>
     <p>&nbsp;</p>
 
     <h2>Besluit</h2>
-    <p>Ik stel hierbij de subsidie vast op {$content->stage4->amount}.</p>
+    <p>
+        Uw subsidieaanvraag borstprothesen transvrouwen is toegewezen. De hoogte van de subsidie is
+        {$content->stage2->amount}.
+    </p>
     <p>
         De subsidie is gebaseerd op artikel 4 van de subsidieregeling borstprothesen transvrouwen. De
         subsidieregeling heeft als doel dat man-vrouw transgenders met genderdysforie, die zich in een medisch
@@ -119,14 +116,4 @@
         <br/>
         P.A. van Hecking Colenbrander
     </p>
-{/block}
-
-{block sidebar}
-    {include parent}
-
-    <h4>Relatienummer</h4>
-    <p>{$content->stage2->businessPartnerNumber}</p>
-
-    <h4>Verplichtingennummer</h4>
-    <p>{$content->stage2->liabilitiesNumber}</p>
 {/block}
