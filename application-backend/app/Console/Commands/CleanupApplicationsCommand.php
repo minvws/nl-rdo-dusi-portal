@@ -55,7 +55,6 @@ class CleanupApplicationsCommand extends Command
                         [
                             ApplicationStatus::Approved,
                             ApplicationStatus::Rejected,
-                            ApplicationStatus::Allocated,
                             ApplicationStatus::Reclaimed,
                         ]
                     );
