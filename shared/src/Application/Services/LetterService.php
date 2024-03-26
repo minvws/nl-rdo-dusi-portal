@@ -73,6 +73,10 @@ readonly class LetterService
                 $stageData->put($answerKey, $answer);
             }
 
+            $stageData->createdAt = $applicationStageAnswers->stage->created_at;
+            $stageData->submittedAt = $applicationStageAnswers->stage->submitted_at;
+            $stageData->closedAt = $applicationStageAnswers->stage->closed_at;
+
             $result->put($stageKey, $stageData);
         }
 
@@ -180,6 +184,8 @@ readonly class LetterService
         $submittedAt = $stage->application->submitted_at;
         $submittedAt = $submittedAt ?? CarbonImmutable::now(); // preview doesn't have a submit timestamp
         $subsidy = $stage->subsidyStage->subsidyVersion->subsidy;
+
+//        dd($data);
 
         return new LetterData(
             subsidy: $subsidy,
