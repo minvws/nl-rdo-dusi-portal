@@ -121,7 +121,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
         // gaat de aanvraag gaat naar de IC
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_3_TO_4,
-            'description' => 'Interne beoordeling eens met eerste beoordeling',
+            'description' => 'Uitvoeringscoördinator is het eens met de goedkeuring',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'condition' => $encoder->encode(
