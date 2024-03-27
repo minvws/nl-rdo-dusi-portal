@@ -60,7 +60,7 @@ class SubsidyService
 
         if ($subsidy === null) {
             throw new EncryptedResponseException(
-                EncryptedResponseStatus::FORBIDDEN,
+                EncryptedResponseStatus::NOT_FOUND,
                 'subsidy_not_found'
             );
         }
