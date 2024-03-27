@@ -10,8 +10,6 @@ return new class extends Migration
     {
         Schema::create('application_references', static function (Blueprint $table) {
             $table->string('reference', 15)->unique();
-            $table->boolean('used')->default(true);
-            $table->boolean('deleted')->default(false);
             $table->timestamps();
         });
     }

@@ -18,16 +18,7 @@ class ApplicationReferenceRepository
         ApplicationReference::create(
             [
                 'reference' => $applicationReference,
-                'used' => true,
-                'deleted' => false,
             ]
         );
-    }
-
-    public function setReferenceToDeleted(string $applicationReference): void
-    {
-        ApplicationReference::where('reference', $applicationReference)
-            ->update(['deleted' => true])
-        ;
     }
 }

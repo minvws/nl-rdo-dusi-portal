@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Events\Logging\DeleteApplicationEvent;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationReferenceRepository;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\Logging\Laravel\LogService;
 
@@ -25,7 +24,6 @@ class CleanupApplicationsCommand extends Command
     private bool $dryRun = false;
 
     public function __construct(
-        private readonly ApplicationReferenceRepository $applicationReferenceRepository,
         private readonly LogService $logService
     ) {
         parent::__construct();
@@ -87,7 +85,6 @@ class CleanupApplicationsCommand extends Command
                         $this->deleteSurePayResults($application);
 
                         if (!$this->dryRun) {
-                            $this->applicationReferenceRepository->setReferenceToDeleted($applicationReference);
                             $application->delete();
 
                             $this->logService->log((new DeleteApplicationEvent())
