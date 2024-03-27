@@ -73,6 +73,10 @@ readonly class LetterService
                 $stageData->put($answerKey, $answer);
             }
 
+            $stageData->createdAt = $applicationStageAnswers->stage->created_at;
+            $stageData->submittedAt = $applicationStageAnswers->stage->submitted_at;
+            $stageData->closedAt = $applicationStageAnswers->stage->closed_at;
+
             $result->put($stageKey, $stageData);
         }
 
