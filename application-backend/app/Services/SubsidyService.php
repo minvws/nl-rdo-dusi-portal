@@ -32,6 +32,7 @@ class SubsidyService
         private ApplicationRepository $applicationRepository,
         private ResponseEncryptionService $responseEncryptionService,
         private IdentityService $identityService,
+        private SubsidyRepository $subsidyRepository,
         private SubsidyMapper $subsidyMapper,
         private EncryptedResponseExceptionHelper $exceptionHelper,
     ) {
