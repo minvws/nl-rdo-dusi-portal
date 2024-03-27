@@ -11,14 +11,22 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 /**
  * @throws Exception
  */
-function createDateTimeOrNull(array $inputArray, mixed $key): ?DateTime
+function createDateTimeOrNull(array $inputArray, mixed $key, bool $setTimeToEndOfDay = false): ?DateTime
 {
     if (array_key_exists($key, $inputArray)) {
+        $value = $inputArray[$key];
+
         if ($inputArray[$key] instanceof DateTime) {
-            return $inputArray[$key];
+            $value = $inputArray[$key];
         } else {
-            return new DateTime($inputArray[$key]);
+            $value = new DateTime($inputArray[$key]);
         }
+
+        if ($setTimeToEndOfDay) {
+            $value->setTime(23, 59, 59);
+        }
+
+        return $value;
     }
     return null;
 }
@@ -77,11 +85,11 @@ class ApplicationsFilter
             $inputArray['application_title'] ?? null,
             $inputArray['reference'] ?? null,
             createDateTimeOrNull($inputArray, 'date_from'),
-            createDateTimeOrNull($inputArray, 'date_to'),
+            createDateTimeOrNull($inputArray, 'date_to', true),
             createDateTimeOrNull($inputArray, 'date_last_modified_from'),
-            createDateTimeOrNull($inputArray, 'date_last_modified_to'),
+            createDateTimeOrNull($inputArray, 'date_last_modified_to', true),
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_from'),
-            createDateTimeOrNull($inputArray, 'date_final_review_deadline_to'),
+            createDateTimeOrNull($inputArray, 'date_final_review_deadline_to', true),
             getStatusOrNull($inputArray, 'status'),
             $inputArray['subsidy'] ?? null,
             $inputArray['phase'] ?? null,

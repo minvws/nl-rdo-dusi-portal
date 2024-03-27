@@ -101,14 +101,14 @@ class ApplicationRequestsFilterResource extends JsonResource
                                     "elements" => [
                                         [
                                             "type" => "CustomControl",
-                                            "scope" => "#/properties/updateFrom",
+                                            "scope" => "#/properties/dateLastModifiedFrom",
                                             "options" => [
                                                 "inline" => true
                                             ]
                                         ],
                                         [
                                             "type" => "CustomControl",
-                                            "scope" => "#/properties/updateTo",
+                                            "scope" => "#/properties/dateLastModifiedTo",
                                             "options" => [
                                                 "inline" => true
                                             ]
@@ -202,12 +202,12 @@ class ApplicationRequestsFilterResource extends JsonResource
                     ],
                     'title' => 'Regeling'
                 ],
-                'updateFrom' => [
+                'dateLastModifiedFrom' => [
                     'type' => 'string',
                     'format' => 'date',
                     'title' => 'Van'
                 ],
-                'updateTo' => [
+                'dateLastModifiedTo' => [
                     'type' => 'string',
                     'format' => 'date',
                     'title' => 'Tot'
