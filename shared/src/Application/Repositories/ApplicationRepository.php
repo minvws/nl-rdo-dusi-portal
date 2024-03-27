@@ -405,8 +405,8 @@ class ApplicationRepository
                 ->applications()
                 ->whereRelation('subsidyVersion', 'subsidy_id', '=', $subsidy->id)
                 ->orderBy('created_at', 'desc')
-                ->whereNot('status', ApplicationStatus::Rejected)
-                ->count() !== 0;
+                ->whereNotIn('status', ApplicationStatus::NEW_APPLICATION_ALLOWED_STATUSES)
+                ->exists();
     }
 
     /**

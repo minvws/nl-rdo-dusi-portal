@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
+use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
@@ -18,6 +19,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConcepts;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Throwable;
 
@@ -72,7 +74,13 @@ class SubsidyService
         $subsidyDto = $this->subsidyMapper->mapSubsidyToSubsidyDTO($subsidy);
         $concepts = $this->mapConceptApplicationsToApplicationConcepts($applications);
 
-        $subsidyConcepts = new SubsidyConcepts($subsidyDto, $concepts);
+        $newConceptsAllowed = $this->getNewConceptsAllowed($subsidy, $identity);
+
+        $subsidyConcepts = new SubsidyConcepts(
+            subsidy: $subsidyDto,
+            newConceptAllowed: $newConceptsAllowed,
+            concepts: $concepts,
+        );
 
         return $this->responseEncryptionService->encryptCodable(
             EncryptedResponseStatus::OK,
@@ -103,5 +111,18 @@ class SubsidyService
                 $application->status,
             );
         })->toArray();
+    }
+
+    private function getNewConceptsAllowed(Subsidy $subsidy, Identity $identity): bool
+    {
+        if (!$subsidy->is_open_for_new_applications) {
+            return false;
+        }
+
+        if (!$this->applicationRepository->hasOpenOrApprovedApplicationsForSubsidy($identity, $subsidy)) {
+            return true;
+        }
+
+        return $subsidy->allow_multiple_applications;
     }
 }

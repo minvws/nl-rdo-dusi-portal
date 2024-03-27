@@ -14,6 +14,7 @@ class SubsidyConcepts implements Codable
 
     public function __construct(
         public readonly Subsidy $subsidy,
+        public readonly bool $newConceptAllowed,
         public readonly array $concepts,
     ) {
     }
