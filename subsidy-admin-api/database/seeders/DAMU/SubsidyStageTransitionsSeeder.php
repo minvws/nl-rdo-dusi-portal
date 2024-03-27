@@ -177,7 +177,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
         // volledig beoordeeld worden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_4_TO_2,
-            'description' => 'Interne controle is het oneens met eerste beoordeling',
+            'description' => 'Interne controle is het oneens met de eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             'condition' => $encoder->encode(
