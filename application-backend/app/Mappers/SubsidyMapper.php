@@ -46,7 +46,6 @@ class SubsidyMapper
 
     public function mapSubsidyVersionToFormDTO(SubsidyVersion $subsidyVersion): FormDTO
     {
-        // TODO: form should be based on subsidy code and version
         $subsidyStage =
             $subsidyVersion
                 ->subsidyStages

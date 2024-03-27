@@ -45,7 +45,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ValidationResultDTO;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\Logging\Laravel\LogService;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 use Throwable;
 
 /**
@@ -104,12 +103,7 @@ readonly class ApplicationMutationService
      */
     private function doCreateApplication(ApplicationCreateParams $params): EncryptedResponse
     {
-        if (Uuid::isValid($params->subsidyCode)) {
-            // TODO: once frontend uses subsidy code, we can remove this code
-            $subsidy = $this->subsidyRepository->getSubsidyStage($params->subsidyCode)?->subsidyVersion?->subsidy;
-        } else {
-            $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
-        }
+        $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
 
         if ($subsidy === null) {
             throw new EncryptedResponseException(
