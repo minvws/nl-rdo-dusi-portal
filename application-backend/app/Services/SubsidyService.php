@@ -8,15 +8,18 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
+use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationConcept;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConcepts;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -31,10 +34,27 @@ class SubsidyService
         private IdentityService $identityService,
         private SubsidyRepository $subsidyRepository,
         private SubsidyMapper $subsidyMapper,
+        private EncryptedResponseExceptionHelper $exceptionHelper,
     ) {
     }
 
+
     public function getSubsidyAndConcepts(SubsidyConceptsParams $params): EncryptedResponse
+    {
+        try {
+            return $this->doGetSubsidyAndConcepts($params);
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::GET_SUBSIDY_CONCEPTS,
+                $params->publicKey
+            );
+        }
+    }
+
+    private function doGetSubsidyAndConcepts(SubsidyConceptsParams $params): EncryptedResponse
     {
         $subsidy = $this->subsidyRepository->findSubsidyByCode($params->subsidyCode);
 
