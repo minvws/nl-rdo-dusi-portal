@@ -104,7 +104,7 @@ class CleanupApplicationsCommand extends Command
 
                     $i = 0;
                     foreach ($identitiesCollection as $identity) {
-                        $applicationsForIdentityCount = $identity->applications->count();
+                        $applicationsForIdentityCount = $identity->applications()->count();
 
                         if ($applicationsForIdentityCount === 0) {
                             if (!$this->dryRun) {
@@ -123,7 +123,7 @@ class CleanupApplicationsCommand extends Command
     private function deleteMessages(Application $application): void
     {
         $applicationReference = $application->reference;
-        $applicationMessageCount = $application->applicationMessages->count();
+        $applicationMessageCount = $application->applicationMessages()->count();
 
         if (!$this->dryRun) {
             $application->applicationMessages()->delete();
@@ -135,7 +135,7 @@ class CleanupApplicationsCommand extends Command
     private function deleteApplicationStageTransitions(Application $application): void
     {
         $applicationReference = $application->reference;
-        $stageTransitionsCount = $application->applicationStageTransitions->count();
+        $stageTransitionsCount = $application->applicationStageTransitions()->count();
 
         if (!$this->dryRun) {
             $application->applicationStageTransitions()->delete();
@@ -147,10 +147,10 @@ class CleanupApplicationsCommand extends Command
     private function deleteApplicationStages(Application $application): void
     {
         $applicationReference = $application->reference;
-        $applicationStageCount = $application->applicationStages->count();
+        $applicationStageCount = $application->applicationStages()->count();
 
         foreach ($application->applicationStages as $applicationStage) {
-            $answerCount = $applicationStage->answers->count();
+            $answerCount = $applicationStage->answers()->count();
 
             if (!$this->dryRun) {
                 $applicationStage->answers()->delete();
@@ -173,7 +173,7 @@ class CleanupApplicationsCommand extends Command
     private function deleteApplicationHashes(Application $application): void
     {
         $applicationReference = $application->reference;
-        $applicationHashesCount = $application->applicationHashes->count();
+        $applicationHashesCount = $application->applicationHashes()->count();
 
         if (!$this->dryRun) {
             $application->applicationHashes()->delete();
