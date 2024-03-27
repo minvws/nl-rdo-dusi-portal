@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79e210fb1ebd9d602e82c8090199773a",
+    "content-hash": "a97034944299d22246c0c04fa036828f",
     "packages": [
         {
             "name": "archtechx/enums",
@@ -2801,16 +2801,16 @@
         },
         {
             "name": "laravel/fortify",
-            "version": "v1.21.0",
+            "version": "v1.21.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/fortify.git",
-                "reference": "b34e672e1d341f6e520f81712f73e56f6cb80767"
+                "reference": "405388fd399264715573e23ed2f368fbce426da3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/fortify/zipball/b34e672e1d341f6e520f81712f73e56f6cb80767",
-                "reference": "b34e672e1d341f6e520f81712f73e56f6cb80767",
+                "url": "https://api.github.com/repos/laravel/fortify/zipball/405388fd399264715573e23ed2f368fbce426da3",
+                "reference": "405388fd399264715573e23ed2f368fbce426da3",
                 "shasum": ""
             },
             "require": {
@@ -2818,7 +2818,8 @@
                 "ext-json": "*",
                 "illuminate/support": "^10.0|^11.0",
                 "php": "^8.1",
-                "pragmarx/google2fa": "^8.0"
+                "pragmarx/google2fa": "^8.0",
+                "symfony/console": "^6.0|^7.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
@@ -2861,7 +2862,7 @@
                 "issues": "https://github.com/laravel/fortify/issues",
                 "source": "https://github.com/laravel/fortify"
             },
-            "time": "2024-03-08T19:55:45+00:00"
+            "time": "2024-03-19T20:08:25+00:00"
         },
         {
             "name": "laravel/framework",
@@ -3072,16 +3073,16 @@
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.1.16",
+            "version": "v0.1.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "ca6872ab6aec3ab61db3a61f83a6caf764ec7781"
+                "reference": "8ee9f87f7f9eadcbe21e9e72cd4176b2f06cd5b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/ca6872ab6aec3ab61db3a61f83a6caf764ec7781",
-                "reference": "ca6872ab6aec3ab61db3a61f83a6caf764ec7781",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/8ee9f87f7f9eadcbe21e9e72cd4176b2f06cd5b5",
+                "reference": "8ee9f87f7f9eadcbe21e9e72cd4176b2f06cd5b5",
                 "shasum": ""
             },
             "require": {
@@ -3123,9 +3124,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.1.16"
+                "source": "https://github.com/laravel/prompts/tree/v0.1.17"
             },
-            "time": "2024-02-21T19:25:27+00:00"
+            "time": "2024-03-13T16:05:43+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -9037,48 +9038,48 @@
         },
         {
             "name": "barryvdh/laravel-ide-helper",
-            "version": "v2.15.1",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "77831852bb7bc54f287246d32eb91274eaf87f8b"
+                "reference": "bc1d67f01ce8c77e3f97d48ba51fa1d81874f622"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/77831852bb7bc54f287246d32eb91274eaf87f8b",
-                "reference": "77831852bb7bc54f287246d32eb91274eaf87f8b",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/bc1d67f01ce8c77e3f97d48ba51fa1d81874f622",
+                "reference": "bc1d67f01ce8c77e3f97d48ba51fa1d81874f622",
                 "shasum": ""
             },
             "require": {
-                "barryvdh/reflection-docblock": "^2.0.6",
+                "barryvdh/reflection-docblock": "^2.1.1",
                 "composer/class-map-generator": "^1.0",
-                "doctrine/dbal": "^2.6 || ^3.1.4",
                 "ext-json": "*",
-                "illuminate/console": "^9 || ^10",
-                "illuminate/filesystem": "^9 || ^10",
-                "illuminate/support": "^9 || ^10",
+                "illuminate/console": "^10 || ^11",
+                "illuminate/database": "^10.38 || ^11",
+                "illuminate/filesystem": "^10 || ^11",
+                "illuminate/support": "^10 || ^11",
                 "nikic/php-parser": "^4.18 || ^5",
-                "php": "^8.0",
+                "php": "^8.1",
                 "phpdocumentor/type-resolver": "^1.1.0"
             },
             "require-dev": {
                 "ext-pdo_sqlite": "*",
                 "friendsofphp/php-cs-fixer": "^3",
-                "illuminate/config": "^9 || ^10",
-                "illuminate/view": "^9 || ^10",
+                "illuminate/config": "^9 || ^10 || ^11",
+                "illuminate/view": "^9 || ^10 || ^11",
                 "mockery/mockery": "^1.4",
-                "orchestra/testbench": "^7 || ^8",
-                "phpunit/phpunit": "^9",
-                "spatie/phpunit-snapshot-assertions": "^4",
+                "orchestra/testbench": "^8 || ^9",
+                "phpunit/phpunit": "^10.5",
+                "spatie/phpunit-snapshot-assertions": "^4 || ^5",
                 "vimeo/psalm": "^5.4"
             },
             "suggest": {
-                "illuminate/events": "Required for automatic helper generation (^6|^7|^8|^9|^10)."
+                "illuminate/events": "Required for automatic helper generation (^6|^7|^8|^9|^10|^11)."
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.15-dev"
+                    "dev-master": "3.0-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -9115,7 +9116,7 @@
             ],
             "support": {
                 "issues": "https://github.com/barryvdh/laravel-ide-helper/issues",
-                "source": "https://github.com/barryvdh/laravel-ide-helper/tree/v2.15.1"
+                "source": "https://github.com/barryvdh/laravel-ide-helper/tree/v3.0.0"
             },
             "funding": [
                 {
@@ -9127,7 +9128,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-02-15T14:23:20+00:00"
+            "time": "2024-03-01T12:53:18+00:00"
         },
         {
             "name": "barryvdh/reflection-docblock",
@@ -9327,16 +9328,16 @@
         },
         {
             "name": "composer/xdebug-handler",
-            "version": "3.0.3",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/xdebug-handler.git",
-                "reference": "ced299686f41dce890debac69273b47ffe98a40c"
+                "reference": "4f988f8fdf580d53bdb2d1278fe93d1ed5462255"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/ced299686f41dce890debac69273b47ffe98a40c",
-                "reference": "ced299686f41dce890debac69273b47ffe98a40c",
+                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/4f988f8fdf580d53bdb2d1278fe93d1ed5462255",
+                "reference": "4f988f8fdf580d53bdb2d1278fe93d1ed5462255",
                 "shasum": ""
             },
             "require": {
@@ -9347,7 +9348,7 @@
             "require-dev": {
                 "phpstan/phpstan": "^1.0",
                 "phpstan/phpstan-strict-rules": "^1.1",
-                "symfony/phpunit-bridge": "^6.0"
+                "phpunit/phpunit": "^8.5 || ^9.6 || ^10.5"
             },
             "type": "library",
             "autoload": {
@@ -9371,9 +9372,9 @@
                 "performance"
             ],
             "support": {
-                "irc": "irc://irc.freenode.org/composer",
+                "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/xdebug-handler/issues",
-                "source": "https://github.com/composer/xdebug-handler/tree/3.0.3"
+                "source": "https://github.com/composer/xdebug-handler/tree/3.0.4"
             },
             "funding": [
                 {
@@ -9389,7 +9390,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-02-25T21:32:43+00:00"
+            "time": "2024-03-26T18:29:49+00:00"
         },
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
