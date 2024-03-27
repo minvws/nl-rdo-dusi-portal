@@ -6,7 +6,7 @@ namespace MinVWS\DUSi\Application\API\Services;
 
 use Exception;
 use MinVWS\DUSi\Shared\Bridge\Client\Client;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedApplicationFileUploadParams;
@@ -44,9 +44,9 @@ class ApplicationService
     /**
      * @throws Exception
      */
-    public function findOrCreateApplication(ApplicationFindOrCreateParams $params): EncryptedResponse
+    public function createApplication(ApplicationCreateParams $params): EncryptedResponse
     {
-        return $this->bridgeClient->call(RPCMethods::FIND_OR_CREATE_APPLICATION, $params, EncryptedResponse::class);
+        return $this->bridgeClient->call(RPCMethods::CREATE_APPLICATION, $params, EncryptedResponse::class);
     }
 
     /**

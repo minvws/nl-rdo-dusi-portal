@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\DAMU;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -40,8 +41,9 @@ class DAMUSeeder extends Seeder
             'reference_prefix' => 'DAMU',
             'code' => 'DAMU',
             'description' => 'Ouders of verzorgers van een DAMU-leerling op het primair of het voortgezet onderwijs kunnen een tegemoetkoming in de reiskosten aanvragen. Deze reiskosten kunnen namelijk een barrière zijn voor talentvolle leerlingen om een opleiding aan een DAMU-school te volgen.',
-            'valid_from' => 'now()',
-            'valid_to' => null
+            'valid_from' => CarbonImmutable::today(),
+            'valid_to' => null,
+            'allow_multiple_applications' => true,
         ]);
     }
 

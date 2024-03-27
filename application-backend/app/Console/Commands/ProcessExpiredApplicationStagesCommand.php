@@ -14,7 +14,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
  * This will process all the expired application stages that have a transition with the expiration trigger.
  *
  * An application has an expires_at, this is the date that the application stage expires. The user can still
- * submit an application on this date, the next day, the application stage is expire.
+ * submit an application on this date, the next day, the application stage is expired.
  * This command will process all the expired applications.
  */
 class ProcessExpiredApplicationStagesCommand extends Command
