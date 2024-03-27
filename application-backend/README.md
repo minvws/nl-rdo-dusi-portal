@@ -68,7 +68,7 @@ on how to resolve things.
   This is caused when a `.env` file has not been created or when the `.env` file
   is missing a variable used in the docker(-compose) file.
 
-[laravel-docs]: https://laravel.com/docs/9.x
+[laravel-docs]: https://laravel.com/docs/10.x
 
 ## Testing
 

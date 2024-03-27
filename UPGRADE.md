@@ -30,6 +30,26 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-1516 Remove btv stage transitions usages
+
+For the test and acceptance environment, run the following sql queries before migrating:
+
+```postgresql
+delete from public.application_messages where application_stage_transition_id in (select id from public.application_stage_transitions where subsidy_stage_transition_id = '5b876216-ba37-4b13-aa99-e311db027d6b');
+delete from public.application_stage_transitions where subsidy_stage_transition_id = '5b876216-ba37-4b13-aa99-e311db027d6b';
+delete from public.subsidy_stage_transition_messages where subsidy_stage_transition_id = '5b876216-ba37-4b13-aa99-e311db027d6b';
+```
+
+### DUSI-1470: Add ClamAV file scanning to file uploading on assessment api
+
+ClamAV needs to be added on the Assessment API servers.
+We have the same ClamAV settings available as we already have for
+the backend application.
+
+PR <https://github.com/minvws/nl-rdo-dusi-portal/pull/1470>
+
+## Release 2.3.0
+
 ### DUSI-1265: Add timout transition for BTV and AIGT subsidies
 
 The `2024_02_19_000000_add_stage_timout_transitions_for_btv_aigt_subsidies.sql` SQL update needs to run to add the timeout transitions for BTV and AIGT subsidies.

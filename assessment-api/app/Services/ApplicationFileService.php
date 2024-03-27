@@ -6,12 +6,12 @@ namespace MinVWS\DUSi\Assessment\API\Services;
 
 use Exception;
 use Illuminate\Http\Response;
-use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -24,15 +24,10 @@ class ApplicationFileService
     }
 
     public function getApplicationFile(
-        Application $application,
-        string $applicationStageId,
-        string $fieldCode,
+        ApplicationStage $applicationStage,
+        Field $field,
         string $fileId
     ): Response {
-        $applicationStage = $application->applicationStages()->findOrFail($applicationStageId);
-        assert($applicationStage instanceof ApplicationStage);
-
-        $field = $applicationStage->subsidyStage->fields->where('code', $fieldCode)->firstOrFail();
         $file = $this->applicationFileManager->readFile(
             $applicationStage,
             $field,
@@ -54,15 +49,11 @@ class ApplicationFileService
     }
 
     public function createApplicationFile(
-        Application $application,
-        string $applicationStageId,
-        string $fieldCode,
+        ApplicationStage $applicationStage,
+        Field $field,
         UploadedFile $file
     ): Response {
         $fileId = Uuid::uuid4()->toString();
-        $applicationStage = $application->applicationStages()->findOrFail($applicationStageId);
-        assert($applicationStage instanceof ApplicationStage);
-        $field = $applicationStage->subsidyStage->fields->where('code', $fieldCode)->firstOrFail();
         $this->applicationFileManager->writeFile(
             $applicationStage,
             $field,
