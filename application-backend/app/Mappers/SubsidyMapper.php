@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Application\Backend\Mappers;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Form as FormDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy as SubsidyDTO;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
@@ -21,7 +22,25 @@ class SubsidyMapper
             $subsidyVersion->subsidy->code,
             $subsidyVersion->title ?? $subsidyVersion->subsidy->title,
             $subsidyVersion->subsidy->description,
-            $subsidyVersion->subsidy_page_url
+            $subsidyVersion->subsidy_page_url,
+            $subsidyVersion->subsidy->valid_from,
+            $subsidyVersion->subsidy->valid_to,
+            $subsidyVersion->subsidy->allow_multiple_applications,
+            $subsidyVersion->subsidy->is_open_for_new_applications,
+        );
+    }
+
+    public function mapSubsidyToSubsidyDTO(Subsidy $subsidy): SubsidyDTO
+    {
+        return new SubsidyDTO(
+            $subsidy->code,
+            $subsidy->title,
+            $subsidy->description,
+            null,
+            $subsidy->valid_from,
+            $subsidy->valid_to,
+            $subsidy->allow_multiple_applications,
+            $subsidy->is_open_for_new_applications,
         );
     }
 

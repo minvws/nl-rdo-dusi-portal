@@ -12,7 +12,7 @@ use MinVWS\DUSi\Application\API\Services\ApplicationService;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use MinVWS\DUSi\Application\API\Services\StateService;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
@@ -31,12 +31,12 @@ class ApplicationController extends Controller
         ClientPublicKeyHelper $publicKeyHelper,
         ApplicationService $applicationService
     ): Response {
-        $params = new ApplicationFindOrCreateParams(
+        $params = new ApplicationCreateParams(
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $subsidyCode
         );
-        $response = $applicationService->findOrCreateApplication($params);
+        $response = $applicationService->createApplication($params);
         return $this->encryptedResponse($response);
     }
 

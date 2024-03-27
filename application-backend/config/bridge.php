@@ -7,10 +7,11 @@ use MinVWS\DUSi\Application\Backend\Services\ApplicationFileService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationRetrievalService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMessageService;
+use MinVWS\DUSi\Application\Backend\Services\SubsidyService;
 use MinVWS\DUSi\Shared\Bridge\Ping\Services\PingService;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ActionableCountsParams;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFileParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationListParams;
@@ -21,15 +22,16 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 
 $bindings = [
     'ping' => [
         'paramsClass' => Ping::class,
         'callback' => [PingService::class, 'ping']
     ],
-    RPCMethods::FIND_OR_CREATE_APPLICATION => [
-        'paramsClass' => ApplicationFindOrCreateParams::class,
-        'callback' => [ApplicationMutationService::class, 'findOrCreateApplication']
+    RPCMethods::CREATE_APPLICATION => [
+        'paramsClass' => ApplicationCreateParams::class,
+        'callback' => [ApplicationMutationService::class, 'createApplication']
     ],
     RPCMethods::UPLOAD_APPLICATION_FILE => [
         'paramsClass' => EncryptedApplicationFileUploadParams::class,
@@ -70,6 +72,10 @@ $bindings = [
     RPCMethods::GET_ACTIONABLE_COUNTS => [
         'paramsClass' => ActionableCountsParams::class,
         'callback' => [ActionableService::class, 'getActionableCounts']
+    ],
+    RPCMethods::GET_SUBSIDY_CONCEPTS => [
+        'paramsClass' => SubsidyConceptsParams::class,
+        'callback' => [SubsidyService::class, 'getSubsidyAndConcepts']
     ]
 ];
 

@@ -1,12 +1,12 @@
 [{
     "if": {
         "properties": {
-            "hasAlimony": {
-                "const": "Ja"
+            "isSingleParentFamily": {
+                "const": "Nee"
             }
         }
     },
     "then": {
-        "required": ["alimonyAmount"]
+        "required": ["annualIncomeParentB"]
     }
 }]

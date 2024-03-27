@@ -21,7 +21,7 @@ use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationFindOrCreateParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
@@ -65,6 +65,7 @@ class ApplicationMutationServiceTest extends TestCase
     private string $keyPair;
     private ClientPublicKey $publicKey;
     private ResponseEncryptionService $responseEncryptionService;
+    private ApplicationMutationService $applicationMutationService;
 
     protected function setUp(): void
     {
@@ -118,11 +119,12 @@ class ApplicationMutationServiceTest extends TestCase
         Storage::fake(Disk::APPLICATION_FILES);
 
         $this->responseEncryptionService = $this->app->make(ResponseEncryptionService::class);
+        $this->applicationMutationService = $this->app->make(ApplicationMutationService::class);
     }
 
-    public function testFindOrCreateApplicationWhenNoApplicationExists(): void
+    public function testCreateApplicationWhenNoApplicationExists(): void
     {
-        $params = new ApplicationFindOrCreateParams(
+        $params = new ApplicationCreateParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -131,7 +133,7 @@ class ApplicationMutationServiceTest extends TestCase
             $this->subsidy->code
         );
 
-        $encryptedResponse = $this->app->make(ApplicationMutationService::class)->findOrCreateApplication($params);
+        $encryptedResponse = $this->applicationMutationService->createApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::CREATED, $encryptedResponse->status);
 
@@ -144,13 +146,13 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertEquals(ApplicationStatus::Draft, $app->status);
     }
 
-    public function testFindOrCreateApplicationReturnsExistingDraftApplication(): void
+    public function testCreateApplicationForbiddenWhenOpenApplicationExists(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
         $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         $answer = Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
-        $params = new ApplicationFindOrCreateParams(
+        $params = new ApplicationCreateParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -159,22 +161,19 @@ class ApplicationMutationServiceTest extends TestCase
             $this->subsidy->code
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->findOrCreateApplication($params);
+        $encryptedResponse = $this->applicationMutationService->createApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
-        $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
+        $this->assertEquals(EncryptedResponseStatus::FORBIDDEN, $encryptedResponse->status);
 
-        $app = $this->responseEncryptionService
-            ->decryptCodable($encryptedResponse, ApplicationDTO::class, $this->keyPair);
-        $this->assertNotNull($app);
-        $this->assertEquals($application->reference, $app->reference);
-        $this->assertNotNull($app->data);
-        $this->assertCount(1, get_object_vars($app->data));
-        $this->assertObjectHasProperty($this->textField->code, $app->data);
 
-        $this->assertEquals(ApplicationStatus::Draft, $app->status);
+        $error = $this->responseEncryptionService
+            ->decryptCodable($encryptedResponse, Error::class, $this->keyPair);
+        $this->assertNotNull($error);
+
+        $this->assertEquals('subsidy_does_not_allow_multiple_applications', $error->code);
     }
 
-    public function testFindOrCreateApplicationCreatesNewApplicationWhenOnlyARejectedApplicationExists(): void
+    public function testCreateApplicationCreatesNewApplicationWhenOnlyARejectedApplicationExists(): void
     {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create([
             'status' => ApplicationStatus::Rejected
@@ -182,7 +181,7 @@ class ApplicationMutationServiceTest extends TestCase
         $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
-        $params = new ApplicationFindOrCreateParams(
+        $params = new ApplicationCreateParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, ''),
@@ -191,7 +190,7 @@ class ApplicationMutationServiceTest extends TestCase
             $this->subsidy->code
         );
 
-        $encryptedResponse = $this->app->make(ApplicationMutationService::class)->findOrCreateApplication($params);
+        $encryptedResponse = $this->applicationMutationService->createApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::CREATED, $encryptedResponse->status);
 
@@ -204,8 +203,11 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertEquals(ApplicationStatus::Draft, $app->status);
     }
 
-    public function testFindOrCreateApplicationReturnsErrorIfApplicationAlreadyExistsAndIsNotEditable(): void
+    public function testCreateApplicationReturnsNewApplicationWhenSubsidyAllowsMultipleApplications(): void
     {
+        $this->subsidy->allow_multiple_applications = true;
+        $this->subsidy->save();
+
         $application =
             Application::factory()
                 ->for($this->identity)
@@ -214,7 +216,7 @@ class ApplicationMutationServiceTest extends TestCase
         $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1);
         Answer::factory()->for($applicationStage)->for($this->textField)->create();
 
-        $params = new ApplicationFindOrCreateParams(
+        $params = new ApplicationCreateParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -223,16 +225,20 @@ class ApplicationMutationServiceTest extends TestCase
             $this->subsidy->code
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->findOrCreateApplication($params);
+        $encryptedResponse = $this->applicationMutationService->createApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
-        $this->assertEquals(EncryptedResponseStatus::FORBIDDEN, $encryptedResponse->status);
+        $this->assertEquals(EncryptedResponseStatus::CREATED, $encryptedResponse->status);
 
-        $error = $this->responseEncryptionService
-            ->decryptCodable($encryptedResponse, Error::class, $this->keyPair);
-        $this->assertEquals('application_already_exists', $error->code);
+        $app = $this->responseEncryptionService
+            ->decryptCodable($encryptedResponse, ApplicationDTO::class, $this->keyPair);
+        $this->assertNotNull($app);
+        $this->assertNotNull($app->data);
+        $this->assertCount(0, get_object_vars($app->data));
+        $this->assertEquals($this->subsidy->code, $app->subsidy->code);
+        $this->assertEquals(ApplicationStatus::Draft, $app->status);
     }
 
-    public static function findOrCreateApplicationChecksIfSubsidyOpenForNewApplicationsProvider(): array
+    public static function createApplicationChecksIfSubsidyOpenForNewApplicationsProvider(): array
     {
         return [
             'no_existing_application_should_return_error' => [
@@ -243,20 +249,20 @@ class ApplicationMutationServiceTest extends TestCase
             'existing_draft_application_should_return_error' => [
                 ApplicationStatus::Draft,
                 EncryptedResponseStatus::FORBIDDEN,
-                'subsidy_closed_for_new_applications'
+                'subsidy_does_not_allow_multiple_applications'
             ],
-            'existing_request_for_changes_application_should_not_return_an_error' => [
+            'existing_request_for_changes_application_should_return_an_error' => [
                 ApplicationStatus::RequestForChanges,
-                EncryptedResponseStatus::OK,
-                null
+                EncryptedResponseStatus::FORBIDDEN,
+                'subsidy_does_not_allow_multiple_applications'
             ]
         ];
     }
 
     /**
-     * @dataProvider findOrCreateApplicationChecksIfSubsidyOpenForNewApplicationsProvider
+     * @dataProvider createApplicationChecksIfSubsidyOpenForNewApplicationsProvider
      */
-    public function testFindOrCreateApplicationChecksIfSubsidyOpenForNewApplications(
+    public function testCreateApplicationChecksIfSubsidyOpenForNewApplications(
         ?ApplicationStatus $existingApplicationStatus,
         EncryptedResponseStatus $expectedResponseStatus,
         ?string $expectedErrorCode
@@ -275,7 +281,7 @@ class ApplicationMutationServiceTest extends TestCase
             Answer::factory()->for($applicationStage)->for($this->textField)->create();
         }
 
-        $params = new ApplicationFindOrCreateParams(
+        $params = new ApplicationCreateParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -284,7 +290,7 @@ class ApplicationMutationServiceTest extends TestCase
             $this->subsidy->code
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->findOrCreateApplication($params);
+        $encryptedResponse = $this->applicationMutationService->createApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($expectedResponseStatus, $encryptedResponse->status);
 
@@ -330,7 +336,7 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
+        $encryptedResponse = $this->applicationMutationService->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 
@@ -387,7 +393,7 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
+        $encryptedResponse = $this->applicationMutationService->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($expectedResponseStatus, $encryptedResponse->status);
     }
@@ -452,7 +458,7 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
+        $encryptedResponse = $this->applicationMutationService->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals($expectedResponseStatus, $encryptedResponse->status);
 
@@ -502,7 +508,7 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->make(ApplicationMutationService::class)->saveApplication($params);
+        $encryptedResponse = $this->applicationMutationService->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 
@@ -553,7 +559,7 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->get(ApplicationMutationService::class)->saveApplication($params);
+        $encryptedResponse = $this->applicationMutationService->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::UNPROCESSABLE_ENTITY, $encryptedResponse->status);
         /** @var ValidationResultDTO $validationResultDTO */
@@ -591,7 +597,7 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->make(ApplicationMutationService::class)->saveApplication($params);
+        $encryptedResponse = $this->applicationMutationService->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 
@@ -625,7 +631,7 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
-        $encryptedResponse = $this->app->make(ApplicationMutationService::class)->saveApplication($params);
+        $encryptedResponse = $this->applicationMutationService->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 

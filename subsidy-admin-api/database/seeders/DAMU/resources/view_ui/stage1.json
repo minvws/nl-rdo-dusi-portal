@@ -99,7 +99,6 @@
                         "fields": {
                             "Is er sprake van een eenoudergezin": "{isSingleParentFamily}",
                             "Alimentatie": "{hasAlimony}",
-                            "Alimentatiebedrag": "{alimonyAmount}",
                             "Jaarinkomen ouder 1": "{annualIncomeParentA}",
                             "Jaarinkomen ouder 2": "{annualIncomeParentB}",
                             "Jaarinkomen totaal": "{annualJointIncome}"
@@ -134,7 +133,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Damu School primair onderwijs": "{damuSchoolPrimary}"
+                            "DAMU-school primair onderwijs": "{damuSchoolPrimary}"
                         }
                     },
                     "rule": {
@@ -152,7 +151,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Damu School primair onderwijs": "{damuSchoolSecondary}"
+                            "DAMU-school primair onderwijs": "{damuSchoolSecondary}"
                         }
                     },
                     "rule": {
@@ -165,6 +164,14 @@
                         }
                     }
 
+                },
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "DAMU-school adres": "{damuSchoolAddress}"
+                        }
+                    }
                 }
             ]
         },
@@ -180,8 +187,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Reisafstand enkele reis": "{travelDistanceSingleTrip}",
-                            "Totaal aantal kilometers": "{totalDistance}",
+                            "Reisafstand enkele reis (in kilometers)": "{travelDistanceSingleTrip}",
                             "Kilometervergoeding": "{travelExpenseReimbursement}",
                             "Gevraagd subsidiebedrag": "{requestedSubsidyAmount}"
                         }
@@ -202,9 +208,8 @@
                     "options": {
                         "fields": {
                             "IB60 formulier": "{IBDocument}",
-                            "ANWB routeplanner": "{ANWBRouteCard}",
-                            "Inschrijfbewijs DAMU school": "{proofOfRegistrationDAMUSchool}",
-                            "Inschrijfbewijs reguliere school": "{proofOfRegistrationRegularSchool}"
+                            "Inschrijfbewijs DAMU-school": "{proofOfRegistrationDAMUSchool}",
+                            "Inschrijfbewijs reguliere school": "{proofOfRegistrationHboCollaborationPartner}"
                         }
                     }
                 }

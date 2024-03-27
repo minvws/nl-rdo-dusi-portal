@@ -6,12 +6,17 @@ namespace MinVWS\DUSi\Application\API\Services;
 
 use MinVWS\DUSi\Application\API\Helpers\CacheKeyHelper;
 use MinVWS\DUSi\Application\API\Repositories\CacheRepository;
+use MinVWS\DUSi\Shared\Bridge\Client\Client;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 
 class SubsidyService
 {
     public function __construct(
         private readonly CacheRepository $cacheRepository,
-        private readonly CacheKeyHelper $cacheKeyHelper
+        private readonly CacheKeyHelper $cacheKeyHelper,
+        private readonly Client $bridgeClient,
     ) {
     }
 
@@ -28,5 +33,10 @@ class SubsidyService
         }
 
         return $subsidies;
+    }
+
+    public function getSubsidyConcepts(SubsidyConceptsParams $params): EncryptedResponse
+    {
+        return $this->bridgeClient->call(RPCMethods::GET_SUBSIDY_CONCEPTS, $params, EncryptedResponse::class);
     }
 }

@@ -24,6 +24,10 @@ class BTVAssessmentFieldsSeeder extends Seeder
         $this->firstAssessmentFields();
         $this->secondAssessmentFields();
         $this->internalAssessmentFields();
+        $this->assignationDelayPeriodFields();
+        $this->assignationAssessmentFields();
+        $this->assignationAuditAssessmentFields();
+        $this->assignationImplementationAssessmentFields();
     }
 
     public function firstAssessmentFields(): void
@@ -199,6 +203,104 @@ class BTVAssessmentFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             code: 'internalAssessmentInternalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+    }
+
+    public function assignationDelayPeriodFields(): void
+    {
+        $this->createSelectField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code: 'assessment',
+            title: 'Beoordeling',
+            options: ['Vaststellen', 'Vorderen', 'Uitstellen'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code: 'internalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createUploadField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code:           'proof',
+            title:          'Bewijsstukken',
+            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            isRequired:     false,
+            minItems:       1,
+            maxItems:       20,
+            maxFileSize:    20971520
+        );
+    }
+
+    public function assignationAssessmentFields(): void
+    {
+        $this->createSelectField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code: 'assessment',
+            title: 'Beoordeling',
+            options: ['Vaststellen', 'Vorderen', 'Uitstellen'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code: 'internalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createUploadField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code:           'proof',
+            title:          'Bewijsstukken',
+            isRequired:     false,
+            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize:    20971520,
+            minItems:       1,
+            maxItems:       20
+        );
+    }
+
+    public function assignationAuditAssessmentFields(): void
+    {
+        $this->createSelectField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
+            code: 'assessment',
+            title: 'Beoordeling',
+            options: ['Eens met de beoordeling op de vaststelling', 'Oneens met de beoordeling op de vaststelling'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
+            code: 'internalNote',
+            title: 'Interne notitie',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+    }
+
+    public function assignationImplementationAssessmentFields(): void
+    {
+        $this->createSelectField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_8_UUID,
+            code: 'assessment',
+            title: 'Beoordeling',
+            options: ['Eens met de beoordeling op de vaststelling', 'Oneens met de beoordeling op de vaststelling'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_8_UUID,
+            code: 'internalNote',
             title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
