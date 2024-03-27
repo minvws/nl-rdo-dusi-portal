@@ -37,7 +37,7 @@ class DAMUSeeder extends Seeder
     {
         DB::table('subsidies')->insert([
             'id' => self::SUBSIDY_UUID,
-            'title' => 'Subsidieregeling reiskosten DAMU-leerlingen',
+            'title' => 'Reiskosten DAMU-leerlingen (Dans en Muziek)',
             'reference_prefix' => 'DAMU',
             'code' => 'DAMU',
             'description' => 'Ouders of verzorgers van een DAMU-leerling op het primair of het voortgezet onderwijs kunnen een tegemoetkoming in de reiskosten aanvragen. Deze reiskosten kunnen namelijk een barrière zijn voor talentvolle leerlingen om een opleiding aan een DAMU-school te volgen.',
@@ -59,7 +59,8 @@ class DAMUSeeder extends Seeder
             'contact_mail_address' => 'damu.dus-i@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
-            'review_period' => 7 * 13 // 13 weeks
+            'review_period' => 7 * 13, // 13 weeks
+            'review_deadline' => CarbonImmutable::parse('2025-01-14')
         ]);
     }
 }

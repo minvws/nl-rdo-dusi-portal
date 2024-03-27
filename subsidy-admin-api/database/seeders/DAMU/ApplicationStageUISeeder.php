@@ -58,7 +58,6 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                         "dateOfBirth",
                         "residentialStreet",
                         "residentialHouseNumber",
-                        "residentialHouseNumberSuffix",
                         "residentialPostalCode",
                         "residentialCity",
                         "educationType",
@@ -68,9 +67,8 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                 $this->buildInputUiStep(
                     3, 'Documenten toevoegen', [
                         "IBDocument",
-                        "ANWBRouteCard",
                         "proofOfRegistrationDAMUSchool",
-                        "proofOfRegistrationRegularSchool",
+                        "proofOfRegistrationHboCollaborationPartner",
                     ]
                 ),
                 $this->buildInputUiStep(
