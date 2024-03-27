@@ -237,6 +237,25 @@ WHERE subsidy_stage_id = 'fb21ee98-9f58-40b1-9432-fad2937688dc'
 
 UPDATE public.subsidy_stage_transitions
 SET current_subsidy_stage_id    = 'f343892a-17a8-48e5-81b0-6c3cb710c29a',
+    target_subsidy_stage_id     = 'fb21ee98-9f58-40b1-9432-fad2937688dc',
+    target_application_status   = null,
+    condition                   = '{
+        "type": "comparison",
+        "stage": 3,
+        "fieldCode": "implementationCoordinatorAssessment",
+        "operator": "===",
+        "value": "Oneens met de eerste beoordeling"
+    }',
+    send_message                = false,
+    clone_data                  = true,
+    assign_to_previous_assessor = true,
+    description                 = 'Uitvoeringscoördinator is het oneens met de eerste beoordeling',
+    expiration_period           = null,
+    evaluation_trigger          = 'submit'
+WHERE id = 'da58c18a-0645-4404-bbe4-a186babc01e2';
+
+UPDATE public.subsidy_stage_transitions
+SET current_subsidy_stage_id    = 'f343892a-17a8-48e5-81b0-6c3cb710c29a',
     target_subsidy_stage_id     = 'f36ae9b6-1340-453f-8ca7-611bfe9b94cd',
     target_application_status   = null,
     condition                   = '{
@@ -261,7 +280,7 @@ SET current_subsidy_stage_id    = 'f343892a-17a8-48e5-81b0-6c3cb710c29a',
     send_message                = false,
     clone_data                  = false,
     assign_to_previous_assessor = false,
-    description                 = 'Interne beoordeling eens met eerste beoordeling',
+    description                 = 'Uitvoeringscoördinator is het eens met de goedkeuring',
     expiration_period           = null,
     evaluation_trigger          = 'submit'
 WHERE id = '1c375d68-d9bb-4343-b14e-692ce893b64c';
@@ -292,10 +311,60 @@ SET current_subsidy_stage_id    = 'f343892a-17a8-48e5-81b0-6c3cb710c29a',
     send_message                = true,
     clone_data                  = false,
     assign_to_previous_assessor = false,
-    description                 = 'Implementatie coordinator eens met afkeuring',
+    description                 = 'Uitvoeringscoördinator is het eens met de afkeuring',
     expiration_period           = null,
     evaluation_trigger          = 'submit'
 WHERE id = '5e938249-b011-4b82-a700-1a4a55170492';
+
+UPDATE public.subsidy_stage_transitions
+SET current_subsidy_stage_id    = 'f36ae9b6-1340-453f-8ca7-611bfe9b94cd',
+    target_subsidy_stage_id     = 'fb21ee98-9f58-40b1-9432-fad2937688dc',
+    target_application_status   = null,
+    condition                   = '{
+        "type": "comparison",
+        "stage": 4,
+        "fieldCode": "internalAssessment",
+        "operator": "===",
+        "value": "Oneens met de eerste beoordeling"
+    }',
+    send_message                = false,
+    clone_data                  = true,
+    assign_to_previous_assessor = true,
+    description                 = 'Interne controle is het oneens met de eerste beoordeling',
+    expiration_period           = null,
+    evaluation_trigger          = 'submit'
+WHERE id = '383f4e2b-8d5d-4a64-a3d6-001caa857a31';
+
+UPDATE public.subsidy_stage_transitions
+SET current_subsidy_stage_id    = 'f36ae9b6-1340-453f-8ca7-611bfe9b94cd',
+    target_subsidy_stage_id     = null,
+    target_application_status   = 'approved',
+    condition                   = '{
+        "type": "and",
+        "conditions": [
+            {
+                "type": "comparison",
+                "stage": 2,
+                "fieldCode": "firstAssessment",
+                "operator": "===",
+                "value": "Goedgekeurd"
+            },
+            {
+                "type": "comparison",
+                "stage": 4,
+                "fieldCode": "internalAssessment",
+                "operator": "===",
+                "value": "Eens met de eerste beoordeling"
+            }
+        ]
+    }',
+    send_message                = true,
+    clone_data                  = false,
+    assign_to_previous_assessor = false,
+    description                 = 'Interne controle is het eens met de goedkeuring',
+    expiration_period           = null,
+    evaluation_trigger          = 'submit'
+WHERE id = '7c2c08be-5216-4abb-b8ba-fe08ac922f90';
 
 UPDATE public.subsidy_stage_uis
 SET subsidy_stage_id = '77996a9c-5c8d-47e1-9a88-e41bf594cfc8',
