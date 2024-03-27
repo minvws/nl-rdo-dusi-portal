@@ -101,7 +101,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
         // volledig beoordeeld worden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_3_TO_2,
-            'description' => 'Uitvoeringscoordinator oneens met eerste beoordeling',
+            'description' => 'Uitvoeringscoördinator is het oneens met de eerste beoordeling',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             'condition' => $encoder->encode(
@@ -197,7 +197,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
         // toekenningsbrief verzonden
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_4_TO_APPROVED,
-            'description' => 'Interne auditor eens met goedkeuring',
+            'description' => 'Interne controle is het eens met de goedkeuring',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Approved,
