@@ -7,7 +7,6 @@ namespace MinVWS\DUSi\Shared\Subsidy\Repositories;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Str;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
@@ -221,23 +220,5 @@ class SubsidyRepository
         $stage = $subsidyVersion->subsidyStages()->where('stage', '=', 1)->first();
         assert($stage instanceof SubsidyStage);
         return $stage;
-    }
-
-    public function getCurrentApplicantStageForSubsidy(Subsidy $subsidy): SubsidyStage
-    {
-        $subsidyVersion = $this->getPublishedSubsidyVersionForSubsidy($subsidy);
-
-        $stage = $subsidyVersion->subsidyStages()->where('stage', '=', 1)->first();
-        assert($stage instanceof SubsidyStage);
-        return $stage;
-    }
-
-    private function getPublishedSubsidyVersionForSubsidy(Subsidy $subsidy): SubsidyVersion
-    {
-        $subsidyVersion = $subsidy->subsidyVersions()
-            ->where('status', '=', VersionStatus::Published)
-            ->first();
-        assert($subsidyVersion instanceof SubsidyVersion);
-        return $subsidyVersion;
     }
 }
