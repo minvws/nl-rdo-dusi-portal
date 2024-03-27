@@ -147,7 +147,7 @@ class SubsidyStageTransitionsSeeder extends Seeder
         // afgekeurd en wordt de afkeuringsbrief verzonden.
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_3_TO_REJECTED,
-            'description' => 'Uitvoeringscoördinator is het eens met afkeuring',
+            'description' => 'Uitvoeringscoördinator is het eens met de afkeuring',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             'target_subsidy_stage_id' => null,
             'target_application_status' => ApplicationStatus::Rejected,
