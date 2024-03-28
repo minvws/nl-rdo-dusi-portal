@@ -80,7 +80,8 @@
                     "options": {
                         "fields": {
                             "IBAN": "{bankAccountNumber}",
-                            "Naam rekeninghouder": "{bankAccountHolder}"
+                            "Naam rekeninghouder": "{bankAccountHolder}",
+                            "Bankafschrift (indien nodig)": "{bankStatement}"
                         }
                     }
                 }

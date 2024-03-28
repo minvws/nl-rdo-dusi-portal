@@ -153,6 +153,69 @@
                                 "tip": "Staat u onder bewind? Vermeld dan het IBAN van uw beheerrekening.",
                                 "validation": ["onValid"]
                             }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/bankStatement",
+                            "label": "Bankafschrift",
+                            "options": {
+                                "accept": "image/jpeg,image/png,application/pdf",
+                                "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "De ingevoerde naam rekeninghouder en IBAN konden niet worden geverifieerd.\n\nOp de kopie van een recent bankafschrift moeten het rekeningnummer en uw naam zichtbaar zijn. Adres en datum mogen ook, maar zijn niet verplicht. Maak de andere gegevens onleesbaar. U mag ook een afdruk van internet bankieren gebruiken of een kopie van uw bankpas. Zie ook dit <a href=\"https://www.dus-i.nl/documenten/publicaties/2018/07/30/voorbeeld-bankafschrift\" target=\"_blank\">voorbeeld</a>.",
+                                "validation": ["onInput"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#",
+                                    "schema": {
+                                        "anyOf": [
+                                            {
+                                                "required": [
+                                                    "validationResult"
+                                                ],
+                                                "properties": {
+                                                    "validationResult": {
+                                                        "type": "object",
+                                                        "required": [
+                                                            "bankAccountNumber"
+                                                        ],
+                                                        "properties": {
+                                                            "bankAccountNumber": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "anyOf": [
+                                                                        {
+                                                                            "type": "object",
+                                                                            "required": ["id"],
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "const": "validationSurePayError"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "type": "object",
+                                                                            "required": ["id"],
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "const": "validationSurePayWarning"
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
                         }
                     ]
                 }

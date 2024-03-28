@@ -8,6 +8,7 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
@@ -117,6 +118,18 @@ class ApplicationFieldsSeeder extends Seeder
             code:           'bankAccountHolder',
             title:          'Naam rekeninghouder',
             params:         ['maxLength' => 50],
+        );
+
+        $this->createUploadField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code: 'bankStatement',
+            title: 'Bankafschrift',
+            isRequired: false,
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
+            retentionPeriod: DataRetentionPeriod::Short
         );
 
         $this->createDateField(

@@ -20,6 +20,7 @@ use MinVWS\DUSi\Shared\Application\Models\Disk;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SurePayValidationRule;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -61,7 +62,8 @@ class ApplicationMutationServiceTest extends TestCase
     private Field $textField;
     private Field $uploadField;
     private Field $bankAccountHolderField;
-    private Field $bankAccountNumber;
+    private Field $bankAccountNumberField;
+    private Field $bankStatementField;
     private string $keyPair;
     private ClientPublicKey $publicKey;
     private ResponseEncryptionService $responseEncryptionService;
@@ -92,13 +94,25 @@ class ApplicationMutationServiceTest extends TestCase
         $this->bankAccountHolderField =
             Field::factory()
                 ->for($this->subsidyStage1)
-                ->create(['code' => 'bankAccountHolder', 'type' => FieldType::Text, 'is_required' => false]);
-        $this->bankAccountNumber =
+                ->create([
+                    'code' => SurePayValidationRule::BANK_ACCOUNT_HOLDER_FIELD,
+                    'type' => FieldType::Text,
+                    'is_required' => false,
+                ]);
+        $this->bankAccountNumberField =
             Field::factory()
                 ->for($this->subsidyStage1)
                 ->create([
-                    'code' => 'bankAccountNumber',
+                    'code' => SurePayValidationRule::BANK_ACCOUNT_NUMBER_FIELD,
                     'type' => FieldType::CustomBankAccount,
+                    'is_required' => false,
+                ]);
+        $this->bankStatementField =
+            Field::factory()
+                ->for($this->subsidyStage1)
+                ->create([
+                    'code' => SurePayValidationRule::BANK_STATEMENT_FIELD,
+                    'type' => FieldType::Upload,
                     'is_required' => false,
                 ]);
         $this->subsidyStage2 =
@@ -609,12 +623,18 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertNotNull($app->data);
         $this->assertEquals("Test A", $app->data->text);
 
+        $bankStatementFileId = $this->faker->uuid;
+        $bankStatement = [
+            ['id' => $bankStatementFileId, 'name' => $this->faker->word, 'mimeType' => 'application/pdf']
+        ];
+
         // Update draft application for validation testing
         $body = new ApplicationSaveBody(
             (object)[
                 $this->textField->code => "Test",
                 $this->bankAccountHolderField->code => "Pieter",
-                $this->bankAccountNumber->code => "NL58ABNA9999142181",
+                $this->bankAccountNumberField->code => "NL58ABNA9999142181",
+                $this->bankStatementField->code => $bankStatement,
             ],
             false
         );
@@ -631,6 +651,9 @@ class ApplicationMutationServiceTest extends TestCase
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
 
+        $fileManager = $this->app->get(ApplicationFileManager::class);
+        $fileManager->writeFile($applicationStage, $this->bankStatementField, $bankStatementFileId, 'some-content');
+
         $encryptedResponse = $this->applicationMutationService->saveApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
@@ -646,6 +669,7 @@ class ApplicationMutationServiceTest extends TestCase
                 [
                     'type' => 'warning',
                     'message' => 'Naam rekeninghouder lijkt niet volledig te kloppen! Bedoelde u {suggestion}?',
+                    'id' => 'validationSurePayWarning',
                     'params' => [
                         'suggestion' => [
                             'code' => 'bankAccountHolder',

@@ -8,35 +8,39 @@ use MinVWS\DUSi\Shared\Application\Services\Validation\Enums\ValidationResultTyp
 
 class ValidationResultFactory
 {
-    public static function createError(string $message): ValidationResult
+    public static function createError(string $message, ?string $id = null): ValidationResult
     {
         return new ValidationResult(
             type: ValidationResultType::Error,
             message: $message,
+            id: $id,
         );
     }
 
-    public static function createConfirmation(string $message): ValidationResult
+    public static function createConfirmation(string $message, ?string $id = null): ValidationResult
     {
         return new ValidationResult(
             type: ValidationResultType::Success,
             message: $message,
+            id: $id,
         );
     }
 
-    public static function createExplanation(string $message): ValidationResult
+    public static function createExplanation(string $message, ?string $id = null): ValidationResult
     {
         return new ValidationResult(
             type: ValidationResultType::Explanation,
             message: $message,
+            id: $id,
         );
     }
 
-    public static function createWarning(string $message): ValidationResult
+    public static function createWarning(string $message, ?string $id = null): ValidationResult
     {
         return new ValidationResult(
             type: ValidationResultType::Warning,
             message: $message,
+            id: $id,
         );
     }
 }

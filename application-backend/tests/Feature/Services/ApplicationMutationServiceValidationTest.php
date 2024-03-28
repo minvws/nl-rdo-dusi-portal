@@ -14,7 +14,9 @@ use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SurePayValidationRule;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\BinaryData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ClientPublicKey;
@@ -154,6 +156,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             "Surepay Match" => [
                 'NL62ABNA9999841479',
                 $faker->name(),
+                false,
                 EncryptedResponseStatus::OK,
                 [
                     "validationResult" => [
@@ -161,6 +164,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
                             [
                                 "type" => "confirmation",
                                 "message" => "Naam rekeninghouder komt overeen.",
+                                "id" => "validationSurePayValid",
                                 "params" => []
                             ]
                         ]
@@ -170,6 +174,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             "Surepay NomMatch" => [
                 'NL12ABNA9999876523',
                 $faker->name(),
+                false,
                 EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
                 [
                     "validationResult" => [
@@ -177,15 +182,42 @@ class ApplicationMutationServiceValidationTest extends TestCase
                             [
                                 "type" => "error",
                                 "message" => "Naam rekeninghouder komt niet overeen!",
+                                "id" => "validationSurePayError",
                                 "params" => []
                             ]
                         ]
                     ]
                 ],
             ],
-            "Surepay close match" => [
+            "Surepay close match without bankstatement" => [
                 'NL58ABNA9999142181',
                 $faker->name(),
+                false,
+                EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
+                [
+                    "validationResult" => [
+                        "bankAccountNumber" => [
+                            [
+                                "type" => "error",
+                                "message" =>
+                                    "Naam rekeninghouder lijkt niet volledig te kloppen! Bedoelde u {suggestion}?",
+                                "id" => "validationSurePayError",
+                                "params" => [
+                                    "suggestion" => [
+                                        "code" => "bankAccountHolder",
+                                        "value" => MockedBankAccountRepository::BANK_HOLDER_SUGGESTION
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                false,
+            ],
+            "Surepay close match with bankstatement" => [
+                'NL58ABNA9999142181',
+                $faker->name(),
+                true,
                 EncryptedResponseStatus::OK,
                 [
                     "validationResult" => [
@@ -194,6 +226,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
                                 "type" => "warning",
                                 "message" =>
                                     "Naam rekeninghouder lijkt niet volledig te kloppen! Bedoelde u {suggestion}?",
+                                "id" => "validationSurePayWarning",
                                 "params" => [
                                     "suggestion" => [
                                         "code" => "bankAccountHolder",
@@ -209,6 +242,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             "Empty bankaccount number" => [
                 '',
                 $faker->name(),
+                false,
                 EncryptedResponseStatus::OK,
                 [
                     "validationResult" => []
@@ -217,6 +251,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             "Empty bankHolderName" => [
                 $faker->iban('nl'),
                 '',
+                false,
                 EncryptedResponseStatus::OK,
                 [
                     "validationResult" => []
@@ -225,6 +260,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             "Bankaccount number null" => [
                 null,
                 $faker->name(),
+                false,
                 EncryptedResponseStatus::OK,
                 [
                     "validationResult" => []
@@ -233,6 +269,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             "Bankaccount holder null" => [
                 $faker->iban('nl'),
                 null,
+                false,
                 EncryptedResponseStatus::OK,
                 [
                     "validationResult" => []
@@ -241,6 +278,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
             "Bankaccount holder and name null" => [
                 null,
                 null,
+                false,
                 EncryptedResponseStatus::OK,
                 [
                     "validationResult" => []
@@ -257,27 +295,44 @@ class ApplicationMutationServiceValidationTest extends TestCase
     public function testValidateFieldsWithBankAccount(
         ?string $bankAccountNumber,
         ?string $bankAccountHolder,
+        bool $bankStatementIncluded,
         EncryptedResponseStatus $encryptedResponseStatus,
         array $responseBody,
     ): void {
         $application = Application::factory()->for($this->identity)->for($this->subsidyVersion)->create();
-        ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
+        $applicationStage = ApplicationStage::factory()->for($application)->for($this->subsidyStage1)->create();
         $bankAccountField = Field::factory()
             ->for($this->subsidyStage1)
             ->create([
-                'code' => 'bankAccountNumber',
+                'code' => SurePayValidationRule::BANK_ACCOUNT_NUMBER_FIELD,
                 'type' => FieldType::CustomBankAccount,
             ]);
         $bankAccountHolderField = Field::factory()
             ->for($this->subsidyStage1)
             ->create([
-                'code' => 'bankAccountHolder',
+                'code' => SurePayValidationRule::BANK_ACCOUNT_HOLDER_FIELD,
                 'type' => FieldType::Text,
             ]);
+        $bankStatementField = Field::factory()
+            ->for($this->subsidyStage1)
+            ->create([
+                'code' => SurePayValidationRule::BANK_STATEMENT_FIELD,
+                'type' => FieldType::Upload,
+                'is_required' => false,
+            ]);
+
+        $bankStatement = null;
+        if ($bankStatementIncluded) {
+            $bankStatementFileId = $this->faker->uuid;
+            $bankStatement = [
+                ['id' => $bankStatementFileId, 'name' => $this->faker->word, 'mimeType' => 'application/pdf']
+            ];
+        }
 
         $params = [
             $bankAccountField->code => $bankAccountNumber,
             $bankAccountHolderField->code => $bankAccountHolder,
+            $bankStatementField->code => $bankStatement,
         ];
 
         $body = new FieldValidationParams(
@@ -295,6 +350,11 @@ class ApplicationMutationServiceValidationTest extends TestCase
             $application->reference,
             new BinaryData($json) // NOTE: frontend encryption is disabled, so plain text
         );
+
+        if ($bankStatementIncluded && $bankStatementFileId) {
+            $fileManager = $this->app->get(ApplicationFileManager::class);
+            $fileManager->writeFile($applicationStage, $bankStatementField, $bankStatementFileId, 'some-content');
+        }
 
         $encryptedResponse = $this->app->get(ApplicationMutationService::class)->validateApplication($params);
 
@@ -327,6 +387,7 @@ class ApplicationMutationServiceValidationTest extends TestCase
                             [
                                 "type" => "error",
                                 "message" => "E-mailadres is geen geldig e-mailadres.",
+                                "id" => null,
                                 "params" => []
                             ]
                         ],

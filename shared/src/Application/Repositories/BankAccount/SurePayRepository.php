@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Shared\Application\Repositories\BankAccount;
 
 use Illuminate\Contracts\Redis\Connection;
 use MinVWS\DUSi\Shared\Application\DTO\SurepayServiceHealth;
+use Exception;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayMaxRetryException;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\Exceptions\SurePayRepositoryException;
@@ -23,6 +24,7 @@ class SurePayRepository implements BankAccountRepository
     /**
      * @throws SurePayRepositoryException
      * @throws SurePayMaxRetryException
+     * @throws Exception
      */
     public function checkOrganisationsAccount(
         string $accountOwner,

@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Helpers;
 
-use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
-use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 class SubsidyStageDataSchemaBuilder
 {
+    public function __construct(protected RequiredConditionSchemaMapper $schemaMapper)
+    {
+    }
+
     public function buildDataSchema(SubsidyStage $subsidyStage): array
     {
         $result = [];
@@ -19,15 +22,15 @@ class SubsidyStageDataSchemaBuilder
         $result['properties'] = [];
 
         $required = [];
-        $requiredConditions = [];
+        $allOf = [];
         foreach ($subsidyStage->fields as $field) {
             $result['properties'][$field->code] = $this->createFieldDataSchema($field);
             if ($field->is_required) {
                 $required[] = $field->code;
             }
-            $requiredFieldCondition = $this->getRequiredFieldConditionIfApplicable($field);
-            if (!is_null($requiredFieldCondition)) {
-                $requiredConditions[] = $requiredFieldCondition;
+            $requiredCondition = $field->required_condition;
+            if ($requiredCondition instanceof Condition) {
+                $allOf[] = $this->schemaMapper->mapConditionAndFieldToDataScheme($requiredCondition, $field);
             }
         }
 
@@ -35,8 +38,8 @@ class SubsidyStageDataSchemaBuilder
             $result['required'] = $required;
         }
 
-        if (count($requiredConditions) > 0) {
-            $result['allOf'] = $requiredConditions;
+        if (count($allOf) > 0) {
+            $result['allOf'] = $allOf;
         }
 
         return $result;
@@ -191,38 +194,6 @@ class SubsidyStageDataSchemaBuilder
             'minItems' => $field->params['minItems'] ?? null,
             'uniqueItems' => $field->params['uniqueItems'] ?? null,
         ]);
-    }
-
-    public function getRequiredFieldConditionIfApplicable(Field $field): ?array
-    {
-        if (empty($field->required_condition)) {
-            return null;
-        }
-
-        if (!($field->required_condition instanceof ComparisonCondition)) {
-            return null;
-        }
-
-        if ($field->required_condition->operator !== Operator::Identical) {
-            return null;
-        }
-
-        if ($field->required_condition->stage === 1) {
-            return null;
-        }
-
-        return [
-            'if' => [
-                'properties' => [
-                    $field->required_condition->fieldCode => [
-                        'const' => $field->required_condition->value
-                    ]
-                ]
-            ],
-            'then' => [
-                'required' => [$field->code]
-            ]
-        ];
     }
 
     /**

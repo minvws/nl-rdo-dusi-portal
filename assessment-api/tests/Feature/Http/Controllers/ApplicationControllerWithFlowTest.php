@@ -10,13 +10,14 @@ use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\MockedBankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Application\Services\SurePayService;
+use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\SurePayValidationRule;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\FieldValidationParams;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
-use MinVWS\DUSi\Shared\Test\ApplicationCreator;
 use MinVWS\DUSi\Shared\Test\AssessmentOutcome;
 use MinVWS\DUSi\Shared\Test\ComplexSubsidyAggregateManager;
 use MinVWS\DUSi\Shared\Test\MocksEncryption;
@@ -32,8 +33,6 @@ class ApplicationControllerWithFlowTest extends TestCase
     private ApplicationStageEncryptionService $encryptionService;
 
     private ComplexSubsidyAggregateManager $subsidyManager;
-
-    private ApplicationCreator $applicationCreator;
 
     protected function setUp(): void
     {
@@ -173,27 +172,43 @@ class ApplicationControllerWithFlowTest extends TestCase
         $bankAccountField = Field::factory()
             ->for($this->subsidyManager->getSubsidyStage(1))
             ->create([
-                         'code' => 'bankAccountNumber',
-                         'type' => FieldType::CustomBankAccount,
-                     ]);
+                 'code' => SurePayValidationRule::BANK_ACCOUNT_NUMBER_FIELD,
+                 'type' => FieldType::CustomBankAccount,
+             ]);
         $bankAccountHolderField = Field::factory()
             ->for($this->subsidyManager->getSubsidyStage(1))
             ->create([
-                         'code' => 'bankAccountHolder',
-                         'type' => FieldType::Text,
-                     ]);
+                 'code' => SurePayValidationRule::BANK_ACCOUNT_HOLDER_FIELD,
+                 'type' => FieldType::Text,
+             ]);
+        $bankStatementField = Field::factory()
+            ->for($this->subsidyManager->getSubsidyStage(1))
+            ->create([
+                'code' => SurePayValidationRule::BANK_STATEMENT_FIELD,
+                'type' => FieldType::Upload,
+                'is_required' => false,
+            ]);
 
         [$assessor1, $assessor2, $internalAuditor] = $this->subsidyManager->getUsers();
 
         $application = $this->subsidyManager->createApplication();
         $applicationStage1Sequence1 = $this->subsidyManager->createApplicationStage($application, 1);
 
+        $bankStatementFileId = $this->faker->uuid;
+        $bankStatement = [
+            ['id' => $bankStatementFileId, 'name' => $this->faker->word, 'mimeType' => 'application/pdf']
+        ];
+
         $body = new FieldValidationParams(
             (object) [
                 $bankAccountField->code => MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
                 $bankAccountHolderField->code =>  $this->faker->lastname,
+                $bankStatementField->code => $bankStatement,
             ]
         );
+
+        $fileManager = $this->app->get(ApplicationFileManager::class);
+        $fileManager->writeFile($applicationStage1Sequence1, $bankStatementField, $bankStatementFileId, 'some-content');
 
         $this->app->get(ApplicationDataService::class)->saveApplicationStageData(
             $applicationStage1Sequence1,
@@ -232,6 +247,7 @@ class ApplicationControllerWithFlowTest extends TestCase
             (object) [
                 $bankAccountField->code => MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
                 $bankAccountHolderField->code => $this->faker->lastname,
+                $bankStatementField->code => $bankStatement,
             ]
         );
 

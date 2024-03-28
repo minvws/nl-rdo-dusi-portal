@@ -10,11 +10,10 @@ use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AbstractApplicationStageUISee
 class BTVApplicationStageUISeeder extends AbstractApplicationStageUISeeder
 {
     public const BTV_STAGE1_V1_UUID = '72475863-7987-4375-94d7-21e04ff6552b';
+    public string $resourceDir = __DIR__;
 
     public function run(): void
     {
-        $this->resourceDir = __DIR__;
-
         $inputUI = $this->buildInputUI();
 
         $viewUI = $this->buildViewUI();

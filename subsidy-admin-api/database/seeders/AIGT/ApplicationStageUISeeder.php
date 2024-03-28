@@ -10,11 +10,10 @@ use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AbstractApplicationStageUISee
 class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
 {
     public const SUBSIDY_STAGE1_V1_UUID = '491a4071-c401-4041-97fd-39b8c3aa70c8';
+    public string $resourceDir = __DIR__;
 
     public function run(): void
     {
-        $this->resourceDir = __DIR__;
-
         $inputUI = $this->buildInputUI();
 
         $viewUI = $this->buildViewUI();

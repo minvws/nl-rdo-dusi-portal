@@ -122,6 +122,18 @@ class ApplicationFieldsSeeder extends Seeder
             params:         ['maxLength' => 50],
         );
 
+        $this->createUploadField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code: 'bankStatement',
+            title: 'Bankafschrift',
+            isRequired: false,
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'isSingleParentFamily',
