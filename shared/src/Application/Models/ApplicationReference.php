@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ApplicationReference extends Model
 {
-    protected $primaryKey = 'reference';
+    public const UPDATED_AT = null;
+
     public $incrementing = false;
+
+    protected $primaryKey = 'reference';
     protected $keyType = 'string';
 
     protected $connection = Connection::APPLICATION;

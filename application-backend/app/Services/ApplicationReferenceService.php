@@ -25,7 +25,7 @@ class ApplicationReferenceService
             $applicationReference = $this->createApplicationReferenceString($subsidy->reference_prefix, $randomNumber);
 
             if ($this->applicationReferenceRepository->isReferenceUnique($applicationReference)) {
-                $this->applicationReferenceRepository->saveReference($applicationReference);
+
 
                 return $applicationReference;
             }
