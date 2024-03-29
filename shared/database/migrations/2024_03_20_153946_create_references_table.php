@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('application_references', static function (Blueprint $table) {
             $table->string('reference', 15)->unique();
             $table->timestamp('created_at')->useCurrent();
-            $table->timestamps();
         });
     }
 
