@@ -7,4 +7,5 @@ namespace MinVWS\DUSi\Shared\Subsidy\Models\Enums;
 enum FieldSource: string
 {
     case User = 'user';
+    case Calculated = 'calculated';
 }

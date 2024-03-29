@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
@@ -171,6 +172,7 @@ class ApplicationFieldsSeeder extends Seeder
             inputMode:      'numeric',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
@@ -260,6 +262,7 @@ class ApplicationFieldsSeeder extends Seeder
             code:           'damuSchoolAddress',
             title:          'Adres DAMU-school',
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
@@ -277,6 +280,7 @@ class ApplicationFieldsSeeder extends Seeder
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
@@ -286,6 +290,7 @@ class ApplicationFieldsSeeder extends Seeder
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createUploadField(

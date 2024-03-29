@@ -136,6 +136,6 @@ class RequiredConditionSchemaMapper
         return array_filter([
             'required' => $required,
             'properties' => $properties,
-        ], null, ARRAY_FILTER_USE_BOTH);
+        ]);
     }
 }
