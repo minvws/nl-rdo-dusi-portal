@@ -46,7 +46,7 @@ class RequiredConditionSchemaMapper
             $properties[] = $this->mapConditionToSchema($subCondition);
         }
 
-        return $this->getAllOfSchema(array_merge(...$properties));
+        return $this->getAllOfSchema($properties);
     }
 
     private function mapComparisonConditionToSchema(ComparisonCondition $comparisonCondition): array
