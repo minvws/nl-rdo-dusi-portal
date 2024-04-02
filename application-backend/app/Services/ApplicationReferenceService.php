@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationReferenceException;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationReferenceRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -20,12 +22,20 @@ class ApplicationReferenceService
 
     public function generateUniqueReferenceByElevenRule(Subsidy $subsidy): string
     {
+        $savePoint = sprintf('trans_%s_%s', $subsidy->reference_prefix, time());
+        DB::statement(sprintf('SAVEPOINT %s;', $savePoint));
+
         for ($i = 0; $i < self::MAX_TRIES; $i++) {
             $randomNumber = $this->applicationReferenceGenerator->generateRandomNumberByElevenRule();
             $applicationReference = $this->createApplicationReferenceString($subsidy->reference_prefix, $randomNumber);
 
-            if ($this->applicationReferenceRepository->isReferenceUnique($applicationReference)) {
+            try {
+                $this->applicationReferenceRepository->saveReference($applicationReference);
+
                 return $applicationReference;
+            } catch (UniqueConstraintViolationException $e) {
+                // To prevent the complete transaction to fail, do a rollback to the savepoint first and try again
+                DB::statement(sprintf('ROLLBACK TO SAVEPOINT %s;', $savePoint));
             }
         }
 
