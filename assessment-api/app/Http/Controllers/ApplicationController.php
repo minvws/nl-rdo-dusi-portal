@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -19,6 +20,7 @@ use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationRequestsFilterResource;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationStageValidationResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationService;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
@@ -159,7 +161,7 @@ class ApplicationController extends Controller
         string $applicationId,
         Authenticatable $user,
         Request $request,
-    ): ApplicationSubsidyVersionResource {
+    ): ApplicationSubsidyVersionResource|JsonResponse {
         return DB::transaction(fn() => $this->doSaveAssessment($applicationId, $user, $request));
     }
 
@@ -172,7 +174,7 @@ class ApplicationController extends Controller
         string $applicationId,
         Authenticatable $user,
         Request $request
-    ): ApplicationSubsidyVersionResource {
+    ): ApplicationSubsidyVersionResource|JsonResponse {
         $application = $this->applicationRepository->getApplication($applicationId, lockForUpdate: true);
 
         if (is_null($application)) {
@@ -209,7 +211,9 @@ class ApplicationController extends Controller
                 'submitAssessment' => $submit,
                 'validationErrors' => $exception->getValidationResults(),
             ]);
-            abort(Response::HTTP_BAD_REQUEST);
+            return (new ApplicationStageValidationResource($exception))
+                ->response()
+                ->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
