@@ -70,9 +70,9 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
 
         $query = "SET ";
 
-        $i = 0;
+        $index = 0;
         foreach ($data as $column => $value) {
-            $i++;
+            $index++;
             if ($value === null) {
                 continue;
             }
@@ -82,7 +82,7 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
             $value = str_replace("'", "''", $value);
 
             $query .= "$column = '$value'";
-            if ($i !== $numberOfItems) {
+            if ($index !== $numberOfItems) {
                 $query .= "," . PHP_EOL;
             }
         }
