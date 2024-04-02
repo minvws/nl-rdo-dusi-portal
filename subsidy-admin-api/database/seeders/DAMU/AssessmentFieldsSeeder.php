@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
 class AssessmentFieldsSeeder extends Seeder
@@ -89,6 +90,7 @@ class AssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
@@ -98,6 +100,7 @@ class AssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use Ramsey\Uuid\Uuid;
 
 trait CreateField
@@ -26,7 +27,8 @@ trait CreateField
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
         DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
-        bool $excludeFromCloneData = false
+        bool $excludeFromCloneData = false,
+        FieldSource $source = FieldSource::User,
     ): string {
         $id = Uuid::uuid4()->toString();
 
@@ -42,6 +44,7 @@ trait CreateField
             'required_condition' => $this->getRequiredCondition($requiredCondition),
             'retention_period_on_approval' => $retentionPeriod,
             'exclude_from_clone_data' => $excludeFromCloneData,
+            'source' => $source,
         ]);
 
         return $id;
@@ -57,6 +60,7 @@ trait CreateField
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
         DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
+        FieldSource $source = FieldSource::User,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -68,6 +72,7 @@ trait CreateField
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
             retentionPeriod: $retentionPeriod,
+            source: $source,
         );
     }
 
