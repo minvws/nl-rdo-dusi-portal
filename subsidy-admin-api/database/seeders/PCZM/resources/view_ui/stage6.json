@@ -1,0 +1,16 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/increaseAmountInternalNote",
+            "options": {
+                "readonly": true,
+                "format": "textarea"
+            }
+        }
+    ]
+}
