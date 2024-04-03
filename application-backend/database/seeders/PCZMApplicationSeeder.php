@@ -20,11 +20,14 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResul
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedIdentity;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use Throwable;
 
@@ -35,12 +38,18 @@ class PCZMApplicationSeeder extends Seeder
     public const PCZM_VERSION_UUID = '513011cd-789b-4628-ba5c-2fee231f8959';
     public const PCZM_STAGE_1_UUID = '7e5d64e9-35f0-4fee-b8d2-dca967b43183';
     public const PCZM_STAGE_2_UUID = '8027c102-93ef-4735-ab66-97aa63b836eb';
+    public const PCZM_STAGE_3_UUID = '61436439-E337-4986-BC18-57138E2FAB65';
+    public const PCZM_STAGE_4_UUID = '7CEB3C91-5C3B-4627-B9EF-A46D5FE2ED68';
+    public const PCZM_STAGE_5_UUID = '85ED726E-CDBE-444E-8D12-C56F9BED2621';
+    public const PCZM_STAGE_6_UUID = 'ef2238cf-a8ce-4376-ab2e-e821bc43ddb5';
+
     public function __construct(
         protected ApplicationDataService $applicationDataService,
         protected ApplicationFileManager $fileManager,
         protected ApplicationStageEncryptionService $encryptionService,
         protected HsmEncryptionService $hsmEncryptionService,
         protected IdentityService $identityService,
+        private readonly ApplicationFlowService $applicationFlowService,
     ) {
          $this->faker = Factory::create();
     }
@@ -121,7 +130,7 @@ class PCZMApplicationSeeder extends Seeder
     private function createApplicationData($application, $applicationData): void
     {
         $applicationStage = $this->createApplicationStage(
-            $application, 1, true, self::PCZM_STAGE_1_UUID, false
+            $application, 1, false, $this->getSubsidyStageUuid(1), true
         );
         $this->writeFields($applicationStage);
 
@@ -129,12 +138,34 @@ class PCZMApplicationSeeder extends Seeder
 
         $this->createApplicationSurepayResult($applicationData, $application, $applicationStage);
 
-        $this->createApplicationStage(
-            $application,
-            2,
-            false,
-            self::PCZM_STAGE_2_UUID,
-            true);
+        $numberOfStages = $this->faker->numberBetween(2,6);
+
+        while ($applicationStage->subsidyStage->stage <= $numberOfStages) {
+
+            try {
+                $newStage = $this->applicationFlowService->evaluateApplicationStage(
+                    $applicationStage,
+                    EvaluationTrigger::Submit
+                );
+            } catch (ApplicationFlowException $e) {
+                dump(
+                    sprintf(
+                        'Error processing application %s: %s',
+                        $applicationStage->application->reference,
+                        $e->getMessage()
+                    )
+                );
+                continue;
+            }
+
+            if ($newStage === null) {
+                break;
+            }
+
+            $applicationStageData = $this->createApplicationStageData($newStage->subsidyStage->stage);
+            $this->applicationDataService->saveApplicationStageData($newStage, $applicationStageData, false);
+            $applicationStage = $newStage;
+        }
     }
 
     private function readApplicationDataFromFile()
@@ -156,7 +187,7 @@ class PCZMApplicationSeeder extends Seeder
                 'judgement' => 'pending',
                 'final_review_deadline' => now()->addMonth(),
                 'subsidy_version_id' => self::PCZM_VERSION_UUID,
-                'status' => ApplicationStatus::Pending
+                'status' => ApplicationStatus::Draft
             ]
         )->for($this->createIdentifier())
             ->count($count)
@@ -193,5 +224,31 @@ class PCZMApplicationSeeder extends Seeder
         }
 
         ApplicationSurePayResult::factory()->for($application)->create($applicationSurepayResult);
+    }
+
+    // Generate data for condition fields which are used on stages 2-6. There is no guarantee that the data is in line
+    // with other stages.
+    private function createApplicationStageData(int $currentStage): object
+    {
+        return (object)match ($currentStage) {
+            2 => ['firstAssessment' => $this->faker->randomElement(['Goedgekeurd', 'Goedgekeurd', 'Afgekeurd'])],
+            3 => ['secondAssessment' => $this->faker->randomElement(['Oneens met de eerste beoordeling', 'Eens met de eerste beoordeling', 'Eens met de eerste beoordeling'])],
+            4 => ['internalAssessment' => $this->faker->randomElement(['Goedgekeurd', 'Goedgekeurd', 'Goedgekeurd', 'Afgekeurd'])],
+            5 => ['implementationCoordinatorAssessment' => $this->faker->randomElement(['Goedgekeurd', 'Goedgekeurd', 'Goedgekeurd', 'Afgekeurd'])],
+            6 => [],
+        };
+    }
+
+    private function getSubsidyStageUuid(int $currentStage)
+    {
+        return match ($currentStage) {
+            1 => self::PCZM_STAGE_1_UUID,
+            2 => self::PCZM_STAGE_2_UUID,
+            3 => self::PCZM_STAGE_3_UUID,
+            4 => self::PCZM_STAGE_4_UUID,
+            5 => self::PCZM_STAGE_5_UUID,
+            6 => self::PCZM_STAGE_6_UUID,
+            default => self::PCZM_STAGE_1_UUID,
+        };
     }
 }
