@@ -1,0 +1,140 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MinVWS\DUSi\Application\Backend\Console\Commands;
+
+use Illuminate\Console\Command;
+use MinVWS\DUSi\Application\Backend\Services\SubsidyService;
+use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
+
+/**
+ * This command can only be run when the migration to insert the new stage (PCZM_STAGE_6_UUID) and new
+ * transition (PZCM_TRANSITION_STAGE_6_TO_INCREASE_EMAIL) is run.
+ */
+class IncreaseAmountPCZMCommand extends Command
+{
+    public const PCZM_VERSION_UUID = '513011cd-789b-4628-ba5c-2fee231f8959';
+    public const PCZM_STAGE_6_UUID = 'ef2238cf-a8ce-4376-ab2e-e821bc43ddb5';
+    public const PZCM_TRANSITION_STAGE_5_TO_APPROVED = 'a27195df-9825-4d18-acce-9b3492221d8a';
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'pczm:increase-amount';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Send increased amount email PCZM V1';
+
+    public function __construct(
+        private readonly SubsidyService $subsidyService,
+        private readonly ApplicationRepository $applicationRepository,
+        private readonly ApplicationFlowService $applicationFlowService,
+        private readonly ApplicationStageEncryptionService $encryptionService,
+    ) {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     */
+    public function handle(): void
+    {
+        if (
+            $this->choice(
+                "Has migration '2024_04_02_152701_reopen_pczm_v1.sql' been run?",
+                [1 => 'yes', 0 => 'no'],
+                'no'
+            ) === 'no'
+        ) {
+            $this->error('Please run migration first!');
+        }
+
+        $approvedApplication = Application::query()
+            ->where('subsidy_version_id', self::PCZM_VERSION_UUID)
+            ->where('status', ApplicationStatus::Approved)
+            ->get();
+
+        $bar = $this->output->createProgressBar($approvedApplication->count());
+        $bar->setFormat('verbose');
+
+        $approvedApplication->each(function (Application $application) use ($bar) {
+            $applicationStage = $this->insertIncreaseAmountApplicationStage($application);
+            $this->updateApprovedApplicationStageTransition($application, $applicationStage);
+
+            //Advance to next stage which will send the 'increased-amount' letter
+            $this->performApplicationFlow($applicationStage);
+
+            $bar->advance();
+        });
+
+        $bar->finish();
+
+        $this->info('');
+//        $this->info(json_encode($approvedApplication->pluck('reference', 'id')->toArray()));
+
+        $this->info('Operation completed!');
+    }
+
+    private function insertIncreaseAmountApplicationStage(Application $application)
+    {
+        $applicationStage = new ApplicationStage();
+        $applicationStage->application_id = $application->id;
+        $applicationStage->subsidy_stage_id = self::PCZM_STAGE_6_UUID;
+        $applicationStage->is_current = true;
+        $applicationStage->is_submitted = false;
+        $applicationStage->sequence_number = $application->lastApplicationStage->sequence_number + 1;
+        [$encryptedKey] = $this->encryptionService->generateEncryptionKey();
+        $applicationStage->encrypted_key = $encryptedKey;
+
+        $applicationStage->save();
+
+        return $applicationStage;
+    }
+
+    private function updateApprovedApplicationStageTransition(
+        Application $application,
+        ApplicationStage $applicationStage
+    ) {
+        $applicationStageTransition = ApplicationStageTransition::where(
+            'subsidy_stage_transition_id',
+            self::PZCM_TRANSITION_STAGE_5_TO_APPROVED
+        )
+            ->where('application_id', $application->id)->firstOrFail();
+
+        $applicationStageTransition->new_application_stage_id = $applicationStage->id;
+        $applicationStageTransition->save();
+    }
+
+    private function performApplicationFlow(ApplicationStage $applicationStage)
+    {
+        try {
+            $this->applicationFlowService->evaluateApplicationStage(
+                $applicationStage,
+                EvaluationTrigger::Submit
+            );
+        } catch (ApplicationFlowException $e) {
+            $this->error(
+                sprintf(
+                    'Error processing application %s: %s',
+                    $applicationStage->application->reference,
+                    $e->getMessage()
+                )
+            );
+        }
+    }
+}
