@@ -105,7 +105,6 @@ readonly class ApplicationFileService
         $decryptedContent = $this->frontendDecryptionService->decrypt($params->data);
 
         $tempFile = new TemporaryFile($decryptedContent);
-        $tempFile->makeGroupReadable();
 
         $validator = $this->fileValidator->getValidator($field, $tempFile->getUploadedFile());
         if ($validator->fails()) {
