@@ -91,8 +91,7 @@ class ApplicationReferenceServiceTest extends TestCase
         $generatorMock
             ->expects($this->atLeastOnce())
             ->method('generateUniqueReferenceByElevenRule')
-            ->willThrowException(new ApplicationReferenceException())
-            ->willReturn($reference);
+            ->willThrowException(new ApplicationReferenceException());
 
         // Bind the mock into the Laravel's service container
         $this->app->instance(ApplicationReferenceService::class, $generatorMock);
@@ -131,7 +130,7 @@ class ApplicationReferenceServiceTest extends TestCase
 
         //Fixture application
         ApplicationReference::create(['reference' => $reference]);
-        Application::factory(compact('reference'))->recycle($this->subsidyVersion)->create();
+        Application::factory(['reference' => $reference])->recycle($this->subsidyVersion)->create();
 
         $this->assertDatabaseHas('application_references', ['reference' => $reference]);
         $this->assertDatabaseHas('applications', ['reference' => $reference]);
