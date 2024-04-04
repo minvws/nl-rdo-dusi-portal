@@ -121,9 +121,9 @@ class ApplicationReferenceServiceTest extends TestCase
 
         // Configure the mock method for the first call
         $generatorMock
-            ->expects($this->atLeastOnce())
+            ->expects($this->exactly(3))
             ->method('generateRandomNumberByElevenRule')
-            ->willReturnOnConsecutiveCalls($elevenRuleNumber, $newElevenRuleNumber);
+            ->willReturnOnConsecutiveCalls($elevenRuleNumber, $elevenRuleNumber, $newElevenRuleNumber);
 
         // Bind the mock into the Laravel's service container
         $this->app->instance(ApplicationReferenceGenerator::class, $generatorMock);
