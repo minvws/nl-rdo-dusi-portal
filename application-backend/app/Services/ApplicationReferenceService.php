@@ -22,20 +22,23 @@ class ApplicationReferenceService
 
     public function generateUniqueReferenceByElevenRule(Subsidy $subsidy): string
     {
-        $savePoint = sprintf('trans_%s_%s', $subsidy->reference_prefix, time());
-        DB::statement(sprintf('SAVEPOINT %s;', $savePoint));
-
         for ($i = 0; $i < self::MAX_TRIES; $i++) {
+            DB::beginTransaction();
+
             $randomNumber = $this->applicationReferenceGenerator->generateRandomNumberByElevenRule();
-            $applicationReference = $this->createApplicationReferenceString($subsidy->reference_prefix, $randomNumber);
+            $applicationReference = $this->createApplicationReferenceString(
+                $subsidy->reference_prefix,
+                $randomNumber
+            );
 
             try {
                 $this->applicationReferenceRepository->saveReference($applicationReference);
+                DB::commit();
 
                 return $applicationReference;
             } catch (UniqueConstraintViolationException $e) {
                 // To prevent the complete transaction to fail, do a rollback to the savepoint first and try again
-                DB::statement(sprintf('ROLLBACK TO SAVEPOINT %s;', $savePoint));
+                DB::rollBack();
             }
         }
 

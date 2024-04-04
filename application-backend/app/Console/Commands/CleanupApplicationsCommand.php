@@ -74,8 +74,6 @@ class CleanupApplicationsCommand extends Command
                         $applicationReference = $application->reference;
                         $this->info(sprintf('%s | Processing', $applicationReference));
 
-
-
                         $identitiesCollection->add($application->identity);
 
                         $this->deleteMessages($application);
@@ -99,7 +97,7 @@ class CleanupApplicationsCommand extends Command
 
                     $this->info(sprintf('Check %d identities', $identitiesCollection->count()));
 
-                    $i = 0;
+                    $counter = 0;
                     foreach ($identitiesCollection as $identity) {
                         $applicationsForIdentityCount = $identity->applications()->count();
 
@@ -107,11 +105,11 @@ class CleanupApplicationsCommand extends Command
                             if (!$this->dryRun) {
                                 $identity->delete();
                             }
-                            $i++;
+                            $counter++;
                         }
                     }
 
-                    $this->info(sprintf('Deleted %d of %d identities', $i, $identitiesCollection->count()));
+                    $this->info(sprintf('Deleted %d of %d identities', $counter, $identitiesCollection->count()));
                 });
             })
         ;

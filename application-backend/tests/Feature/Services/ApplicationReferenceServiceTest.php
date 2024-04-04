@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Tests\Feature\Services;
 
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\WithFaker;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationMutationService;
 use MinVWS\DUSi\Application\Backend\Services\ApplicationReferenceGenerator;
@@ -13,8 +12,9 @@ use MinVWS\DUSi\Application\Backend\Services\Exceptions\ApplicationReferenceExce
 use MinVWS\DUSi\Application\Backend\Tests\MocksEncryptionAndHashing;
 use MinVWS\DUSi\Application\Backend\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationReference;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationReferenceRepository;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
@@ -43,8 +43,6 @@ class ApplicationReferenceServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->markTestSkipped('Should refactor the app save with unique reference so it is easier to test.');
-
         parent::setUp();
         $this->withoutFrontendEncryption();
 
@@ -56,12 +54,13 @@ class ApplicationReferenceServiceTest extends TestCase
             ->create(['status' => VersionStatus::Published]);
     }
 
-    public function testAppliationReferenceIsCreated()
+    public function testApplicationReferenceIsCreated(): void
     {
         $application = $this->createSubsidyApplication();
 
         $this->assertNotEmpty($application->reference);
         $this->assertMatchesRegularExpression('/^[A-Za-z0-9]{6}-\d{8}$/', $application->reference);
+        $this->assertDatabaseHas('application_references', ['reference' => $application->reference]);
     }
 
     public function testApplicationReferencePassesTheElevenRule(): void
@@ -69,7 +68,9 @@ class ApplicationReferenceServiceTest extends TestCase
         $application = $this->createSubsidyApplication();
 
         $referenceNumber = substr($application->reference, 7);
-        $this->assertTrue((int)$referenceNumber % 11 === 0);
+        $this->assertSame((int)$referenceNumber % 11, 0);
+
+        $this->assertDatabaseHas('application_references', ['reference' => $application->reference]);
     }
 
     public function testApplicationReferenceDuplicateExceptionThrown(): void
@@ -80,7 +81,9 @@ class ApplicationReferenceServiceTest extends TestCase
         // Create a mock for the ApplicationReferenceGenerator class with only
         $generatorMock = $this->getMockBuilder(ApplicationReferenceService::class)
             ->setConstructorArgs([
-                $this->app->make(ApplicationRepository::class), $this->app->make(ApplicationReferenceGenerator::class)])
+                $this->app->make(ApplicationReferenceRepository::class),
+                $this->app->make(ApplicationReferenceGenerator::class)
+            ])
             ->onlyMethods(['generateUniqueReferenceByElevenRule'])
             ->getMock();
 
@@ -88,62 +91,55 @@ class ApplicationReferenceServiceTest extends TestCase
         $generatorMock
             ->expects($this->atLeastOnce())
             ->method('generateUniqueReferenceByElevenRule')
+            ->willThrowException(new ApplicationReferenceException())
             ->willReturn($reference);
 
         // Bind the mock into the Laravel's service container
         $this->app->instance(ApplicationReferenceService::class, $generatorMock);
 
         //Fixture application
-        Application::factory([
-            'reference' => $reference,
-        ])->recycle($this->subsidyVersion)->create();
+        ApplicationReference::create(['reference' => $reference]);
+        Application::factory(['reference' => $reference])->recycle($this->subsidyVersion)->create();
 
-        $this->expectException(QueryException::class);
+        $this->assertDatabaseHas('application_references', ['reference' => $reference]);
 
         //Create another application
-        $this->createSubsidyApplication();
+        $this->createFaultySubsidyApplication();
     }
 
     public function testApplicationReferenceDuplicateExceptionHandling(): void
     {
         $elevenRuleNumber = 1122334;
-        $reference = sprintf('%s-%s', $this->subsidyVersion->subsidy->reference_prefix, $elevenRuleNumber);
+        $reference = sprintf('%s-%08d', $this->subsidyVersion->subsidy->reference_prefix, $elevenRuleNumber);
 
         $newElevenRuleNumber = 12345678;
-        $newReference = sprintf('%s-%s', $this->subsidyVersion->subsidy->reference_prefix, $newElevenRuleNumber);
+        $newReference = sprintf('%s-%08d', $this->subsidyVersion->subsidy->reference_prefix, $newElevenRuleNumber);
 
         // Create a mock for the ApplicationReferenceGenerator class with only
-        $generatorMock = $this->getMockBuilder(ApplicationReferenceService::class)
-            ->setConstructorArgs([
-                $this->app->make(ApplicationRepository::class), $this->app->make(ApplicationReferenceGenerator::class)])
-            ->onlyMethods(['generateUniqueReferenceByElevenRule'])
+        $generatorMock = $this->getMockBuilder(ApplicationReferenceGenerator::class)
+            ->onlyMethods(['generateRandomNumberByElevenRule'])
             ->getMock();
 
         // Configure the mock method for the first call
         $generatorMock
             ->expects($this->atLeastOnce())
-            ->method('generateUniqueReferenceByElevenRule')
-            ->willReturnCallback(function () use ($reference, $newReference) {
-                if ($this->callCount === 0) {
-                    $this->callCount++;
-                    return $reference;
-                } else {
-                    $this->callCount++;
-                    return $newReference;
-                }
-            });
+            ->method('generateRandomNumberByElevenRule')
+            ->willReturnOnConsecutiveCalls($elevenRuleNumber, $newElevenRuleNumber);
 
         // Bind the mock into the Laravel's service container
-        $this->app->instance(ApplicationReferenceService::class, $generatorMock);
+        $this->app->instance(ApplicationReferenceGenerator::class, $generatorMock);
 
         //Fixture application
-        Application::factory([
-            'reference' => $reference,
-        ])->recycle($this->subsidyVersion)->create();
+        ApplicationReference::create(['reference' => $reference]);
+        Application::factory(compact('reference'))->recycle($this->subsidyVersion)->create();
+
+        $this->assertDatabaseHas('application_references', ['reference' => $reference]);
+        $this->assertDatabaseHas('applications', ['reference' => $reference]);
 
         //Create another application, which will trigger generateUniqueReferenceByElevenRule
         $newApplication = $this->createSubsidyApplication();
         $this->assertEquals($newReference, $newApplication->reference);
+        $this->assertDatabaseHas('application_references', ['reference' => $newReference]);
     }
 
     public function testApplicationReferenceCreationReachingMaxTriesShouldThrowAnException(): void
@@ -164,12 +160,17 @@ class ApplicationReferenceServiceTest extends TestCase
 
         $this->expectException(ApplicationReferenceException::class);
 
-        Application::factory([
-            'reference' => sprintf('%s-%08d', $this->subsidyVersion->subsidy->reference_prefix, $elevenRuleNumber),
-        ])->recycle($this->subsidyVersion)->create();
+        ApplicationReference::create(
+            [
+                'reference' => sprintf('%s-%08d', $this->subsidyVersion->subsidy->reference_prefix, $elevenRuleNumber),
+            ]
+        );
+
+        $referenceService = $this->app->make(ApplicationReferenceService::class);
+        $referenceService->generateUniqueReferenceByElevenRule($this->subsidyVersion->subsidy);
 
         // Create another application when the generateRandomNumberByElevenRule should be called
-        $this->createSubsidyApplication();
+        $this->createFaultySubsidyApplication();
     }
 
     public function testApplicationReferenceShouldHaveLeadingZeros(): void
@@ -194,6 +195,7 @@ class ApplicationReferenceServiceTest extends TestCase
             sprintf('%s-%s', $this->subsidyVersion->subsidy->reference_prefix, '00000011'),
             $application->reference
         );
+        $this->assertDatabaseHas('application_references', ['reference' => $application->reference]);
     }
 
     private function createSubsidyApplication(): ApplicationDTO
@@ -223,5 +225,32 @@ class ApplicationReferenceServiceTest extends TestCase
         $this->assertEquals(EncryptedResponseStatus::CREATED, $encryptedResponse->status);
         $encryptionService = $this->app->make(ResponseEncryptionService::class);
         return $encryptionService->decryptCodable($encryptedResponse, ApplicationDTO::class, $keyPair);
+    }
+
+    private function createFaultySubsidyApplication(): void
+    {
+        SubsidyStage::factory()
+            ->recycle($this->subsidyVersion)
+            ->create();
+
+        $mutationService = $this->app->get(ApplicationMutationService::class);
+        assert($mutationService instanceof ApplicationMutationService);
+
+        $keyPair = sodium_crypto_box_keypair();
+        $publicKey = new ClientPublicKey(sodium_crypto_box_publickey($keyPair));
+
+        $identity = Identity::factory()->create();
+
+        $params = new ApplicationCreateParams(
+            new EncryptedIdentity(
+                type: IdentityType::CitizenServiceNumber,
+                encryptedIdentifier: new HsmEncryptedData($identity->hashed_identifier, '')
+            ),
+            $publicKey,
+            $this->subsidyVersion->subsidy->code
+        );
+
+        $encryptedResponse = $mutationService->createApplication($params);
+        $this->assertEquals(EncryptedResponseStatus::INTERNAL_SERVER_ERROR, $encryptedResponse->status);
     }
 }
