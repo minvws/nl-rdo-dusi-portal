@@ -16,7 +16,7 @@ class MockedBankAccountRepository implements BankAccountRepository
     public const BANK_ACCOUNT_NUMBER_MATCH = 'NL62ABNA9999841479';
     public const BANK_ACCOUNT_NUMBER_NO_MATCH = 'NL12ABNA9999876523';
     public const BANK_ACCOUNT_NUMBER_CLOSE_MATCH = 'NL58ABNA9999142181';
-    public const BANK_ACCOUNT_NUMBER_TOO_SHORT = 'NL76ABNA9999161548';
+    public const BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT = 'NL76ABNA9999161548';
     public const BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH = 'NL04RABO8731326943';
     public const BANK_ACCOUNT_NUMBER_FAILED = 'NL16BNDA0100101649';
 
@@ -77,7 +77,7 @@ class MockedBankAccountRepository implements BankAccountRepository
                 self::BANK_HOLDER_SUGGESTION
             ],
             //NameMatchResult::NameTooShort
-            self::BANK_ACCOUNT_NUMBER_TOO_SHORT => [
+            self::BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::NameTooShort,
                 null
@@ -105,7 +105,7 @@ class MockedBankAccountRepository implements BankAccountRepository
             self::BANK_ACCOUNT_NUMBER_MATCH,
             self::BANK_ACCOUNT_NUMBER_NO_MATCH,
             self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
-            self::BANK_ACCOUNT_NUMBER_TOO_SHORT,
+            self::BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT,
             self::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH,
         ];
     }
@@ -115,7 +115,7 @@ class MockedBankAccountRepository implements BankAccountRepository
         return [
             self::BANK_ACCOUNT_NUMBER_MATCH,
             self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
-            self::BANK_ACCOUNT_NUMBER_TOO_SHORT,
+            self::BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT,
             self::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH,
         ];
     }

@@ -77,20 +77,21 @@ class PCZMApplicationSeeder extends Seeder
     /**
      * @throws Exception
      */
-    private function writeFields($appStage): void
+    private function writeUploadFields($appStage): void
     {
         // IDs are hardcoded because they are provided in pczmApplicationData.json
-        $this->writeField($appStage, 'certifiedEmploymentDocument', '739cecda-0aa3-4692-a5e7-040984d5ff2a');
-        $this->writeField($appStage, 'wiaDecisionDocument', '337016e7-20e8-4d5e-9f20-1999980d4b5c');
-        $this->writeField($appStage, 'wiaDecisionPostponedLetter', '1dbbc21d-8c2b-4075-bf1e-7bd208006117');
-        $this->writeField($appStage, 'employmentContract', 'dbef8055-7c3e-4025-89fb-a1e5e1a73f98');
-        $this->writeField($appStage, 'socialMedicalAssessment', '89040bab-5f11-40ec-9a2c-57081acbeb4c');
+        $this->writeUploadField($appStage, 'certifiedEmploymentDocument', '739cecda-0aa3-4692-a5e7-040984d5ff2a');
+        $this->writeUploadField($appStage, 'wiaDecisionDocument', '337016e7-20e8-4d5e-9f20-1999980d4b5c');
+        $this->writeUploadField($appStage, 'wiaDecisionPostponedLetter', '1dbbc21d-8c2b-4075-bf1e-7bd208006117');
+        $this->writeUploadField($appStage, 'employmentContract', 'dbef8055-7c3e-4025-89fb-a1e5e1a73f98');
+        $this->writeUploadField($appStage, 'socialMedicalAssessment', '89040bab-5f11-40ec-9a2c-57081acbeb4c');
+        $this->writeUploadField($appStage, 'bankStatement', '85046457-7794-47dd-81be-edc56aef0a0f');
     }
 
     /**
      * @throws Exception
      */
-    private function writeField($appStage, $fieldCode, $fileId): void
+    private function writeUploadField($appStage, $fieldCode, $fileId): void
     {
         $content = file_get_contents(__DIR__ . "/resources/nvt.pdf");
 
@@ -127,12 +128,12 @@ class PCZMApplicationSeeder extends Seeder
      * @throws Throwable
      * @throws ValidationException
      */
-    private function createApplicationData($application, $applicationData): void
+    private function createApplicationStages($application, $applicationData): void
     {
         $applicationStage = $this->createApplicationStage(
             $application, 1, false, $this->getSubsidyStageUuid(1), true
         );
-        $this->writeFields($applicationStage);
+        $this->writeUploadFields($applicationStage);
 
         $this->applicationDataService->saveApplicationStageData($applicationStage, $applicationData, true);
 
@@ -194,7 +195,7 @@ class PCZMApplicationSeeder extends Seeder
             ->create()
             ->each(function ($application) use ($applicationData) {
                 $applicationData->bankAccountNumber = Arr::random(MockedBankAccountRepository::allValid());
-                $this->createApplicationData($application, $applicationData);
+                $this->createApplicationStages($application, $applicationData);
 
                 // Random updated_at and final_review_deadline to test sorting
                 $application->final_review_deadline = now()->addDays(rand(0, 30))->startOfDay();
@@ -214,7 +215,7 @@ class PCZMApplicationSeeder extends Seeder
                 MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_MATCH => NameMatchResult::Match,
                 MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_CLOSE_MATCH => NameMatchResult::CloseMatch,
                 MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH => NameMatchResult::CouldNotMatch,
-                MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_TOO_SHORT => NameMatchResult::NameTooShort,
+                MockedBankAccountRepository::BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT => NameMatchResult::NameTooShort,
                 default => NameMatchResult::CouldNotMatch
             },
         ];
