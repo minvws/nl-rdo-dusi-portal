@@ -272,7 +272,7 @@ class PCZMSubsidyStageTransitionsSeeder extends Seeder
             'id' => self::PZCM_TRANSITION_STAGE_5_TO_APPROVED,
             'description' => 'Aanvraag goedgekeurd',
             'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
-            'target_subsidy_stage_id' => null,
+            'target_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_6_UUID,
             'target_application_status' => ApplicationStatus::Approved->value,
             'condition' => $encoder->encode(
                 new ComparisonCondition(

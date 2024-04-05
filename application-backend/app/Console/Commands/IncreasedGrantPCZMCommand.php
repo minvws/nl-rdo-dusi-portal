@@ -16,6 +16,9 @@ use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 
+use PHPUnit\Event\RuntimeException;
+use function Laravel\Prompts\confirm;
+
 /**
  * This command can only be run when the migration to insert the new stage (PCZM_STAGE_6_UUID) and new
  * transition (PZCM_TRANSITION_STAGE_6_TO_INCREASE_EMAIL) is run.
@@ -52,15 +55,7 @@ class IncreasedGrantPCZMCommand extends Command
      */
     public function handle(): void
     {
-        if (
-            $this->choice(
-                "Has migration '2024_04_02_152701_increased_add_stage_pczm_v1.sql' been run?",
-                [1 => 'yes', 0 => 'no'],
-                'no'
-            ) === 'no'
-        ) {
-            $this->error('Please run migration first!');
-        }
+       confirm("Has migration '2024_04_02_152701_increased_add_stage_pczm_v1.sql' been run?");
 
         $approvedApplication = Application::query()
             ->where('subsidy_version_id', self::PCZM_VERSION_UUID)
@@ -90,6 +85,13 @@ class IncreasedGrantPCZMCommand extends Command
 
     private function insertIncreasedGrantApplicationStage(Application $application): ApplicationStage
     {
+        if (ApplicationStage::query()
+            ->where('application_id', $application->id)
+            ->where('subsidy_stage_id', self::PCZM_STAGE_6_UUID)
+            ->exists()) {
+            throw new RuntimeException('Stage already exists! Reference: ' . $application->reference);
+        }
+
         $applicationStage = new ApplicationStage();
         $applicationStage->application_id = $application->id;
         $applicationStage->subsidy_stage_id = self::PCZM_STAGE_6_UUID;
