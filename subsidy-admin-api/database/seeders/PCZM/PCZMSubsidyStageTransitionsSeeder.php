@@ -28,7 +28,7 @@ class PCZMSubsidyStageTransitionsSeeder extends Seeder
     public const PZCM_TRANSITION_STAGE_4_TO_5 = '3286f4cf-87ae-4cfc-9c1d-523b2ec6745a';
     public const PZCM_TRANSITION_STAGE_5_TO_APPROVED = 'a27195df-9825-4d18-acce-9b3492221d8a';
     public const PZCM_TRANSITION_STAGE_5_TO_REJECTED = '963a5afa-6990-4ea9-b097-91999c863d6c';
-    public const PZCM_TRANSITION_STAGE_6_TO_INCREASE_EMAIL = '2b493130-c191-4455-8de4-d932ab6c2b60';
+    public const PZCM_TRANSITION_STAGE_6_TO_INCREASED_GRANT_EMAIL = '2b493130-c191-4455-8de4-d932ab6c2b60';
 
     /**
      * Run the database seeds.
@@ -288,7 +288,7 @@ class PCZMSubsidyStageTransitionsSeeder extends Seeder
         // Een goedgekeurde aanvraag krijgt een brief waarin wordt toegelicht dat het toegewezen bedrag wordt
         // verhoogd.
         DB::table('subsidy_stage_transitions')->insert([
-            'id' => self::PZCM_TRANSITION_STAGE_6_TO_INCREASE_EMAIL,
+            'id' => self::PZCM_TRANSITION_STAGE_6_TO_INCREASED_GRANT_EMAIL,
             'description' => 'Toegekend bedrag verhoogd',
             'current_subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_6_UUID,
             'target_subsidy_stage_id' => null,

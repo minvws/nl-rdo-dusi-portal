@@ -21,7 +21,7 @@ class PCZMAssessmentStageUISeeder extends Seeder
         $this->secondAssessment();
         $this->internalAssessment();
         $this->implementationCoordinatorAssessment();
-        $this->increaseAmountStage();
+        $this->increasedGrantStage();
     }
 
     private function buildViewSchema(int $stage): array
@@ -668,7 +668,7 @@ class PCZMAssessmentStageUISeeder extends Seeder
         ]);
     }
 
-    public function increaseAmountStage(): void
+    public function increasedGrantStage(): void
     {
         $view_ui = $this->buildViewSchema(6);
 
@@ -684,7 +684,7 @@ class PCZMAssessmentStageUISeeder extends Seeder
                     "elements" => [
                         [
                             "type" => "CustomControl",
-                            "scope" => "#/properties/increaseAmountInternalNote",
+                            "scope" => "#/properties/increasedGrantInternalNote",
                             "options" => [
                                 "format" => "textarea"
                             ]

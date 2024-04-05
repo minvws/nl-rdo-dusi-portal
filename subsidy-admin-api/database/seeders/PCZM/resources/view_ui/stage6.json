@@ -6,7 +6,7 @@
     "elements": [
         {
             "type": "CustomControl",
-            "scope": "#/properties/increaseAmountInternalNote",
+            "scope": "#/properties/increasedGrantInternalNote",
             "options": {
                 "readonly": true,
                 "format": "textarea"

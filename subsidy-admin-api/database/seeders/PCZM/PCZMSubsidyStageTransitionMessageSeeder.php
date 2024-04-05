@@ -65,13 +65,13 @@ class PCZMSubsidyStageTransitionMessageSeeder extends Seeder
 
         DB::table('subsidy_stage_transition_messages')->insert([
            'id' => self::PZCM_TRANSITION_STAGE_6_TO_INCREASED_MESSAGE,
-           'subsidy_stage_transition_id' => PCZMSubsidyStageTransitionsSeeder::PZCM_TRANSITION_STAGE_6_TO_INCREASE_EMAIL,
+           'subsidy_stage_transition_id' => PCZMSubsidyStageTransitionsSeeder::PZCM_TRANSITION_STAGE_6_TO_INCREASED_GRANT_EMAIL,
            'version' => 1,
            'status' => VersionStatus::Published->value,
            'created_at' => Carbon::now(),
            'subject' => 'Verhoging toegewezen bedrag',
-           'content_pdf' => file_get_contents(__DIR__ . '/resources/letters/letter-increased-amount-pdf.latte'),
-           'content_html' => file_get_contents(__DIR__ . '/resources/letters/letter-increased-amount-view.latte'),
+           'content_pdf' => file_get_contents(__DIR__ . '/resources/letters/letter-increased-grant-pdf.latte'),
+           'content_html' => file_get_contents(__DIR__ . '/resources/letters/letter-increased-grant-view.latte'),
         ]);
     }
 }

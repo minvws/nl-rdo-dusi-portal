@@ -20,7 +20,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
  * This command can only be run when the migration to insert the new stage (PCZM_STAGE_6_UUID) and new
  * transition (PZCM_TRANSITION_STAGE_6_TO_INCREASE_EMAIL) is run.
  */
-class IncreaseAmountPCZMCommand extends Command
+class IncreasedGrantPCZMCommand extends Command
 {
     public const PCZM_VERSION_UUID = '513011cd-789b-4628-ba5c-2fee231f8959';
     public const PCZM_STAGE_6_UUID = 'ef2238cf-a8ce-4376-ab2e-e821bc43ddb5';
@@ -31,18 +31,16 @@ class IncreaseAmountPCZMCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'pczm:increase-amount';
+    protected $signature = 'pczm:increase-grant';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send increased amount email PCZM V1';
+    protected $description = 'Send increased grant email PCZM V1';
 
     public function __construct(
-        private readonly SubsidyService $subsidyService,
-        private readonly ApplicationRepository $applicationRepository,
         private readonly ApplicationFlowService $applicationFlowService,
         private readonly ApplicationStageEncryptionService $encryptionService,
     ) {
@@ -56,7 +54,7 @@ class IncreaseAmountPCZMCommand extends Command
     {
         if (
             $this->choice(
-                "Has migration '2024_04_02_152701_reopen_pczm_v1.sql' been run?",
+                "Has migration '2024_04_02_152701_increased_add_stage_pczm_v1.sql' been run?",
                 [1 => 'yes', 0 => 'no'],
                 'no'
             ) === 'no'
@@ -73,10 +71,10 @@ class IncreaseAmountPCZMCommand extends Command
         $bar->setFormat('verbose');
 
         $approvedApplication->each(function (Application $application) use ($bar) {
-            $applicationStage = $this->insertIncreaseAmountApplicationStage($application);
+            $applicationStage = $this->insertIncreasedGrantApplicationStage($application);
             $this->updateApprovedApplicationStageTransition($application, $applicationStage);
 
-            //Advance to next stage which will send the 'increased-amount' letter
+            //Advance to next stage which will send the 'increased-grant' letter
             $this->performApplicationFlow($applicationStage);
 
             $bar->advance();
@@ -90,7 +88,7 @@ class IncreaseAmountPCZMCommand extends Command
         $this->info('Operation completed!');
     }
 
-    private function insertIncreaseAmountApplicationStage(Application $application)
+    private function insertIncreasedGrantApplicationStage(Application $application): ApplicationStage
     {
         $applicationStage = new ApplicationStage();
         $applicationStage->application_id = $application->id;
@@ -109,18 +107,19 @@ class IncreaseAmountPCZMCommand extends Command
     private function updateApprovedApplicationStageTransition(
         Application $application,
         ApplicationStage $applicationStage
-    ) {
+    ): void {
         $applicationStageTransition = ApplicationStageTransition::where(
-            'subsidy_stage_transition_id',
-            self::PZCM_TRANSITION_STAGE_5_TO_APPROVED
-        )
-            ->where('application_id', $application->id)->firstOrFail();
+                'subsidy_stage_transition_id',
+                self::PZCM_TRANSITION_STAGE_5_TO_APPROVED
+            )
+            ->where('application_id', $application->id)
+            ->firstOrFail();
 
         $applicationStageTransition->new_application_stage_id = $applicationStage->id;
         $applicationStageTransition->save();
     }
 
-    private function performApplicationFlow(ApplicationStage $applicationStage)
+    private function performApplicationFlow(ApplicationStage $applicationStage): void
     {
         try {
             $this->applicationFlowService->evaluateApplicationStage(
