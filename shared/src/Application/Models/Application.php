@@ -40,6 +40,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read ApplicationStage $firstApplicationStage
  * @property-read Collection<string, ApplicationStage> $applicationStages
  * @property-read Collection<ApplicationStageTransition> $applicationStageTransitions
+ * @property-read Collection<ApplicationHash> $applicationHashes
  * @property-read ApplicationSurePayResult|null $applicationSurePayResult
  * @method static Builder<self> forIdentity(Identity $identity)
  * @method Builder<self> forIdentity(Identity $identity)
