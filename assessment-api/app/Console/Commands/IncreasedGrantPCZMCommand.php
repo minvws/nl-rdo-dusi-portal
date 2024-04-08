@@ -13,12 +13,9 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
-use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use PHPUnit\Event\RuntimeException;
-use function Laravel\Prompts\confirm;
 
 /**
  * This command can only be run when the migration to insert the new stage (PCZM_STAGE_6_UUID) and new
@@ -63,40 +60,45 @@ class IncreasedGrantPCZMCommand extends Command
             return;
         }
 
-        $query = Application::query()
-            ->with('lastApplicationStage')
+        $approvedApplications = Application::query()
+            ->whereDoesntHave('applicationStages', function ($query) {
+                $query->where('subsidy_stage_id', self::PCZM_STAGE_6_UUID);
+            })
             ->where('subsidy_version_id', self::PCZM_VERSION_UUID)
-            ->where('status', ApplicationStatus::Approved);
-        $query->toRawSql();
-        $approvedApplications = $query->get();
+            ->where('status', ApplicationStatus::Approved)
+        ;
+
+        if ($approvedApplications->count() === 0) {
+            $this->error('No applications found to process');
+            return;
+        }
 
         $approvedApplications->chunk(10, function (Collection $applications) {
-                if ($applications->count() === 0) {
-                    $this->error('No applications found to process');
-                    return;
-                }
+            $applications->each(function (Application $application) {
+                DB::transaction(function () use ($application) {
+                    try {
+                        $applicationStage = $this->insertIncreasedGrantApplicationStage($application);
+                        $this->updateApprovedApplicationStageTransition($application, $applicationStage);
 
-                $applications->each(function(Application $application) {
-                    DB::transaction(function () use ($application) {
-                        try {
-                            $applicationStage = $this->insertIncreasedGrantApplicationStage($application);
-                            $this->updateApprovedApplicationStageTransition($application, $applicationStage);
-
-                            //Advance to next stage which will send the 'increased-grant' letter
-                            $this->performApplicationFlow($applicationStage);
-                            $this->info(sprintf('Successfully transitioned %s(%s)', $application->reference, $application->id));
-                        } catch (Exception $e) {
-                            $this->error(
-                                sprintf(
-                                    'Error processing application %s: %s',
-                                    $application->reference,
-                                    $e->getMessage()
-                                )
-                            );
-                        }
-                    });
+                        //Advance to next stage which will send the 'increased-grant' letter
+                        $this->performApplicationFlow($applicationStage);
+                        $this->info(sprintf(
+                            'Successfully transitioned %s(%s)',
+                            $application->reference,
+                            $application->id
+                        ));
+                    } catch (Exception $e) {
+                        $this->error(
+                            sprintf(
+                                'Error processing application %s: %s',
+                                $application->reference,
+                                $e->getMessage()
+                            )
+                        );
+                    }
                 });
             });
+        });
 
         $this->info('');
 
@@ -105,15 +107,6 @@ class IncreasedGrantPCZMCommand extends Command
 
     private function insertIncreasedGrantApplicationStage(Application $application): ApplicationStage
     {
-        if (
-            ApplicationStage::query()
-            ->where('application_id', $application->id)
-            ->where('subsidy_stage_id', self::PCZM_STAGE_6_UUID)
-            ->exists()
-        ) {
-            throw new RuntimeException('Stage already exists! Reference: ' . $application->reference);
-        }
-
         $applicationStage = new ApplicationStage();
         $applicationStage->application_id = $application->id;
         $applicationStage->subsidy_stage_id = self::PCZM_STAGE_6_UUID;
