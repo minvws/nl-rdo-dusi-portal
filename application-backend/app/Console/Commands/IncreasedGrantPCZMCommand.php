@@ -55,7 +55,10 @@ class IncreasedGrantPCZMCommand extends Command
      */
     public function handle(): void
     {
-       confirm("Has migration '2024_04_02_152701_increased_add_stage_pczm_v1.sql' been run?");
+        if (confirm("Has migration '2024_04_02_152701_increased_add_stage_pczm_v1.sql' been run?") === false) {
+            $this->info('Please run migration first!');
+            return;
+        }
 
         $approvedApplication = Application::query()
             ->where('subsidy_version_id', self::PCZM_VERSION_UUID)
@@ -78,7 +81,6 @@ class IncreasedGrantPCZMCommand extends Command
         $bar->finish();
 
         $this->info('');
-//        $this->info(json_encode($approvedApplication->pluck('reference', 'id')->toArray()));
 
         $this->info('Operation completed!');
     }
