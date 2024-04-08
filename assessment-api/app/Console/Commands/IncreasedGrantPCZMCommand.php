@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\DUSi\Application\Backend\Console\Commands;
+namespace MinVWS\DUSi\Assessment\API\Console\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
@@ -13,8 +16,8 @@ use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use PHPUnit\Event\RuntimeException;
-
 use function Laravel\Prompts\confirm;
 
 /**
@@ -53,30 +56,47 @@ class IncreasedGrantPCZMCommand extends Command
      */
     public function handle(): void
     {
-        if (confirm("Has migration '2024_04_02_152701_increased_add_stage_pczm_v1.sql' been run?") === false) {
-            $this->info('Please run migration first!');
+        try {
+            SubsidyStage::findOrFail(self::PCZM_STAGE_6_UUID);
+        } catch (\Exception $e) {
+            $this->info("Please run migration '2024_04_02_152701_add_stage_pczm_v1.sql' first!");
             return;
         }
 
-        $approvedApplication = Application::query()
+        $query = Application::query()
+            ->with('lastApplicationStage')
             ->where('subsidy_version_id', self::PCZM_VERSION_UUID)
-            ->where('status', ApplicationStatus::Approved)
-            ->get();
+            ->where('status', ApplicationStatus::Approved);
+        $query->toRawSql();
+        $approvedApplications = $query->get();
 
-        $bar = $this->output->createProgressBar($approvedApplication->count());
-        $bar->setFormat('verbose');
+        $approvedApplications->chunk(10, function (Collection $applications) {
+                if ($applications->count() === 0) {
+                    $this->error('No applications found to process');
+                    return;
+                }
 
-        $approvedApplication->each(function (Application $application) use ($bar) {
-            $applicationStage = $this->insertIncreasedGrantApplicationStage($application);
-            $this->updateApprovedApplicationStageTransition($application, $applicationStage);
+                $applications->each(function(Application $application) {
+                    DB::transaction(function () use ($application) {
+                        try {
+                            $applicationStage = $this->insertIncreasedGrantApplicationStage($application);
+                            $this->updateApprovedApplicationStageTransition($application, $applicationStage);
 
-            //Advance to next stage which will send the 'increased-grant' letter
-            $this->performApplicationFlow($applicationStage);
-
-            $bar->advance();
-        });
-
-        $bar->finish();
+                            //Advance to next stage which will send the 'increased-grant' letter
+                            $this->performApplicationFlow($applicationStage);
+                            $this->info(sprintf('Successfully transitioned %s(%s)', $application->reference, $application->id));
+                        } catch (Exception $e) {
+                            $this->error(
+                                sprintf(
+                                    'Error processing application %s: %s',
+                                    $application->reference,
+                                    $e->getMessage()
+                                )
+                            );
+                        }
+                    });
+                });
+            });
 
         $this->info('');
 
@@ -125,19 +145,9 @@ class IncreasedGrantPCZMCommand extends Command
 
     private function performApplicationFlow(ApplicationStage $applicationStage): void
     {
-        try {
-            $this->applicationFlowService->evaluateApplicationStage(
-                $applicationStage,
-                EvaluationTrigger::Submit
-            );
-        } catch (ApplicationFlowException $e) {
-            $this->error(
-                sprintf(
-                    'Error processing application %s: %s',
-                    $applicationStage->application->reference,
-                    $e->getMessage()
-                )
-            );
-        }
+        $this->applicationFlowService->evaluateApplicationStage(
+            $applicationStage,
+            EvaluationTrigger::Submit
+        );
     }
 }
