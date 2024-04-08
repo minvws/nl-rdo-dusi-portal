@@ -6,9 +6,52 @@ VALUES ('ef2238cf-a8ce-4376-ab2e-e821bc43ddb5', null, '513011cd-789b-4628-ba5c-2
 
 INSERT INTO public.fields (id, title, description, type, params, is_required, code, source, subsidy_stage_id,
                            required_condition, retention_period_on_approval, exclude_from_clone_data)
-VALUES ('2c9e3924-b916-42e5-89d0-7e806fef1d26', 'Interne notitie', null, 'text', 'null', false, 'increasedGrantInternalNote',
+VALUES ('2c9e3924-b916-42e5-89d0-7e806fef1d26', 'Interne notitie', null, 'text', 'null', false,
+        'increasedGrantInternalNote',
         'user', 'ef2238cf-a8ce-4376-ab2e-e821bc43ddb5', null, 'short', false);
 
+INSERT INTO public.subsidy_stage_uis (id, subsidy_stage_id, version, status, input_ui, created_at, updated_at, view_ui)
+VALUES ('0521b7fd-fd90-4fbe-af16-c2df2d21a0b0', 'ef2238cf-a8ce-4376-ab2e-e821bc43ddb5', 1, 'published', '{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true,
+        "group": true
+    },
+    "elements": [
+        {
+            "type": "VerticalLayout",
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#\/properties\/increasedGrantInternalNote",
+                    "options": {
+                        "format": "textarea"
+                    }
+                }
+            ]
+        }
+    ]
+}', null, null, '{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "CustomControl",
+            "scope": "#\/properties\/increasedGrantInternalNote",
+            "options": {
+                "readonly": true,
+                "format": "textarea"
+            }
+        }
+    ]
+}');
+
+
+UPDATE public.subsidy_stage_transitions
+SET target_subsidy_stage_id = 'ef2238cf-a8ce-4376-ab2e-e821bc43ddb5'
+WHERE id = 'a27195df-9825-4d18-acce-9b3492221d8a';
 
 INSERT INTO public.subsidy_stage_transitions (id, current_subsidy_stage_id, target_subsidy_stage_id,
                                               target_application_status, condition, send_message, clone_data,

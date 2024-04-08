@@ -5,18 +5,16 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Application\Backend\Console\Commands;
 
 use Illuminate\Console\Command;
-use MinVWS\DUSi\Application\Backend\Services\SubsidyService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
-
 use PHPUnit\Event\RuntimeException;
+
 use function Laravel\Prompts\confirm;
 
 /**
@@ -87,10 +85,12 @@ class IncreasedGrantPCZMCommand extends Command
 
     private function insertIncreasedGrantApplicationStage(Application $application): ApplicationStage
     {
-        if (ApplicationStage::query()
+        if (
+            ApplicationStage::query()
             ->where('application_id', $application->id)
             ->where('subsidy_stage_id', self::PCZM_STAGE_6_UUID)
-            ->exists()) {
+            ->exists()
+        ) {
             throw new RuntimeException('Stage already exists! Reference: ' . $application->reference);
         }
 
@@ -113,9 +113,9 @@ class IncreasedGrantPCZMCommand extends Command
         ApplicationStage $applicationStage
     ): void {
         $applicationStageTransition = ApplicationStageTransition::where(
-                'subsidy_stage_transition_id',
-                self::PZCM_TRANSITION_STAGE_5_TO_APPROVED
-            )
+            'subsidy_stage_transition_id',
+            self::PZCM_TRANSITION_STAGE_5_TO_APPROVED
+        )
             ->where('application_id', $application->id)
             ->firstOrFail();
 
