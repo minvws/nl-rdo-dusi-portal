@@ -2604,16 +2604,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.26.0",
+            "version": "3.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "072735c56cc0da00e10716dd90d5a7f7b40b36be"
+                "reference": "4729745b1ab737908c7d055148c9a6b3e959832f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/072735c56cc0da00e10716dd90d5a7f7b40b36be",
-                "reference": "072735c56cc0da00e10716dd90d5a7f7b40b36be",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/4729745b1ab737908c7d055148c9a6b3e959832f",
+                "reference": "4729745b1ab737908c7d055148c9a6b3e959832f",
                 "shasum": ""
             },
             "require": {
@@ -2678,7 +2678,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.26.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.27.0"
             },
             "funding": [
                 {
@@ -2690,7 +2690,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-25T11:49:53+00:00"
+            "time": "2024-04-07T19:17:50+00:00"
         },
         {
             "name": "league/flysystem-local",
@@ -7884,16 +7884,16 @@
         },
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v3.13.2",
+            "version": "v3.13.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-debugbar.git",
-                "reference": "da425a64d9d3bf4730e9f050e2771b9c37fe7649"
+                "reference": "241e9bddb04ab42a04a5fe8b2b9654374c864229"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/da425a64d9d3bf4730e9f050e2771b9c37fe7649",
-                "reference": "da425a64d9d3bf4730e9f050e2771b9c37fe7649",
+                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/241e9bddb04ab42a04a5fe8b2b9654374c864229",
+                "reference": "241e9bddb04ab42a04a5fe8b2b9654374c864229",
                 "shasum": ""
             },
             "require": {
@@ -7952,7 +7952,7 @@
             ],
             "support": {
                 "issues": "https://github.com/barryvdh/laravel-debugbar/issues",
-                "source": "https://github.com/barryvdh/laravel-debugbar/tree/v3.13.2"
+                "source": "https://github.com/barryvdh/laravel-debugbar/tree/v3.13.3"
             },
             "funding": [
                 {
@@ -7964,7 +7964,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-03T19:25:19+00:00"
+            "time": "2024-04-04T02:42:49+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -9805,16 +9805,16 @@
         },
         {
             "name": "laravel-lang/locales",
-            "version": "2.6.0",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/locales.git",
-                "reference": "8cd288c5041731befc3b8cf9e63b8cc44b62cdc0"
+                "reference": "35aa06ee4ea58d210fca305341220698aeb6b356"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/locales/zipball/8cd288c5041731befc3b8cf9e63b8cc44b62cdc0",
-                "reference": "8cd288c5041731befc3b8cf9e63b8cc44b62cdc0",
+                "url": "https://api.github.com/repos/Laravel-Lang/locales/zipball/35aa06ee4ea58d210fca305341220698aeb6b356",
+                "reference": "35aa06ee4ea58d210fca305341220698aeb6b356",
                 "shasum": ""
             },
             "require": {
@@ -9873,7 +9873,7 @@
                 "issues": "https://github.com/Laravel-Lang/locales/issues",
                 "source": "https://github.com/Laravel-Lang/locales"
             },
-            "time": "2024-03-13T09:48:27+00:00"
+            "time": "2024-04-06T12:33:47+00:00"
         },
         {
             "name": "laravel-lang/native-country-names",
@@ -10789,16 +10789,16 @@
         },
         {
             "name": "orchestra/testbench-core",
-            "version": "v8.23.5",
+            "version": "v8.23.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "0e5c930d247f50d1d6d5997441e57891af862634"
+                "reference": "b1c22e92bac8a043cc9270beb97c4cff2a743e09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/0e5c930d247f50d1d6d5997441e57891af862634",
-                "reference": "0e5c930d247f50d1d6d5997441e57891af862634",
+                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/b1c22e92bac8a043cc9270beb97c4cff2a743e09",
+                "reference": "b1c22e92bac8a043cc9270beb97c4cff2a743e09",
                 "shasum": ""
             },
             "require": {
@@ -10877,7 +10877,7 @@
                 "issues": "https://github.com/orchestral/testbench/issues",
                 "source": "https://github.com/orchestral/testbench-core"
             },
-            "time": "2024-03-25T04:32:37+00:00"
+            "time": "2024-04-08T09:59:28+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -11831,16 +11831,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.16",
+            "version": "10.5.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "18f8d4a5f52b61fdd9370aaae3167daa0eeb69cd"
+                "reference": "c1f736a473d21957ead7e94fcc029f571895abf5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/18f8d4a5f52b61fdd9370aaae3167daa0eeb69cd",
-                "reference": "18f8d4a5f52b61fdd9370aaae3167daa0eeb69cd",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c1f736a473d21957ead7e94fcc029f571895abf5",
+                "reference": "c1f736a473d21957ead7e94fcc029f571895abf5",
                 "shasum": ""
             },
             "require": {
@@ -11912,7 +11912,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.16"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.17"
             },
             "funding": [
                 {
@@ -11928,7 +11928,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-28T10:08:10+00:00"
+            "time": "2024-04-05T04:39:01+00:00"
         },
         {
             "name": "psalm/plugin-laravel",
