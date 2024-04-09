@@ -30,6 +30,16 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-252: Increased grant notification for PCZM v1
+
+After running the the migration script '2024_04_02_152701_add_stage_pczm_v1.sql', run the following artisan command
+from the public folder in the assessment-api app (assuming the artisan script is in the root folder of the
+assessment-api):
+
+php ../artisan pczm:increase-grant
+
+## Release 2.5.2
+
 ### DUSI-1516 Remove btv stage transitions usages
 
 For the test and acceptance environment, run the following sql queries before migrating:
