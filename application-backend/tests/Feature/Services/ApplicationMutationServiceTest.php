@@ -158,6 +158,7 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertCount(0, get_object_vars($app->data));
         $this->assertEquals($this->subsidy->code, $app->subsidy->code);
         $this->assertEquals(ApplicationStatus::Draft, $app->status);
+        $this->assertDatabaseHas('application_references', ['reference' => $app->reference]);
     }
 
     public function testCreateApplicationForbiddenWhenOpenApplicationExists(): void
@@ -215,6 +216,7 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertCount(0, get_object_vars($app->data));
         $this->assertEquals($this->subsidy->code, $app->subsidy->code);
         $this->assertEquals(ApplicationStatus::Draft, $app->status);
+        $this->assertDatabaseHas('application_references', ['reference' => $app->reference]);
     }
 
     public function testCreateApplicationReturnsNewApplicationWhenSubsidyAllowsMultipleApplications(): void
@@ -250,6 +252,7 @@ class ApplicationMutationServiceTest extends TestCase
         $this->assertCount(0, get_object_vars($app->data));
         $this->assertEquals($this->subsidy->code, $app->subsidy->code);
         $this->assertEquals(ApplicationStatus::Draft, $app->status);
+        $this->assertDatabaseHas('application_references', ['reference' => $app->reference]);
     }
 
     public static function createApplicationChecksIfSubsidyOpenForNewApplicationsProvider(): array

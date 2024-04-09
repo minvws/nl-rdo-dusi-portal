@@ -56,4 +56,15 @@ return [
     | This option defines the maximum time to wait in seconds for a read.
     */
     'socket_read_timeout' => env('CLAMAV_SOCKET_READ_TIMEOUT', 30),
+
+    /*
+    |--------------------------------------------------------------------------
+    | File Permissions before scan
+    |--------------------------------------------------------------------------
+    | This option defines the file permissions that will be set before a file scan.
+    |
+    | By default no specific file permissions will be set. If you need to set specific
+    | file permissions, you can set it to a specific value for example, 0640.
+    */
+    'set_file_permissions_before_scan' => env('CLAMAV_SET_FILE_PERMISSIONS_BEFORE_SCAN', null),
 ];

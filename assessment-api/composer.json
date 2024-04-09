@@ -10,6 +10,7 @@
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
         "laravel/framework": "^10.17",
+        "laravel/prompts": "^0.1.17",
         "laravel/sanctum": "^3.3",
         "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Providers;
 
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use DateTime;
+use DateTimeImmutable;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Application;
@@ -49,6 +52,9 @@ class LetterServiceProvider extends ServiceProvider
             $policy->allowProperties(LetterStages::class, $policy::All);
             $policy->allowProperties(LetterStageData::class, $policy::All);
             $policy->allowProperties(ApplicationStageAnswer::class, $policy::All);
+            $policy->allowMethods(DateTime::class, $policy::All);
+            $policy->allowMethods(DateTimeImmutable::class, $policy::All);
+            $policy->allowMethods(Carbon::class, $policy::All);
             $policy->allowMethods(CarbonImmutable::class, $policy::All);
             $policy->allowMethods(LetterData::class, ['getSignature']);
 
