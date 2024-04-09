@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Assessment\API\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
@@ -60,45 +59,48 @@ class IncreasedGrantPCZMCommand extends Command
             return;
         }
 
-        $approvedApplications = Application::query()
+        $approvedApplicationsIds = Application::query()
             ->whereDoesntHave('applicationStages', function ($query) {
                 $query->where('subsidy_stage_id', self::PCZM_STAGE_6_UUID);
             })
             ->where('subsidy_version_id', self::PCZM_VERSION_UUID)
             ->where('status', ApplicationStatus::Approved)
+            ->pluck('id')
         ;
 
-        if ($approvedApplications->count() === 0) {
+        if ($approvedApplicationsIds->count() === 0) {
             $this->error('No applications found to process');
             return;
         }
 
-        $approvedApplications->chunk(10, function (Collection $applications) {
-            $applications->each(function (Application $application) {
-                DB::transaction(function () use ($application) {
-                    try {
-                        $applicationStage = $this->insertIncreasedGrantApplicationStage($application);
-                        $this->updateApprovedApplicationStageTransition($application, $applicationStage);
+        $approvedApplicationsIds->chunk(10)
+            ->each(function ($chunk) {
+                $applications = Application::findMany($chunk);
+                $applications->each(function (Application $application) {
+                    DB::transaction(function () use ($application) {
+                        try {
+                            $applicationStage = $this->insertIncreasedGrantApplicationStage($application);
+                            $this->updateApprovedApplicationStageTransition($application, $applicationStage);
 
-                        //Advance to next stage which will send the 'increased-grant' letter
-                        $this->performApplicationFlow($applicationStage);
-                        $this->info(sprintf(
-                            'Successfully transitioned %s(%s)',
-                            $application->reference,
-                            $application->id
-                        ));
-                    } catch (Exception $e) {
-                        $this->error(
-                            sprintf(
-                                'Error processing application %s: %s',
+                            //Advance to next stage which will send the 'increased-grant' letter
+                            $this->performApplicationFlow($applicationStage);
+                            $this->info(sprintf(
+                                'Successfully transitioned %s(%s)',
                                 $application->reference,
-                                $e->getMessage()
-                            )
-                        );
-                    }
+                                $application->id
+                            ));
+                        } catch (Exception $e) {
+                            $this->error(
+                                sprintf(
+                                    'Error processing application %s: %s',
+                                    $application->reference,
+                                    $e->getMessage()
+                                )
+                            );
+                        }
+                    });
                 });
             });
-        });
 
         $this->info('');
 
