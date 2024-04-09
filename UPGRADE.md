@@ -35,7 +35,7 @@ Add the newest note to the top, below this line:
 After deployment of the code run the following script to update caches:
 
 ```shell
-artisan cache:subsidy-stages
+php artisan cache:subsidy-stages
 ```
 
 ## Release 2.5.2
