@@ -235,7 +235,8 @@
                             "options": {
                                 "format": "radio",
                                 "placeholder": "",
-                                "tip": "Er is alleen sprake van een eenoudergezin als een van de ouders overleden is of als een van de ouders volledig uit beeld is."
+                                "tip": "Er is alleen sprake van een eenoudergezin als een van de ouders overleden is of als een van de ouders volledig uit beeld is.",
+                                "remoteAction": ["onValid"]
                             }
                         },
                         {
