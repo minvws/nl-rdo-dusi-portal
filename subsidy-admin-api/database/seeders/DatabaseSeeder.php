@@ -9,6 +9,7 @@ use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV\BTVSeeder;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT\AIGTSeeder;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\DAMU\DAMUSeeder;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMSeeder;
+use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZMv2\PCZMv2Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,5 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(BTVSeeder::class);
         $this->call(AIGTSeeder::class);
         $this->call(DAMUSeeder::class);
+        $this->call(PCZMv2Seeder::class);
     }
 }

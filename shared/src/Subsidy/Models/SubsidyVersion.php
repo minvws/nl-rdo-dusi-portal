@@ -77,6 +77,11 @@ class SubsidyVersion extends Model
         return $query->orderBy('created_at');
     }
 
+    public function scopeOrderedByVersion(Builder $query): Builder
+    {
+        return $query->orderBy('version', 'desc');
+    }
+
     public function subsidyStages(): HasMany
     {
         return $this->hasMany(SubsidyStage::class, 'subsidy_version_id', 'id');

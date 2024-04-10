@@ -214,6 +214,13 @@ class Application extends Model
         });
     }
 
+    public function scopeOrderByStatus(Builder $query): Builder
+    {
+        // phpcs:disable Generic.Files.LineLength
+        return $query->orderByRaw('CASE status WHEN \'draft\' THEN 1 WHEN \'pending\' THEN 2 WHEN \'approved\' THEN 3 WHEN \'rejected\' THEN 4 END');
+        // phpcs:enable Generic.Files.LineLength
+    }
+
     /**
      * Note that we search explicitly for a stage title as multiple subsidy stages belonging to different susbsidies
      * could have the same stage title

@@ -73,7 +73,7 @@ class Subsidy extends Model
      */
     public function publishedVersion(): HasOne
     {
-        return $this->hasOne(SubsidyVersion::class)->published();
+        return $this->hasOne(SubsidyVersion::class)->orderedByVersion()->published();
     }
 
     protected static function newFactory(): SubsidyFactory
