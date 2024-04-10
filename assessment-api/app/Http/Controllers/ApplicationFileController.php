@@ -60,6 +60,14 @@ class ApplicationFileController extends Controller
         Field $field,
         ApplicationFileUploadRequest $request,
     ): Response {
+        $this->logger->log((new ViewFileEvent())
+            ->withActor($user)
+            ->withData([
+                'applicationId' => $application->id,
+                'fieldCode' => $field->code,
+                'fileId' => $fileId,
+                'userId' => $user->getAuthIdentifier(),
+            ]));
         return $this->applicationFileService->createApplicationFile(
             $applicationStage,
             $field,

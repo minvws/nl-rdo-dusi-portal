@@ -4,18 +4,18 @@
 // ENCRYPTION_PUBLIC, DECRYPTION_SECRET
 // to debug encryption, uncomment specific parts of the script below.
 
-//$keypair1 = sodium_crypto_box_keypair();
-//$keypair1_secret = sodium_crypto_box_secretkey($keypair1);
-//$keypair1_public = sodium_crypto_box_publickey($keypair1);
-//$keypair2 = sodium_crypto_box_keypair();
-//$keypair2_secret = sodium_crypto_box_secretkey($keypair2);
-//$keypair2_public = sodium_crypto_box_publickey($keypair2);
-//
-//echo base64_encode($keypair1_secret) . "\n";
-//echo base64_encode($keypair1_public) . "\n";
-//echo base64_encode($keypair2_secret) . "\n";
-//echo base64_encode($keypair2_public) . "\n";
-//exit 1;
+$keypair1 = sodium_crypto_box_keypair();
+$keypair1_secret = sodium_crypto_box_secretkey($keypair1);
+$keypair1_public = sodium_crypto_box_publickey($keypair1);
+$keypair2 = sodium_crypto_box_keypair();
+$keypair2_secret = sodium_crypto_box_secretkey($keypair2);
+$keypair2_public = sodium_crypto_box_publickey($keypair2);
+
+echo base64_encode($keypair1_secret) . "\n";
+echo base64_encode($keypair1_public) . "\n";
+echo base64_encode($keypair2_secret) . "\n";
+echo base64_encode($keypair2_public) . "\n";
+exit;
 
 $encrypted = base64_decode($argv[1]);
 //

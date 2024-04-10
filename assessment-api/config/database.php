@@ -60,7 +60,7 @@ return [
             'driver' => 'pgsql',
             'url' => env('APPLICATION_DATABASE_URL'),
             'host' => env('DB_APPLICATION_HOST', '127.0.0.1'),
-            'port' => env('DB_APPLICATION_PORT', '5432'),
+            'port' => env('DB_APPLICATION_PORT', '`5432`'),
             'database' => env('DB_APPLICATION_DATABASE', 'forge'),
             'username' => env('DB_APPLICATION_USERNAME', 'forge'),
             'password' => env('DB_APPLICATION_PASSWORD', ''),
