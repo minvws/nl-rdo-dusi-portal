@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZMv2;
 
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -41,7 +42,7 @@ class PCZMv2Seeder extends Seeder
                 'subsidy_id' => PCZMSeeder23::PCZM_UUID,
                 'version' => 2,
                 'status' => VersionStatus::Published,
-                'created_at' => '2024-04-01',
+                'created_at' => Carbon::now(),
                 'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/zorgmedewerkers-met-langdurige-post-covid-klachten',
                 'contact_mail_address' => 'dienstpostbus@minvws.nl',
                 'mail_to_address_field_identifier' => 'email',

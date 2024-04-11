@@ -2,7 +2,7 @@
 INSERT INTO public.subsidy_versions (id, created_at, subsidy_id, version, status, subsidy_page_url,
                                      contact_mail_address, mail_to_name_field_identifier,
                                      mail_to_address_field_identifier, review_period, review_deadline)
-VALUES ('0185f897-99b0-4390-bd1f-98cce4bd578b', '2024-04-01 00:00:00', '06a6b91c-d59b-401e-a5bf-4bf9262d85f8', 2,
+VALUES ('0185f897-99b0-4390-bd1f-98cce4bd578b', 'now()', '06a6b91c-d59b-401e-a5bf-4bf9262d85f8', 2,
         'published', 'https://www.dus-i.nl/subsidies/zorgmedewerkers-met-langdurige-post-covid-klachten',
         'dienstpostbus@minvws.nl', 'firstName;infix;lastName', 'email', 91, '2024-08-30 23:59:59');
 
@@ -81,7 +81,7 @@ INSERT INTO public.fields (id, title, description, type, params, is_required, co
 INSERT INTO public.fields (id, title, description, type, params, is_required, code, source, subsidy_stage_id, required_condition, retention_period_on_approval, exclude_from_clone_data) VALUES ('5888430b-06aa-4adc-87e5-22ef6a105849', 'Extra informatie over de gedane wijzigingen', null, 'text', 'null', false, 'coordinatorImplementationApprovalNote', 'user', 'e2467684-3d17-4f2b-9d89-274fce583fa7', null, 'short', false);
 
 -- subsidy_stage_hashes
-INSERT INTO public.subsidy_stage_hashes (id, subsidy_stage_id, description, created_at, updated_at, name) VALUES ('9789ee74-8814-4c12-b876-a1e01880f37a', 'd7f38409-6805-408c-87e9-afd9b00a8de0', 'Bank account duplicate reporting', '2024-04-11 07:58:09', '2024-04-11 07:58:09', 'Bank account');
+INSERT INTO public.subsidy_stage_hashes (id, subsidy_stage_id, description, created_at, updated_at, name) VALUES ('9789ee74-8814-4c12-b876-a1e01880f37a', 'd7f38409-6805-408c-87e9-afd9b00a8de0', 'Bank account duplicate reporting', 'now()', 'now()', 'Bank account');
 
 -- subsidy_stage_hash_field
 INSERT INTO public.subsidy_stage_hash_fields (subsidy_stage_hash_id, field_id) VALUES ('9789ee74-8814-4c12-b876-a1e01880f37a', '56e3197f-77f5-4185-ab93-839ef492a813');
@@ -203,7 +203,7 @@ INSERT INTO public.subsidy_stage_transition_messages (id, subsidy_stage_transiti
 {/block}
 
 {block objectionFooter}{/block}
-', '2024-04-11 07:58:09', null);
+', 'now()', null);
 INSERT INTO public.subsidy_stage_transition_messages (id, subsidy_stage_transition_id, version, status, subject, content_html, content_pdf, created_at, updated_at) VALUES ('56f521d5-c079-4849-a06e-5bd1e672042b', '7a49bdad-854b-468c-a17f-0cb0d091b186', 1, 'published', 'Aanvraag afgekeurd', e'{block content}
     <p>Beste lezer,</p>
     <p>
@@ -280,7 +280,7 @@ INSERT INTO public.subsidy_stage_transition_messages (id, subsidy_stage_transiti
 {block sidebar}
     {include parent}
 {/block}
-', '2024-04-11 07:58:09', null);
+', 'now()', null);
 INSERT INTO public.subsidy_stage_transition_messages (id, subsidy_stage_transition_id, version, status, subject, content_html, content_pdf, created_at, updated_at) VALUES ('8908ef68-5241-4b4e-961f-304b53f3695c', 'ed12757d-b2cf-4164-bc62-9ac54b665921', 1, 'published', 'Aanvraag goedgekeurd', e'{block content}
     <p>Beste lezer,</p>
     <p>
@@ -391,7 +391,7 @@ INSERT INTO public.subsidy_stage_transition_messages (id, subsidy_stage_transiti
 {block sidebar}
     {include parent}
 {/block}
-', '2024-04-11 07:58:09', null);
+', 'now()', null);
 
 -- Archive old PCZM version
-UPDATE public.subsidy_versions SET status = 'archived' WHERE id = '513011cd-789b-4628-ba5c-2fee231f8959';
+UPDATE public.subsidy_versions SET status = 'archived', updated_at = now() WHERE id = '513011cd-789b-4628-ba5c-2fee231f8959';
