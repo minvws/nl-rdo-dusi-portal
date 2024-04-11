@@ -394,4 +394,4 @@ INSERT INTO public.subsidy_stage_transition_messages (id, subsidy_stage_transiti
 ', 'now()', null);
 
 -- Archive old PCZM version
-UPDATE public.subsidy_versions SET status = 'archived', updated_at = now() WHERE id = '513011cd-789b-4628-ba5c-2fee231f8959';
+UPDATE public.subsidy_versions SET status = 'archived' WHERE id = '513011cd-789b-4628-ba5c-2fee231f8959';
