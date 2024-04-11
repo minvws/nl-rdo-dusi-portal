@@ -414,7 +414,12 @@ class ApplicationRepository
      */
     public function getMyApplications(Identity $identity): array
     {
-        return $identity->applications()->with(['subsidyVersion', 'subsidyVersion.subsidy'])->get()->all();
+        return $identity
+            ->applications()
+            ->with(['subsidyVersion', 'subsidyVersion.subsidy'])
+            ->orderByStatus()
+            ->get()
+            ->all();
     }
 
     /**
