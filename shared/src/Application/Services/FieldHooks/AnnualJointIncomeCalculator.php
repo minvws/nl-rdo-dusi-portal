@@ -20,6 +20,10 @@ class AnnualJointIncomeCalculator
 
     private static function getAnnualIncomeParentB(array $fieldValues): int
     {
+        if ($fieldValues['isSingleParentFamily']->value === 'Ja') {
+            return  0;
+        }
+
         return (int)(is_numeric($fieldValues['annualIncomeParentB']->value) ?
             $fieldValues['annualIncomeParentB']->value : 0);
     }
