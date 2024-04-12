@@ -219,7 +219,7 @@ class ApplicationFieldsSeeder extends Seeder
             code: 'employmentFunction',
             title: 'Functie',
             options: [
-                'Ambulancechauffeur',
+                'Ambulancechauffeur/(zorgambulance)begeleider',
                 'Anesthesiemedewerker en/of operatieassistent',
                 'Arts',
                 'Bachelor medisch hulpverlener',
@@ -229,8 +229,10 @@ class ApplicationFieldsSeeder extends Seeder
                 'Praktijkondersteuner huisarts',
                 'Verpleegkundig specialist',
                 '(gespecialiseerd) Verpleegkundige',
-                'Verzorgende in de individuele gezondheidszorg (VIG’er) of verzorgende',
-                'Zorgondersteuner en/of voedingsassistent',
+                'Verzorgende in de individuele gezondheidszorg (VIG’er) of (kraam)verzorgende',
+                'ADL-assistent, zorgondersteuner en/of voedingsassistent',
+                'Begeleider gehandicaptenzorg, jeugdzorg en/of psychiatrische inrichting',
+                'GGD-test medewerker',
                 'Anders',
             ],
             retentionPeriod: DataRetentionPeriod::Short
