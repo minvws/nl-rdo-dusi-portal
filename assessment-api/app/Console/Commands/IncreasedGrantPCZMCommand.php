@@ -55,7 +55,7 @@ class IncreasedGrantPCZMCommand extends Command
         try {
             SubsidyStage::findOrFail(self::PCZM_STAGE_6_UUID);
         } catch (\Exception $e) {
-            $this->info("Please run migration '2024_04_02_152701_add_stage_pczm_v1.sql' first!");
+            $this->eror("Please run migration '2024_04_02_152701_add_stage_pczm_v1.sql' first!");
             return;
         }
 
