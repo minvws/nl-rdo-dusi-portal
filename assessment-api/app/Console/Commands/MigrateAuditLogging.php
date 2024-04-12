@@ -48,7 +48,9 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
         $theirPublicKey = base64_decode('q7qP8+ptuihG6fmwH3xXqPqg77Or5J3RG7nda4V3Gms=');
 
         $decryption_keypair = sodium_crypto_box_keypair_from_secretkey_and_publickey(
-            $ourPrivatKey, $theirPublicKey);
+            $ourPrivatKey,
+            $theirPublicKey
+        );
 
         $file = new SplFileObject($this->argument('audit-file'), 'r');
 
@@ -79,7 +81,7 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
 
         $logEvent = json_decode($decrypted, true);
 
-        if (isset($logEvent['request'])){
+        if (isset($logEvent['request'])) {
             $logEvent['context'] = $logEvent['request'];
             unset($logEvent['request']);
         }
