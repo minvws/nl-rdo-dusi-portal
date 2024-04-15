@@ -160,12 +160,12 @@ class IncreasedGrantPCZMCommand extends Command
                 ->sole();
 
             $encrypter = $this->encryptionService->getEncrypter($applicationStage);
-            Answer::create([
-                'field_id' => $internalNoteField->id,
-                'application_stage_id' => $applicationStage->id,
-                'encrypted_answer' => $encrypter->encrypt('De verhoging van de toekenning is via een
-                geautomatiseerd script doorgevoerd. Aanvragers hebben een bericht per email ontvangen.')
-            ]);
+            $answer = new Answer();
+            $answer->field_id = $internalNoteField->id;
+            $answer->application_stage_id = $applicationStage->id;
+            $answer->encrypted_answer = $encrypter->encrypt('De verhoging van de toekenning is via een ' .
+                'geautomatiseerd script doorgevoerd. Aanvragers hebben een bericht per email ontvangen.');
+            $answer->save();
         }
     }
 }
