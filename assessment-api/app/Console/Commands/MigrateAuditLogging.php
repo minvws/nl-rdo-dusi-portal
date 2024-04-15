@@ -37,7 +37,8 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
      */
     public function handle(): void
     {
-        if (!file_exists($this->argument('audit-file'))) {
+        $filePath = $this->argument('audit-file');
+        if (!file_exists($filePath)) {
             $this->error('Audit logging file does not exist');
         }
 
@@ -52,11 +53,16 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
             $theirPublicKey
         );
 
-        $file = new SplFileObject($this->argument('audit-file'), 'r');
+        $bar = $this->output->createProgressBar($this->countLines($filePath));
+        $bar->start();
+
+        $file = new SplFileObject($filePath, 'r');
 
         foreach ($file as $line) {
             $this->handleLine($line, $decryption_keypair);
+            $bar->advance();
         }
+        $bar->finish();
     }
 
     public function handleLine(string $line, $decryption_keypair): void
@@ -88,5 +94,21 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
 
         $auditLog = new AuditLog($logEvent);
         $auditLog->save();
+    }
+
+
+    private function countLines($filePath)
+    {
+        $lineCount = 0;
+        $handle = fopen($filePath, "r");
+
+        while (!feof($handle)) {
+            if (fgets($handle) !== false) {
+                $lineCount++;
+            }
+        }
+
+        fclose($handle);
+        return $lineCount;
     }
 }
