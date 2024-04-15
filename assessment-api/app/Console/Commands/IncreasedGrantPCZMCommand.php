@@ -153,10 +153,9 @@ class IncreasedGrantPCZMCommand extends Command
 
     private function createInternalNote(ApplicationStage $applicationStage): void
     {
-        $subsidyStage = SubsidyStage::findOrFail(self::PCZM_STAGE_6_UUID);
-        if ($subsidyStage->internalNoteField !== null) {
-            $internalNoteField = Field::where('subsidy_stage_id', $subsidyStage->id)
-                ->where('code', $subsidyStage->internalNoteField)
+        if ($applicationStage->subsidyStage->internal_note_field_code !== null) {
+            $internalNoteField = Field::where('subsidy_stage_id', $applicationStage->subsidyStage->id)
+                ->where('code', $applicationStage->subsidyStage->internal_note_field_code)
                 ->sole();
 
             $encrypter = $this->encryptionService->getEncrypter($applicationStage);
