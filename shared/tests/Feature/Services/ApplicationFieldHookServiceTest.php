@@ -141,27 +141,27 @@ class ApplicationFieldHookServiceTest extends TestCase
     public static function fieldHookReimbursementDataProvider(): array
     {
         return [
-            'income1: 1000, income2: 2000, education: Primair, travel distance: 29.1, expectedReimbursement: 4000' => [
+            'income1: 1000, income2: 2000, education: Primair, travel distance: 29.1, requestedSubsidyAmount: 4000' => [
                 'income1' => 10000,
                 'income2' => 20000,
                 'educationType' => EducationalType::PRIMARY_EDUCATION,
                 'travelDistanceSingleTripe' => 29.4,
-                'expectedReimbursement' => 1333.58,
+                'requestedSubsidyAmount' => 1333.58,
             ],
-            'income1: 2000, income2: 2000, education: Primair, travel distance: 29.1, expectedReimbursement: 4000' => [
+            'income1: 2000, income2: 2000, education: Primair, travel distance: 29.1, requestedSubsidyAmount: 4000' => [
                 'income1' => 20000,
                 'income2' => 20000,
                 'educationType' => EducationalType::PRIMARY_EDUCATION,
                 'travelDistanceSingleTripe' => 29.4,
-                'expectedReimbursement' => 1111.32,
+                'requestedSubsidyAmount' => 1111.32,
             ],
             'income1: 2000, income2: 2000, education: Voortgezet,
-             travel distance: 29.1, expectedReimbursement: 4000' => [
+             travel distance: 29.1, requestedSubsidyAmount: 4000' => [
                 'income1' => 20000,
                 'income2' => 20000,
                 'educationType' => EducationalType::SECONDARY_EDUCATION,
                 'travelDistanceSingleTripe' => 29.4,
-                'expectedReimbursement' => 1222.45,
+                'requestedSubsidyAmount' => 1222.45,
             ],
         ];
     }
