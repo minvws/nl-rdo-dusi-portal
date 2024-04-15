@@ -1,7 +1,7 @@
 INSERT INTO public.subsidy_stages (id, created_at, subsidy_version_id, title, subject_role, subject_organisation, stage,
                                    assessor_user_role, internal_note_field_code, allow_duplicate_assessors)
 VALUES ('ef2238cf-a8ce-4376-ab2e-e821bc43ddb5', null, '513011cd-789b-4628-ba5c-2fee231f8959',
-        'Informeren over verhoging van toegekend bedrag', 'assessor', null, 6, 'implementationCoordinator', null,
+        'Informeren over verhoging van toegekend bedrag', 'assessor', null, 6, 'implementationCoordinator', 'increasedGrantInternalNote',
         false);
 
 INSERT INTO public.fields (id, title, description, type, params, is_required, code, source, subsidy_stage_id,
