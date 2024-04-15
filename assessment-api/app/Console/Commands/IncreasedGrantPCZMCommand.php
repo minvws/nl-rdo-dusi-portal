@@ -92,6 +92,7 @@ class IncreasedGrantPCZMCommand extends Command
                                 $application->id
                             ));
                         } catch (Exception $e) {
+                            DB::rollBack();
                             $this->error(
                                 sprintf(
                                     'Error processing application %s: %s',
