@@ -73,6 +73,7 @@ class PCZMSubsidyStagesSeeder extends Seeder
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::ImplementationCoordinator->value,
             'stage' => 6,
+            'internal_note_field_code' => 'increasedGrantInternalNote'
         ]);
     }
 }

@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use MinVWS\DUSi\Shared\Application\Models\Answer;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStageTransition;
@@ -14,6 +15,7 @@ use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryp
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 /**
@@ -55,7 +57,7 @@ class IncreasedGrantPCZMCommand extends Command
         try {
             SubsidyStage::findOrFail(self::PCZM_STAGE_6_UUID);
         } catch (\Exception $e) {
-            $this->eror("Please run migration '2024_04_02_152701_add_stage_pczm_v1.sql' first!");
+            $this->error("Please run migration '2024_04_02_152701_add_stage_pczm_v1.sql' first!");
             return;
         }
 
@@ -119,6 +121,9 @@ class IncreasedGrantPCZMCommand extends Command
         $applicationStage->encrypted_key = $encryptedKey;
 
         $applicationStage->save();
+        $applicationStage->refresh();
+
+        $this->createInternalNote($applicationStage);
 
         return $applicationStage;
     }
@@ -144,5 +149,23 @@ class IncreasedGrantPCZMCommand extends Command
             $applicationStage,
             EvaluationTrigger::Submit
         );
+    }
+
+    private function createInternalNote(ApplicationStage $applicationStage): void
+    {
+        $subsidyStage = SubsidyStage::findOrFail(self::PCZM_STAGE_6_UUID);
+        if ($subsidyStage->internalNoteField !== null) {
+            $internalNoteField = Field::where('subsidy_stage_id', $subsidyStage->id)
+                ->where('code', $subsidyStage->internalNoteField)
+                ->sole();
+
+            $encrypter = $this->encryptionService->getEncrypter($applicationStage);
+            Answer::create([
+                'field_id' => $internalNoteField->id,
+                'application_stage_id' => $applicationStage->id,
+                'encrypted_answer' => $encrypter->encrypt('De verhoging van de toekenning is via een
+                geautomatiseerd script doorgevoerd. Aanvragers hebben een bericht per email ontvangen.')
+            ]);
+        }
     }
 }
