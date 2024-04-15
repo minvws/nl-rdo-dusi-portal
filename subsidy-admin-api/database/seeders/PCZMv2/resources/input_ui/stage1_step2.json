@@ -6,7 +6,7 @@
     "elements": [
         {
             "type": "Group",
-            "label": "Persoonlijke informatie aanvrager",
+            "label": "Persoonlijke informatie",
             "elements": [
                 {
                     "type": "VerticalLayout",
@@ -31,6 +31,14 @@
                             "type": "CustomControl",
                             "scope": "#/properties/lastName",
                             "label": "Achternaam",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/dateOfBirth",
+                            "label": "Geboortedatum",
                             "options": {
                                 "placeholder": ""
                             }
@@ -92,7 +100,8 @@
                             "label": "Land",
                             "options": {
                                 "format": "select",
-                                "placeholder": "Selecteer een land"
+                                "placeholder": "Selecteer een land",
+                                "default": "Nederland"
                             }
                         }
                     ]
@@ -215,238 +224,6 @@
                                         ]
                                     }
                                 }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "Group",
-            "label": "Inkomen",
-            "elements": [
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/isSingleParentFamily",
-                            "label": "Is er sprake van een eenoudergezin?",
-                            "options": {
-                                "format": "radio",
-                                "placeholder": "",
-                                "tip": "Er is alleen sprake van een eenoudergezin als een van de ouders overleden is of als een van de ouders volledig uit beeld is.",
-                                "remoteAction": ["onValid"]
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/hasAlimony",
-                            "label": "Ontvangt u kinderalimentatie?",
-                            "options": {
-                                "format": "radio",
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/annualIncomeParentA",
-                            "label": "Jaarinkomen ouder 1",
-                            "options": {
-                                "placeholder": "",
-                                "remoteAction": ["onBlur"]
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/annualIncomeParentB",
-                            "label": "Jaarinkomen ouder 2",
-                            "options": {
-                                "placeholder": "",
-                                "remoteAction": ["onBlur"]
-                            },
-                            "rule": {
-                                "effect": "SHOW",
-                                "condition": {
-                                    "scope": "#/properties/isSingleParentFamily",
-                                    "schema": { "const": "Nee" }
-                                }
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/annualJointIncome",
-                            "label": "Jaarinkomen totaal",
-                            "options": {
-                                "readonly": true
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "Group",
-            "label": "Gegevens kind",
-            "elements": [
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/childName",
-                            "label": "Naam kind",
-                            "options": {
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/dateOfBirth",
-                            "label": "Geboortedatum",
-                            "options": {
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/residentialStreet",
-                            "label": "Straatnaam",
-                            "options": {
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/residentialHouseNumber",
-                            "label": "Huisnummer",
-                            "options": {
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/residentialHouseNumberSuffix",
-                            "label": "Huisnummer toevoeging",
-                            "options": {
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/residentialPostalCode",
-                            "label": "Postcode",
-                            "options": {
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/residentialCity",
-                            "label": "Plaatsnaam",
-                            "options": {
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/educationType",
-                            "label": "Gaat naar het",
-                            "options": {
-                                "format": "radio",
-                                "placeholder": "",
-                                "remoteAction": ["onValid"]
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/damuSchoolPrimary",
-                            "label": "DAMU-school",
-                            "options": {
-                                "format": "select",
-                                "placeholder": "",
-                                "remoteAction": ["onValid"]
-                            },
-                            "rule": {
-                                "effect": "SHOW",
-                                "condition": {
-                                    "scope": "#/properties/educationType",
-                                    "schema": { "const": "Primair onderwijs" }
-                                }
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/damuSchoolSecondary",
-                            "label": "DAMU-school",
-                            "options": {
-                                "format": "select",
-                                "placeholder": "",
-                                "remoteAction": ["onValid"]
-                            },
-                            "rule": {
-                                "effect": "SHOW",
-                                "condition": {
-                                    "scope": "#/properties/educationType",
-                                    "schema": { "const": "Voortgezet onderwijs" }
-                                }
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/damuSchoolAddress",
-                            "label": "DAMU-school adres",
-                            "options": {
-                                "placeholder": "",
-                                "readonly": true
-                            },
-                            "rule": {
-                                "effect": "SHOW",
-                                "condition": {
-                                    "scope": "#",
-                                    "schema": {
-                                        "required": ["educationType"]
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "Group",
-            "label": "Subsidie",
-            "elements": [
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/travelDistanceSingleTrip",
-                            "label": "Reisafstand enkele reis (in kilometers)",
-                            "options": {
-                                "placeholder": "",
-                                "remoteAction": ["onBlur"],
-                                "tip": "Gebruik de <a target='_blank' href='https://www.anwb.nl/verkeer/routeplanner'>ANWB-routeplanner</a> met de optie ‘snelste route’. U mag geen andere routeplanner gebruiken. Kies als route het woonadres naar de DAMU-school. Schakel de optie 'Route op basis van actueel verkeer' uit en klik op 'Herbereken route'."
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/travelExpenseReimbursement",
-                            "label": "Vergoeding per kilometer",
-                            "options": {
-                                "readonly": true,
-                                "placeholder": ""
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/requestedSubsidyAmount",
-                            "label": "Gevraagd subsidiebedrag",
-                            "options": {
-                                "readonly": true,
-                                "placeholder": ""
                             }
                         }
                     ]

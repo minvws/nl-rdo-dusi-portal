@@ -58,17 +58,26 @@ class ApplicationFieldHookServiceTest extends TestCase
     public static function fieldHookJointIncomeDataProvider(): array
     {
         return [
-            'income1: 1000, income2: 2000, expectedIncome: 4000' => [
+            'single income: nee, income1: 1000, income2: 2000, expectedIncome: 4000' => [
+                'isSingleParentFamily' => 'Nee',
                 'income1' => 1000,
                 'income2' => 2000,
                 'expectedIncome' => 3000,
             ],
-            'income1: 1000, income2: 2000, expectedIncome: 3000' => [
+            'single income: ja, income1: 1000, income2: 2000, expectedIncome: 1000' => [
+                'isSingleParentFamily' => 'Ja',
+                'income1' => 1000,
+                'income2' => 2000,
+                'expectedIncome' => 1000,
+            ],
+            'single income: nee, income1: 1000, income2: 2000, expectedIncome: 3000' => [
+                'isSingleParentFamily' => 'Nee',
                 'income1' => 1000,
                 'income2' => 2000,
                 'expectedIncome' => 3000,
             ],
-            'income1: 1000, income2: null, expectedIncome: 1000' => [
+            'single income: nee, income1: 1000, income2: null, expectedIncome: 1000' => [
+                'isSingleParentFamily' => 'Nee',
                 'income1' => 1000,
                 'income2' => null,
                 'expectedIncome' => 1000,
@@ -81,11 +90,21 @@ class ApplicationFieldHookServiceTest extends TestCase
      * @dataProvider fieldHookJointIncomeDataProvider
      */
     public function testCalculateJointIncomeField(
+        string $isSingleParentFamily,
         int $income1,
         ?int $income2,
         int $expectedIncome
     ): void {
         $fieldValues = [
+            'isSingleParentFamily' => new FieldValue(
+                Field::factory()
+                    ->for($this->applicationStage->subsidyStage)
+                    ->create([
+                       'code' => 'isSingleParentFamily',
+                       'type' => FieldType::Select,
+                    ]),
+                value: $isSingleParentFamily,
+            ),
             'annualIncomeParentA' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
@@ -161,6 +180,15 @@ class ApplicationFieldHookServiceTest extends TestCase
 
 
         $fieldValues = [
+            'isSingleParentFamily' => new FieldValue(
+                Field::factory()
+                    ->for($this->applicationStage->subsidyStage)
+                    ->create([
+                        'code' => 'isSingleParentFamily',
+                        'type' => FieldType::Select,
+                    ]),
+                value: 'Nee',
+            ),
             'annualIncomeParentA' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
