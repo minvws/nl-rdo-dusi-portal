@@ -40,6 +40,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read ApplicationStage $firstApplicationStage
  * @property-read Collection<string, ApplicationStage> $applicationStages
  * @property-read Collection<ApplicationStageTransition> $applicationStageTransitions
+ * @property-read Collection<ApplicationHash> $applicationHashes
  * @property-read ApplicationSurePayResult|null $applicationSurePayResult
  * @method static Builder<self> forIdentity(Identity $identity)
  * @method Builder<self> forIdentity(Identity $identity)
@@ -211,6 +212,13 @@ class Application extends Model
         return $query->whereHas('subsidyVersion.subsidy', function (Builder $q) use ($codes) {
             $q->whereIn('code', $codes);
         });
+    }
+
+    public function scopeOrderByStatus(Builder $query): Builder
+    {
+        // phpcs:disable Generic.Files.LineLength
+        return $query->orderByRaw('CASE status WHEN \'draft\' THEN 1 WHEN \'pending\' THEN 2 WHEN \'approved\' THEN 3 WHEN \'rejected\' THEN 4 END');
+        // phpcs:enable Generic.Files.LineLength
     }
 
     /**

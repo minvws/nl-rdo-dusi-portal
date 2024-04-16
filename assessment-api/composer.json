@@ -10,6 +10,7 @@
         "guzzlehttp/guzzle": "^7.7",
         "laravel/fortify": "^1.17",
         "laravel/framework": "^10.17",
+        "laravel/prompts": "^0.1.17",
         "laravel/sanctum": "^3.3",
         "minvws/codable": "dev-main as 1.0.x-dev",
         "minvws/dusi-shared": "@dev",
@@ -17,7 +18,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
-        "barryvdh/laravel-ide-helper": "^2.13",
+        "barryvdh/laravel-ide-helper": "^3.0",
         "fakerphp/faker": "^1.23",
         "jorijn/laravel-security-checker": "^2.4",
         "larastan/larastan": "^2.0",

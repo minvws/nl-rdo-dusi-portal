@@ -23,6 +23,7 @@ class PCZMAssessmentFieldsSeeder extends Seeder
         $this->secondAssessmentFields();
         $this->internalAssessmentFields();
         $this->coordinatorImplemenationFields();
+        $this->increasedGrantFields();
     }
 
     public function firstAssessmentFields(): void
@@ -388,6 +389,17 @@ class PCZMAssessmentFieldsSeeder extends Seeder
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
             code: 'coordinatorImplementationApprovalNote',
             title: 'Extra informatie over de gedane wijzigingen',
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+    }
+
+    public function increasedGrantFields(): void
+    {
+        $this->createTextField(
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_6_UUID,
+            code: 'increasedGrantInternalNote',
+            title: 'Interne notitie',
             isRequired: false,
             retentionPeriod: DataRetentionPeriod::Short
         );

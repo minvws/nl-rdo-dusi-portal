@@ -15,6 +15,7 @@ class ValidationResult implements Codable
     public function __construct(
         public readonly ValidationResultType $type,
         public readonly string $message,
+        public readonly ?string $id = null,
         public ?array $params = [],
     ) {
     }

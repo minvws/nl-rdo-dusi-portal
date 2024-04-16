@@ -6,15 +6,16 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
 
-class ApplicationFindOrCreateParams implements Codable
+class SubsidyConcepts implements Codable
 {
     use CodableSupport;
 
     public function __construct(
-        public readonly EncryptedIdentity $identity,
-        public readonly ClientPublicKey $publicKey,
-        public readonly string $subsidyCode
+        public readonly Subsidy $subsidy,
+        public readonly bool $newConceptAllowed,
+        public readonly array $concepts,
     ) {
     }
 }

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Subsidy\Repositories;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Str;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use Illuminate\Support\Facades\DB;
 
 class SubsidyRepository
 {
@@ -210,7 +212,7 @@ class SubsidyRepository
 
     public function findSubsidyByCode(string $code): ?Subsidy
     {
-        return Subsidy::query()->where('code', '=', $code)->first();
+        return Subsidy::query()->where(DB::raw('lower(code)'), '=', Str::lower($code))->first();
     }
 
     public function getFirstStageForSubsidyVersion(SubsidyVersion $subsidyVersion): SubsidyStage

@@ -12,10 +12,10 @@ class PCZMApplicationStageUISeeder extends AbstractApplicationStageUISeeder
 {
     public const PCZM_STAGE1_V1_UUID = 'e6d5cd35-8c67-40c4-abc4-b1d6bf8afb97';
 
+    public string $resourceDir = __DIR__;
+
     public function run(): void
     {
-        $this->resourceDir = __DIR__;
-
         $inputUi = $this->buildInputUi();
         $viewUI = $this->buildViewUI();
 

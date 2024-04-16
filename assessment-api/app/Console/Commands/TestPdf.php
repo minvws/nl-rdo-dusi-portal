@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Console\Commands;
 
-use DateTimeImmutable;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationStageAnswer;
 use MinVWS\DUSi\Shared\Application\DTO\LetterData;
 use MinVWS\DUSi\Shared\Application\DTO\LetterStageData;
 use MinVWS\DUSi\Shared\Application\DTO\LetterStages;
 use MinVWS\DUSi\Shared\Application\Services\LetterService;
-use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Services\SubsidyFileManager;
+
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\select;
 
 class TestPdf extends Command
 {
@@ -40,54 +47,103 @@ class TestPdf extends Command
      */
     public function handle(): void
     {
-        $template = <<<EOF
-{layout 'letter_layout.latte'}
+        $subsidyVersions = SubsidyVersion::with(['subsidy', 'subsidyStages'])->get();
+        $subsidyVersionChoices = $this->getSubsidyVersionChoices($subsidyVersions);
 
-{block concern}
-    Betreft: Vragen over aanvraag ....
-{/block}
+        $chosenSubsidyVersionId = select(
+            label: 'Which subsidy?',
+            options: $subsidyVersionChoices,
+        );
 
-{block content}
-    <p>Beste lezer,</p>
-    <p>Dit is een test PDF</p>
-
-    <p>&nbsp;</p>
-{/block}
-
-{block sidebar}
-    {include parent}
-{/block}
-EOF;
-
-        $dataStage1 = new LetterStageData();
-        $dataStage1->put('firstName', new ApplicationStageAnswer('firstName', 'John'));
-        $dataStage1->put('lastName', new ApplicationStageAnswer('lastName', 'Doe'));
-        $dataStage1->put('street', new ApplicationStageAnswer('street', 'Main Street'));
-        $dataStage1->put('houseNumber', new ApplicationStageAnswer('houseNumber', '1'));
-        $dataStage1->put('houseNumberSuffix', new ApplicationStageAnswer('houseNumberSuffix', 'A'));
-        $dataStage1->put('postalCode', new ApplicationStageAnswer('postalCode', '1234 AB'));
-        $dataStage1->put('city', new ApplicationStageAnswer('city', 'Amsterdam'));
-
-        $stages = new LetterStages();
-        $stages->put('stage1', $dataStage1);
-
-        $subsidy = Subsidy::find('06a6b91c-d59b-401e-a5bf-4bf9262d85f8');
-        if ($subsidy === null) {
-            $this->error('Could not find fixed subsidy `06a6b91c-d59b-401e-a5bf-4bf9262d85f8` to create PDF');
+        /** @var SubsidyVersion|null $subsidyVersion */
+        $subsidyVersion = $subsidyVersions->find($chosenSubsidyVersionId);
+        if ($subsidyVersion === null) {
+            error(sprintf('Subsidy version with ID %s not found!', $chosenSubsidyVersionId));
             return;
         }
 
+        $transitionMessages = SubsidyStageTransitionMessage::query()
+            ->published()
+            ->whereHas('subsidyStageTransition', function ($query) use ($subsidyVersion) {
+                $query->whereHas('currentSubsidyStage', function ($query) use ($subsidyVersion) {
+                    $query->where('subsidy_version_id', $subsidyVersion->id);
+                });
+            })
+            ->get();
+
+        $transitionMessageChoices = $transitionMessages
+            ->pluck('subject', 'id')
+            ->toArray();
+
+        $chosenTransitionMessageId = select(
+            label: 'Which message?',
+            options: $transitionMessageChoices,
+        );
+
+        /** @var SubsidyStageTransitionMessage|null $transitionMessage */
+        $transitionMessage = $transitionMessages->find($chosenTransitionMessageId);
+        if ($transitionMessage === null) {
+            error(sprintf('Transition message with ID %s not found!', $chosenTransitionMessageId));
+            return;
+        }
+
+        $stages = new LetterStages();
+        foreach ($subsidyVersion->subsidyStages as $subsidyStage) {
+            $stage = $this->fakeLetterStage();
+            $stage->createdAt = new Carbon();
+            $stage->submittedAt = new Carbon();
+            $stage->closedAt = new Carbon();
+
+            $stages->put('stage' . $subsidyStage->stage, $stage);
+        }
+
         $letterData = new LetterData(
-            subsidy: $subsidy,
+            subsidy: $subsidyVersion->subsidy,
             stages: $stages,
-            createdAt: new DateTimeImmutable(),
-            contactEmailAddress: 'tester@rdobeheer.nl',
+            createdAt: new CarbonImmutable(),
+            contactEmailAddress: 'tester@irealisatie.nl',
             reference: '123456789',
-            submittedAt: new DateTimeImmutable(),
+            submittedAt: new CarbonImmutable(),
             fileManager: $this->fileManager
         );
 
-        $pdfContent = $this->letterService->generatePDFLetter($template, $letterData);
-        file_put_contents(storage_path('test.pdf'), $pdfContent);
+        $pdfContent = $this->letterService->generatePDFLetter($transitionMessage->content_pdf, $letterData);
+
+        $fileNamePrefix = sprintf(
+            'test-pdf-%s-%s',
+            Str::slug($subsidyVersionChoices[$chosenSubsidyVersionId]),
+            Str::slug($transitionMessageChoices[$chosenTransitionMessageId])
+        );
+        $fileName = tempnam(sys_get_temp_dir(), $fileNamePrefix . '-') . '.pdf';
+        $result = file_put_contents($fileName, $pdfContent);
+        if (!$result) {
+            $this->error('Failed to write PDF to ' . $fileName);
+            return;
+        }
+
+        $this->info('PDF written to ' . $fileName);
+
+        // For local development with Laravel Sail, move the PDF to the storage directory
+        if (env('LARAVEL_SAIL') !== null) {
+            $newFileName = storage_path($fileNamePrefix . '.pdf');
+            rename($fileName, $newFileName);
+            $this->info('PDF moved to ' . $newFileName);
+        }
+    }
+    protected function fakeLetterStage(): LetterStageData
+    {
+        return new class extends LetterStageData {
+            public function get($key, $default = null): ?ApplicationStageAnswer
+            {
+                return new ApplicationStageAnswer($key, $default ?? '{' . $key . '}');
+            }
+        };
+    }
+
+    protected function getSubsidyVersionChoices(Collection $subsidyVersions): array
+    {
+        return $subsidyVersions->mapWithKeys(function (SubsidyVersion $version) {
+            return [$version->id => $version->subsidy->code . ' - v' . $version->version];
+        })->toArray();
     }
 }

@@ -6,20 +6,21 @@
 
     <h2>Besluit</h2>
     <p>Uw aanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
+    <p>&nbsp;</p>
 
     <h2>Motivatie</h2>
 
-    {if $content->stage1->eductionType === 'Primair onderwijs'}
-    <p>Uw aanvraag is beoordeeld aan de hand van de criteria uit artikel 6 en 7 van de Regeling. </p>
+    {if $content->stage1->educationType === 'Primair onderwijs'}
+    <p>Uw aanvraag is beoordeeld aan de hand van de criteria uit artikel 6 en 7 van de Regeling.</p>
     {/if}
 
-    {if $content->stage1->eductionType === 'Voorgezet onderwijs'}
+    {if $content->stage1->educationType === 'Voorgezet onderwijs'}
     <p>Uw aanvraag is beoordeeld aan de hand van de criteria uit artikel 3 en 6 van de Regeling.</p>
     {/if}
 
     {if $content->stage2->firstAssessmentRejectedNote}
-    <p>Uw aanvraag voldoet niet aan de volgende voorwaarde(n):<<br/>>
-    {$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
+    <p>Uw aanvraag voldoet niet aan de volgende voorwaarde(n):</p>
+    <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
     {/if}
 {/block}
 
@@ -33,7 +34,7 @@
         <br/>
         <img class="signature" alt="handtekening" src="{$content->getSignature('vws_dusi_signature.jpg')|dataStream}" />
         <br/>
-        C.H. van der Schaaf
+        J. Kraaijeveld
     </p>
 {/block}
 

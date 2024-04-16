@@ -1,12 +1,43 @@
 [{
     "if": {
+        "required": ["validationResult"],
         "properties": {
-            "hasAlimony": {
-                "const": "Ja"
+            "validationResult": {
+                "type": "object",
+                "required": ["bankAccountNumber"],
+                "properties": {
+                    "bankAccountNumber": {
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "object",
+                                    "required": ["id"],
+                                    "properties": {
+                                        "id": {
+                                            "const": "validationSurePayError"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         }
     },
     "then": {
-        "required": ["alimonyAmount"]
+        "required": ["bankStatement"]
+    }
+},{
+    "if": {
+        "properties": {
+            "isSingleParentFamily": {
+                "const": "Nee"
+            }
+        }
+    },
+    "then": {
+        "required": ["annualIncomeParentB"]
     }
 }]

@@ -53,7 +53,7 @@ class PCZMSeeder extends Seeder
             'id' => self::PCZM_VERSION_UUID,
             'subsidy_id' => self::PCZM_UUID,
             'version' => 1,
-            'status' => VersionStatus::Published,
+            'status' => VersionStatus::Archived,
             'created_at' => '2023-08-31',
             'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/zorgmedewerkers-met-langdurige-post-covid-klachten',
             'contact_mail_address' => 'dienstpostbus@minvws.nl',

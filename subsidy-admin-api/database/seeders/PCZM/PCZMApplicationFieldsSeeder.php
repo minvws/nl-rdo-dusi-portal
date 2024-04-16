@@ -145,6 +145,18 @@ class PCZMApplicationFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
+            code: 'bankStatement',
+            title: 'Bankafschrift',
+            isRequired: false,
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createUploadField(
+            subsidyStageId: PCZMSubsidyStagesSeeder::PCZM_STAGE_1_UUID,
             code: 'certifiedEmploymentDocument',
             title: 'Gewaarmerkt verzekeringsbericht',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],

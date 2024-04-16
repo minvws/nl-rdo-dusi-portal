@@ -63,7 +63,7 @@ class FileValidatorTest extends TestCase
         $fileValidator = new FileValidator(
             clamAvService: new ClamAvService(enabled: false),
             logger: $this->mock(LoggerInterface::class, function (MockInterface $mock) {
-                $mock->shouldReceive('debug')->with('Skipping ClamAV scan because skipValidation is set to true');
+                $mock->shouldReceive('warning')->with('Skipping ClamAV scan because ClamAV is not enabled.');
             }),
             translator: $this->translator,
         );

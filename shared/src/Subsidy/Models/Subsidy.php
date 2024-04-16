@@ -28,6 +28,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
  * @property boolean $is_open_for_new_applications
  * @property Collection<SubsidyVersion> $subsidyVersions
  * @property SubsidyVersion $publishedVersion
+ * @property boolean $allow_multiple_applications
  * @method static SubsidyVersion|Builder publishedVersion()
  */
 class Subsidy extends Model
@@ -72,7 +73,7 @@ class Subsidy extends Model
      */
     public function publishedVersion(): HasOne
     {
-        return $this->hasOne(SubsidyVersion::class)->published();
+        return $this->hasOne(SubsidyVersion::class)->orderedByVersion()->published();
     }
 
     protected static function newFactory(): SubsidyFactory

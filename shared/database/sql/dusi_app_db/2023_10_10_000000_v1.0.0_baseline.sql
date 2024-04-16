@@ -1487,6 +1487,6 @@ ALTER TABLE ONLY public.subsidy_versions
 CREATE ROLE dusi_dba;
 
 CREATE ROLE "dpw-dusi" WITH LOGIN;
-CREATE ROLE "backend-dusi" WITH LOGIN;
+CREATE ROLE "backend_dusi" WITH LOGIN;
 CREATE ROLE "user-admin-dusi" WITH LOGIN;
 CREATE ROLE "assessment-web-dusi" WITH LOGIN;

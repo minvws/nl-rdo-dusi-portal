@@ -11,22 +11,21 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Xenolope\Quahog\Client;
 use Xenolope\Quahog\Result;
 
 class ClamAvRuleTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testEnabled(): void
+    public function testClamAvNotEnabled(): void
     {
         $clamAvService = Mockery::mock(ClamAvService::class);
         $clamAvService->expects('enabled')
             ->andReturn(false);
 
         $logger = Mockery::mock(LoggerInterface::class);
-        $logger->expects('debug')
-            ->with('Skipping ClamAV scan because skipValidation is set to true');
+        $logger->expects('warning')
+            ->with('Skipping ClamAV scan because ClamAV is not enabled.');
 
         $rule = new ClamAv($clamAvService, $logger);
         $rule->validate('test', null, function ($message) {
@@ -61,16 +60,12 @@ class ClamAvRuleTest extends TestCase
         $resultMock->expects('isOk')
             ->andReturn(true);
 
-        $clientMock = Mockery::mock(Client::class);
-        $clientMock->expects('scanFile')
-            ->with($uploadedFile->getPathname())
-            ->andReturn($resultMock);
-
         $clamAvService = Mockery::mock(ClamAvService::class);
         $clamAvService->expects('enabled')
             ->andReturn(true);
-        $clamAvService->expects('getClamAvClient')
-            ->andReturn($clientMock);
+        $clamAvService->expects('scanFile')
+            ->with($uploadedFile->getPathname())
+            ->andReturn($resultMock);
 
         $rule = new ClamAv($clamAvService, $logger);
         $rule->validate('test', $uploadedFile, function ($message) {
@@ -86,7 +81,7 @@ class ClamAvRuleTest extends TestCase
         $uploadedFile = $tempFile->getUploadedFile();
 
         $logger = Mockery::mock(LoggerInterface::class);
-        $logger->expects('info')
+        $logger->expects('notice')
             ->with('ClamAV scan failed', [
                 'failed' => true,
                 'error' => false,
@@ -106,16 +101,12 @@ class ClamAvRuleTest extends TestCase
         $resultMock->expects('getReason')
             ->andReturn('A virus found');
 
-        $clientMock = Mockery::mock(Client::class);
-        $clientMock->expects('scanFile')
-            ->with($uploadedFile->getPathname())
-            ->andReturn($resultMock);
-
         $clamAvService = Mockery::mock(ClamAvService::class);
         $clamAvService->expects('enabled')
             ->andReturn(true);
-        $clamAvService->expects('getClamAvClient')
-            ->andReturn($clientMock);
+        $clamAvService->expects('scanFile')
+            ->with($uploadedFile->getPathname())
+            ->andReturn($resultMock);
 
         $rule = new ClamAv($clamAvService, $logger);
         $rule->validate('test', $uploadedFile, function ($message) {

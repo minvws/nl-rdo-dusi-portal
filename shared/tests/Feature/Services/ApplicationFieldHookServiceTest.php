@@ -58,23 +58,26 @@ class ApplicationFieldHookServiceTest extends TestCase
     public static function fieldHookJointIncomeDataProvider(): array
     {
         return [
-            'hasAlimony: Ja, Alimony: 1000, income1: 1000, income2: 2000, expectedIncome: 4000' => [
-                'hasAlimony' => 'Ja',
-                'alimonyAmount' => 1000,
-                'income1' => 1000,
-                'income2' => 2000,
-                'expectedIncome' => 4000,
-            ],
-            'hasAlimony: Nee, Alimony: 1000, income1: 1000, income2: 2000, expectedIncome: 3000' => [
-                'hasAlimony' => 'Nee',
-                'alimonyAmount' => 1000,
+            'single income: nee, income1: 1000, income2: 2000, expectedIncome: 4000' => [
+                'isSingleParentFamily' => 'Nee',
                 'income1' => 1000,
                 'income2' => 2000,
                 'expectedIncome' => 3000,
             ],
-            'hasAlimony: Nee, Alimony: null, income1: 1000, income2: null, expectedIncome: 1000' => [
-                'hasAlimony' => 'Nee',
-                'alimonyAmount' => null,
+            'single income: ja, income1: 1000, income2: 2000, expectedIncome: 1000' => [
+                'isSingleParentFamily' => 'Ja',
+                'income1' => 1000,
+                'income2' => 2000,
+                'expectedIncome' => 1000,
+            ],
+            'single income: nee, income1: 1000, income2: 2000, expectedIncome: 3000' => [
+                'isSingleParentFamily' => 'Nee',
+                'income1' => 1000,
+                'income2' => 2000,
+                'expectedIncome' => 3000,
+            ],
+            'single income: nee, income1: 1000, income2: null, expectedIncome: 1000' => [
+                'isSingleParentFamily' => 'Nee',
                 'income1' => 1000,
                 'income2' => null,
                 'expectedIncome' => 1000,
@@ -87,33 +90,20 @@ class ApplicationFieldHookServiceTest extends TestCase
      * @dataProvider fieldHookJointIncomeDataProvider
      */
     public function testCalculateJointIncomeField(
-        string $hasAlimony,
-        ?int $alimonyAmount,
+        string $isSingleParentFamily,
         int $income1,
         ?int $income2,
         int $expectedIncome
     ): void {
         $fieldValues = [
-            'hasAlimony' => new FieldValue(
+            'isSingleParentFamily' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                        'code' => 'hasAlimony',
-                        'type' => FieldType::Select,
-                        'params' => [
-                            'options' => ['Ja', 'Nee']
-                        ]
+                       'code' => 'isSingleParentFamily',
+                       'type' => FieldType::Select,
                     ]),
-                value: $hasAlimony,
-            ),
-            'alimonyAmount' => new FieldValue(
-                Field::factory()
-                    ->for($this->applicationStage->subsidyStage)
-                    ->create([
-                        'code' => 'alimonyAmount',
-                        'type' => FieldType::TextNumeric,
-                    ]),
-                value: $alimonyAmount,
+                value: $isSingleParentFamily,
             ),
             'annualIncomeParentA' => new FieldValue(
                 Field::factory()
@@ -190,15 +180,12 @@ class ApplicationFieldHookServiceTest extends TestCase
 
 
         $fieldValues = [
-            'hasAlimony' => new FieldValue(
+            'isSingleParentFamily' => new FieldValue(
                 Field::factory()
                     ->for($this->applicationStage->subsidyStage)
                     ->create([
-                        'code' => 'hasAlimony',
+                        'code' => 'isSingleParentFamily',
                         'type' => FieldType::Select,
-                        'params' => [
-                            'options' => ['Ja', 'Nee']
-                        ]
                     ]),
                 value: 'Nee',
             ),

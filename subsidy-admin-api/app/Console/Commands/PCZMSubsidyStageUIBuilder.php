@@ -46,26 +46,47 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
 
         $query = implode(PHP_EOL, array_filter([
             "UPDATE public.subsidy_stage_uis",
-            implode("," . PHP_EOL, array_filter([
-                $this->getSetQuery('input_ui', $inputUi),
-                $this->getSetQuery('view_ui', $viewUi),
-            ])),
+            $this->getSetQuery(array_filter([
+                'input_ui' => $inputUi,
+                'view_ui' => $viewUi,
+            ], mode: ARRAY_FILTER_USE_BOTH)),
             "WHERE id = '" . PCZMApplicationStageUISeeder::PCZM_STAGE1_V1_UUID . "';",
         ]));
 
         $this->info($query);
     }
 
-    protected function getSetQuery(string $column, mixed $value): ?string
+    /**
+     * @param array<string, mixed> $data
+     * @return string|null
+     * @throws JsonException
+     */
+    protected function getSetQuery(array $data): ?string
     {
-        if ($value === null) {
+        $numberOfItems = count($data);
+        if (count($data) === 0) {
             return null;
         }
 
-        if (is_array($value)) {
-            $value = json_encode($value, JSON_THROW_ON_ERROR);
+        $query = "SET ";
+
+        $index = 0;
+        foreach ($data as $column => $value) {
+            $index++;
+            if ($value === null) {
+                continue;
+            }
+            if (is_array($value)) {
+                $value = json_encode($value, JSON_THROW_ON_ERROR);
+            }
+            $value = str_replace("'", "''", $value);
+
+            $query .= "$column = '$value'";
+            if ($index !== $numberOfItems) {
+                $query .= "," . PHP_EOL;
+            }
         }
 
-        return  "SET $column = '$value'";
+        return  $query;
     }
 }

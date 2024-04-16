@@ -30,6 +30,44 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-252: Increased grant notification for PCZM v1
+
+After running the the migration script '2024_04_02_152701_add_stage_pczm_v1.sql', run the following artisan command
+from the public folder in the assessment-api app (assuming the artisan script is in the root folder of the
+assessment-api):
+
+php ../artisan pczm:increase-grant
+
+## Release 2.6.0
+
+### DUSI-252 New PCZM version
+
+This adds a new subsidy version for PCZM, run `shared/database/sql/dusi_app_db/2024_04_09_132315_switch_pczm_subsidy_version.sql` for this. This will also archive the first version of PCZM.
+
+PR: <https://github.com/minvws/nl-rdo-dusi-portal/pull/1589>
+
+### DUSI-1570 AIGTfixes
+
+Please run `shared/database/sql/dusi_app_db/2024_04_09_131744_aigt_fix.sql`.
+
+PR: <https://github.com/minvws/nl-rdo-dusi-portal/pull/1586>
+
+### DUSI-1569 DAMU fixes
+
+Please run `shared/database/sql/dusi_app_db/2024_04_09_160001_damu_fix.sql`.
+
+PR: <https://github.com/minvws/nl-rdo-dusi-portal/pull/1587>
+
+### DUSI-638 Cleanup command for draft and old applications
+
+This will add a command for cleaning up `draft` applications and applications that are older then 10 years. Please add `artisan app:cleanup-applications` to a cron job.
+
+This will also introduce a new table for keeping track of the application references. Please run `shared/database/sql/dusi_app_db/2024_03_25_000000_fill_reference_table.sql`.
+
+PR: <https://github.com/minvws/nl-rdo-dusi-portal/pull/1515>
+
+## Release 2.4.3
+
 ### DUSI-1516 Remove btv stage transitions usages
 
 For the test and acceptance environment, run the following sql queries before migrating:

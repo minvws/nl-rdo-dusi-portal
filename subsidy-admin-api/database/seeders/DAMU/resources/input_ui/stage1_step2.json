@@ -153,6 +153,69 @@
                                 "tip": "Staat u onder bewind? Vermeld dan het IBAN van uw beheerrekening.",
                                 "validation": ["onValid"]
                             }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/bankStatement",
+                            "label": "Bankafschrift",
+                            "options": {
+                                "accept": "image/jpeg,image/png,application/pdf",
+                                "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "De ingevoerde naam rekeninghouder en IBAN konden niet worden geverifieerd.\n\nOp de kopie van een recent bankafschrift moeten het rekeningnummer en uw naam zichtbaar zijn. Adres en datum mogen ook, maar zijn niet verplicht. Maak de andere gegevens onleesbaar. U mag ook een afdruk van internet bankieren gebruiken of een kopie van uw bankpas. Zie ook dit <a href=\"https://www.dus-i.nl/documenten/publicaties/2018/07/30/voorbeeld-bankafschrift\" target=\"_blank\">voorbeeld</a>.",
+                                "validation": ["onInput"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#",
+                                    "schema": {
+                                        "anyOf": [
+                                            {
+                                                "required": [
+                                                    "validationResult"
+                                                ],
+                                                "properties": {
+                                                    "validationResult": {
+                                                        "type": "object",
+                                                        "required": [
+                                                            "bankAccountNumber"
+                                                        ],
+                                                        "properties": {
+                                                            "bankAccountNumber": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "anyOf": [
+                                                                        {
+                                                                            "type": "object",
+                                                                            "required": ["id"],
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "const": "validationSurePayError"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "type": "object",
+                                                                            "required": ["id"],
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "const": "validationSurePayWarning"
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
                         }
                     ]
                 }
@@ -168,36 +231,21 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/isSingleParentFamily",
-                            "label": "Is er sprake van een eenouder gezin?",
+                            "label": "Is er sprake van een eenoudergezin?",
                             "options": {
                                 "format": "radio",
-                                "placeholder": ""
+                                "placeholder": "",
+                                "tip": "Er is alleen sprake van een eenoudergezin als een van de ouders overleden is of als een van de ouders volledig uit beeld is.",
+                                "remoteAction": ["onValid"]
                             }
                         },
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/hasAlimony",
-                            "label": "Alimentatie",
+                            "label": "Ontvangt u kinderalimentatie?",
                             "options": {
                                 "format": "radio",
-                                "placeholder": "",
-                                "remoteAction": ["onChange"]
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/alimonyAmount",
-                            "label": "Alimentatiebedrag",
-                            "options": {
-                                "placeholder": "",
-                                "remoteAction": ["onBlur"]
-                            },
-                            "rule": {
-                                "effect": "SHOW",
-                                "condition": {
-                                    "scope": "#/properties/hasAlimony",
-                                    "schema": { "const": "Ja" }
-                                }
+                                "placeholder": ""
                             }
                         },
                         {
@@ -216,6 +264,13 @@
                             "options": {
                                 "placeholder": "",
                                 "remoteAction": ["onBlur"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/isSingleParentFamily",
+                                    "schema": { "const": "Nee" }
+                                }
                             }
                         },
                         {
@@ -300,16 +355,17 @@
                             "options": {
                                 "format": "radio",
                                 "placeholder": "",
-                                "remoteAction": ["onBlur"]
+                                "remoteAction": ["onValid"]
                             }
                         },
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/damuSchoolPrimary",
-                            "label": "DAMU school",
+                            "label": "DAMU-school",
                             "options": {
                                 "format": "select",
-                                "placeholder": ""
+                                "placeholder": "",
+                                "remoteAction": ["onValid"]
                             },
                             "rule": {
                                 "effect": "SHOW",
@@ -322,16 +378,35 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/damuSchoolSecondary",
-                            "label": "DAMU school",
+                            "label": "DAMU-school",
                             "options": {
                                 "format": "select",
-                                "placeholder": ""
+                                "placeholder": "",
+                                "remoteAction": ["onValid"]
                             },
                             "rule": {
                                 "effect": "SHOW",
                                 "condition": {
                                     "scope": "#/properties/educationType",
                                     "schema": { "const": "Voortgezet onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolAddress",
+                            "label": "DAMU-school adres",
+                            "options": {
+                                "placeholder": "",
+                                "readonly": true
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#",
+                                    "schema": {
+                                        "required": ["educationType"]
+                                    }
                                 }
                             }
                         }
@@ -349,25 +424,17 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/travelDistanceSingleTrip",
-                            "label": "Reisafstand enkele reis",
+                            "label": "Reisafstand enkele reis (in kilometers)",
                             "options": {
                                 "placeholder": "",
-                                "remoteAction": ["onBlur"]
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/totalDistance",
-                            "label": "Totaal aantal kilometers",
-                            "options": {
-                                "readonly": true,
-                                "placeholder": ""
+                                "remoteAction": ["onBlur"],
+                                "tip": "Gebruik de <a target='_blank' href='https://www.anwb.nl/verkeer/routeplanner'>ANWB-routeplanner</a> met de optie ‘snelste route’. U mag geen andere routeplanner gebruiken. Kies als route het woonadres naar de DAMU-school. Schakel de optie 'Route op basis van actueel verkeer' uit en klik op 'Herbereken route'."
                             }
                         },
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/travelExpenseReimbursement",
-                            "label": "Kilometervergoeding",
+                            "label": "Vergoeding per kilometer",
                             "options": {
                                 "readonly": true,
                                 "placeholder": ""
@@ -376,7 +443,7 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/requestedSubsidyAmount",
-                            "label": "Gevraagde subsidiebedrag",
+                            "label": "Gevraagd subsidiebedrag",
                             "options": {
                                 "readonly": true,
                                 "placeholder": ""

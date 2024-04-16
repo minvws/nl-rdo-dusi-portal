@@ -15,18 +15,22 @@ enum ApplicationStatus: string
 
     case RequestForChanges = 'requestForChanges';
 
+    public const NEW_APPLICATION_ALLOWED_STATUSES = [self::Rejected, self::Reclaimed];
+    public const EDIT_ALLOWED_STATUSES = [self::Draft, self::RequestForChanges];
+    public const EDIT_AFTER_CLOSURE_ALLOWED_STATUSES = [self::RequestForChanges];
+
     public function isEditableForApplicant(): bool
     {
-        return in_array($this, [ApplicationStatus::Draft, ApplicationStatus::RequestForChanges], true);
+        return in_array($this, self::EDIT_ALLOWED_STATUSES, true);
     }
 
     public function isEditableForApplicantAfterClosure(): bool
     {
-        return $this === ApplicationStatus::RequestForChanges;
+        return in_array($this, self::EDIT_AFTER_CLOSURE_ALLOWED_STATUSES, true);
     }
 
     public function isNewApplicationAllowed(): bool
     {
-        return $this === ApplicationStatus::Rejected || $this === ApplicationStatus::Reclaimed;
+        return in_array($this, self::NEW_APPLICATION_ALLOWED_STATUSES, true);
     }
 }

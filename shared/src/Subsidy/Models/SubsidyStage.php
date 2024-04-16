@@ -30,6 +30,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
  * @property-read SubsidyVersion $subsidyVersion
  * @property-read Collection<int, SubsidyStageTransition> $subsidyStageTransitions
  * @property-read Collection<int, SubsidyStageHash> $subsidyStagesHashes
+ * @property-read Collection<int, Field> $fields
  * @property-read Field|null $internalNoteField
  */
 class SubsidyStage extends Model

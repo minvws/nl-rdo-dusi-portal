@@ -8,26 +8,23 @@ class AnnualJointIncomeCalculator
 {
     public static function calculate(array $fieldValues): int
     {
-        return self::getAlimonyAmount($fieldValues) +
-            self::getannualIncomeParentA($fieldValues) +
-            self::getannualIncomeParentB($fieldValues);
+        return self::getAnnualIncomeParentA($fieldValues) +
+            self::getAnnualIncomeParentB($fieldValues);
     }
 
-    private static function getannualIncomeParentA(array $fieldValues): int
+    private static function getAnnualIncomeParentA(array $fieldValues): int
     {
         return (int)(is_numeric($fieldValues['annualIncomeParentA']->value) ?
             $fieldValues['annualIncomeParentA']->value : 0);
     }
 
-    private static function getannualIncomeParentB(array $fieldValues): int
+    private static function getAnnualIncomeParentB(array $fieldValues): int
     {
+        if ($fieldValues['isSingleParentFamily']->value === 'Ja') {
+            return  0;
+        }
+
         return (int)(is_numeric($fieldValues['annualIncomeParentB']->value) ?
             $fieldValues['annualIncomeParentB']->value : 0);
-    }
-
-    private static function getAlimonyAmount(array $fieldValues): int
-    {
-        return (int)($fieldValues['hasAlimony']->value === 'Ja' && is_numeric($fieldValues['alimonyAmount']->value) ?
-            $fieldValues['alimonyAmount']->value : 0);
     }
 }

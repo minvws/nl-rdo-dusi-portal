@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\AndCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
 class AssessmentFieldsSeeder extends Seeder
@@ -36,8 +37,10 @@ class AssessmentFieldsSeeder extends Seeder
             title: 'Gecontroleerd',
             options: [
                 'Woont de aanvrager niet in Caribisch Nederland?',
-                'Is het inschrijvingsbewijs bij de DAMU school aangeleverd?',
-                'Is naam van de leerling op het inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
+                'Is het inschrijvingsbewijs van de DAMU-school aangeleverd?',
+                'Is naam van de leerling op het DAMU inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
+                'Is het inschrijvingsbewijs van de HBO school aangeleverd?',
+                'Is naam van de leerling op het HBO inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
                 'Is een recente inkomensverklaring (van beide ouders) aangeleverd (maximaal 2 kalenderjaren oud)?',
                 'Zijn onnodige gegevens onleesbaar gemaakt?'
             ],
@@ -47,7 +50,7 @@ class AssessmentFieldsSeeder extends Seeder
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code: 'isMinimumTravelDistanceMet',
-            title: 'Is voldaan aan de minimale reisafstand tussen het woonadres en de DAMU school, volgens de ANWB routeplanner?',
+            title: 'Is voldaan aan de minimale reisafstand tussen het woonadres en de DAMU-school, volgens de ANWB routeplanner?',
             options: ['Ja', 'Nee'],
             isRequired: false,
         );
@@ -87,6 +90,7 @@ class AssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
@@ -96,12 +100,13 @@ class AssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code:           'businessPartnerNumber',
-            title:          'ZP-nummer',
+            title:          'Zakenpartnernummer',
             inputMode:      'numeric',
             isRequired:     false,
             params:         ['minimum' => 0],
@@ -177,7 +182,7 @@ class AssessmentFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code:           'amount',
-            title:          'Bedrag',
+            title:          'Toegekend bedrag',
             isRequired:     true,
             requiredCondition: new AndCondition([
                 new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),

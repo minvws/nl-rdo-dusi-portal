@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
@@ -122,10 +123,22 @@ class ApplicationFieldsSeeder extends Seeder
             params:         ['maxLength' => 50],
         );
 
+        $this->createUploadField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code: 'bankStatement',
+            title: 'Bankafschrift',
+            isRequired: false,
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'isSingleParentFamily',
-            title:          'Is er sprake van een eenouder gezin?',
+            title:          'Is er sprake van een eenoudergezin?',
             options:        ['Ja', 'Nee'],
         );
 
@@ -134,15 +147,6 @@ class ApplicationFieldsSeeder extends Seeder
             code:           'hasAlimony',
             title:          'Alimentatie?',
             options:        ['Ja', 'Nee'],
-        );
-
-        $this->createTextField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'alimonyAmount',
-            title:          'Alimentatiebedrag',
-            inputMode:      'numeric',
-            isRequired:     false,
-            requiredCondition: new ComparisonCondition(1, 'hasAlimony', Operator::Identical, 'Ja'),
         );
 
         $this->createTextField(
@@ -158,6 +162,7 @@ class ApplicationFieldsSeeder extends Seeder
             title:          'Jaarinkomen ouder 2',
             inputMode:      'numeric',
             isRequired:     false,
+            requiredCondition: new ComparisonCondition(1, 'isSingleParentFamily', Operator::Identical, 'Nee'),
         );
 
         $this->createTextField(
@@ -167,6 +172,7 @@ class ApplicationFieldsSeeder extends Seeder
             inputMode:      'numeric',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
@@ -207,7 +213,6 @@ class ApplicationFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'residentialPostalCode',
             title:          'Postcode',
-            isRequired:     false,
         );
 
         $this->createTextField(
@@ -227,20 +232,20 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'damuSchoolPrimary',
-            title:          'DAMU school',
-            options:        ['Amsterdam - Olympiaschool', 'Den Haag - School voor jong talent', 'Rotterdam - Nieuwe Park Rozenburgschool'],
+            title:          'DAMU-school',
+            options:        ['Amsterdam - Olympiaschool', 'Den Haag - School voor Jong Talent', 'Rotterdam - Nieuwe Park Rozenburgschool'],
             isRequired:     false,
         );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'damuSchoolSecondary',
-            title:          'DAMU school',
+            title:          'DAMU-school',
             options:        [
                 'Amsterdam - Gerrit van der Veen College',
                 'Amsterdam - Individueel Voortgezet Kunstzinnig Onderwijs (IVKO)',
                 'Arnhem - Beekdal Lyceum',
-                'Den Haag - Interfaculteit School voor jong talent',
+                'Den Haag - Interfaculteit School voor Jong Talent',
                 'Enschede - Het Stedelijk Lyceum, locatie Kottenpark',
                 'Haren - Zernike College',
                 'Maastricht - Bonnefanten College',
@@ -254,19 +259,18 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'travelDistanceSingleTrip',
-            title:          'Reisafstand enkele reis',
-            inputMode:      'float',
-            params:         ['minimum' => 1, 'maximum' => 9999],
+            code:           'damuSchoolAddress',
+            title:          'Adres DAMU-school',
+            isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'totalDistance',
-            title:          'Totaal aantal kilometers',
+            code:           'travelDistanceSingleTrip',
+            title:          'Reisafstand enkele reis (in kilometers)',
             inputMode:      'float',
-            params:         ['readonly' => true],
-            isRequired:     false,
+            params:         ['minimum' => 1, 'maximum' => 9999],
         );
 
         $this->createTextField(
@@ -276,6 +280,7 @@ class ApplicationFieldsSeeder extends Seeder
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createTextField(
@@ -285,6 +290,7 @@ class ApplicationFieldsSeeder extends Seeder
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
+            source:         FieldSource::Calculated,
         );
 
         $this->createUploadField(
@@ -299,18 +305,8 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'ANWBRouteCard',
-            title:          'ANWB routeplanner',
-            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
-            minItems:       1,
-            maxItems:       20,
-            maxFileSize:    20971520
-        );
-
-        $this->createUploadField(
-            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'proofOfRegistrationDAMUSchool',
-            title:          'Inschrijfbewijs DAMU school',
+            title:          'Inschrijfbewijs DAMU-school',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
@@ -319,7 +315,7 @@ class ApplicationFieldsSeeder extends Seeder
 
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
-            code:           'proofOfRegistrationRegularSchool',
+            code:           'proofOfRegistrationHboCollaborationPartner',
             title:          'Inschrijfbewijs reguliere school',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
