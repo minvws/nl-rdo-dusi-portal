@@ -6,7 +6,7 @@
 
 -- Cleanup alternate from with dashes
 -- DROP ROLE IF EXISTS "dpw-dusi";
--- DROP ROLE IF EXISTS "backend-dusi";
+-- DROP ROLE IF EXISTS "backend_dusi";
 -- DROP ROLE IF EXISTS "user-admin-dusi";
 -- DROP ROLE IF EXISTS "assessment-web-dusi";
 

@@ -9,14 +9,14 @@ INSERT INTO public.deploy_releases(version) values ('v1.0.0');
 ALTER TABLE public.deploy_releases OWNER TO dusi_dba;
 
 GRANT SELECT ON public.deploy_releases TO  "dpw-dusi";
-GRANT SELECT ON public.deploy_releases TO  "backend-dusi";
+GRANT SELECT ON public.deploy_releases TO  "backend_dusi";
 GRANT SELECT ON public.deploy_releases TO  "user-admin-dusi";
 
 GRANT ALL PRIVILEGES ON DATABASE dusi_app_db to "dpw-dusi";
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to "dpw-dusi";
 
-GRANT ALL PRIVILEGES ON DATABASE dusi_app_db to "backend-dusi";
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to "backend-dusi";
+GRANT ALL PRIVILEGES ON DATABASE dusi_app_db to "backend_dusi";
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to "backend_dusi";
 
 GRANT ALL PRIVILEGES ON DATABASE dusi_app_db to "assessment-web-dusi";
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to "assessment-web-dusi";
