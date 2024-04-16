@@ -16,6 +16,7 @@ class PCZMSubsidyStagesSeeder extends Seeder
     public const PCZM_STAGE_3_UUID = '61436439-E337-4986-BC18-57138E2FAB65';
     public const PCZM_STAGE_4_UUID = '7CEB3C91-5C3B-4627-B9EF-A46D5FE2ED68';
     public const PCZM_STAGE_5_UUID = '85ED726E-CDBE-444E-8D12-C56F9BED2621';
+    public const PCZM_STAGE_6_UUID = 'ef2238cf-a8ce-4376-ab2e-e821bc43ddb5';
 
     /**
      * Run the database seeds.
@@ -64,6 +65,15 @@ class PCZMSubsidyStagesSeeder extends Seeder
             'assessor_user_role' => Role::ImplementationCoordinator->value,
             'stage' => 5,
             'internal_note_field_code' => 'coordinatorImplementationInternalNote'
+        ]);
+        DB::table('subsidy_stages')->insert([
+            'id' => self::PCZM_STAGE_6_UUID,
+            'subsidy_version_id' => PCZMSeeder::PCZM_VERSION_UUID,
+            'title' => 'Informeren over verhoging van toegekend bedrag',
+            'subject_role' => SubjectRole::Assessor->value,
+            'assessor_user_role' => Role::ImplementationCoordinator->value,
+            'stage' => 6,
+            'internal_note_field_code' => 'increasedGrantInternalNote'
         ]);
     }
 }

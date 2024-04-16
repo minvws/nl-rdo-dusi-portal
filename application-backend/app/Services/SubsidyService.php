@@ -20,6 +20,8 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConcepts;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Throwable;
 
@@ -124,5 +126,10 @@ class SubsidyService
         }
 
         return $subsidy->allow_multiple_applications;
+    }
+
+    public function getStageTransitionsForSubsidyStage(SubsidyStage $selectedCurrentSubsidyStage): Collection
+    {
+        return SubsidyStageTransition::where('current_subsidy_stage_id', $selectedCurrentSubsidyStage->id)->get();
     }
 }

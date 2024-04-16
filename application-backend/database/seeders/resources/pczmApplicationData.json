@@ -13,6 +13,13 @@
         "email": "e@mail.com",
         "bankAccountHolder": "Naam rekeninghouder",
         "bankAccountNumber": "NL62ABNA9999841479",
+        "bankStatement": [
+            {
+                "id": "85046457-7794-47dd-81be-edc56aef0a0f",
+                "name": "Naam rekeninghouder",
+                "mimeType": "application/pdf"
+            }
+        ],
         "country": "Nederland",
         "certifiedEmploymentDocument": [
             {

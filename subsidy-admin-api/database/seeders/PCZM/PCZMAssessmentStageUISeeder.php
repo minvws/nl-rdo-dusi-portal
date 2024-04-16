@@ -13,6 +13,7 @@ class PCZMAssessmentStageUISeeder extends Seeder
     public const PCZM_V1_STAGE3_UI_UUID = '44914BC7-9E4F-4B79-9498-01ADBE5C4CFE';
     public const PCZM_V1_STAGE4_UI_UUID = 'E819DF05-03B7-4F37-B315-7F62339FD067';
     public const PCZM_V1_STAGE5_UI_UUID = 'C51302F6-E131-45FF-8D4B-F4FF4A39B52F';
+    public const PCZM_V1_STAGE6_UI_UUID = '0521b7fd-fd90-4fbe-af16-c2df2d21a0b0';
 
     public function run(): void
     {
@@ -20,6 +21,7 @@ class PCZMAssessmentStageUISeeder extends Seeder
         $this->secondAssessment();
         $this->internalAssessment();
         $this->implementationCoordinatorAssessment();
+        $this->increasedGrantStage();
     }
 
     private function buildViewSchema(int $stage): array
@@ -659,6 +661,42 @@ class PCZMAssessmentStageUISeeder extends Seeder
         DB::table('subsidy_stage_uis')->insert([
             'id' => self::PCZM_V1_STAGE5_UI_UUID,
             'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_5_UUID,
+            'version' => 1,
+            'status' => 'published',
+            'input_ui' => json_encode($input_ui),
+            'view_ui' => json_encode($view_ui)
+        ]);
+    }
+
+    public function increasedGrantStage(): void
+    {
+        $view_ui = $this->buildViewSchema(6);
+
+        $input_ui = [
+            "type" => "FormGroupControl",
+            "options" => [
+                "section" => true,
+                "group" => true
+            ],
+            "elements" => [
+                [
+                    "type" => "VerticalLayout",
+                    "elements" => [
+                        [
+                            "type" => "CustomControl",
+                            "scope" => "#/properties/increasedGrantInternalNote",
+                            "options" => [
+                                "format" => "textarea"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        DB::table('subsidy_stage_uis')->insert([
+            'id' => self::PCZM_V1_STAGE6_UI_UUID,
+            'subsidy_stage_id' => PCZMSubsidyStagesSeeder::PCZM_STAGE_6_UUID,
             'version' => 1,
             'status' => 'published',
             'input_ui' => json_encode($input_ui),
