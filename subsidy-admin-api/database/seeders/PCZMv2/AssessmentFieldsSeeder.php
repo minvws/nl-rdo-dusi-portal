@@ -77,7 +77,7 @@ class AssessmentFieldsSeeder extends Seeder
                 'Niet van toepassing',
                 'Op het verzekeringsbericht staat vermeld dat de aanvrager een WIA-uitkering ontvangt',
                 'De ingangsdatum van de WIA in de WIA-beslissing komt overeen met de ingangsdatum op het verzekeringsbericht',
-                'De eerste ziektedag ligt in de periode van de eerste golf (heel 2020)',
+                'De eerste ziektedag ligt in de periode van 1 maart 2020 tot 31 december 2020',
             ],
             isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
@@ -89,7 +89,7 @@ class AssessmentFieldsSeeder extends Seeder
             title:           'Geen WIA-uitkering met als reden dat meer dan 65% verdiend kan worden',
             options:         [
                 'Niet van toepassing',
-                'De datum waarop de WIA-uitkering niet wordt ontvangen ligt in de periode van 1 maart 2022 tot 1 september 2022 (104 weken wachttijd)',
+                'De datum waarop de WIA-uitkering niet wordt ontvangen ligt in de periode van 1 maart 2022 tot 1 februari 2023 (104 weken wachttijd)',
             ],
             isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
