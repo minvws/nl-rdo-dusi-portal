@@ -20,6 +20,7 @@ class PCZMv2Seeder extends Seeder
      */
     public function run(): void
     {
+        $this->updateSubsidy();
         $this->createSubsidyVersion();
 
         $this->call(SubsidyStagesSeeder::class);
@@ -33,6 +34,16 @@ class PCZMv2Seeder extends Seeder
         $this->call(SubsidyStageTransitionsSeeder::class);
         $this->call(SubsidyStageTransitionMessageSeeder::class);
     }
+
+    public function updateSubsidy(): void
+    {
+        DB::table('subsidies')
+            ->where('id', PCZMSeeder23::PCZM_UUID)
+            ->update([
+                'description' => "De regeling Zorgmedewerkers met langdurige post-COVID klachten richt zich op zorgmedewerkers die tijdens de eerste golf van de COVID-19 pandemie besmet zijn geraakt met COVID-19 en sindsdien langdurige post-COVID klachten hebben. Deze klachten hebben grote invloed op het werk en het privéleven van deze zorgmedewerkers. Zij kunnen soms hun eigen werk als zorgmedewerker niet meer (volledig) doen. Voor deze specifieke groep zorgmedewerkers is een eenmalige financiële ondersteuning van €24.000 beschikbaar.",
+            ]);
+    }
+
 
     private function createSubsidyVersion(): void
     {
