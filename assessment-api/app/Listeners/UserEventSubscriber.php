@@ -40,7 +40,6 @@ readonly class UserEventSubscriber
             ->withData([
                 'userId' => $user->getAuthIdentifier(),
             ]));
-        dd("new login event");
     }
 
     public function handleUserLogout(Logout $event): void
