@@ -119,7 +119,9 @@
                         "fields": {
                             "WIA-Beslissing": "{wiaDecisionDocument}",
                             "WIA-Beslissing uitgesteld": "{isWiaDecisionPostponed}",
-                            "Toekenningsbrief (indien uitgesteld)": "{wiaDecisionPostponedLetter}"
+                            "Toekenningsbrief (indien uitgesteld)": "{wiaDecisionPostponedLetter}",
+                            "Eerste ziektedag buiten de periode van 1 maart 2020 tot en met 31 december": "{isWiaDecisionFirstSickDayOutsidePeriod}",
+                            "Bewijsstukken (eerste ziektedag buiten genoemde periode)": "{wiaFirstSickDayOutsidePeriodProof}"
                         }
                     }
                 }

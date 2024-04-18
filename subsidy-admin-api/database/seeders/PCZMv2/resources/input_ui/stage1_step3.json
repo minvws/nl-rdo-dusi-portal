@@ -72,6 +72,33 @@
                                     "schema": { "const": "Ja" }
                                 }
                             }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/isWiaDecisionFirstSickDayOutsidePeriod",
+                            "label": "Blijkt uit uw WIA-beslissing dat uw eerste ziektedag buiten de periode van 1 maart 2020 tot en met 31 december 2020 ligt?",
+                            "options": {
+                                "format": "radio"
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/wiaFirstSickDayOutsidePeriodProof",
+                            "label": "Onderbouwing eerste ziektedag buiten de periode",
+                            "options": {
+                                "accept": "image/jpeg,image/png,application/pdf",
+                                "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "Upload een document waarmee u kunt aantonen dat uw langdurige Post-COVID klachten toch het gevolg zijn van een vermoedelijke COVID-19 besmetting in de periode van 1 maart 2020 tot en met 31 december 2020. U kunt dit bijvoorbeeld onderbouwen met een verklaring van uw (bedrijfs)arts. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/isWiaDecisionFirstSickDayOutsidePeriod",
+                                    "schema": { "const": "Ja" }
+                                }
+                            }
                         }
                     ]
                 }

@@ -11,6 +11,17 @@
     }
 }, {
     "if": {
+        "properties": {
+            "isWiaDecisionFirstSickDayOutsidePeriod": {
+                "const": "Ja"
+            }
+        }
+    },
+    "then": {
+        "required": ["wiaFirstSickDayOutsidePeriodProof"]
+    }
+}, {
+    "if": {
         "anyOf": [
             {
                 "required": [
