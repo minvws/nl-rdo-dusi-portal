@@ -6,13 +6,17 @@ namespace MinVWS\DUSi\Assessment\API\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
+use Monolog\Logger;
 use MinVWS\DUSi\Shared\Application\Services\LetterService;
 use MinVWS\DUSi\Shared\Subsidy\Services\SubsidyFileManager;
 use MinVWS\Logging\Laravel\Models\AuditLog;
+use Monolog\Handler\StreamHandler;
 use SplFileObject;
 
 class MigrateAuditLogging extends Command implements PromptsForMissingInput
 {
+    private Logger $errorLogger;
+
     /**
      * The name and signature of the console command.
      *
@@ -42,34 +46,55 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
             $this->error('Audit logging file does not exist');
         }
 
-//        $ourPrivatKey = base64_decode($this->option('our-priv-nacl-key'));
-//        $theirPublicKey = base64_decode($this->option('their-pub-nacl-key'));
+        $logFilePath = getcwd() . DIRECTORY_SEPARATOR . 'error.log';
+        $this->errorLogger = new Logger('errorLogger');
+        $this->errorLogger->pushHandler(new StreamHandler($logFilePath, Logger::DEBUG));
 
         $ourPrivatKey = base64_decode('a/NBbsb96Kl0o7vGCYoWWMnvr+okSTWk7VuYPVF9PmM=');
         $theirPublicKey = base64_decode('q7qP8+ptuihG6fmwH3xXqPqg77Or5J3RG7nda4V3Gms=');
 
-        $decryption_keypair = sodium_crypto_box_keypair_from_secretkey_and_publickey(
+        $decryptionKeypair = sodium_crypto_box_keypair_from_secretkey_and_publickey(
             $ourPrivatKey,
             $theirPublicKey
         );
 
-        $bar = $this->output->createProgressBar($this->countLines($filePath));
+        $countLines = $this->countLines($filePath);
+        $bar = $this->output->createProgressBar($countLines);
         $bar->start();
 
         $file = new SplFileObject($filePath, 'r');
 
-        foreach ($file as $line) {
-            $this->handleLine($line, $decryption_keypair);
+        $successfullMigrations = 0;
+        iterator_apply($file, function (array|string|false $line) use (
+            $decryptionKeypair,
+            $bar,
+            &$successfullMigrations
+) {
+            if ($this->handleLine($line, $decryptionKeypair) === true) {
+                $successfullMigrations++;
+            }
             $bar->advance();
-        }
+            return true;
+        }, [$file]);
+
         $bar->finish();
+
+        $this->info('');
+
+        if ($successfullMigrations > 0) {
+            $this->info("Successfully migrated $successfullMigrations audit logging lines.");
+        }
+
+        if ($successfullMigrations !== $countLines) {
+            $this->warn("Errors were reported in $logFilePath.");
+        }
     }
 
-    public function handleLine(string $line, $decryption_keypair): void
+    public function handleLine(array|string|false $line, string $decryptionKeypair): bool
     {
-        if (strpos($line, 'AuditLog:') === false) {
-            $this->warn("No AuditLog found: $line");
-            return;
+        if (!is_string($line) || strpos($line, 'AuditLog:') === false) {
+            $this->errorLogger->error(sprintf("No valid AuditLog found: %s", json_encode($line)));
+            return false;
         }
 
         $auditLog = substr($line, strpos($line, 'AuditLog:') + 10);
@@ -79,10 +104,10 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
         $nonce = substr($encrypted, 0, SODIUM_CRYPTO_BOX_NONCEBYTES);
         $encrypted = substr($encrypted, SODIUM_CRYPTO_BOX_NONCEBYTES);
 
-        $decrypted = sodium_crypto_box_open($encrypted, $nonce, $decryption_keypair);
+        $decrypted = sodium_crypto_box_open($encrypted, $nonce, $decryptionKeypair);
         if (!$decrypted) {
-            $this->warn("failed to decrypt: $line");
-            return;
+            $this->errorLogger->error("failed to decrypt: $line");
+            return false;
         }
 
         $logEvent = json_decode($decrypted, true);
@@ -94,13 +119,19 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
 
         $auditLog = new AuditLog($logEvent);
         $auditLog->save();
+
+        return true;
     }
 
 
-    private function countLines($filePath)
+    private function countLines(string $filePath): int
     {
         $lineCount = 0;
         $handle = fopen($filePath, "r");
+
+        if ($handle === false) {
+            return 0;
+        }
 
         while (!feof($handle)) {
             if (fgets($handle) !== false) {
