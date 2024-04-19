@@ -19,15 +19,12 @@ class ApplicationFieldsSeeder extends Seeder
 {
     use CreateField;
 
-    public const SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID = '9789ee74-8814-4c12-b876-a1e01880f37a';
-
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
         $this->createApplicationFields();
-        $this->createSubsidyStageHashes();
     }
 
     public function createApplicationFields(): void
@@ -341,34 +338,6 @@ class ApplicationFieldsSeeder extends Seeder
             title: '',
             retentionPeriod: DataRetentionPeriod::Short,
             excludeFromCloneData: true
-        );
-    }
-
-    private function createSubsidyStageHashes(): void
-    {
-        DB::table('subsidy_stage_hashes')->insert(
-            [
-                'id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
-                'subsidy_stage_id' => SubsidyStagesSeeder::STAGE_1_UUID,
-                'name' => 'Bank account',
-                'description' => 'Bank account duplicate reporting',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
-
-        /** @var Field $bankAccountNumber */
-        $bankAccountNumber = DB::table('fields')
-            ->where('subsidy_stage_id', SubsidyStagesSeeder::STAGE_1_UUID)
-            ->where('code', 'bankAccountNumber')
-            ->where('title', 'IBAN')
-            ->first();
-
-        DB::table('subsidy_stage_hash_fields')->insert(
-            [
-                'subsidy_stage_hash_id' => self::SUBSIDY_STAGE_HASH_BANK_ACCOUNT_DUPLICATES_UUID,
-                'field_id' => $bankAccountNumber->id,
-            ]
         );
     }
 }
