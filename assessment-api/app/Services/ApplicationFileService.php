@@ -52,7 +52,7 @@ class ApplicationFileService
         ApplicationStage $applicationStage,
         Field $field,
         UploadedFile $file
-    ): Response {
+    ): string {
         $fileId = Uuid::uuid4()->toString();
         $this->applicationFileManager->writeFile(
             $applicationStage,
@@ -61,10 +61,7 @@ class ApplicationFileService
             $file->getContent(),
         );
 
-        return new Response(
-            content: ["id" => $fileId],
-            status: 201
-        );
+        return $fileId;
     }
 
     public function getMessageFile(ApplicationMessage $message, MessageDownloadFormat $format): Response

@@ -59,7 +59,16 @@ class ApplicationFileController extends Controller
         ApplicationStage $applicationStage,
         Field $field,
         ApplicationFileUploadRequest $request,
+        Authenticatable $user
     ): Response {
+        $fileId = $this->applicationFileService->createApplicationFile(
+            $applicationStage,
+            $field,
+            $request->validated('file')
+        );
+
+        assert($user instanceof User);
+
         $this->logger->log((new ViewFileEvent())
             ->withActor($user)
             ->withData([
@@ -68,10 +77,10 @@ class ApplicationFileController extends Controller
                 'fileId' => $fileId,
                 'userId' => $user->getAuthIdentifier(),
             ]));
-        return $this->applicationFileService->createApplicationFile(
-            $applicationStage,
-            $field,
-            $request->validated('file')
+
+        return new Response(
+            content: ["id" => $fileId],
+            status: 201
         );
     }
 }
