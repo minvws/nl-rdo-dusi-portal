@@ -7,8 +7,6 @@ namespace MinVWS\DUSi\Assessment\API\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Monolog\Logger;
-use MinVWS\DUSi\Shared\Application\Services\LetterService;
-use MinVWS\DUSi\Shared\Subsidy\Services\SubsidyFileManager;
 use MinVWS\Logging\Laravel\Models\AuditLog;
 use Monolog\Handler\StreamHandler;
 use SplFileObject;
@@ -31,11 +29,6 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
      */
     protected $description = 'Migrate the audit logging form file the configured logging';
 
-    public function __construct(protected LetterService $letterService, protected SubsidyFileManager $fileManager)
-    {
-        parent::__construct();
-    }
-
     /**
      * Execute the console command.
      */
@@ -43,15 +36,15 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
     {
         $filePath = $this->argument('audit-file');
         if (!file_exists($filePath)) {
-            $this->error('Audit logging file does not exist');
+            $this->error('File path does not exist');
         }
 
         $logFilePath = getcwd() . DIRECTORY_SEPARATOR . 'error.log';
         $this->errorLogger = new Logger('errorLogger');
         $this->errorLogger->pushHandler(new StreamHandler($logFilePath, Logger::DEBUG));
 
-        $ourPrivatKey = base64_decode('a/NBbsb96Kl0o7vGCYoWWMnvr+okSTWk7VuYPVF9PmM=');
-        $theirPublicKey = base64_decode('q7qP8+ptuihG6fmwH3xXqPqg77Or5J3RG7nda4V3Gms=');
+        $ourPrivatKey = base64_decode($this->option('our-priv-nacl-key') ?? '');
+        $theirPublicKey = base64_decode($this->option('their-pub-nacl-key') ?? '');
 
         $decryptionKeypair = sodium_crypto_box_keypair_from_secretkey_and_publickey(
             $ourPrivatKey,
@@ -69,7 +62,7 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
             $decryptionKeypair,
             $bar,
             &$successfullMigrations
-) {
+        ) {
             if ($this->handleLine($line, $decryptionKeypair) === true) {
                 $successfullMigrations++;
             }
