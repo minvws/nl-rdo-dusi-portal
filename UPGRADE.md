@@ -39,7 +39,7 @@ in the assessment-api:
 php artisan app:migrate-audit-logging 
   --their-pub-nacl-key=[AUDIT_SYSLOG_THEIR_PUB_KEY] 
   --our-priv-nacl-key=[AUDIT_SYSLOG_OUR_PRIV_KEY] 
-  storage/logs/audit.log;
+  storage/logs/audit.log
 ````
 
 ## Release 2.6.1
