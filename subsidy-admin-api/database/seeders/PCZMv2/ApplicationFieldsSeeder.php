@@ -200,6 +200,33 @@ class ApplicationFieldsSeeder extends Seeder
             retentionPeriod: DataRetentionPeriod::Short
         );
 
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::STAGE_1_UUID,
+            code: 'isWiaDecisionFirstSickDayOutsidePeriod',
+            title: 'Blijkt uit uw WIA-beslissing dat uw eerste ziektedag buiten de periode van 1 maart 2020 tot en met 31 december 2020 ligt?',
+            options: ['Ja', 'Nee'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        //If isWiaDecisionFirstSickDayOutsidePeriod === yes
+        $this->createUploadField(
+            subsidyStageId: SubsidyStagesSeeder::STAGE_1_UUID,
+            code: 'wiaFirstSickDayOutsidePeriodProof',
+            title: 'Onderbouwing eerste ziektedag buiten de periode',
+            description: 'Upload een document waarmee u kunt aantonen dat uw langdurige Post-COVID klachten toch het gevolg zijn van een vermoedelijke COVID-19 besmetting in de periode van 1 maart 2020 tot en met 31 december 2020. U kunt dit bijvoorbeeld onderbouwen met een verklaring van uw (bedrijfs)arts. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB.',
+            mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize: 20971520,
+            minItems: 1,
+            maxItems: 20,
+            requiredCondition: new ComparisonCondition(
+                stage: 1,
+                fieldCode: 'isWiaDecisionFirstSickDayOutsidePeriod',
+                operator: Operator::Identical,
+                value: 'Ja'
+            ),
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::STAGE_1_UUID,
             code: 'employmentContract',

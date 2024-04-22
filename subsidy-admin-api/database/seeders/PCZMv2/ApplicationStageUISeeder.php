@@ -66,6 +66,7 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                         "certifiedEmploymentDocument",
                         "wiaDecisionDocument",
                         "isWiaDecisionPostponed",
+                        "isWiaDecisionFirstSickDayOutsidePeriod",
                         "employmentContract",
                         "employmentFunction",
                         "employerKind",
