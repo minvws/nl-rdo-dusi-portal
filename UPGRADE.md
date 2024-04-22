@@ -30,6 +30,20 @@ Add the newest note to the top, below this line:
 
 ## Next release
 
+### DUSI-1588 Migrate audit syslogs to pgsql
+
+After running the database migration '2024_04_15_140115_create_auditlog_table.sql', please run the following command  
+in the assessment-api:
+
+```shell
+php artisan app:migrate-audit-logging 
+  --their-pub-nacl-key=[AUDIT_SYSLOG_THEIR_PUB_KEY] 
+  --our-priv-nacl-key=[AUDIT_SYSLOG_OUR_PRIV_KEY] 
+  storage/logs/audit.log;
+````
+
+## Release 2.6.1
+
 ### DUSI-252: Increased grant notification for PCZM v1
 
 After running the the migration script '2024_04_02_152701_add_stage_pczm_v1.sql', run the following artisan command
