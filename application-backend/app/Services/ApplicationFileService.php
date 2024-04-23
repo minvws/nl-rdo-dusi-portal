@@ -10,6 +10,7 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
@@ -110,6 +111,7 @@ readonly class ApplicationFileService
         if ($validator->fails()) {
             $this->logger->debug('File validation failed', [
                 'errors' => $validator->errors()->toArray(),
+                'failed' => $validator->failed(),
                 'file' => [
                     'size' => $tempFile->getUploadedFile()->getSize(),
                     'mimeType' => $tempFile->getUploadedFile()->getMimeType()
@@ -118,6 +120,13 @@ readonly class ApplicationFileService
 
             // After calling fails, the validator has run and the file can be closed
             $tempFile->close();
+
+            if ($this->fileValidator->failsOnMimetype()) {
+                throw new EncryptedResponseException(
+                    EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
+                    'file_mimetype_not_allowed',
+                );
+            }
 
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::BAD_REQUEST,
@@ -141,6 +150,8 @@ readonly class ApplicationFileService
         try {
             return DB::transaction(fn () => $this->doSaveApplicationFile($params));
         } catch (Throwable $e) {
+            Log::debug('saveApplicationFile exception ' . $e->getCode());
+            Log::debug('saveApplicationFile exception msg ' . $e->getMessage());
             return $this->exceptionHelper->processException(
                 $e,
                 __CLASS__,

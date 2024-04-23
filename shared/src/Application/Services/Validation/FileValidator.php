@@ -13,28 +13,25 @@ use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ClamAv;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Psr\Log\LoggerInterface;
 
-readonly class FileValidator
+class FileValidator
 {
+    private ?LaravelValidator $validator;
+
     public function __construct(
         private ClamAvService $clamAvService,
         private LoggerInterface $logger,
         private Translator $translator,
     ) {
+        $this->validator = null;
     }
 
     public function getValidator(Field $field, UploadedFile $file): ValidatorContract
     {
-        $rules = $this->getRules($field);
+        if ($this->validator === null) {
+            $this->validator = $this->createValidator($field, $file);
+        }
 
-        return new LaravelValidator(
-            translator: $this->translator,
-            data: [
-                'file' => $file,
-            ],
-            rules: [
-                'file' => $rules,
-            ],
-        );
+        return $this->validator;
     }
 
     public function getRules(Field $field): array
@@ -58,5 +55,31 @@ readonly class FileValidator
         $rules[] = new ClamAv($this->clamAvService, $this->logger);
 
         return $rules;
+    }
+
+    private function createValidator(Field $field, UploadedFile $file): LaravelValidator
+    {
+        $rules = $this->getRules($field);
+
+        return new LaravelValidator(
+            translator: $this->translator,
+            data: [
+                'file' => $file,
+            ],
+            rules: [
+                'file' => $rules,
+            ],
+        );
+    }
+
+    public function failsOnMimetype(): bool
+    {
+        if ($this->validator === null) {
+            return false;
+        }
+
+        return collect(array_keys($this->validator->failed()['file']))
+            ->filter(fn(string $rule) => strpos(strtolower($rule), 'mimetypes') !== false)
+            ->isNotEmpty();
     }
 }
