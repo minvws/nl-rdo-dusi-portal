@@ -3035,11 +3035,11 @@
         },
         {
             "name": "minvws/dusi-shared",
-            "version": "dev-feature/composer-update-be",
+            "version": "dev-feat/audit-log-migration",
             "dist": {
                 "type": "path",
                 "url": "../shared",
-                "reference": "7c546e6796ad940ee49ca63919d0940674f544da"
+                "reference": "219daef04d3accbbaab41b1dfc66a81568f961c3"
             },
             "require": {
                 "barryvdh/laravel-dompdf": "^2.0",
@@ -3050,7 +3050,7 @@
                 "laravel/framework": "^10.17",
                 "latte/latte": "^3.0",
                 "minvws/codable": "dev-main as 1.0.x-dev",
-                "minvws/laravel-logging": "^2.1",
+                "minvws/laravel-logging": "^2.2",
                 "php": "^8.2",
                 "xenolope/quahog": "^3.0"
             },
@@ -3110,11 +3110,11 @@
         },
         {
             "name": "minvws/laravel-logging",
-            "version": "v2.1.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minvws/nl-rdo-laravel-logging.git",
-                "reference": "6484a35a3debdd17c72bfa4b4bb271becefcc334"
+                "reference": "c8e9f22ed1caab6e1dd6b19cb3e35d24e607c439"
             },
             "require": {
                 "laravel/framework": "^7.30.6|^8.75.0|^9.0|^10.0",
@@ -3124,7 +3124,7 @@
             },
             "require-dev": {
                 "mockery/mockery": "^1.4.3",
-                "orchestra/testbench": "^6.0",
+                "orchestra/testbench": "^6.15",
                 "phpstan/phpstan": "^1.7",
                 "phpunit/phpunit": "^9.5",
                 "squizlabs/php_codesniffer": "^3.6",
@@ -3180,7 +3180,7 @@
                 "laravel",
                 "logging"
             ],
-            "time": "2023-09-25T21:08:06+00:00"
+            "time": "2024-04-22T10:24:05+00:00"
         },
         {
             "name": "minvws/openid-connect-php-laravel",
@@ -3246,7 +3246,7 @@
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
-            "version": "dev-feature/composer-update-be",
+            "version": "dev-feat/audit-log-migration",
             "dist": {
                 "type": "path",
                 "url": "../bridge",
@@ -4194,16 +4194,16 @@
         },
         {
             "name": "php-amqplib/php-amqplib",
-            "version": "v3.6.1",
+            "version": "v3.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-amqplib/php-amqplib.git",
-                "reference": "76eee289e98b0b309a761787e65cbe1acbaf8c72"
+                "reference": "cb514530ce45a6d2f636be5196010c47c3bcf6e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/76eee289e98b0b309a761787e65cbe1acbaf8c72",
-                "reference": "76eee289e98b0b309a761787e65cbe1acbaf8c72",
+                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/cb514530ce45a6d2f636be5196010c47c3bcf6e0",
+                "reference": "cb514530ce45a6d2f636be5196010c47c3bcf6e0",
                 "shasum": ""
             },
             "require": {
@@ -4269,9 +4269,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-amqplib/php-amqplib/issues",
-                "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.6.1"
+                "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.6.2"
             },
-            "time": "2024-02-07T17:21:26+00:00"
+            "time": "2024-04-15T18:31:22+00:00"
         },
         {
             "name": "phpoption/phpoption",
