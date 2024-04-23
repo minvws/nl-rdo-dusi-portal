@@ -74,7 +74,7 @@ class FileValidator
 
     public function failsOnMimetype(): bool
     {
-        if ($this->validator === null) {
+        if ($this->validator === null || $this->validator->passes()) {
             return false;
         }
 
