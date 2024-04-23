@@ -79,7 +79,7 @@ class FileValidator
         }
 
         return collect(array_keys($this->validator->failed()['file']))
-            ->filter(fn(string $rule) => strpos(strtolower($rule), 'mimetypes') !== false)
+            ->filter(fn(int|string $rule) => strpos(strtolower((string)$rule), 'mimetypes') !== false)
             ->isNotEmpty();
     }
 }
