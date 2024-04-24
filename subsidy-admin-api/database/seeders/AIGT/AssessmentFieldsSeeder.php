@@ -186,6 +186,18 @@ class AssessmentFieldsSeeder extends Seeder
 
     public function assignationDelayPeriodFields(): void
     {
+        $this->createMultiSelectField(
+            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            code:            'assignationAssessmentChecklist',
+            title:           'Controlevragen',
+            options:         [
+                'OIGT heeft de afronding van de buitenlandstage bevestigd',
+                'De verplichting is vastgesteld',
+            ],
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
             code: 'assessment',
@@ -216,6 +228,18 @@ class AssessmentFieldsSeeder extends Seeder
 
     public function assignationAssessmentFields(): void
     {
+        $this->createMultiSelectField(
+            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
+            code:            'assignationAssessmentChecklist',
+            title:           'Controlevragen',
+            options:         [
+                'OIGT heeft de afronding van de buitenlandstage bevestigd',
+                'De verplichting is vastgesteld',
+            ],
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
             code: 'assessment',
@@ -265,6 +289,19 @@ class AssessmentFieldsSeeder extends Seeder
 
     public function assignationImplementationAssessmentFields(): void
     {
+        $this->createMultiSelectField(
+            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
+            code:            'assignationImplementationAssessmentChecklist',
+            title:           'Controlevragen',
+            options:         [
+                'Akkoord met de vaststelling',
+                'De verplichting is geaccordeerd in SAP',
+                'De vaststellingsbrief mag verzonden worden',
+            ],
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
             code: 'assessment',

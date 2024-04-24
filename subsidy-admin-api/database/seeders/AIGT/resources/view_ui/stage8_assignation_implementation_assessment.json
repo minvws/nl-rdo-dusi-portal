@@ -6,6 +6,14 @@
     "elements": [
         {
             "type": "CustomControl",
+            "scope": "#/properties/assignationImplementationAssessmentChecklist",
+            "options": {
+                "readonly": true,
+                "format": "checkbox-group"
+            }
+        },
+        {
+            "type": "CustomControl",
             "scope": "#/properties/assessment",
             "options": {
                 "readonly": true,

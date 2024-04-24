@@ -7,6 +7,24 @@
     "elements": [
         {
             "type": "Group",
+            "label": "Beoordeling",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/assignationImplementationAssessmentChecklist",
+                            "options": {
+                                "format": "checkbox-group"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
             "label": "Status",
             "elements": [
                 {
