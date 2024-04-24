@@ -482,6 +482,7 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
                 ])
             ),
             'send_message' => false,
+            'assign_to_previous_assessor' => true,
         ]);
     }
 }
