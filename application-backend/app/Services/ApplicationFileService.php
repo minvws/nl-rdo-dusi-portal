@@ -10,7 +10,6 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 
 use finfo;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
@@ -150,8 +149,6 @@ readonly class ApplicationFileService
         try {
             return DB::transaction(fn () => $this->doSaveApplicationFile($params));
         } catch (Throwable $e) {
-            Log::debug('saveApplicationFile exception ' . $e->getCode());
-            Log::debug('saveApplicationFile exception msg ' . $e->getMessage());
             return $this->exceptionHelper->processException(
                 $e,
                 __CLASS__,
