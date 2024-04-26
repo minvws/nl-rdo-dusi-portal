@@ -395,15 +395,16 @@ SET params                       = '{
 WHERE id = '0575d1af-dcbf-49ea-b4c6-5d135a03f15f';
 
 UPDATE public.subsidy_stage_transition_messages
-SET
-content_html = e'{block content}
+SET content_html = e'{block content}
     <p>Beste lezer,</p>
     <p>
         Op {$content->createdAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling {$content->subsidyTitle} met referentienummer {$content->reference}.
     </p>
 
     <h2>Besluit</h2>
-    <p>Hierbij ken ik uw aanvraag (gedeeltelijk) toe en stel ik de subsidie (aangepast) vast op € {$content->stage3->amount}. U vroeg een subsidie aan van € {$content->stage1->requestedSubsidyAmount}.</p>
+    <p>Hierbij ken ik uw aanvraag (gedeeltelijk) toe en stel ik de subsidie (aangepast) vast
+            op € {formatCurrency($content->stage3->amount)}. U vroeg een subsidie aan
+            van € {formatCurrency($content->stage1->requestedSubsidyAmount)}.</p>
 
     {if $content->stage1->educationType === \'Primair onderwijs\'}
     <p>De subsidie is toegekend op grond van artikel 3 van de Regeling en beoordeeld aan de hand van de criteria uit artikel
@@ -478,7 +479,8 @@ content_html = e'{block content}
         </p>
     </footer>
 {/block}
-', content_pdf = e'{layout \'letter_layout.latte\'}
+',
+    content_pdf                 = e'{layout \'letter_layout.latte\'}
 
 {block concern}
 Betreft: Verlening aanvraag {$content->subsidyTitle}
@@ -491,7 +493,9 @@ Betreft: Verlening aanvraag {$content->subsidyTitle}
 </p>
 
 <h2>Besluit</h2>
-<p>Hierbij ken ik uw aanvraag (gedeeltelijk) toe en stel ik de subsidie (aangepast) vast op € {$content->stage3->amount}. U vroeg een subsidie aan van € {$content->stage1->requestedSubsidyAmount}.</p>
+<p>Hierbij ken ik uw aanvraag (gedeeltelijk) toe en stel ik de subsidie (aangepast) vast
+        op € {formatCurrency($content->stage3->amount)}. U vroeg een subsidie aan
+        van € {formatCurrency($content->stage1->requestedSubsidyAmount)}.</p>
 
 {if $content->stage1->educationType === \'Primair onderwijs\'}
 <p>De subsidie is toegekend op grond van artikel 3 van de Regeling en beoordeeld aan de hand van de criteria uit artikel
@@ -514,13 +518,14 @@ Betreft: Verlening aanvraag {$content->subsidyTitle}
 <u>Wet- en regelgeving</u>
 <p>Op deze subsidie is de volgende wet- en regelgeving van toepassing:
 <ul>
-    <li>Wet overige OCW subsidies;</li>
+    <li>Wet overige OCW-subsidies BWBR0009458;</li>
     <li>Kaderregeling subsidies OCW, SZW en VWS;</li>
+    {if $content->stage1->educationType === \'Primair onderwijs\'}
     <li>Subsidieregeling reiskosten DAMU-leerlingen, nr.24900503;</li>
+    {else}
+    <li>Subsidieregeling reiskosten DAMU-leerlingen, nr. VO/1360431</li>
+    {/if}
     <li>Algemene wet bestuursrecht;</li>
-    <li>Wet bestuurlijke boete bijzondere meldingsplichten die gelden voor subsidies die door ministers zijn
-        verleend.
-    </li>
 </ul>
 </p>
 <p>De regelgeving kunt u raadplegen via <a href="https://wetten.overheid.nl" target="_blank">wetten.overheid.nl</a>.</p>
@@ -571,7 +576,8 @@ Betreft: Verlening aanvraag {$content->subsidyTitle}
 {block sidebar}
     {include parent}
 {/block}
-', created_at = '2024-04-25 07:38:56', updated_at = null WHERE id = '9445db1e-2aeb-4434-be02-e57622c28e77';
-
+',
+    updated_at                  = 'now()'
+WHERE id = '9445db1e-2aeb-4434-be02-e57622c28e77';
 
 -- START DAMU assessment field changes
