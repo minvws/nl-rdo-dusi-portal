@@ -77,5 +77,6 @@ class FileValidatorTest extends TestCase
 
         $validator = $fileValidator->getValidator($field, $file);
         $this->assertSame($success, !$validator->fails());
+        $this->assertSame($success, !$fileValidator->failsOnMimetype());
     }
 }

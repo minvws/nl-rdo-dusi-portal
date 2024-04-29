@@ -209,7 +209,7 @@ class AssessmentFieldsSeeder extends Seeder
             options: [
                 'Valt de aanvrager onder de WSNP/bewindvoering?',
                 'Is het subsidiebedrag juist vermeld in SAP?',
-                'Is het in de brief opgenomen IBAN juist conform SAP en aanvraagformulier?',
+                'Komt het IBAN op de aanvraag overeen met SAP?',
                 'Is de aangemaakte verplichting geboekt op juiste budgetplaats en budgetpositie?'
             ],
             isRequired: false,

@@ -152,7 +152,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "DAMU-school primair onderwijs": "{damuSchoolSecondary}"
+                            "DAMU-school voortgezet onderwijs": "{damuSchoolSecondary}"
                         }
                     },
                     "rule": {
@@ -164,13 +164,47 @@
                             }
                         }
                     }
-
                 },
                 {
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
                             "DAMU-school adres": "{damuSchoolAddress}"
+                        }
+                    }
+                },
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "HBO vooropleiding": "{hboPreviousEducationPrimary}"
+                        }
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/educationType",
+                            "schema": {
+                                "const": "Primair onderwijs"
+                            }
+                        }
+                    }
+
+                },
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "HBO vooropleiding": "{hboPreviousEducationSecondary}"
+                        }
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/educationType",
+                            "schema": {
+                                "const": "Voortgezet onderwijs"
+                            }
                         }
                     }
                 }

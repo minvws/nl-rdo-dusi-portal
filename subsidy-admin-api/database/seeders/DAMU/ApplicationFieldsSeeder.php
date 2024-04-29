@@ -265,6 +265,39 @@ class ApplicationFieldsSeeder extends Seeder
             source:         FieldSource::Calculated,
         );
 
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code:           'hboPreviousEducationPrimary',
+            title:          'HBO vooropleiding dans en muziek',
+            options:        [
+                'Academie voor Theater en Dans: Nationale Balletacademie (dans) (21QA)',
+                'Codarts (dans) (14NI)',
+                'Koninklijk Conservatorium (dans en muziek) (23KJ)]'
+            ],
+            isRequired:     false,
+        );
+
+        $this->createSelectField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code:           'hboPreviousEducationSecondary',
+            title:          'HBO vooropleiding dans en muziek',
+            options:        [
+                'Academie voor Theater en Dans 5 o’clock class (dans) (21QA)',
+                'Academie voor Theater en Dans: Nationale Balletacademie (dans) (21QA)',
+                'ArtEz (dans) (27NF)',
+                'Codarts (dans) (14NI)',
+                'Codarts (dans en muziek) (14NI)',
+                'Conservatorium Maastricht (muziek) (25JX)',
+                'Conservatorium van Amsterdam (Muziek) (21QA)',
+                'Fontys Hogeschool voor de Kunsten (dans) (30GB)',
+                'Fontys Hogeschool voor de Kunsten (musical) (30GB)',
+                'Koninklijk Conservatorium (dans en muziek) (23KJ)',
+                'Lucia Marthas Institute for Performing Arts (dans) (25LW)',
+                'Prins Claus Conservatorium (muziek) (25BE)'
+            ],
+            isRequired: false,
+        );
+
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'travelDistanceSingleTrip',

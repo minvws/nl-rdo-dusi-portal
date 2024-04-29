@@ -40,6 +40,8 @@ class LetterServiceProvider extends ServiceProvider
             $latte->setSandboxMode();
             $latte->setTempDirectory($app->config->get('view.compiled'));
             $latte->setLoader($latteLoaderService);
+            $latte->addFunction('formatCurrency', fn($amount) =>
+                number_format((float)$amount, 2, ',', '.'));
 
             $policy = new SecurityPolicy();
             $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include']);
@@ -57,8 +59,10 @@ class LetterServiceProvider extends ServiceProvider
             $policy->allowMethods(Carbon::class, $policy::All);
             $policy->allowMethods(CarbonImmutable::class, $policy::All);
             $policy->allowMethods(LetterData::class, ['getSignature']);
+            $policy->allowFunctions(['formatCurrency']);
 
             $latte->setPolicy($policy);
+
 
             return $latte;
         });

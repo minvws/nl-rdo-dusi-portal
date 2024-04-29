@@ -409,6 +409,38 @@
                                     }
                                 }
                             }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hboPreviousEducationPrimary",
+                            "label": "HBO vooropleiding",
+                            "options": {
+                                "format": "select",
+                                "placeholder": ""
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Primair onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hboPreviousEducationSecondary",
+                            "label": "HBO vooropleiding",
+                            "options": {
+                                "format": "select",
+                                "placeholder": ""
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Voortgezet onderwijs" }
+                                }
+                            }
                         }
                     ]
                 }

@@ -110,6 +110,7 @@ readonly class ApplicationFileService
         if ($validator->fails()) {
             $this->logger->debug('File validation failed', [
                 'errors' => $validator->errors()->toArray(),
+                'failed' => $validator->failed(),
                 'file' => [
                     'size' => $tempFile->getUploadedFile()->getSize(),
                     'mimeType' => $tempFile->getUploadedFile()->getMimeType()
@@ -118,6 +119,13 @@ readonly class ApplicationFileService
 
             // After calling fails, the validator has run and the file can be closed
             $tempFile->close();
+
+            if ($this->fileValidator->failsOnMimetype()) {
+                throw new EncryptedResponseException(
+                    EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
+                    'file_mimetype_not_allowed',
+                );
+            }
 
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::BAD_REQUEST,
