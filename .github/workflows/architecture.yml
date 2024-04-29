@@ -50,7 +50,7 @@ jobs:
 
       - name: Publish document
         if: steps.check_files.outputs.files_exists == 'true'
-        uses: baileyjm02/markdown-to-pdf@v2
+        uses: baileyjm02/markdown-to-pdf@v1
         with:
           input_path: "docs/${{ matrix.directory }}/${{ matrix.name }} ${{ env.RELEASE_VERSION }}.md"
           images_dir: docs/${{ matrix.directory }}/images
