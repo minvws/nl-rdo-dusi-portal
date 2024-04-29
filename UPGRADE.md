@@ -28,11 +28,25 @@ Add the newest note to the top, below this line:
 
 ====================================================================================================
 
-## Next release
+## Release 2.6.2
 
 ### DUSI-1588 Migrate audit syslogs to pgsql
 
-After running the database migration '2024_04_15_140115_create_auditlog_table.sql', please run the following command  
+First run the database migration '2024_04_15_140115_create_auditlog_table.sql'. Next setup audit db logging for the
+following backend environments:  
+
+- application-api
+- application-backend
+- assessment-api
+- user-admin-api
+
+```shell
+AUDIT_DBLOG_ENABLED=true
+AUDIT_DBLOG_THEIR_PUB_KEY=[public key]
+AUDIT_DBLOG_OUR_PRIV_KEY=[private key]
+```
+
+The logs in de assessment-api need to be migrated to the new audit_logs table. Please run the following command  
 in the assessment-api:
 
 ```shell
@@ -41,6 +55,8 @@ php artisan app:migrate-audit-logging
   --our-priv-nacl-key=[AUDIT_SYSLOG_OUR_PRIV_KEY] 
   storage/logs/audit.log
 ````
+
+After successful migration, the env value AUDIT_SYSLOG_ENABLED can be removed or set to false.
 
 ## Release 2.6.1
 
