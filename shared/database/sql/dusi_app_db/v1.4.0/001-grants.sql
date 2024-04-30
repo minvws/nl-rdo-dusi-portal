@@ -51,24 +51,17 @@ begin
    end if;
 end first_block $$;
 
-
-GRANT ALL ON TABLE public.deploy_releases TO "user_admin_dusi";
+-- Deploy releases should be readable for every user
+GRANT SELECT ON TABLE public.deploy_releases TO "user_admin_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "dpw_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "assessment_web_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "backend_dusi";
 
+-- Permissions for user-admin
 GRANT SELECT ON TABLE public.subsidies TO "user_admin_dusi";
 
-GRANT SELECT,INSERT,UPDATE ON TABLE public.answers TO "dpw_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_hashes TO "dpw_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_messages TO "dpw_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_stage_transitions TO "dpw_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_stages TO "dpw_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_surepay_results TO "dpw_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.applications TO "dpw_dusi";
-GRANT SELECT ON TABLE public.failed_jobs TO "dpw_dusi";
+-- Permissions for application-api
 GRANT SELECT ON TABLE public.fields TO "dpw_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.identities TO "dpw_dusi";
 GRANT SELECT ON TABLE public.subsidies TO "dpw_dusi";
 GRANT SELECT ON TABLE public.subsidy_stage_hash_fields TO "dpw_dusi";
 GRANT SELECT ON TABLE public.subsidy_stage_hashes TO "dpw_dusi";
@@ -77,8 +70,8 @@ GRANT SELECT ON TABLE public.subsidy_stage_transitions TO "dpw_dusi";
 GRANT SELECT ON TABLE public.subsidy_stage_uis TO "dpw_dusi";
 GRANT SELECT ON TABLE public.subsidy_stages TO "dpw_dusi";
 GRANT SELECT ON TABLE public.subsidy_versions TO "dpw_dusi";
-GRANT USAGE ON SEQUENCE public.failed_jobs_id_seq TO "dpw_dusi";
 
+-- permissions for assessment-api
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.answers TO "assessment_web_dusi";
 GRANT SELECT,INSERT,UPDATE ON TABLE public.application_hashes TO "assessment_web_dusi";
 GRANT SELECT,INSERT,UPDATE ON TABLE public.application_messages TO "assessment_web_dusi";
@@ -100,16 +93,18 @@ GRANT SELECT ON TABLE public.subsidy_versions TO "assessment_web_dusi";
 
 GRANT USAGE ON SEQUENCE public.failed_jobs_id_seq TO "assessment_web_dusi";
 
+-- permissions for application-backend
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.answers TO "backend_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_hashes TO "backend_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_messages TO "backend_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_stage_transitions TO "backend_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_stages TO "backend_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.application_surepay_results TO "backend_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.applications TO "backend_dusi";
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.application_hashes TO "backend_dusi";
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.application_messages TO "backend_dusi";
+GRANT SELECT,INSERT ON TABLE public.application_references TO "backend_dusi";
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.application_stage_transitions TO "backend_dusi";
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.application_stages TO "backend_dusi";
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.application_surepay_results TO "backend_dusi";
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.applications TO "backend_dusi";
 GRANT SELECT,INSERT,UPDATE ON TABLE public.failed_jobs TO "backend_dusi";
 GRANT SELECT ON TABLE public.fields TO "backend_dusi";
-GRANT SELECT,INSERT,UPDATE ON TABLE public.identities TO "backend_dusi";
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE public.identities TO "backend_dusi";
 GRANT SELECT ON TABLE public.subsidies TO "backend_dusi";
 GRANT SELECT ON TABLE public.subsidy_stage_hash_fields TO "backend_dusi";
 GRANT SELECT ON TABLE public.subsidy_stage_hashes TO "backend_dusi";
