@@ -239,8 +239,8 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId:  SubsidyStagesSeeder::STAGE_2_UUID,
             code:            'amount',
             title:           'Bedrag',
-            options:         ['€ 24.000'],
-            default:         '€ 24.000',
+            options:         ['€ 24.010'],
+            default:         '€ 24.010',
             isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
         );
