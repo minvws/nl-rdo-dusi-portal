@@ -136,4 +136,5 @@ return [
         ],
     ],
 
+    'auditlog_model' => env('AUDIT_MODEL',MinVWS\DUSi\Shared\User\Models\AuditLog::class),
 ];

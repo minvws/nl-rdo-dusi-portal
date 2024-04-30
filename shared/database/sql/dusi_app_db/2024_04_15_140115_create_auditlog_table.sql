@@ -15,3 +15,6 @@ CREATE TABLE public.audit_logs
 ALTER TABLE public.audit_logs OWNER TO postgres;
 
 GRANT SELECT, INSERT ON TABLE public.audit_logs TO "backend_dusi";
+GRANT SELECT, INSERT ON TABLE public.audit_logs TO "user_admin_dusi";
+GRANT SELECT, INSERT ON TABLE public.audit_logs TO "assessment_web_dusi";
+GRANT SELECT, INSERT ON TABLE public.audit_logs TO "dpw_dusi";

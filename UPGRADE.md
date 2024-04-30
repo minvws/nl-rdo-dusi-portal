@@ -46,17 +46,19 @@ AUDIT_DBLOG_THEIR_PUB_KEY=[public key]
 AUDIT_DBLOG_OUR_PRIV_KEY=[private key]
 ```
 
-The logs in de assessment-api need to be migrated to the new audit_logs table. Please run the following command  
-in the assessment-api:
+Syslogging can be disabled by removing the env value AUDIT_SYSLOG_ENABLED or set it to false.
+
+The logs in de assessment-api need to be migrated to the new audit_logs table. The audit logs are stored in
+storage/logs/audit.log. This file is reset during deployments. Older audit logs are stored in the backup folders.
+Before migration all older log files need to be merged to a single file. After merging the files the following
+command should be run in the assessment-api:
 
 ```shell
 php artisan app:migrate-audit-logging 
   --their-pub-nacl-key=[AUDIT_SYSLOG_THEIR_PUB_KEY] 
   --our-priv-nacl-key=[AUDIT_SYSLOG_OUR_PRIV_KEY] 
-  storage/logs/audit.log
+  storage/logs/merged_audit.log
 ````
-
-After successful migration, the env value AUDIT_SYSLOG_ENABLED can be removed or set to false.
 
 ## Release 2.6.1
 
