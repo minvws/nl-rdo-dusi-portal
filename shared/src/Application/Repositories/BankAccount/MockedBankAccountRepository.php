@@ -8,10 +8,17 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\AccountInfo;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
+use RuntimeException;
 
 class MockedBankAccountRepository implements BankAccountRepository
 {
     public const BANK_HOLDER_SUGGESTION = 'Pietersma';
+    public const BANK_ACCOUNT_NUMBER_MATCH = 'NL62ABNA9999841479';
+    public const BANK_ACCOUNT_NUMBER_NO_MATCH = 'NL12ABNA9999876523';
+    public const BANK_ACCOUNT_NUMBER_CLOSE_MATCH = 'NL58ABNA9999142181';
+    public const BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT = 'NL76ABNA9999161548';
+    public const BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH = 'NL04RABO8731326943';
+    public const BANK_ACCOUNT_NUMBER_FAILED = 'NL16BNDA0100101649';
 
     public function checkOrganisationsAccount(
         string $accountOwner,
@@ -38,6 +45,10 @@ class MockedBankAccountRepository implements BankAccountRepository
 
     private function bankAccountCheckMockValues(string $accountNumber, string $accountHolder): array
     {
+        if ($accountNumber === self::BANK_ACCOUNT_NUMBER_FAILED) {
+            throw new RuntimeException('Bank account check failed as expected');
+        }
+
         if ($this->hasAccountHolderMatchWithSuggestion($accountNumber, $accountHolder)) {
             return [
                 AccountNumberValidation::Valid,
@@ -48,31 +59,31 @@ class MockedBankAccountRepository implements BankAccountRepository
 
         $bankAccountMockData = [
             //Valid Iban, NameMatchResult::Match
-            'NL62ABNA9999841479' => [
+            self::BANK_ACCOUNT_NUMBER_MATCH => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::Match,
                 null
             ],
             //NameMatchResult::NoMatch
-            'NL12ABNA9999876523' => [
+            self::BANK_ACCOUNT_NUMBER_NO_MATCH => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::NoMatch,
                 null
             ],
             //NameMatchResult::CloseMatch
-            'NL58ABNA9999142181' => [
+            self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::CloseMatch,
                 self::BANK_HOLDER_SUGGESTION
             ],
             //NameMatchResult::NameTooShort
-            'NL76ABNA9999161548' => [
+            self::BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::NameTooShort,
                 null
             ],
             //NameMatchResult::CouldNotMatch
-            'NL04RABO8731326943' => [
+            self::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH => [
                 AccountNumberValidation::Valid,
                 NameMatchResult::CouldNotMatch,
                 null
@@ -84,6 +95,28 @@ class MockedBankAccountRepository implements BankAccountRepository
 
     public function hasAccountHolderMatchWithSuggestion(string $accountNumber, string $accountHolder): bool
     {
-        return $accountNumber === 'NL58ABNA9999142181' && $accountHolder === self::BANK_HOLDER_SUGGESTION;
+        return $accountNumber === self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH &&
+            $accountHolder === self::BANK_HOLDER_SUGGESTION;
+    }
+
+    public static function all(): array
+    {
+        return [
+            self::BANK_ACCOUNT_NUMBER_MATCH,
+            self::BANK_ACCOUNT_NUMBER_NO_MATCH,
+            self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
+            self::BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT,
+            self::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH,
+        ];
+    }
+
+    public static function allValid(): array
+    {
+        return [
+            self::BANK_ACCOUNT_NUMBER_MATCH,
+            self::BANK_ACCOUNT_NUMBER_CLOSE_MATCH,
+            self::BANK_ACCOUNT_NUMBER_NAME_TOO_SHORT,
+            self::BANK_ACCOUNT_NUMBER_COULD_NOT_MATCH,
+        ];
     }
 }

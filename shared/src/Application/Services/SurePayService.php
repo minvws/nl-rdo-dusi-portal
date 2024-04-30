@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Application\Models\ApplicationSurePayResult;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
+use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -18,18 +19,23 @@ use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAc
 class SurePayService
 {
     private const SUBSIDY_PZCM_ID = '06a6b91c-d59b-401e-a5bf-4bf9262d85f8';
+    private const SUBSIDY_BTV_UUID = '00f26400-7232-475f-922c-6b569b7e421a';
+    private const SUBSIDY_AIGT_UUID = 'cb91d7d4-6261-4cd6-96e8-d09c86a670b7';
 
     public function __construct(
         private readonly BankAccountRepository $bankAccountRepository,
         private readonly ApplicationDataService $applicationDataService,
         private readonly ApplicationRepository $applicationRepository,
+        private readonly ApplicationStageEncryptionService $encryptionService,
     ) {
     }
 
     public function shouldCheckSurePayForApplication(Application $application): bool
     {
         // temporary until we have generalized this
-        return $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID;
+        return $application->subsidyVersion->subsidy_id === self::SUBSIDY_PZCM_ID ||
+            $application->subsidyVersion->subsidy_id === self::SUBSIDY_BTV_UUID ||
+            $application->subsidyVersion->subsidy_id === self::SUBSIDY_AIGT_UUID;
     }
 
     /**
@@ -41,7 +47,7 @@ class SurePayService
             return null;
         }
 
-        $stage = $this->applicationRepository->getApplicantApplicationStage($application, true);
+        $stage = $this->applicationRepository->getCurrentApplicantApplicationStage($application, true);
         if ($stage === null) {
             Log::error('SurePay check not possible, no applicant stage for application ' . $application->id);
             return null;
@@ -72,6 +78,11 @@ class SurePayService
         $model->joint_account = $result->account->jointAccount;
         $model->number_of_account_holders = $result->account->numberOfAccountHolders;
         $model->country_code = $result->account->countryCode;
+
+        if (!empty($result->nameSuggestion)) {
+            $encrypter = $this->encryptionService->getEncrypter($stage);
+            $model->encrypted_name_suggestion = $encrypter->encrypt($result->nameSuggestion);
+        }
         $model->save();
 
         return $model;

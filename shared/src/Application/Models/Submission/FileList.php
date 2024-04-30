@@ -30,11 +30,6 @@ class FileList implements Codable, JsonSerializable
      */
     public static function decode(DecodingContainer $container, ?Decodable $object = null): Decodable
     {
-        // TODO: remove, is only for backwards compatibility
-        if (is_string($container->getRawValue())) {
-            return new self([new File($container->decodeString(), null, null)]);
-        }
-
         return new self($container->decodeArray(File::class));
     }
 
@@ -46,5 +41,18 @@ class FileList implements Codable, JsonSerializable
     public function jsonSerialize(): mixed
     {
         return $this->items;
+    }
+
+    public function __toString(): string
+    {
+        return (string)array_reduce(
+            $this->getFileIds(),
+            fn(null|string $carry, string $id) => $carry . $id
+        );
+    }
+
+    public function count(): int
+    {
+        return count($this->items);
     }
 }

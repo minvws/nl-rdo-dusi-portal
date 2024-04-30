@@ -10,6 +10,7 @@ use MinVWS\Codable\Decoding\Decoder;
 use MinVWS\DUSi\Application\API\Http\Responses\OidcLoginResponseHandler;
 use MinVWS\DUSi\Application\API\Services\Oidc\OidcUserLoa;
 use MinVWS\DUSi\Application\API\Tests\TestCase;
+use MinVWS\Logging\Laravel\LogService;
 
 class OidcLoginResponseHandlerTest extends TestCase
 {
@@ -26,10 +27,12 @@ class OidcLoginResponseHandlerTest extends TestCase
             frontendBaseUrl: 'https://example.com',
             decoder: new Decoder(),
             minimumLoa: $minimumLoa,
+            logger: new LogService(),
         );
 
         $redirectResponse = $responseHandler->handleLoginResponse((object) [
             'bsn' => '1234567890',
+            'session_id' => 'test-session-id',
             'loa_authn' => $userLoa?->value,
         ]);
 
@@ -69,7 +72,8 @@ class OidcLoginResponseHandlerTest extends TestCase
         $responseHandler = new OidcLoginResponseHandler(
             frontendBaseUrl: 'https://example.com',
             decoder: new Decoder(),
-            minimumLoa: OidcUserLoa::SUBSTANTIAL
+            minimumLoa: OidcUserLoa::SUBSTANTIAL,
+            logger: new LogService(),
         );
 
         $this->expectException(AuthorizationException::class);
@@ -83,7 +87,10 @@ class OidcLoginResponseHandlerTest extends TestCase
             'missing_data' => [[]],
             'missing_loa_authn' => [['bsn' => '123456789']],
             'missing_bsn' => [['loa_authn' => OidcUserLoa::SUBSTANTIAL->value]],
-            'invalid_loa_authn' => [['bsn' => '123456789', 'loa_authn' => 'does-not-exist']],
+            'missing_session_id' => [['bsn' => '123456789', 'loa_authn' => OidcUserLoa::SUBSTANTIAL->value]],
+            'invalid_loa_authn' => [
+                ['bsn' => '123456789', 'loa_authn' => 'does-not-exist', 'session_id' => 'test-session-id']
+            ],
         ];
     }
 }

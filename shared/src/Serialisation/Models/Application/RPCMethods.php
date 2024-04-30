@@ -10,7 +10,7 @@ class RPCMethods
     public const GET_MESSAGE = 'getMessage';
     public const GET_MESSAGE_DOWNLOAD = 'getMessageDownload';
 
-    public const FIND_OR_CREATE_APPLICATION = 'findOrCreateApplication';
+    public const CREATE_APPLICATION = 'createApplication';
     public const UPLOAD_APPLICATION_FILE = 'uploadApplicationFile';
     public const SAVE_APPLICATION = 'saveApplication';
     public const VALIDATE_APPLICATION = 'validateApplication';
@@ -19,4 +19,6 @@ class RPCMethods
     public const GET_APPLICATION_FILE = 'getApplicationFile';
 
     public const GET_ACTIONABLE_COUNTS = 'getActionableCounts';
+
+    public const GET_SUBSIDY_CONCEPTS = 'getSubsidyConcepts';
 }

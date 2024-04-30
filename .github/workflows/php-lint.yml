@@ -38,7 +38,7 @@ jobs:
         with:
           php-version: '8.2'
           extensions: zip
-          tools: psalm
+          tools: vimeo/psalm
 
       - name: Copy .env
         continue-on-error: true
@@ -49,7 +49,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -98,7 +98,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -142,7 +142,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -155,50 +155,6 @@ jobs:
 
       - name: Static analysis with PHPStan
         run: phpstan analyse
-
-  php-linting-cve:
-    strategy:
-      matrix:
-        directory: [ "shared", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api" ]
-
-    defaults:
-      run:
-        working-directory: ${{ matrix.directory }}
-
-    needs: call-composer-install
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: zip
-
-      - name: Copy .env
-        continue-on-error: true
-        run: cp -n .env.example .env
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-${{ matrix.directory }}-composer-
-
-      - name: Install Dependencies
-        env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
-      - name: Check for known CVE vulnerabilities
-        if : ${{ matrix.directory != 'shared'}}
-        run: php artisan security-check:now
 
   phpmd:
     strategy:
@@ -230,7 +186,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles('**/composer.lock') }}

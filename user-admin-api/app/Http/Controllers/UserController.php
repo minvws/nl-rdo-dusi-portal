@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\User\Admin\API\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\User\Admin\API\Components\FlashNotification;
 use MinVWS\DUSi\User\Admin\API\Enums\FlashNotificationTypeEnum;
+use MinVWS\DUSi\User\Admin\API\Events\Logging\CreateUserEvent;
+use MinVWS\DUSi\User\Admin\API\Events\Logging\UpdateUserEvent;
+use MinVWS\DUSi\User\Admin\API\Events\Logging\ViewUserEvent;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserCreateRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserFilterRequest;
 use MinVWS\DUSi\User\Admin\API\Http\Requests\UserResetCredentialsRequest;
@@ -18,6 +23,7 @@ use MinVWS\DUSi\Shared\User\Models\Organisation;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\DUSi\User\Admin\API\Services\UserService;
 use MinVWS\DUSi\User\Admin\API\View\Data\UserCredentialsData;
+use MinVWS\Logging\Laravel\LogService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -26,6 +32,7 @@ class UserController extends Controller
 {
     public function __construct(
         protected UserService $userService,
+        protected readonly LogService $logger,
     ) {
         $this->authorizeResource(User::class, 'user');
     }
@@ -38,6 +45,13 @@ class UserController extends Controller
         $users = User::query()
             ->with('organisation')
             ->filterByNameOrEmail($filterRequest->validated('filter'))
+            ->when(
+                value: $filterRequest->validated('sort'),
+                callback: fn($query) => $query->orderBy(
+                    column: $filterRequest->validated('sort'),
+                    direction: $filterRequest->validated('direction', 'asc')
+                )
+            )
             ->paginate();
 
         return view('users.index', [
@@ -70,6 +84,15 @@ class UserController extends Controller
             organisationId: $request->validated('organisation_id'),
         );
 
+        $requestUser = $request->user();
+        assert($requestUser instanceof User);
+
+        $this->logger->log((new CreateUserEvent())
+            ->withActor($requestUser)
+            ->withData([
+                'userId' => $user->id,
+            ]));
+
         return redirect()
             ->route('users.credentials', $user->id)
             ->with(UserCredentialsData::SESSION_KEY, new UserCredentialsData(
@@ -99,10 +122,21 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user): View
+    public function show(Request $request, User $user): View
     {
+        $requestUser = $request->user();
+        assert($requestUser instanceof User);
+
+        $this->logger->log((new ViewUserEvent())
+           ->withActor($requestUser)
+           ->withData([
+                'userId' => $user->id,
+            ]));
+
         return view('users.show', [
             'user' => $user,
+            'userRoles' => $user->roles()->paginate(),
+            'subsidies' => Subsidy::query()->pluck('title', 'id'),
             'organisations' => Organisation::query()->pluck('name', 'id')
         ]);
     }
@@ -113,6 +147,15 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
         $user->update($request->validated());
+
+        $requestUser = $request->user();
+        assert($requestUser instanceof User);
+
+        $this->logger->log((new UpdateUserEvent())
+            ->withActor($requestUser)
+            ->withData([
+                'userId' => $user->id,
+            ]));
 
         return redirect()
             ->route('users.show', $user->id)
@@ -127,6 +170,15 @@ class UserController extends Controller
         $this->authorize('update', $user);
 
         $user->update($updateActiveRequest->validated());
+
+        $requestUser = $updateActiveRequest->user();
+        assert($requestUser instanceof User);
+
+        $this->logger->log((new UpdateUserEvent())
+            ->withActor($requestUser)
+            ->withData([
+                'userId' => $user->id,
+            ]));
 
         return redirect()
             ->route('users.show', $user->id)

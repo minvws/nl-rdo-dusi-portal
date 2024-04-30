@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Assessment\API\Policies;
 
 use Illuminate\Support\Facades\Log;
+use MinVWS\DUSi\Shared\Application\Enums\ApplicationStageGrouping;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -38,7 +39,12 @@ class ApplicationPolicy
 
     public function filterApplications(User $user): bool
     {
-        return $user->hasRole([Role::Assessor, Role::InternalAuditor, Role::ImplementationCoordinator]);
+        return $user->hasRole([
+            Role::Assessor,
+            Role::InternalAuditor,
+            Role::ImplementationCoordinator,
+            Role::LegalSpecialist,
+         ]);
     }
 
     public function filterAssignedApplications(User $user): bool
@@ -93,45 +99,85 @@ class ApplicationPolicy
         return $stage->assessor_user_id === $user->id;
     }
 
-    public function claim(User $user, Application $application): bool
+    private function validateClaim(Application $application): bool
     {
         $stage = $application->currentApplicationStage;
 
         if ($stage === null) {
-            Log::debug('No current stage found for application');
+            Log::debug('No current stage found for application', ['applicationId' => $application->id]);
             return false;
         }
 
         if ($stage->is_submitted) {
-            Log::debug('Current stage is already submitted');
+            Log::debug('Current stage is already submitted', ['stageId' => $stage->id]);
             return false;
         }
 
         if ($stage->assessor_user_id !== null) {
-            Log::debug('Current stage is already assigned');
+            Log::debug('Current stage is already assigned', ['stageId' => $stage->id]);
             return false;
         }
 
         $subsidyStage = $stage->subsidyStage;
         if (
             $subsidyStage->subject_role !== SubjectRole::Assessor ||
-            $subsidyStage->assessor_user_role === null ||
+            $subsidyStage->assessor_user_role === null
+        ) {
+            Log::debug('Current stage is not assignable to assessor role.', [
+                'stageId' => $stage->id,
+                'subjectRole' => $subsidyStage->subject_role,
+                'assessorUserRole' => $subsidyStage->assessor_user_role
+            ]);
+            return false;
+        }
+
+        return true;
+    }
+
+    public function claim(User $user, Application $application): bool
+    {
+        if (!$this->validateClaim($application)) {
+            return false;
+        }
+
+        $currentApplicationStage = $application->currentApplicationStage;
+        if ($currentApplicationStage === null) {
+            return false;
+        }
+
+        $subsidyStage = $currentApplicationStage->subsidyStage;
+        if ($subsidyStage->assessor_user_role === null) {
+            return false;
+        }
+        if (
             !$user->hasRoleForSubsidy($subsidyStage->assessor_user_role, $application->subsidyVersion->subsidy_id)
         ) {
-            Log::debug('Current stage is not assignable to this assessor');
+            Log::debug(
+                'Current stage is not assignable to this assessor',
+                ['stageId' => $currentApplicationStage->id]
+            );
             return false;
         }
 
         // 4-ogen principe; user can't assess more than 1 stage
-        $applicationStages = $this->applicationRepository->getApplicationStagesUpToIncluding($stage);
+        $applicationStages =
+            $this->applicationRepository->getLatestApplicationStagesUpToIncluding(
+                $currentApplicationStage,
+                ApplicationStageGrouping::ByStageNumber
+            );
         foreach ($applicationStages as $applicationStage) {
-            if ($applicationStage->assessor_user_id === $user->id) {
-                Log::debug('User already assessed a previous stage');
+            if (!$subsidyStage->allow_duplicate_assessors && $applicationStage->assessor_user_id === $user->id) {
+                Log::debug('User already assessed a stage', ['stageId' => $currentApplicationStage->id]);
                 return false;
             }
         }
 
         return true;
+    }
+
+    public function getApplicationHistory(User $user, Application $application): bool
+    {
+        return $this->show($user, $application);
     }
 
     public function getTransitionHistory(User $user, Application $application): bool
@@ -142,5 +188,27 @@ class ApplicationPolicy
     public function getLetterFromMessage(User $user, Application $application): bool
     {
         return $this->show($user, $application);
+    }
+
+    public function assign(User $user, Application $application): bool
+    {
+        if (!$this->validateClaim($application)) {
+            return false;
+        }
+        return $user->hasRoleForSubsidy(
+            Role::ImplementationCoordinator,
+            $application->subsidyVersion->subsidy_id
+        );
+    }
+
+    public function export(User $user): bool
+    {
+        $pczmSubsidy = Subsidy::whereCode('PCZM')->first();
+        assert($pczmSubsidy !== null);
+
+        return $user->hasRoleForSubsidy(
+            Role::DataExporter,
+            $pczmSubsidy->id
+        );
     }
 }

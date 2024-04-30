@@ -7,15 +7,17 @@ ARGUMENTS="$@"
 DOWN=false
 FORCE=false
 INSTALL=false
+UPDATE=false
 OTHER_ARGUMENT=false
 
 # Function to display script usage
 function display_usage() {
-    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-m|--migrate] [-h|--help]"
+    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-u|--update] [-m|--migrate] [-h|--help]"
     echo "Options:"
     echo "  -c, --clear-env                 Copy the env files from the example files in each repository"
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
+    echo "  -u, --update                    Update packages"
     echo "  -f, --force                     Force override of installed packages"
     echo "      --ignore-platform-reqs      Ignore platform requirements during composer install"
     echo "  -m, --migrate                   Migrate database"
@@ -42,6 +44,10 @@ while [[ $# -gt 0 ]]; do
             INSTALL=true
             shift
             ;;
+        -u | --update)
+            UPDATE=true
+            shift
+            ;;
         -f | --force)
             FORCE=true
             shift
@@ -53,7 +59,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if "$DOWN" && ( "$INSTALL" || "$OTHER_ARGUMENT" ) ; then
+if "$DOWN" && ( "$INSTALL" || "$UPDATE" || "$OTHER_ARGUMENT" ) ; then
     echo "Down only works without other arguments. Please run the script again with only the down option."
     exit 1
 fi
@@ -75,6 +81,11 @@ if "$DOWN" ; then
     exit 0
 fi
 
+if "$UPDATE" ; then
+    echo "Update packages"
+    exit 0
+fi
+
 cp "$BASEDIR/application-backend/secrets/public.key" "$BASEDIR/application-api/secrets/public.key"
 cp "$BASEDIR/application-backend/secrets/public.key" "$BASEDIR/assessment-api/secrets/public.key"
 cp "$BASEDIR/application-backend/secrets/pki/issued/softhsm^SoftHSMLabel^*=create,destroy,use,import.crt" "$BASEDIR/assessment-api/secrets/softhsm.crt"
@@ -85,15 +96,19 @@ cd "$BASEDIR/user-admin-api"
 
 vendor/bin/sail artisan organisation:create "DUS-I"
 vendor/bin/sail artisan admin:create user@example.com user password --secret=USERUSERUSERUSER
-vendor/bin/sail artisan user:create assessor@example.com assessor password assessor --secret=ASSESSORASSESSOR
-vendor/bin/sail artisan user:create anotherAssessor@example.com assessor password assessor --secret=ASSESSORASSESSOR
-vendor/bin/sail artisan user:create implementationCoordinator@example.com implementationCoordinator password implementationCoordinator --secret=IMPLEMENTATIONCO
+vendor/bin/sail artisan user:create assessor@example.com Assessor password assessor --secret=ASSESSORASSESSOR
+vendor/bin/sail artisan user:create anotherAssessor@example.com "Another Assessor" password assessor --secret=ASSESSORASSESSOR
+vendor/bin/sail artisan user:create implementationCoordinator@example.com "Implementation Coordinator" password implementationCoordinator --secret=IMPLEMENTATIONCO
 vendor/bin/sail artisan user:create internalAuditor@example.com internalAuditor password internalAuditor --secret=INTERNALAUDITORI
+vendor/bin/sail artisan user:create dataExporter@example.com dataExporter password dataExporter --secret=DATAEXPORTERDATA
+vendor/bin/sail artisan user:create legalSpecialist@example.com legalSpecialist password legalSpecialist --secret=LEGALSPECIALISTD
 
 echo "User for user admin: user@example.com password"
 echo "Assessor user for assessment portal: assessor@example.com password"
 echo "Another assessor user for assessment portal: anotherAssessor@example.com password"
 echo "ImplementationCoordinator user for assessment portal: implementationCoordinator@example.com password"
 echo "InternalAuditor user for assessment portal: internalAuditor@example.com password"
+echo "DataExporter user for assessment portal: dataExporter@example.com password"
+echo "LegalSpecialist user for assessment portal: legalSpecialist@example.com password"
 
 cd "$BASEDIR"

@@ -72,6 +72,7 @@ class ValidationService
             FieldType::TextEmail => ['email:strict,dns', ...$this->getTextFieldRules($field)],
             FieldType::TextTel => [...$this->getTextFieldRules($field)],
             FieldType::TextNumeric => [...$this->getNumericFieldRules($field)],
+            FieldType::TextFloat => [...$this->getFloatFieldRules($field)],
             FieldType::TextUrl => [],
             FieldType::Upload => [new FileUploadRule($field)],
         }];
@@ -135,8 +136,8 @@ class ValidationService
             'string',
         ];
 
-        $maxLength = $field->params['minLength'] ?? null;
-        if (!empty($maxLength)) {
+        $minLength = $field->params['minLength'] ?? null;
+        if (!empty($minLength)) {
             $rules[] = 'min:' . $field->params['minLength'];
         }
 
@@ -158,13 +159,36 @@ class ValidationService
             'integer'
         ];
 
-        $maxLength = $field->params['minimum'] ?? null;
-        if (!empty($maxLength)) {
+        $minimum = $field->params['minimum'] ?? null;
+        if (!empty($minimum)) {
             $rules[] = 'min:' . $field->params['minimum'];
         }
 
-        $maxLength = $field->params['maximum'] ?? null;
-        if (!empty($maxLength)) {
+        $maximum = $field->params['maximum'] ?? null;
+        if (!empty($maximum)) {
+            $rules[] = 'max:' . $field->params['maximum'];
+        }
+
+        return $rules;
+    }
+
+    protected function getFloatFieldRules(Field $field): array
+    {
+        if ($field->type !== FieldType::TextFloat) {
+            return [];
+        }
+
+        $rules = [
+            'numeric'
+        ];
+
+        $minimum = $field->params['minimum'] ?? null;
+        if (!empty($minimum)) {
+            $rules[] = 'min:' . $field->params['minimum'];
+        }
+
+        $maximum = $field->params['maximum'] ?? null;
+        if (!empty($maximum)) {
             $rules[] = 'max:' . $field->params['maximum'];
         }
 

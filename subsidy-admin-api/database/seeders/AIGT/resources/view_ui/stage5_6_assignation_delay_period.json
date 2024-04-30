@@ -1,0 +1,40 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/assignationAssessmentChecklist",
+            "options": {
+                "readonly": true,
+                "format": "checkbox-group"
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/assessment",
+            "options": {
+                "readonly": true,
+                "format": "radio"
+            }
+        },
+        {
+            "type": "FormResultsTable",
+            "options": {
+                "fields": {
+                    "Bewijs": "{proof}"
+                }
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/internalNote",
+            "options": {
+                "readonly": true,
+                "format": "textarea"
+            }
+        }
+    ]
+}

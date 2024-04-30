@@ -188,6 +188,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+
         /*
          * Package Service Providers...
          */
@@ -206,6 +207,8 @@ return [
         MinVWS\DUSi\Shared\User\DatabaseServiceProvider::class,
         MinVWS\DUSi\Shared\Providers\SurePayServiceProvider::class,
         MinVWS\DUSi\Shared\Providers\LetterServiceProvider::class,
+        MinVWS\DUSi\Shared\Providers\UserServiceProvider::class,
+        MinVWS\DUSi\Shared\Providers\ClamAvServiceProvider::class,
     ],
 
     /*
@@ -222,5 +225,4 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
-
 ];

@@ -7,7 +7,6 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 use DateTimeInterface;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
-use MinVWS\Codable\Reflection\Attributes\CodableArray;
 
 class Application implements Codable
 {
@@ -22,7 +21,7 @@ class Application implements Codable
         public readonly bool $isEditable,
         public readonly Form $form,
         public readonly ?object $data,
-        public readonly ?object $validationResult
+        public readonly ?array $validationResult
     ) {
     }
 }

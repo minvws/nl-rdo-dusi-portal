@@ -8,14 +8,16 @@ FORCE=false
 IGNORE_PLATFORM_REQS=false
 INSTALL=false
 MIGRATE=false
+UPDATE=false
 
 # Function to display script usage
 function display_usage() {
-    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-m|--migrate] [-h|--help]"
+    echo "Usage: $0 [-c|--clear-env] [-v|--verbose] [-i|--install] [-u|--update] [-m|--migrate] [-h|--help]"
     echo "Options:"
     echo "  -c, --clear-env                 Copy the env files from the example files in each repository"
     echo "  -v, --verbose                   Print the commands that are executed"
     echo "  -i, --install                   Install packages"
+    echo "  -u, --update                    Update packages"
     echo "      --ignore-platform-reqs      Ignore platform requirements during composer install"
     echo "  -f, --force                     Force override of installed packages"
     echo "  -m, --migrate                   Migrate database"
@@ -44,6 +46,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -i | --install)
             INSTALL=true
+            shift
+            ;;
+        -u | --update)
+            UPDATE=true
             shift
             ;;
         --ignore-platform-reqs)
@@ -77,6 +83,18 @@ if $DOWN ; then
     else
         echo "Composer packages not installed."
     fi
+    exit 0
+fi
+
+if $UPDATE ; then
+    if $IGNORE_PLATFORM_REQS ; then
+        composer update --ignore-platform-req=ext-redis --ignore-platform-req=ext-sodium
+    else
+        composer update
+    fi
+
+    npm update
+
     exit 0
 fi
 

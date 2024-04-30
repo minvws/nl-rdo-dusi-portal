@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection, PhpUnusedPrivateMethodInspection, SpellCheckingInspection, PhpSameParameterValueInspection, PhpNamedArgumentsWithChangedOrderInspection */
 
 declare(strict_types=1);
@@ -8,6 +9,8 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits;
 use Illuminate\Support\Facades\DB;
 use MinVWS\Codable\JSON\JSONEncoder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use Ramsey\Uuid\Uuid;
 
 trait CreateField
@@ -23,6 +26,9 @@ trait CreateField
         ?array $params = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
+        bool $excludeFromCloneData = false,
+        FieldSource $source = FieldSource::User,
     ): string {
         $id = Uuid::uuid4()->toString();
 
@@ -36,6 +42,9 @@ trait CreateField
             'params' => json_encode($params),
             'is_required' => $isRequired && $requiredCondition === null,
             'required_condition' => $this->getRequiredCondition($requiredCondition),
+            'retention_period_on_approval' => $retentionPeriod,
+            'exclude_from_clone_data' => $excludeFromCloneData,
+            'source' => $source,
         ]);
 
         return $id;
@@ -47,9 +56,11 @@ trait CreateField
         string $title,
         ?string $description = null,
         ?string $inputMode = null,
-        ?int $maxLength = null,
+        ?array $params = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
+        FieldSource $source = FieldSource::User,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -57,9 +68,11 @@ trait CreateField
             title: $title,
             description: $description,
             type: $inputMode !== null ? "text:$inputMode" : 'text',
-            params: ['maxLength' => $maxLength],
+            params: $params,
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
+            source: $source,
         );
     }
 
@@ -70,6 +83,7 @@ trait CreateField
         ?string $description = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -79,6 +93,7 @@ trait CreateField
             type: 'date',
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
         );
     }
 
@@ -90,6 +105,7 @@ trait CreateField
         ?string $description = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -100,6 +116,7 @@ trait CreateField
             params: ['options' => $options],
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
         );
     }
 
@@ -110,6 +127,8 @@ trait CreateField
         ?string $description = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
+        bool $excludeFromCloneData = false
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -119,6 +138,8 @@ trait CreateField
             type: 'checkbox',
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
+            excludeFromCloneData: $excludeFromCloneData,
         );
     }
 
@@ -130,7 +151,9 @@ trait CreateField
         ?string $description = null,
         string|null $default = null,
         bool $isRequired = true,
-        ?Condition  $requiredCondition = null,
+        ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
+        bool $excludeFromCloneData = false
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -141,6 +164,8 @@ trait CreateField
             params: ['options' => $options, 'default' => $default],
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
+            excludeFromCloneData: $excludeFromCloneData,
         );
     }
 
@@ -151,6 +176,7 @@ trait CreateField
         ?string $description = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -160,6 +186,7 @@ trait CreateField
             type: 'textarea',
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
         );
     }
 
@@ -170,6 +197,7 @@ trait CreateField
         ?string $description = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -179,6 +207,7 @@ trait CreateField
             type: 'custom:postalcode',
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
         );
     }
 
@@ -189,6 +218,7 @@ trait CreateField
         ?string $description = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
     ): string {
         return $this->createSelectField(
             subsidyStageId: $subsidyStageId,
@@ -448,6 +478,7 @@ trait CreateField
             ],
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
         );
     }
 
@@ -458,6 +489,7 @@ trait CreateField
         ?string $description = null,
         bool $isRequired = true,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -467,6 +499,7 @@ trait CreateField
             type: 'custom:bankaccount',
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
+            retentionPeriod: $retentionPeriod,
         );
     }
 
@@ -478,7 +511,10 @@ trait CreateField
         bool $isRequired = true,
         ?array $mimeTypes = null,
         ?int $maxFileSize = null,
+        ?int $minItems = null,
+        ?int $maxItems = null,
         ?Condition $requiredCondition = null,
+        DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -491,7 +527,10 @@ trait CreateField
             params: array_filter([
                 'mimeTypes' => $mimeTypes,
                 'maxFileSize' => $maxFileSize,
+                'minItems' => $minItems,
+                'maxItems' => $maxItems,
             ]),
+            retentionPeriod: $retentionPeriod,
         );
     }
 

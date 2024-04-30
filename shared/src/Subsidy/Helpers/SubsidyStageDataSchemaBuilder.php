@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Helpers;
 
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 
 class SubsidyStageDataSchemaBuilder
 {
+    public function __construct(protected RequiredConditionSchemaMapper $schemaMapper)
+    {
+    }
+
     public function buildDataSchema(SubsidyStage $subsidyStage): array
     {
         $result = [];
@@ -17,15 +22,24 @@ class SubsidyStageDataSchemaBuilder
         $result['properties'] = [];
 
         $required = [];
+        $allOf = [];
         foreach ($subsidyStage->fields as $field) {
             $result['properties'][$field->code] = $this->createFieldDataSchema($field);
             if ($field->is_required) {
                 $required[] = $field->code;
             }
+            $requiredCondition = $field->required_condition;
+            if ($requiredCondition instanceof Condition) {
+                $allOf[] = $this->schemaMapper->mapConditionAndFieldToDataScheme($requiredCondition, $field);
+            }
         }
 
         if (count($required) > 0) {
             $result['required'] = $required;
+        }
+
+        if (count($allOf) > 0) {
+            $result['allOf'] = $allOf;
         }
 
         return $result;
@@ -41,6 +55,9 @@ class SubsidyStageDataSchemaBuilder
     {
         switch ($field->type) {
             case FieldType::Checkbox:
+                if ($field->is_required) {
+                    $result['const'] = true;
+                }
                 break;
             case FieldType::CustomBankAccount:
                 $result['iban'] = true;
@@ -59,6 +76,7 @@ class SubsidyStageDataSchemaBuilder
                     'type' => 'string',
                     'enum' => $field->params['options']
                 ];
+                $result = array_merge($result, $this->getArrayValidationOptions($field));
                 break;
             case FieldType::Select:
                 $result['enum'] = $field->params['options'];
@@ -81,6 +99,9 @@ class SubsidyStageDataSchemaBuilder
                 $result['minimum'] = 0;
                 $result = array_merge($result, $this->getNumberValidationOptions($field));
                 break;
+            case FieldType::TextFloat:
+                $result = array_merge(['step' => 0.01], $result, $this->getNumberValidationOptions($field));
+                break;
             case FieldType::TextUrl:
                 // Currently nothing extra
                 break;
@@ -95,6 +116,7 @@ class SubsidyStageDataSchemaBuilder
                     'required' => ['id']
                 ];
                 $result['file'] = true;
+                $result = array_merge($result, $this->getArrayValidationOptions($field));
                 break;
         }
     }
@@ -103,6 +125,7 @@ class SubsidyStageDataSchemaBuilder
     {
         $type = match ($field->type) {
             FieldType::TextNumeric => 'integer',
+            FieldType::TextFloat => 'number',
             FieldType::Checkbox => 'boolean',
             FieldType::Upload => 'array',
             FieldType::Multiselect => 'array',

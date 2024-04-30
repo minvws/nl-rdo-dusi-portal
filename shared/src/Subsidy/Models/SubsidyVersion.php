@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
-use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\SubsidyVersionFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
@@ -79,6 +77,11 @@ class SubsidyVersion extends Model
         return $query->orderBy('created_at');
     }
 
+    public function scopeOrderedByVersion(Builder $query): Builder
+    {
+        return $query->orderBy('version', 'desc');
+    }
+
     public function subsidyStages(): HasMany
     {
         return $this->hasMany(SubsidyStage::class, 'subsidy_version_id', 'id');
@@ -91,7 +94,7 @@ class SubsidyVersion extends Model
 
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', 'published');
+        return $query->where('status', VersionStatus::Published);
     }
 
     public function scopeSubjectRole(Builder $query, SubjectRole $role): Builder

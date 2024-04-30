@@ -11,14 +11,22 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 /**
  * @throws Exception
  */
-function createDateTimeOrNull(array $inputArray, mixed $key): ?DateTime
+function createDateTimeOrNull(array $inputArray, mixed $key, bool $setTimeToEndOfDay = false): ?DateTime
 {
     if (array_key_exists($key, $inputArray)) {
+        $value = $inputArray[$key];
+
         if ($inputArray[$key] instanceof DateTime) {
-            return $inputArray[$key];
+            $value = $inputArray[$key];
         } else {
-            return new DateTime($inputArray[$key]);
+            $value = new DateTime($inputArray[$key]);
         }
+
+        if ($setTimeToEndOfDay) {
+            $value->setTime(23, 59, 59);
+        }
+
+        return $value;
     }
     return null;
 }
@@ -53,17 +61,17 @@ class ApplicationsFilter
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        public ?string $applicationTitle,
-        public ?string $reference,
-        public ?DateTime $dateFrom,
-        public ?DateTime $dateTo,
-        public ?DateTime $dateLastModifiedFrom,
-        public ?DateTime $dateLastModifiedTo,
-        public ?DateTime $dateFinalReviewDeadlineFrom,
-        public ?DateTime $dateFinalReviewDeadlineTo,
-        public ?array $status,
-        public ?array $subsidy,
-        public ?array $phase,
+        public ?string $applicationTitle = null,
+        public ?string $reference = null,
+        public ?DateTime $dateFrom = null,
+        public ?DateTime $dateTo = null,
+        public ?DateTime $dateLastModifiedFrom = null,
+        public ?DateTime $dateLastModifiedTo = null,
+        public ?DateTime $dateFinalReviewDeadlineFrom = null,
+        public ?DateTime $dateFinalReviewDeadlineTo = null,
+        public ?array $status = null,
+        public ?array $subsidy = null,
+        public ?array $phase = null,
     ) {
     }
 
@@ -77,11 +85,11 @@ class ApplicationsFilter
             $inputArray['application_title'] ?? null,
             $inputArray['reference'] ?? null,
             createDateTimeOrNull($inputArray, 'date_from'),
-            createDateTimeOrNull($inputArray, 'date_to'),
+            createDateTimeOrNull($inputArray, 'date_to', true),
             createDateTimeOrNull($inputArray, 'date_last_modified_from'),
-            createDateTimeOrNull($inputArray, 'date_last_modified_to'),
+            createDateTimeOrNull($inputArray, 'date_last_modified_to', true),
             createDateTimeOrNull($inputArray, 'date_final_review_deadline_from'),
-            createDateTimeOrNull($inputArray, 'date_final_review_deadline_to'),
+            createDateTimeOrNull($inputArray, 'date_final_review_deadline_to', true),
             getStatusOrNull($inputArray, 'status'),
             $inputArray['subsidy'] ?? null,
             $inputArray['phase'] ?? null,

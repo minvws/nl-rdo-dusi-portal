@@ -1,5 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
-
+<?php
 
 declare(strict_types=1);
 
@@ -9,21 +8,33 @@ use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Validator as LaravelValidator;
-use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\ClamAv\ClamAvService;
 use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ClamAv;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use Psr\Log\LoggerInterface;
 
-readonly class FileValidator
+class FileValidator
 {
+    private ?LaravelValidator $validator;
+
     public function __construct(
         private ClamAvService $clamAvService,
         private LoggerInterface $logger,
         private Translator $translator,
     ) {
+        $this->validator = null;
     }
 
     public function getValidator(Field $field, UploadedFile $file): ValidatorContract
+    {
+        if ($this->validator === null) {
+            $this->validator = $this->createValidator($field, $file);
+        }
+
+        return $this->validator;
+    }
+
+    public function getRules(Field $field): array
     {
         $rules = [
             'required',
@@ -43,6 +54,13 @@ readonly class FileValidator
         // Add as last so size and mime type are checked first
         $rules[] = new ClamAv($this->clamAvService, $this->logger);
 
+        return $rules;
+    }
+
+    private function createValidator(Field $field, UploadedFile $file): LaravelValidator
+    {
+        $rules = $this->getRules($field);
+
         return new LaravelValidator(
             translator: $this->translator,
             data: [
@@ -52,5 +70,16 @@ readonly class FileValidator
                 'file' => $rules,
             ],
         );
+    }
+
+    public function failsOnMimetype(): bool
+    {
+        if ($this->validator === null || $this->validator->passes()) {
+            return false;
+        }
+
+        return collect(array_keys($this->validator->failed()['file']))
+            ->filter(fn(int|string $rule) => strpos(strtolower((string)$rule), 'mimetypes') !== false)
+            ->isNotEmpty();
     }
 }

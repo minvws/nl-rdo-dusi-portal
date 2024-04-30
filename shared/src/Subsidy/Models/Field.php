@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MinVWS\DUSi\Shared\Subsidy\Database\Factories\FieldFactory;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Condition;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 
@@ -25,7 +27,9 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
  * @property bool $is_required
  * @property Condition|null $required_condition
  * @property string $source
+ * @property DataRetentionPeriod $retention_period_on_approval
  * @property SubsidyStage $subsidyStage
+ * @property bool $exclude_from_clone_data
  */
 class Field extends Model
 {
@@ -45,7 +49,8 @@ class Field extends Model
         'source' => FieldSource::class,
         'params' => 'array',
         'is_required' => 'boolean',
-        'required_condition' => Condition::class
+        'required_condition' => Condition::class,
+        'retention_period_on_approval' => DataRetentionPeriod::class,
     ];
 
     protected $fillable = [
@@ -56,6 +61,7 @@ class Field extends Model
         'is_required',
         'code',
         'source',
+        'retention_period_on_approval',
     ];
 
     public function subsidyStage(): BelongsTo
@@ -66,6 +72,11 @@ class Field extends Model
     public function subsidyStageHashFields(): HasMany
     {
         return $this->HasMany(SubsidyStageHashField::class, 'field_id', 'id');
+    }
+
+    public function scopeWithRetentionPeriod(Builder $query, DataRetentionPeriod $retentionPeriod): Builder
+    {
+        return $query->where('retention_period_on_approval', '=', $retentionPeriod->value);
     }
 
     protected static function newFactory(): FieldFactory

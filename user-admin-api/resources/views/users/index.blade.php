@@ -61,7 +61,7 @@
                         </tbody>
                     </table>
 
-                    {!! $users->appends(\Request::except('page', '_token'))->render() !!}
+                    {!! $users->appends(\Request::except(['page', '_token']))->render() !!}
                 </div>
             @endif
         </div>

@@ -46,7 +46,7 @@ class ModelApplicationTest extends TestCase
             'created_at' => '2021-01-01',
             'final_review_deadline' => '2021-01-01',
             'updated_at' => '2021-01-01',
-            'status' => ApplicationStatus::Submitted,
+            'status' => ApplicationStatus::Pending,
         ]);
 
         $this->applicationStage = ApplicationStage::factory()->create([
@@ -96,7 +96,7 @@ class ModelApplicationTest extends TestCase
 
     public function testScopeStatus()
     {
-        $query = Application::query()->status([ApplicationStatus::Submitted])->get();
+        $query = Application::query()->status([ApplicationStatus::Pending])->get();
 
         $this->assertTrue($query->contains('id', $this->application->id));
 

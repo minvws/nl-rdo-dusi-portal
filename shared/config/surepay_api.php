@@ -7,7 +7,7 @@ return [
     'key' => env('SUREPAY_KEY'),
     'secret' => env('SUREPAY_SECRET'),
     'endpoint' => env('SUREPAY_ENDPOINT'),
-    'verify_ssl' => env('SUREPAY_VERIFY_SSL', false),
+    'verify_ssl' => env('SUREPAY_VERIFY_SSL', true),
     'proxy' => [
         'http' => env('SUREPAY_HTTP_PROXY', ''),
         'https' => env('SUREPAY_HTTPS_PROXY', ''),
@@ -19,4 +19,18 @@ return [
         env('SUREPAY_ENDPOINT_REQUEST_ACCESSTOKEN', 'oauth/client_credential/accesstoken'),
     'endpoint_check_organisations' =>
         env('SUREPAY_ENDPOINT_CHECK_ORGANISATIONS', 'account/check/organisations'),
+
+    /**
+     * Here you can configure the specific log channel for SurePay.
+     * The default LOG_CHANNEL is used as the log channel.
+     *
+     * @link https://laravel.com/docs/10.x/logging#configuration
+     */
+    'log_channel' => env('SUREPAY_LOG_CHANNEL', env('LOG_CHANNEL', 'stack')),
+
+    /**
+     * Here you can configure the maximum number of retries for the SurePay API.
+     * We will retry a request when the API returns a 5xx error or specific 400 errors.
+     */
+    'max_retries' => env('SUREPAY_MAX_RETRIES', 3),
 ];

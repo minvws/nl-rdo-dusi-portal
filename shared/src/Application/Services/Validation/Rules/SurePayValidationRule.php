@@ -5,28 +5,27 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Services\Validation\Rules;
 
 use Closure;
+use Exception;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Translation\Translator;
 use Illuminate\Validation\ValidationException;
 use MinVWS\DUSi\Shared\Application\Repositories\BankAccount\BankAccountRepository;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\CheckOrganisationsAccountResponse;
 use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\AccountNumberValidation;
-use MinVWS\DUSi\Shared\Application\Repositories\SurePay\DTO\Enums\NameMatchResult;
+use MinVWS\DUSi\Shared\Application\Services\Validation\SurePayValidationResultBuilder;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResult;
-use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResultFactory;
 use Illuminate\Support\Collection;
-use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResultParam;
 
 class SurePayValidationRule implements
     DataAwareRule,
     ImplicitValidationRule,
     ValidationResultRule
 {
-    private const BANK_ACCOUNT_HOLDER = 'bankAccountHolder';
-    private const BANK_ACCOUNT_NUMBER = 'bankAccountNumber';
-    private const CLOSE_MATCH_SUGGESTION = 'suggestion';
+    public const BANK_ACCOUNT_HOLDER_FIELD = 'bankAccountHolder';
+    public const BANK_ACCOUNT_NUMBER_FIELD = 'bankAccountNumber';
+    public const BANK_STATEMENT_FIELD = 'bankStatement';
+    public const VALIDATION_MESSAGE_CLOSE_MATCH_SUGGESTION_PARAM = 'suggestion';
 
     public function __construct(
         private readonly BankAccountRepository $bankAccountRepository,
@@ -61,20 +60,35 @@ class SurePayValidationRule implements
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (empty($this->data[self::BANK_ACCOUNT_NUMBER]) || empty($this->data[self::BANK_ACCOUNT_HOLDER])) {
+        if (
+            empty($this->data[self::BANK_ACCOUNT_NUMBER_FIELD])
+            || empty($this->data[self::BANK_ACCOUNT_HOLDER_FIELD])
+        ) {
             return;
         }
 
-        $checkResult = $this->executeSurePayCheck();
+        $validationResultBuilder = new SurePayValidationResultBuilder(
+            translator: $this->translator,
+            bankStatementIsSubmitted: $this->bankStatementIsSubmitted(),
+        );
+        try {
+            $checkResult = $this->executeSurePayCheck();
+        } catch (Exception $e) {
+            // Catch all exceptions and log them. User needs to upload bank statement in case of exception.
+            Log::error('SurePay validation failed', ['exception' => $e]);
 
-        $this->validateBankAccountNumber($checkResult, $fail);
-        $this->processNameMatchResults($checkResult, $fail);
-    }
+            $this->validationResults->push($validationResultBuilder->getFailedValidationResult());
+            return;
+        }
 
-    private function validateBankAccountNumber(CheckOrganisationsAccountResponse $checkResult, Closure $fail): void
-    {
         if ($checkResult->account->accountNumberValidation === AccountNumberValidation::Invalid) {
-            $fail($this->translator->get('validateFields.iban_not_valid'));
+            $this->validationResults->push($validationResultBuilder->getAccountNumberInvalidValidationResult());
+            return;
+        }
+
+        $validationResult = $validationResultBuilder->getValidationResult($checkResult);
+        if ($validationResult !== null) {
+            $this->validationResults->push($validationResult);
         }
     }
 
@@ -84,8 +98,8 @@ class SurePayValidationRule implements
     private function executeSurePayCheck(): CheckOrganisationsAccountResponse
     {
         return $this->checkOrganisationsAccount(
-            $this->data[self::BANK_ACCOUNT_HOLDER] ?? '',
-            $this->data[self::BANK_ACCOUNT_NUMBER]
+            $this->data[self::BANK_ACCOUNT_HOLDER_FIELD] ?? '',
+            $this->data[self::BANK_ACCOUNT_NUMBER_FIELD]
         );
     }
 
@@ -102,64 +116,8 @@ class SurePayValidationRule implements
         );
     }
 
-    protected function processNameMatchResults(CheckOrganisationsAccountResponse $checkResult, Closure $fail): void
+    private function bankStatementIsSubmitted(): bool
     {
-        $message = $this->getTranslatedMessageFromNameMatchResult($checkResult);
-        $nameMatchResult = $checkResult->nameMatchResult;
-
-        if ($nameMatchResult === NameMatchResult::NoMatch) {
-            $this->handleNoMatch($message, $fail);
-        }
-
-        if ($nameMatchResult === NameMatchResult::CloseMatch) {
-            $this->handleCloseMatch($checkResult, $message);
-        }
-
-        if ($nameMatchResult === NameMatchResult::Match) {
-            $this->handleMatch($message);
-        }
-
-        //Other results need no response in Application portal
-    }
-
-    private function handleNoMatch(string $message, Closure $fail): void
-    {
-        $this->validationResults->push(ValidationResultFactory::createError(message: $message));
-        $fail($message);
-    }
-
-    private function handleCloseMatch(CheckOrganisationsAccountResponse $checkResult, string $message): void
-    {
-        $validationResult = ValidationResultFactory::createWarning(message: $message);
-
-        if ($checkResult->nameSuggestion) {
-            $validationResult->setParam(
-                self::CLOSE_MATCH_SUGGESTION,
-                new ValidationResultParam(self::BANK_ACCOUNT_HOLDER, $checkResult->nameSuggestion)
-            );
-        }
-
-        $this->validationResults->push($validationResult);
-    }
-
-    private function handleMatch(string $message): void
-    {
-        $this->validationResults->push(ValidationResultFactory::createConfirmation(message: $message));
-    }
-
-    private function getTranslatedMessageFromNameMatchResult(
-        CheckOrganisationsAccountResponse $checkResult
-    ): string {
-        $lowerNameMatchResult = Str::lower($checkResult->nameMatchResult->value);
-        $message = $this->getSurePayValidationTranslation($lowerNameMatchResult);
-
-        return $message;
-    }
-
-    public function getSurePayValidationTranslation(string $lowerNameMatchResult): string
-    {
-        return (string) $this->translator->get(
-            sprintf('validateFields.validation_surepay_%s', $lowerNameMatchResult)
-        );
+        return !empty($this->data[self::BANK_STATEMENT_FIELD]);
     }
 }

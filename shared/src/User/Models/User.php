@@ -17,6 +17,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\User\Database\Factories\UserFactory;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
+use MinVWS\Logging\Laravel\Contracts\LoggableUser;
 
 /**
  * @property string $id
@@ -33,7 +34,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
  * @property Organisation $organisation
  * @method bool can($abilities, $arguments = [])
  */
-class User extends Authenticatable
+class User extends Authenticatable implements LoggableUser
 {
     use HasFactory;
     use Notifiable;
@@ -42,11 +43,6 @@ class User extends Authenticatable
 
     protected $connection = Connection::USER;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',

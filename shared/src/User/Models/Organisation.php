@@ -23,11 +23,6 @@ class Organisation extends Model
 
     protected $connection = Connection::USER;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
     protected $fillable = [
         'name',
     ];

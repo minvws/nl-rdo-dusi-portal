@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Feature\Http\Controllers;
 
 use Carbon\Carbon;
+use Generator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Testing\TestResponse;
@@ -40,6 +41,12 @@ class ApplicationControllerTest extends TestCase
     private Application $application4;
     private ApplicationStage $application4Stage1;
     private ApplicationStage $application4Stage2;
+
+    private Application $application5;
+    private ApplicationStage $application5Stage1;
+
+    private Application $application6;
+    private ApplicationStage $application6Stage1;
 
     private Subsidy $subsidy;
     private SubsidyVersion $subsidyVersion;
@@ -97,6 +104,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Pending,
             ]
         );
         $this->application1Stage1 = ApplicationStage::factory()
@@ -115,6 +123,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::RequestForChanges,
             ]
         );
         $this->application2Stage1 = ApplicationStage::factory()
@@ -144,6 +153,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Pending,
             ]
         );
         $this->application3Stage1 = ApplicationStage::factory()
@@ -153,6 +163,7 @@ class ApplicationControllerTest extends TestCase
                     'is_current' => false,
                     'is_submitted' => true,
                     'application_id' => $this->application3->id,
+                    'assessor_user_id' => $this->assessorUser2->id
                 ]
             );
 
@@ -174,6 +185,7 @@ class ApplicationControllerTest extends TestCase
                     'updated_at' => Carbon::today(),
                     'created_at' => Carbon::today(),
                     'final_review_deadline' => Carbon::today(),
+                    'status' => ApplicationStatus::Pending,
                 ]
             );
         $this->application4Stage1 = ApplicationStage::factory()
@@ -190,6 +202,40 @@ class ApplicationControllerTest extends TestCase
             ->create([
                 'sequence_number' => 2,
             ]);
+
+        $this->application5 = Application::factory()->create(
+            [
+                'application_title' => 'application 5',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Draft,
+            ]
+        );
+        $this->application5Stage1 = ApplicationStage::factory()
+            ->for($this->subsidyStage1)
+            ->create(
+                [
+                    'application_id' => $this->application5->id,
+                    'sequence_number' => 1,
+                ]
+            );
+
+        $this->application6 = Application::factory()->create(
+            [
+                'application_title' => 'application 6',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Approved,
+            ]
+        );
+        $this->application6Stage1 = ApplicationStage::factory()
+            ->for($this->subsidyStage1)
+            ->for($this->application6)
+            ->create();
     }
 
     public function testFilterForImplementationCoordinator(): void
@@ -201,6 +247,7 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications', $filters);
 
         $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
 
         $this->assertJsonFragment($response, $this->application1, ['show']);
     }
@@ -214,6 +261,7 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications', $filters);
 
         $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
 
         $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
     }
@@ -230,6 +278,7 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications', $filters);
 
         $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
 
         $this->assertJsonFragment($response, $this->application4, ['claim']);
     }
@@ -244,27 +293,25 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(3, 'data');
 
-        $response->assertJsonFragment([
-            'application_title' => $this->application2->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application2->status->value,
-            'final_review_deadline' => $this->application2->final_review_deadline,
-            'updated_at' => $this->application2->updated_at,
-            'actions' => ['release', 'show'],
-        ]);
-        $response->assertJsonFragment([
-            'application_title' => $this->application4->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application4->status->value,
-            'final_review_deadline' => $this->application4->final_review_deadline,
-            'updated_at' => $this->application4->updated_at,
-            'actions' => ['claim'],
-        ]);
+        $this->assertJsonFragment($response, $this->application1, ['release', 'show']);
+        $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
+        $this->assertJsonFragment($response, $this->application4, ['claim']);
 
         // Don't show the one where you are not the assessor
         $response->assertJsonMissing([
          'application_title' => $this->application3->application_title,
+        ]);
+
+        // Don't show draft
+        $response->assertJsonMissing([
+         'application_title' => $this->application5->application_title,
+        ]);
+
+        // Don't show approved
+        $response->assertJsonMissing([
+         'application_title' => $this->application6->application_title,
         ]);
     }
 
@@ -278,22 +325,14 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(4, 'data');
 
-        $response->assertJsonFragment([
-            'application_title' => $this->application1->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application1->status->value,
-            'final_review_deadline' => $this->application1->final_review_deadline,
-            'updated_at' => $this->application1->updated_at,
-            'actions' => ['show'],
-        ]);
-        $response->assertJsonFragment([
-            'application_title' => $this->application2->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application2->status->value,
-            'final_review_deadline' => $this->application2->final_review_deadline,
-            'updated_at' => $this->application2->updated_at,
-            'actions' => ['release', 'show'],
+        $this->assertJsonFragment($response, $this->application1, ['show']);
+        $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
+
+        // Don't show draft
+        $response->assertJsonMissing([
+            'application_title' => $this->application5->application_title,
         ]);
     }
 
@@ -314,6 +353,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Draft->value,
             ]
         );
 
@@ -331,9 +371,14 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(4, 'data');
 
         $response->assertJsonMissing([
             'application_title' => $unsubmittedApplication->application_title,
+        ]);
+
+        $response->assertJsonMissing([
+            'application_title' => $this->application5->application_title,
         ]);
     }
 
@@ -344,19 +389,16 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications/assigned');
 
         $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
 
-        $response->assertJsonFragment([
-            'application_title' => $this->application2->application_title,
-            'subsidy' => $this->subsidy->code,
-            'status' => $this->application2->status->value,
-            'final_review_deadline' => $this->application2->final_review_deadline,
-            'updated_at' => $this->application2->updated_at,
-            'actions' => ['release', 'show'],
-        ]);
+        $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
 
         // Don't show the one where you are not the assessor
         $response->assertJsonMissing([
             'application_title' => $this->application3->application_title,
+        ]);
+        $response->assertJsonMissing([
+            'application_title' => $this->application5->application_title,
         ]);
     }
 
@@ -372,7 +414,7 @@ class ApplicationControllerTest extends TestCase
                 'updated_at' => Carbon::today(),
                 'created_at' => Carbon::today(),
                 'final_review_deadline' => Carbon::today(),
-                'status' => ApplicationStatus::Submitted
+                'status' => ApplicationStatus::Pending
             ]
         );
 
@@ -423,70 +465,70 @@ class ApplicationControllerTest extends TestCase
         ]);
     }
 
-    public static function noResultFilterProvider(): \Generator
+    public static function noResultFilterProvider(): Generator
     {
         yield 'reference' => [
             [
                 'reference' => "123test123",
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateFrom' => [
             [
                 'date_from' => Carbon::tomorrow(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateTo' => [
             [
                 'date_to' => Carbon::yesterday(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateLastModifiedFrom' => [
             [
                 'date_last_modified_from' => Carbon::tomorrow(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateLastModifiedTo' => [
             [
                 'date_last_modified_to' => Carbon::yesterday(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateFinalReviewDeadLineFrom' => [
             [
                 'date_final_review_deadline_from' => Carbon::tomorrow(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'dateFinalReviewDeadLineTo' => [
             [
                 'date_final_review_deadline_to' => Carbon::yesterday(),
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
         yield 'Status' => [
             [
                 'status' => ['test'],
             ],
             422,
-            '{"message":"Gekozen status.0 is ongeldig.","errors":{"status.0":["Gekozen status.0 is ongeldig."]}}', // @phpcs:ignore
+            '{"message":"Gekozen status.0 is ongeldig.","errors":{"status.0":["Gekozen status.0 is ongeldig."]}}',
         ];
         yield 'Subsidy' => [
             [
                 'subsidy' => ['test'],
             ],
             200,
-            '{"data":[]}',
+            '{"data":[],"links":{"first":"http:\/\/localhost\/api\/applications?page=1","last":"http:\/\/localhost\/api\/applications?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Vorige","active":false},{"url":"http:\/\/localhost\/api\/applications?page=1","label":"1","active":true},{"url":null,"label":"Volgende &raquo;","active":false}],"path":"http:\/\/localhost\/api\/applications","per_page":15,"to":null,"total":0,"sorts":[{"column":"final_review_deadline","direction":"ascending"},{"column":"updated_at","direction":"ascending"}]}}', // phpcs:ignore
         ];
     }
 
@@ -528,5 +570,184 @@ class ApplicationControllerTest extends TestCase
             'updated_at' => $application->updated_at,
             'actions' => $actions
         ]);
+    }
+
+    public function testAsLegalSpecialistListApplications(): void
+    {
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::LegalSpecialist, $this->subsidy->id);
+
+        $application = Application::factory()->create(
+            [
+                'application_title' => 'application rejected',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Rejected,
+            ]
+        );
+        ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage1)
+            ->create();
+
+        $response = $this
+            ->be($user)
+            ->json('GET', '/api/applications');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(0, 'data');
+    }
+
+    public function testAsLegalSpecialistListApplicationByReference(): void
+    {
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::LegalSpecialist, $this->subsidy->id);
+
+        $application = Application::factory()->create(
+            [
+                'application_title' => 'application rejected',
+                'subsidy_version_id' => $this->subsidyVersion->id,
+                'updated_at' => Carbon::today(),
+                'created_at' => Carbon::today(),
+                'final_review_deadline' => Carbon::today(),
+                'status' => ApplicationStatus::Rejected,
+            ]
+        );
+        ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage1)
+            ->create();
+
+        $response = $this
+            ->be($user)
+            ->json('GET', '/api/applications?reference=' . $application->reference);
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+
+        $this->assertJsonFragment($response, $application, ['show']);
+    }
+
+    public function testAsLegalSpecialistListApplicationByReferenceGivesNoResultWhenApplicationInNotFinished(): void
+    {
+        $user = User::factory()->create();
+        $user->attachRole(RoleEnum::LegalSpecialist, $this->subsidy->id);
+
+        $response = $this
+            ->be($user)
+            ->json('GET', '/api/applications?reference=' . $this->application1->reference);
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(0, 'data');
+    }
+
+    /**
+     * @dataProvider sortProvider
+     */
+    public function testSortMetaDataIsReturned(string $sortParameter, array $expectedSortsResponse): void
+    {
+        $response = $this
+            ->be($this->assessorUser1)
+            ->json('GET', '/api/applications', ['sort' => $sortParameter]);
+
+        $response->assertJsonPath('meta.sorts', $expectedSortsResponse);
+    }
+
+    public static function sortProvider(): Generator
+    {
+        yield 'sort by final_review_deadline' => [
+            'final_review_deadline',
+            [
+                [
+                    'column' => 'final_review_deadline',
+                    'direction' => 'ascending',
+                ],
+                [
+                    'column' => 'updated_at',
+                    'direction' => 'ascending',
+                ],
+            ]
+        ];
+        yield 'sort by -final_review_deadline' => [
+            '-final_review_deadline',
+            [
+                [
+                    'column' => 'final_review_deadline',
+                    'direction' => 'descending',
+                ],
+                [
+                    'column' => 'updated_at',
+                    'direction' => 'ascending',
+                ],
+            ]
+        ];
+        yield 'sort by updated_at' => [
+            'updated_at',
+            [
+                [
+                    'column' => 'updated_at',
+                    'direction' => 'ascending',
+                ],
+            ]
+        ];
+        yield 'sort by -updated_at' => [
+            '-updated_at',
+            [
+                [
+                    'column' => 'updated_at',
+                    'direction' => 'descending',
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * @param array $queryParameters
+     * @param int $expectedPerPage
+     * @param int $expectedPage
+     * @return void
+     * @dataProvider paginationProvider
+     */
+    public function testPagination(array $queryParameters, int $expectedPerPage, int $expectedPage): void
+    {
+        $response = $this
+            ->be($this->assessorUser1)
+            ->json('GET', '/api/applications', $queryParameters);
+
+        $this->assertSame($response->json('meta.per_page'), $expectedPerPage);
+        $this->assertSame($response->json('meta.current_page'), $expectedPage);
+    }
+
+    public static function paginationProvider(): Generator
+    {
+        yield 'without pagination parameters' => [
+            [],
+            15,
+            1,
+        ];
+        yield '30 per page' => [
+            [
+                'per_page' => 30,
+            ],
+            30,
+            1,
+        ];
+        yield '30 per page and 2nd page' => [
+            [
+                'per_page' => 30,
+                'page' => 2,
+            ],
+            30,
+            2,
+        ];
+        yield '2nd page' => [
+            [
+                'page' => 2,
+            ],
+            15,
+            2,
+        ];
     }
 }

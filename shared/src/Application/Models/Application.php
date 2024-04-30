@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
@@ -38,8 +37,10 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property-read Collection<ApplicationMessage> $applicationMessages
  * @property-read ApplicationStage|null $currentApplicationStage
  * @property-read ApplicationStage $lastApplicationStage
- * @property-read Collection<ApplicationStage> $applicationStages
+ * @property-read ApplicationStage $firstApplicationStage
+ * @property-read Collection<string, ApplicationStage> $applicationStages
  * @property-read Collection<ApplicationStageTransition> $applicationStageTransitions
+ * @property-read Collection<ApplicationHash> $applicationHashes
  * @property-read ApplicationSurePayResult|null $applicationSurePayResult
  * @method static Builder<self> forIdentity(Identity $identity)
  * @method Builder<self> forIdentity(Identity $identity)
@@ -76,6 +77,7 @@ class Application extends Model
                     ->where('application_id', '=', $attrs['id'])
                     ->whereRelation('subsidyStage', 'stage', '=', 1)
                     ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
+                    ->where('is_submitted', '=', true)
                     ->orderBy('sequence_number')
                     ->limit(1)
                     ->first(['submitted_at'])
@@ -135,6 +137,14 @@ class Application extends Model
         return
             $this->hasOne(ApplicationStage::class)
                 ->orderBy('sequence_number', 'desc')
+                ->limit(1);
+    }
+
+    public function firstApplicationStage(): HasOne
+    {
+        return
+            $this->hasOne(ApplicationStage::class, 'application_id', 'id')
+                ->orderBy('sequence_number', 'asc')
                 ->limit(1);
     }
 
@@ -202,6 +212,13 @@ class Application extends Model
         return $query->whereHas('subsidyVersion.subsidy', function (Builder $q) use ($codes) {
             $q->whereIn('code', $codes);
         });
+    }
+
+    public function scopeOrderByStatus(Builder $query): Builder
+    {
+        // phpcs:disable Generic.Files.LineLength
+        return $query->orderByRaw('CASE status WHEN \'draft\' THEN 1 WHEN \'pending\' THEN 2 WHEN \'approved\' THEN 3 WHEN \'rejected\' THEN 4 END');
+        // phpcs:enable Generic.Files.LineLength
     }
 
     /**

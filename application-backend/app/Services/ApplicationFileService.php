@@ -96,7 +96,7 @@ readonly class ApplicationFileService
     private function doSaveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
     {
         $identity = $this->loadIdentity($params->identity);
-        $application = $this->loadApplication($identity, $params->applicationReference);
+        $application = $this->loadApplication($identity, $params->applicationReference, lockForUpdate: true);
         $applicationStage = $this->loadApplicationStage($application);
         $field = $this->loadField($applicationStage, $params->fieldCode);
 
@@ -105,12 +105,12 @@ readonly class ApplicationFileService
         $decryptedContent = $this->frontendDecryptionService->decrypt($params->data);
 
         $tempFile = new TemporaryFile($decryptedContent);
-        $tempFile->makeGroupReadable();
 
         $validator = $this->fileValidator->getValidator($field, $tempFile->getUploadedFile());
         if ($validator->fails()) {
             $this->logger->debug('File validation failed', [
                 'errors' => $validator->errors()->toArray(),
+                'failed' => $validator->failed(),
                 'file' => [
                     'size' => $tempFile->getUploadedFile()->getSize(),
                     'mimeType' => $tempFile->getUploadedFile()->getMimeType()
@@ -119,6 +119,13 @@ readonly class ApplicationFileService
 
             // After calling fails, the validator has run and the file can be closed
             $tempFile->close();
+
+            if ($this->fileValidator->failsOnMimetype()) {
+                throw new EncryptedResponseException(
+                    EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
+                    'file_mimetype_not_allowed',
+                );
+            }
 
             throw new EncryptedResponseException(
                 EncryptedResponseStatus::BAD_REQUEST,
@@ -157,7 +164,7 @@ readonly class ApplicationFileService
         $identity = $this->loadIdentity($params->identity);
         $application = $this->loadApplication($identity, $params->applicationReference);
 
-        $applicationStage = $this->applicationRepository->getApplicantApplicationStage($application, true);
+        $applicationStage = $this->applicationRepository->getCurrentApplicantApplicationStage($application, true);
         assert($applicationStage !== null);
 
         $field = $this->loadField($applicationStage, $params->fieldCode);

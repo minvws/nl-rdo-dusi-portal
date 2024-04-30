@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Application\Repositories;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 class ApplicationFileRepository
 {
@@ -43,6 +41,11 @@ class ApplicationFileRepository
     public function makeDirectory(string $filePath): bool
     {
         return $this->filesystem->makeDirectory($filePath);
+    }
+
+    public function deleteDirectory(string $directoryPath): bool
+    {
+        return $this->filesystem->deleteDirectory($directoryPath);
     }
 
     public function copyFiles(string $sourceDirectory, string $targetDirectory): bool

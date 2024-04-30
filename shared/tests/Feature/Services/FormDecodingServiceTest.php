@@ -14,6 +14,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use MinVWS\DUSi\Shared\Tests\TestCase;
 
+/** @group decoding */
 class FormDecodingServiceTest extends TestCase
 {
     /**
@@ -52,16 +53,23 @@ class FormDecodingServiceTest extends TestCase
     public static function dataProviderTestDecodeFormValues(): array
     {
         return [
-            'field type text' => self::getTestDataForField(FieldType::Text, 'tekst'),
-            'field type text numeric' => self::getTestDataForField(FieldType::TextNumeric, 1),
-            'field type text email' => self::getTestDataForField(FieldType::TextEmail, 'tekst'),
-            'field type text tel' => self::getTestDataForField(FieldType::TextTel, '+31123456'),
-            'field type text url' => self::getTestDataForField(FieldType::TextTel, 'https://rdobeheer.nl'),
-            'field type checkbox true' => self::getTestDataForField(FieldType::Checkbox, true),
-            'field type checkbox false' => self::getTestDataForField(FieldType::Checkbox, false),
-            'field type multiselect' => self::getTestDataForField(FieldType::Multiselect, ['a', 'b']),
-            'field type select' => self::getTestDataForField(FieldType::Select, 'a'),
-            'field type textarea' => self::getTestDataForField(FieldType::TextArea, 'b'),
+            'field type text' => self::getTestDataForFieldExpectSameValue(FieldType::Text, 'tekst'),
+            'field type text numeric' => self::getTestDataForFieldExpectSameValue(FieldType::TextNumeric, 1),
+            'field type text float' => self::getTestDataForFieldExpectSameValue(FieldType::TextFloat, 1.1),
+            'field type text float whole value' => self::getTestDataForFieldExpectSameValue(FieldType::TextFloat, 1.0),
+            'field type text float with integer value' => self::getTestDataForField(FieldType::TextFloat, 1, 1.0),
+            'field type text email' => self::getTestDataForFieldExpectSameValue(FieldType::TextEmail, 'tekst'),
+            'field type text tel' => self::getTestDataForFieldExpectSameValue(FieldType::TextTel, '+31123456'),
+            'field type text url' => self::getTestDataForFieldExpectSameValue(
+                FieldType::TextTel,
+                'https://rdobeheer.nl'
+            ),
+            'field type checkbox true' => self::getTestDataForFieldExpectSameValue(FieldType::Checkbox, true),
+            'field type checkbox false' => self::getTestDataForFieldExpectSameValue(FieldType::Checkbox, false),
+            'field type multiselect' => self::getTestDataForFieldExpectSameValue(FieldType::Multiselect, ['a', 'b']),
+            'field type multiselect with empty list' => self::getTestDataForField(FieldType::Multiselect, [], null),
+            'field type select' => self::getTestDataForFieldExpectSameValue(FieldType::Select, 'a'),
+            'field type textarea' => self::getTestDataForFieldExpectSameValue(FieldType::TextArea, 'b'),
             'field type upload' => self::getTestDataForField(FieldType::Upload, [
                 [
                     'id' => '225654e6-1db3-445c-8ff8-48679dd802c2',
@@ -71,26 +79,46 @@ class FormDecodingServiceTest extends TestCase
             ], new FileList([
                 new File('225654e6-1db3-445c-8ff8-48679dd802c2', 'file1.pdf', 'application/pdf'),
             ])),
-            'field type date' => self::getTestDataForField(FieldType::Date, '2023-12-31'),
-            'field type custom postal code' => self::getTestDataForField(FieldType::CustomPostalCode, '1234AB'),
-            'field type custom country' => self::getTestDataForField(FieldType::CustomCountry, 'NL'),
+            'field type upload with empty items' => self::getTestDataForField(FieldType::Upload, [
+                null,
+                [
+                    'id' => '225654e6-1db3-445c-8ff8-48679dd802c2',
+                    'name' => 'file1.pdf',
+                    'mimeType' => 'application/pdf'
+                ],
+                null,
+            ], new FileList([
+                new File('225654e6-1db3-445c-8ff8-48679dd802c2', 'file1.pdf', 'application/pdf'),
+            ])),
+            'field type upload with only empty items' => self::getTestDataForField(FieldType::Upload, [
+                null,
+                null,
+            ], null),
+            'field type upload with empty list' => self::getTestDataForField(FieldType::Upload, [], null),
+            'field type date' => self::getTestDataForFieldExpectSameValue(FieldType::Date, '2023-12-31'),
+            'field type custom postal code' => self::getTestDataForFieldExpectSameValue(
+                FieldType::CustomPostalCode,
+                '1234AB'
+            ),
+            'field type custom country' => self::getTestDataForFieldExpectSameValue(FieldType::CustomCountry, 'NL'),
             'field type custom bank account' =>
-                self::getTestDataForField(FieldType::CustomBankAccount, 'NL18RABO0123459876'),
+                self::getTestDataForFieldExpectSameValue(FieldType::CustomBankAccount, 'NL18RABO0123459876'),
         ];
+    }
+
+    protected static function getTestDataForFieldExpectSameValue(FieldType $fieldType, mixed $value): array
+    {
+        return self::getTestDataForField($fieldType, $value, $value);
     }
 
     protected static function getTestDataForField(
         FieldType $fieldType,
         mixed $value,
-        mixed $expectedValue = null
+        mixed $expectedValue,
     ): array {
         $form = [
             'code' => $value,
         ];
-
-        if ($expectedValue === null) {
-            $expectedValue = $value;
-        }
 
         return [
             $fieldType,

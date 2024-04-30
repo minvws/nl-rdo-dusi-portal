@@ -1,5 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
-
+<?php
 
 declare(strict_types=1);
 
@@ -10,7 +9,7 @@ use Exception;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Translation\PotentiallyTranslatedString;
-use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\ClamAv\ClamAvService;
 use Psr\Log\LoggerInterface;
 
 readonly class ClamAv implements ValidationRule
@@ -33,7 +32,7 @@ readonly class ClamAv implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (!$this->clamAvService->enabled()) {
-            $this->logger?->debug('Skipping ClamAV scan because skipValidation is set to true');
+            $this->logger?->warning('Skipping ClamAV scan because ClamAV is not enabled.');
             return;
         }
 
@@ -42,11 +41,10 @@ readonly class ClamAv implements ValidationRule
             return;
         }
 
-        $client = $this->clamAvService->getClamAvClient();
-        $result = $client->scanFile($value->getPathname());
+        $result = $this->clamAvService->scanFile($value->getPathname());
 
         if (!$result->isOk()) {
-            $this->logger?->info(
+            $this->logger?->notice(
                 'ClamAV scan failed',
                 [
                     'failed' => $result->hasFailed(),

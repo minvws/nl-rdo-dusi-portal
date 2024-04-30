@@ -4,36 +4,37 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Subsidy\Repositories;
 
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Str;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransitionMessage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use Illuminate\Support\Facades\DB;
 
 class SubsidyRepository
 {
-    /*
-     * @return Collection<Subsidy>
+    /**
+     * @return EloquentCollection<array-key, Subsidy>
      */
-    public function getActiveSubsidies(): Collection
+    public function getActiveSubsidies(): EloquentCollection
     {
         /** @phpstan-ignore-next-line */
         return Subsidy::query()->active()->ordered()->with('publishedVersion.subsidyStages')->get();
     }
 
-    /*
+    /**
      * @param SubjectRole $subjectRole
-     * @return Collection<Subsidy>
+     * @return EloquentCollection<array-key, Subsidy>
      */
-    public function getSubsidiesWithSubsidyStagesForSubjectRole(SubjectRole $subjectRole): Collection
+    public function getSubsidiesWithSubsidyStagesForSubjectRole(SubjectRole $subjectRole): EloquentCollection
     {
         /** @phpstan-ignore-next-line */
         return Subsidy::query()->subjectRole($subjectRole)->ordered()->with('publishedVersion.subsidyStages')->get();
     }
 
-    /*
+    /**
      * @param string $id
      * @return ?Subsidy
      */
@@ -46,22 +47,22 @@ class SubsidyRepository
         return null;
     }
 
-    /*
+    /**
      * @param string $id
      * @return ?SubsidyStage
      */
-    public function getSubsidyStage(string $id): ?SubsidyStage
+    public function getSubsidyStage(string $id, bool $lockForUpdate = false): ?SubsidyStage
     {
-        $subsidyStage = SubsidyStage::find($id);
+        $subsidyStage = SubsidyStage::query()->when($lockForUpdate, fn($q) => $q->lockForUpdate())->find($id);
         if ($subsidyStage instanceof SubsidyStage) {
             return $subsidyStage;
         }
         return null;
     }
 
-    /*
+    /**
      * @param string $id
-     * @return ?SubsidyStageUI
+     * @return ?SubsidyVersion
      */
     public function getSubsidyVersion(string $id): ?SubsidyVersion
     {
@@ -72,7 +73,7 @@ class SubsidyRepository
         return null;
     }
 
-    /*
+    /**
      * @param string $id
      * @return ?Field
      */
@@ -85,7 +86,7 @@ class SubsidyRepository
         return null;
     }
 
-    /*
+    /**
      * @param SubsidyStage $subsidyStage
      * @param string $code
      * @return ?Field
@@ -102,18 +103,18 @@ class SubsidyRepository
         return null;
     }
 
-    /*
+    /**
      * @param SubsidyStage $subsidyStage
-     * @return Collection<Field>
+     * @return EloquentCollection<array-key, Field>
      */
-    public function getFields(SubsidyStage $subsidyStage): Collection
+    public function getFields(SubsidyStage $subsidyStage): EloquentCollection
     {
         return Field
             ::where('subsidy_stage_id', $subsidyStage->id)
             ->get();
     }
 
-    /*
+    /**
      * @return Subsidy
      */
     public function makeSubsidy(): Subsidy
@@ -121,7 +122,7 @@ class SubsidyRepository
         return new Subsidy();
     }
 
-    /*
+    /**
      * @param Subsidy $subsidy
      */
     public function saveSubsidy(Subsidy $subsidy): void
@@ -129,7 +130,7 @@ class SubsidyRepository
         $subsidy->save();
     }
 
-    /*
+    /**
      * @param Subsidy $subsidy
      * @return SubsidyVersion
      */
@@ -140,7 +141,7 @@ class SubsidyRepository
         return $subsidyVersion;
     }
 
-    /*
+    /**
      * @param SubsidyVersion $subsidyVersion
      * @return SubsidyStage
      */
@@ -151,7 +152,7 @@ class SubsidyRepository
         return $subsidyStage;
     }
 
-    /*
+    /**
      * @param SubsidyStage $subsidyStage
      */
     public function saveSubsidyStage(SubsidyStage $subsidyStage): void
@@ -159,7 +160,7 @@ class SubsidyRepository
         $subsidyStage->save();
     }
 
-    /*
+    /**
      * @param SubsidyStage $subsidyStage
      * @return Field
      */
@@ -170,7 +171,7 @@ class SubsidyRepository
         return $field;
     }
 
-    /*
+    /**
      * @param Field $field
      */
     public function saveField(Field $field): void
@@ -178,27 +179,40 @@ class SubsidyRepository
         $field->save();
     }
 
-    /*
-     * @param SubsidyLetter $subsidyLetter
-     * @return Collection<string>
+    /**
+     * @param array<int> $subsidyIds
+     * @return array<array-key, string>
      */
-    public function getActiveSubsidyCodes(): Collection
+    public function getActiveSubsidyCodes(?array $subsidyIds = null): array
     {
-        return Subsidy::query()->active()->ordered()->pluck('code');
+        return Subsidy::filterByIds($subsidyIds)
+            ->active()
+            ->ordered()
+            ->pluck('code')
+            ->toArray();
     }
 
-    /*
-     * @param SubsidyLetter $subsidyLetter
-     * @return Collection<SubsidyStage>
+    /**
+     * @param array<int> $subsidyIds
+     * @return array<array-key, string>
      */
-    public function getSubsidyStageTitles(): Collection
+    public function getSubsidyStageTitles(?array $subsidyIds = null): array
     {
-        return SubsidyStage::query()->distinct()->ordered()->get();
+        return SubsidyStage::bySubsidyIds($subsidyIds)
+            ->select('title', 'stage', 'subsidy_version_id')
+            ->get()
+            ->groupBy('subsidy_version_id')
+            ->each->sortBy('stage')
+            ->map->pluck('title')
+            ->flatten()
+            ->unique()
+            ->values()
+            ->toArray();
     }
 
     public function findSubsidyByCode(string $code): ?Subsidy
     {
-        return Subsidy::query()->where('code', '=', $code)->first();
+        return Subsidy::query()->where(DB::raw('lower(code)'), '=', Str::lower($code))->first();
     }
 
     public function getFirstStageForSubsidyVersion(SubsidyVersion $subsidyVersion): SubsidyStage

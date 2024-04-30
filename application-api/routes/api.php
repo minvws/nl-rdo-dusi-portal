@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Application\API\Http\Controllers\ActionableController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationController;
 use MinVWS\DUSi\Application\API\Http\Controllers\ApplicationFileController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MessageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\MockedResourceController;
-use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyController;
+use MinVWS\DUSi\Application\API\Http\Controllers\SubsidyStageController;
 use MinVWS\DUSi\Application\API\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 use MinVWS\DUSi\Application\API\Http\Middleware\RequireClientPublicKey;
 
 /*
@@ -29,6 +29,8 @@ Route::middleware('auth')->group(
 
         // TODO: move more routes to this once the frontend is ready
         Route::middleware(RequireClientPublicKey::class)->group(function () {
+            Route::get('subsidies/{subsidyCode}', [SubsidyController::class, 'getSubsidyAndConcepts'])
+                ->name('subsidy-and-concepts');
             Route::post('subsidies/{subsidyCode}/applications', [ApplicationController::class, 'create'])
                 ->name('application-create');
 
@@ -58,13 +60,13 @@ Route::middleware('auth')->group(
                 ->name('message-download');
         });
 
-        Route::get('actionables/counts', [ActionableController::class, 'counts']);
+        Route::get('actionables/counts', [ActionableController::class, 'counts'])->name('actionables-count');
 
         Route::get('user/info', [UserController::class, 'info'])->name('user-info');
         Route::post('user/logout', [UserController::class, 'logout'])->name('user-logout');
 
-        // TODO: route name not suitable for user messages
-        Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters']);
+        Route::get('ui/applications/messages-filter', [MessageController::class, 'showFilters'])
+            ->name('ui-applications-messages-filter');
     }
 );
 

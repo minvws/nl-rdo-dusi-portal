@@ -1,10 +1,10 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
-
+<?php
 
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\DTO;
 
+use DateTime;
 use Illuminate\Support\Collection;
 
 /**
@@ -12,6 +12,10 @@ use Illuminate\Support\Collection;
  */
 class LetterStageData extends Collection
 {
+    public ?DateTime $createdAt;
+    public ?DateTime $submittedAt;
+    public ?DateTime $closedAt;
+
     public function __get($key): mixed
     {
         return $this->get($key)?->answerData;

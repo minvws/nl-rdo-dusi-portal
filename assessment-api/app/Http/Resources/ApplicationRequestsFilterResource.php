@@ -22,15 +22,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 class ApplicationRequestsFilterResource extends JsonResource
 {
     /**
-     * @param array<string> $regulations
-     */
-    //TODO dynamic regulations
-    public function __construct(array $regulations)
-    {
-        parent::__construct($regulations);
-    }
-
-    /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
@@ -110,14 +101,14 @@ class ApplicationRequestsFilterResource extends JsonResource
                                     "elements" => [
                                         [
                                             "type" => "CustomControl",
-                                            "scope" => "#/properties/updateFrom",
+                                            "scope" => "#/properties/dateLastModifiedFrom",
                                             "options" => [
                                                 "inline" => true
                                             ]
                                         ],
                                         [
                                             "type" => "CustomControl",
-                                            "scope" => "#/properties/updateTo",
+                                            "scope" => "#/properties/dateLastModifiedTo",
                                             "options" => [
                                                 "inline" => true
                                             ]
@@ -176,11 +167,7 @@ class ApplicationRequestsFilterResource extends JsonResource
                         'type' => 'string',
                         'oneOf' => [
                             [
-                                'const' => ApplicationStatus::Draft,
-                                'title'  => 'Nog niet ingediend'
-                            ],
-                            [
-                                'const' => ApplicationStatus::Submitted,
+                                'const' => ApplicationStatus::Pending,
                                 'title'  => 'Nieuw'
                             ],
                             [
@@ -203,7 +190,7 @@ class ApplicationRequestsFilterResource extends JsonResource
                     'type' => 'array',
                     'items' => [
                         'type' => 'string',
-                        'enum' => $this['phases']->map(fn ($item) => $item->title)
+                        'enum' => $this['phases']
                     ],
                     'title' => 'Fase'
                 ],
@@ -215,12 +202,12 @@ class ApplicationRequestsFilterResource extends JsonResource
                     ],
                     'title' => 'Regeling'
                 ],
-                'updateFrom' => [
+                'dateLastModifiedFrom' => [
                     'type' => 'string',
                     'format' => 'date',
                     'title' => 'Van'
                 ],
-                'updateTo' => [
+                'dateLastModifiedTo' => [
                     'type' => 'string',
                     'format' => 'date',
                     'title' => 'Tot'

@@ -1,0 +1,84 @@
+[{
+    "if": {
+        "properties": {
+            "isWiaDecisionPostponed": {
+                "const": "Ja"
+            }
+        }
+    },
+    "then": {
+        "required": ["wiaDecisionPostponedLetter"]
+    }
+}, {
+    "if": {
+        "properties": {
+            "isWiaDecisionFirstSickDayOutsidePeriod": {
+                "const": "Ja"
+            }
+        }
+    },
+    "then": {
+        "required": ["wiaFirstSickDayOutsidePeriodProof"]
+    }
+}, {
+    "if": {
+        "anyOf": [
+            {
+                "required": [
+                    "employmentFunction"
+                ],
+                "properties": {
+                    "employmentFunction": {
+                        "const": "Anders"
+                    }
+                }
+            },
+            {
+                "required": [
+                    "employerKind"
+                ],
+                "properties": {
+                    "employerKind": {
+                        "const": "Andere organisatie"
+                    }
+                }
+            }
+        ]
+    },
+    "then": {
+        "required": ["otherEmployerDeclarationFile"]
+    }
+}, {
+    "if": {
+        "properties": {
+            "hasBeenWorkingAtJudicialInstitution": {
+                "const": "Ja"
+            }
+        }
+    },
+    "then": {
+        "required": ["BIGNumberJudicialInstitution"]
+    }
+}, {
+    "if": {
+        "properties": {
+            "employmentFunction": {
+                "const": "Anders"
+            }
+        }
+    },
+    "then": {
+        "required": ["otherEmploymentFunction"]
+    }
+}, {
+    "if": {
+        "properties": {
+            "hasPostCovidDiagnose": {
+                "const": "Nee"
+            }
+        }
+    },
+    "then": {
+        "required": ["doctorsCertificate"]
+    }
+}]

@@ -8,8 +8,11 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewFileEvent;
+use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationFileUploadRequest;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationFileService;
 use MinVWS\DUSi\Shared\Application\Models\Application;
+use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\Logging\Laravel\LogService;
 
@@ -26,25 +29,58 @@ class ApplicationFileController extends Controller
      */
     public function show(
         Application $application,
-        string $applicationStageId,
-        string $fieldCode,
+        ApplicationStage $applicationStage,
+        Field $field,
         string $fileId,
         Authenticatable $user
     ): Response {
         $this->authorize('show', $application);
         assert($user instanceof User);
         $this->logger->log((new ViewFileEvent())
+            ->withActor($user)
             ->withData([
                 'applicationId' => $application->id,
-                'fieldCode' => $fieldCode,
+                'fieldCode' => $field->code,
                 'fileId' => $fileId,
-                'userId' => $user->id,
+                'userId' => $user->getAuthIdentifier(),
             ]));
         return $this->applicationFileService->getApplicationFile(
-            $application,
-            $applicationStageId,
-            $fieldCode,
+            $applicationStage,
+            $field,
             $fileId
+        );
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) Application is used for route binding
+     */
+    public function uploadFile(
+        Application $application,
+        ApplicationStage $applicationStage,
+        Field $field,
+        ApplicationFileUploadRequest $request,
+        Authenticatable $user
+    ): Response {
+        $fileId = $this->applicationFileService->createApplicationFile(
+            $applicationStage,
+            $field,
+            $request->validated('file')
+        );
+
+        assert($user instanceof User);
+
+        $this->logger->log((new ViewFileEvent())
+            ->withActor($user)
+            ->withData([
+                'applicationId' => $application->id,
+                'fieldCode' => $field->code,
+                'fileId' => $fileId,
+                'userId' => $user->getAuthIdentifier(),
+            ]));
+
+        return new Response(
+            content: ["id" => $fileId],
+            status: 201
         );
     }
 }

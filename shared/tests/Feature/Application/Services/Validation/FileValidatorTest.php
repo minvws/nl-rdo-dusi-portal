@@ -10,7 +10,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Translation\ArrayLoader;
 use Illuminate\Translation\Translator;
-use MinVWS\DUSi\Shared\Application\Services\Clamav\ClamAvService;
+use MinVWS\DUSi\Shared\Application\Services\ClamAv\ClamAvService;
 use MinVWS\DUSi\Shared\Application\Services\Validation\FileValidator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Tests\TestCase;
@@ -63,7 +63,7 @@ class FileValidatorTest extends TestCase
         $fileValidator = new FileValidator(
             clamAvService: new ClamAvService(enabled: false),
             logger: $this->mock(LoggerInterface::class, function (MockInterface $mock) {
-                $mock->shouldReceive('debug')->with('Skipping ClamAV scan because skipValidation is set to true');
+                $mock->shouldReceive('warning')->with('Skipping ClamAV scan because ClamAV is not enabled.');
             }),
             translator: $this->translator,
         );
@@ -77,5 +77,6 @@ class FileValidatorTest extends TestCase
 
         $validator = $fileValidator->getValidator($field, $file);
         $this->assertSame($success, !$validator->fails());
+        $this->assertSame($success, !$fileValidator->failsOnMimetype());
     }
 }

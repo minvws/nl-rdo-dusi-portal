@@ -14,9 +14,9 @@ trait LoadApplication
     /**
      * @throws EncryptedResponseException
      */
-    private function loadApplication(Identity $identity, string $reference): Application
+    private function loadApplication(Identity $identity, string $reference, bool $lockForUpdate = false): Application
     {
-        $app = $this->applicationRepository->getMyApplication($identity, $reference);
+        $app = $this->applicationRepository->getMyApplication($identity, $reference, $lockForUpdate);
         if ($app !== null) {
             return $app;
         }

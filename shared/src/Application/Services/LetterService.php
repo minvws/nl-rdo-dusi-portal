@@ -1,10 +1,5 @@
 <?php
 
-/**
- * phpcs:disable PSR1.Files.SideEffects
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Services;
@@ -77,6 +72,10 @@ readonly class LetterService
                 $answer = new ApplicationStageAnswer($answerKey, $value);
                 $stageData->put($answerKey, $answer);
             }
+
+            $stageData->createdAt = $applicationStageAnswers->stage->created_at;
+            $stageData->submittedAt = $applicationStageAnswers->stage->submitted_at;
+            $stageData->closedAt = $applicationStageAnswers->stage->closed_at;
 
             $result->put($stageKey, $stageData);
         }

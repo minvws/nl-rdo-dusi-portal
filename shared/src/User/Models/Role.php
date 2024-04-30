@@ -7,7 +7,6 @@ namespace MinVWS\DUSi\Shared\User\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use MinVWS\DUSi\Shared\User\Database\Factories\RoleFactory;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
 
@@ -26,11 +25,6 @@ class Role extends Model
     public $incrementing = false;
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
     protected $fillable = [
         'name',
         'view_all_stages',

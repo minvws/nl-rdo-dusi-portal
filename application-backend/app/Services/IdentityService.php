@@ -26,12 +26,12 @@ class IdentityService
         return hash_hmac($this->hashAlgorithm, $input, $this->hashSecret);
     }
 
-    public function findOrCreateIdentity(EncryptedIdentity $encryptedIdentity): Identity
+    public function findOrCreateIdentity(EncryptedIdentity $encryptedIdentity, bool $lockForUpdate = false): Identity
     {
         $identifier = $this->decryptionService->decrypt($encryptedIdentity->encryptedIdentifier);
         $hashedIdentifier = $this->hashIdentifier($encryptedIdentity->type, $identifier);
 
-        $identity = $this->findIdentityByIdentifier($encryptedIdentity->type, $hashedIdentifier);
+        $identity = $this->findIdentityByIdentifier($encryptedIdentity->type, $hashedIdentifier, $lockForUpdate);
         if ($identity !== null) {
             return $identity;
         }
@@ -51,11 +51,15 @@ class IdentityService
         return $this->findIdentityByIdentifier($encryptedIdentity->type, $hashedIdentifier);
     }
 
-    protected function findIdentityByIdentifier(IdentityType $type, string $hashedIdentifier): ?Identity
-    {
+    protected function findIdentityByIdentifier(
+        IdentityType $type,
+        string $hashedIdentifier,
+        bool $lockForUpdate = false
+    ): ?Identity {
         return $this->identityRepository->findIdentity(
             type: $type,
             hashedIdentifier: $hashedIdentifier,
+            lockForUpdate: $lockForUpdate
         );
     }
 }

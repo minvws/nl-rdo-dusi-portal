@@ -10,4 +10,6 @@ enum Role: string
     case Assessor = 'assessor';
     case ImplementationCoordinator = 'implementationCoordinator';
     case InternalAuditor = 'internalAuditor';
+    case DataExporter = 'dataExporter';
+    case LegalSpecialist = 'legalSpecialist';
 }

@@ -41,14 +41,11 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
     private function buildApplication(): array
     {
+        $surePayCloseMatchSuggestion = $this->getCloseMatchSuggestion();
+
         return [
             'metadata' => [
-                'application' => [
-                    'id' => $this->application->id,
-                    'reference' => $this->application->reference,
-                    'finalReviewDeadline' => $this->application->final_review_deadline,
-                    'status' => $this->application->status->value
-                ],
+                ...$this->applicationMetaData(),
                 'subsidyVersion' => [
                     'id' => $this->application->subsidyVersion->id,
                     'version' => $this->application->subsidyVersion->version
@@ -80,6 +77,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
                     ],
                     'surePayResult' => [
                         'type' => 'string'
+                    ],
+                    'surePayCloseMatchSuggestion' => [
+                        'type' => 'string'
                     ]
                 ]
             ],
@@ -100,7 +100,8 @@ class ApplicationSubsidyVersionResource extends JsonResource
                                 'Aangevraagd op' => '{submittedAt}',
                                 'Uiterste behandeldatum' => '{finalReviewDeadline}',
                                 'BSN aanvrager' => '{citizenServiceNumber}',
-                                'SurePay controle resultaat' => '{surePayResult}'
+                                'SurePay controle resultaat' => '{surePayResult}',
+                                'SurePay suggestie' => '{surePayCloseMatchSuggestion}'
                             ]
                         ]
                     ]
@@ -120,7 +121,8 @@ class ApplicationSubsidyVersionResource extends JsonResource
                         NameMatchResult::CouldNotMatch => 'Could not match',
                         NameMatchResult::NameTooShort => 'Naam te kort',
                         default => 'Onbekend'
-                    }
+                    },
+                'surePayCloseMatchSuggestion' => $surePayCloseMatchSuggestion
             ]
         ];
     }
@@ -131,7 +133,10 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
         return array_map(
             fn (ApplicationStageData $applicationStageData) => $this->buildApplicationStage($applicationStageData),
-            $this->applicationDataService->getApplicationStageDataUpToIncluding($stage)
+            $this->applicationDataService->getApplicationStageDataUniqueBySequenceUpToIncluding(
+                $stage,
+                $this->readOnly
+            )
         );
     }
 
@@ -151,6 +156,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
         return [
             'metadata' => [
+                ...$this->applicationMetaData(),
                 'subsidyStage' => [
                     'id' => $subsidyStage->id,
                     'stage' => $subsidyStage->stage,
@@ -169,6 +175,27 @@ class ApplicationSubsidyVersionResource extends JsonResource
             'uiType' => $uiType,
             'uischema' => $uiSchema,
             'data' => $data
+        ];
+    }
+
+    public function getCloseMatchSuggestion(): string
+    {
+        return $this->application->applicationSurePayResult?->encrypted_name_suggestion ?
+            $this->applicationDataService->decryptForApplicantStage(
+                $this->application,
+                $this->application->applicationSurePayResult->encrypted_name_suggestion
+            ) : "-";
+    }
+
+    protected function applicationMetaData(): array
+    {
+        return [
+            'application' => [
+                'id' => $this->application->id,
+                'reference' => $this->application->reference,
+                'finalReviewDeadline' => $this->application->final_review_deadline,
+                'status' => $this->application->status->value
+            ],
         ];
     }
 }

@@ -43,7 +43,7 @@ class ApplicationFilterResource extends JsonResource
         assert($application instanceof Application);
 
         $actions = [];
-        foreach (['show', 'claim', 'release'] as $action) {
+        foreach (['show', 'claim', 'release', 'assign'] as $action) {
             if ($user->can($action, [$application])) {
                 $actions[] = $action;
             }

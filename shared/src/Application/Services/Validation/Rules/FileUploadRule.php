@@ -9,21 +9,17 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
-use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFileManager;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ApplicationFileManagerAwareRule;
-use MinVWS\DUSi\Shared\Application\Services\Validation\ApplicationRepositoryAwareRule;
 use MinVWS\DUSi\Shared\Application\Services\Validation\ApplicationStageAwareRule;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 class FileUploadRule implements
     ValidationRule,
     ApplicationStageAwareRule,
-    ApplicationFileManagerAwareRule,
-    ApplicationRepositoryAwareRule
+    ApplicationFileManagerAwareRule
 {
     protected ApplicationStage $applicationStage;
-    protected ApplicationRepository $applicationRepository;
     protected ApplicationFileManager $applicationFileManager;
 
     public function __construct(protected Field $field)
@@ -40,30 +36,31 @@ class FileUploadRule implements
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $fieldIsRequired = $this->field->is_required;
-        if (!$fieldIsRequired && $value === null) {
+        if ($this->fieldNotRequiredAndValueIsNull($value)) {
             return;
         }
 
-        if ($fieldIsRequired && $value === null) {
+        if ($this->valueIsNotFileList($value)) {
             $fail("Field is required!");
             return;
         }
 
-        if (!($value instanceof FileList)) {
-            $fail("Value is not a FileList!");
+        if ($this->fieldIsNotRequiredAndFileListIsEmpty($value)) {
             return;
         }
 
-        foreach ($value->items as $file) {
-            $fileExists = $this->applicationFileManager->fileExists(
-                applicationStage: $this->applicationStage,
-                field: $this->field,
-                fileId: $file->id,
-            );
-            if (!$fileExists) {
-                $fail("File not found!");
-            }
+        if ($this->aFileIsMissing($value)) {
+            $fail("File not found!");
+            return;
+        }
+
+        if (!$this->minItemsIsMet($value)) {
+            $fail("Minimum number of files not met!");
+            return;
+        }
+
+        if (!$this->maxItemsIsMet($value)) {
+            $fail("Maximum number of files exceeded!");
         }
     }
 
@@ -77,8 +74,45 @@ class FileUploadRule implements
         $this->applicationFileManager = $applicationFileManager;
     }
 
-    public function setApplicationRepository(ApplicationRepository $applicationRepository): void
+    protected function maxItemsIsMet(FileList $value): bool
     {
-        $this->applicationRepository = $applicationRepository;
+        $maxItems = $this->field->params['maxItems'] ?? null;
+        return $maxItems === null || $value->count() <= $maxItems;
+    }
+
+    protected function minItemsIsMet(FileList $value): bool
+    {
+        $minItems = $this->field->params['minItems'] ?? null;
+        return $minItems === null || $value->count() >= $minItems;
+    }
+
+    protected function aFileIsMissing(FileList $value): bool
+    {
+        foreach ($value->items as $file) {
+            $fileMissing = !$this->applicationFileManager->fileExists(
+                applicationStage: $this->applicationStage,
+                field: $this->field,
+                fileId: $file->id,
+            );
+            if ($fileMissing) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected function fieldNotRequiredAndValueIsNull(mixed $value): bool
+    {
+        return !$this->field->is_required && $value === null;
+    }
+
+    protected function valueIsNotFileList(mixed $value): bool
+    {
+        return !($value instanceof FileList);
+    }
+
+    protected function fieldIsNotRequiredAndFileListIsEmpty(FileList $value): bool
+    {
+        return !$this->field->is_required && $value->count() === 0;
     }
 }

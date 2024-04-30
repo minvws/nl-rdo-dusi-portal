@@ -1,5 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects
-
+<?php
 
 declare(strict_types=1);
 
@@ -15,6 +14,7 @@ use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\LetterService;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use Throwable;
 
 readonly class ApplicationSubsidyService
@@ -59,7 +59,9 @@ readonly class ApplicationSubsidyService
             throw new TransitionNotFoundException();
         }
 
-        $transition = $this->applicationFlowService->evaluateTransitionsForApplicationStage($stage);
+        $transition =
+            $this->applicationFlowService
+                ->evaluateTransitionsForApplicationStage($stage, EvaluationTrigger::Submit);
         if ($transition === null) {
             Log::error('No matching transition found for application ' . $application->id);
             throw new TransitionNotFoundException();

@@ -9,6 +9,7 @@ use Laravel\Fortify\TwoFactorAuthenticationProvider;
 use MinVWS\DUSi\Assessment\API\Tests\TestCase;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\User\Enums\Role as RoleEnum;
@@ -50,6 +51,7 @@ class TwoFactorTest extends TestCase
         $this->application = Application::factory()->create(
             [
                 'subsidy_version_id' => $this->subsidyVersion->id,
+                'status' => ApplicationStatus::Pending,
             ]
         );
         $this->applicationStage = ApplicationStage::factory()->create(

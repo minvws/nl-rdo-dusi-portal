@@ -1,0 +1,44 @@
+{block content}
+    <p>Beste lezer,</p>
+    <p>Met mijn brief van {$content->stage2->createdAt|date:"d-m-Y"} heb ik u een subsidie verleend van
+       {$content->stage2->amount} voor het onderdeel "Buitenland" van de opleiding AIGT. Uit de aan mij ter beschikking
+       gestelde gegevens blijkt dat u inmiddels het opleidingsonderdeel "Buitenland" van de opleiding AIGT heeft afgerond.
+    </p>
+    <p>&nbsp;</p>
+
+    <h2>Besluit</h2>
+    <p>Ik stel hierbij de subsidie vast op {$content->stage2->amount}.</p>
+
+    <h2>Motivering bij het besluit</h2>
+    <p>De subsidie is gebaseerd op artikel 1.2 van de Kaderregeling subsidies OCW, SZW en VWS en de Subsidieregeling opleidingsactiviteiten Arts Internationale Gezondheid en Tropengeneeskunde 2021-2026.
+        Dit is een projectsubsidie als bedoeld in artikel 1.5, onder a 1° van de Kaderregeling subsidies OCW, SZW en VWS.
+        De subsidie wordt eenmalig verstrekt ter compensatie van de kosten voor het volgen van het opleidingsonderdeel “Buitenland’ van de opleiding tot Arts Internationale Gezondheid en Tropengeneeskunde.
+    </p>
+
+    <p><ins>Wet- en regelgeving</ins><br />
+        De subsidie is vastgesteld op grond van:
+        <ul>
+            <li>Kaderregeling subsidies OCW, SZW en VWS;</li>
+            <li>Subsidieregeling opleidingsactiviteiten Arts Internationale Gezondheid en Tropengeneeskunde 2021-2026;</li>
+            <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
+            <li>Profielregister RGS en opleidingsregister OIGT.</li>
+        </ul>
+    </p>
+
+    <h2>Hoe wordt de subsidie verder afgehandeld?</h2>
+    <p>U hebt inmiddels het volledige subsidiebedrag van {$content->stage2->amount} ontvangen.</p>
+{/block}
+
+{block signature}
+    <p>
+        Met vriendelijke groet,<br/>
+        <br/>
+        de Minister voor Medische Zorg,<br/>
+        namens deze,<br/>
+        het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
+        <br/>
+        <img class="signature" alt="handtekening" src="{$content->getSignature('vws_dusi_signature.jpg')|dataStream}" />
+        <br/>
+        L. van der Weij
+    </p>
+{/block}

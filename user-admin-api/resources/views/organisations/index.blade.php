@@ -43,7 +43,7 @@
                         </tbody>
                     </table>
 
-                    {!! $organisations->appends(\Request::except('page', '_token'))->render() !!}
+                    {!! $organisations->appends(\Request::except(['page', '_token']))->render() !!}
                 </div>
             @endif
         </div>

@@ -34,7 +34,7 @@
 
     <rule ref="rulesets/naming.xml/LongClassName">
         <properties>
-            <property name="subtract-suffixes" value="Repository,Service,Controller,Model,Factory,Interface,Exception,Test"/>
+            <property name="subtract-suffixes" value="Repository,Service,Controller,Model,Factory,Interface,Exception,Test,Response"/>
         </properties>
     </rule>
 </ruleset>

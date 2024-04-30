@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
+use MinVWS\DUSi\Assessment\API\Events\Logging\SubmitAssessmentEvent;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewApplicationEvent;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationRequest;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationCountResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationMessageFilterResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationRequestsFilterResource;
+use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationStageValidationResource;
 use MinVWS\DUSi\Assessment\API\Http\Resources\ApplicationSubsidyVersionResource;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationService;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationSubsidyService;
@@ -24,11 +29,17 @@ use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSaveExcepti
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\InvalidApplicationSubmitException;
 use MinVWS\DUSi\Assessment\API\Services\Exceptions\TransitionNotFoundException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
+use MinVWS\DUSi\Shared\Application\DTO\PaginationOptions;
+use MinVWS\DUSi\Shared\Application\DTO\SortOptions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
+use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
+use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadFormat;
 use MinVWS\DUSi\Shared\User\Models\User;
 use MinVWS\Logging\Laravel\LogService;
+use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -38,7 +49,8 @@ class ApplicationController extends Controller
     public function __construct(
         private ApplicationSubsidyService $applicationSubsidyService,
         private ApplicationService $applicationService,
-        private LogService $logger,
+        private ApplicationRepository $applicationRepository,
+        private LogService $logService,
     ) {
     }
 
@@ -51,23 +63,14 @@ class ApplicationController extends Controller
     {
         $this->authorize('filterApplications', [Application::class]);
 
-        $user = $request->user();
-        assert($user !== null);
-
-        $filter = ApplicationsFilter::fromArray($request->validated());
-        return $this->applicationService->getApplications($user, false, $filter);
+        return $this->getFilteredApplications(request: $request, onlyMyApplications: false);
     }
 
     public function filterAssignedApplications(ApplicationRequest $request): AnonymousResourceCollection
     {
         $this->authorize('filterAssignedApplications', [Application::class]);
 
-        $user = $request->user();
-        assert($user !== null);
-
-        $filter = ApplicationsFilter::fromArray($request->validated());
-
-        return $this->applicationService->getApplications($user, true, $filter);
+        return $this->getFilteredApplications(request: $request, onlyMyApplications: true);
     }
 
     /**
@@ -78,7 +81,8 @@ class ApplicationController extends Controller
     {
         $this->authorize('show', $application);
         assert($user instanceof User);
-        $this->logger->log((new ViewApplicationEvent())
+        $this->logService->log((new ViewApplicationEvent())
+            ->withActor($user)
             ->withData([
                 'applicationId' => $application->id,
                 'userId' => $user->id,
@@ -110,22 +114,23 @@ class ApplicationController extends Controller
     /**
      * Get the filter UI resource.
      */
-    public function getApplicationRequestFilterForUserResource(): ApplicationRequestsFilterResource
+    public function getApplicationRequestFilterForUserResource(Request $request): ApplicationRequestsFilterResource
     {
-        //TODO: get and validate user from Auth
-        return $this->applicationService->getApplicationRequestFilterResource(null);
+        return $this->applicationService->getApplicationRequestFilterResource($request->user());
     }
 
     /**
      * Get the filter UI resource.
      */
-    public function getApplicationRequestFilterResource(): ApplicationRequestsFilterResource
+    public function getApplicationRequestFilterResource(Request $request): ApplicationRequestsFilterResource
     {
-        return $this->applicationService->getApplicationRequestFilterResource(null);
+        return $this->applicationService->getApplicationRequestFilterResource($request->user());
     }
 
     public function getApplicationHistory(Application $application): ResourceCollection
     {
+        $this->authorize('getApplicationHistory', $application);
+
         return $this->applicationService->getApplicationStagesResource($application);
     }
 
@@ -149,11 +154,33 @@ class ApplicationController extends Controller
         return $this->applicationService->getLetterFromMessage($message, MessageDownloadFormat::PDF);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function saveAssessment(
-        Application $application,
+        string $applicationId,
+        Authenticatable $user,
+        Request $request,
+    ): ApplicationSubsidyVersionResource|JsonResponse {
+        return DB::transaction(fn() => $this->doSaveAssessment($applicationId, $user, $request));
+    }
+
+    /**
+     * @throws AuthorizationException
+     * @throws ApplicationFlowException
+     * @throws ModelNotFoundException
+     */
+    private function doSaveAssessment(
+        string $applicationId,
         Authenticatable $user,
         Request $request
-    ): ApplicationSubsidyVersionResource {
+    ): ApplicationSubsidyVersionResource|JsonResponse {
+        $application = $this->applicationRepository->getApplication($applicationId, lockForUpdate: true);
+
+        if (is_null($application)) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
         $this->authorize('save', $application);
 
         $submittedData = $request->json()->all();
@@ -164,15 +191,75 @@ class ApplicationController extends Controller
 
         try {
             $application = $this->applicationService->saveAssessment($application, $data, $submit);
-            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
+
+            if ($submit) {
+                $this->logService->log((new SubmitAssessmentEvent())
+                    ->withActor($user)
+                    ->withData([
+                        'applicationId' => $application->id,
+                        'userId' => $user->getAuthIdentifier(),
+                    ]));
+            }
+
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, false);
         } catch (InvalidApplicationSaveException) {
             abort(Response::HTTP_FORBIDDEN);
-        } catch (ValidationException $exception) {
-            Log::error('ValidationException while saveAssessment', [
+        } catch (ValidationErrorException $exception) {
+            Log::error('ValidationErrorException while saveAssessment', [
                 'userId' => $user->id,
                 'applicationId' => $application->id,
                 'submitAssessment' => $submit,
-                'validationErrors' => $exception->errors(),
+                'validationErrors' => $exception->getValidationResults(),
+            ]);
+            return (new ApplicationStageValidationResource($exception))
+                ->response()
+                ->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function validateAssessment(
+        string $applicationId,
+        Authenticatable $user,
+        Request $request,
+    ): ApplicationSubsidyVersionResource {
+        return DB::transaction(fn() => $this->doValidateAssessment($applicationId, $user, $request));
+    }
+
+    /**
+     * @throws AuthorizationException
+     * @throws ModelNotFoundException
+     */
+    private function doValidateAssessment(
+        string $applicationId,
+        Authenticatable $user,
+        Request $request
+    ): ApplicationSubsidyVersionResource {
+        $application = $this->applicationRepository->getApplication($applicationId, lockForUpdate: true);
+
+        if (is_null($application)) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        $this->authorize('save', $application);
+
+        $submittedData = $request->json()->all();
+        $data = (object)($submittedData['data'] ?? []);
+
+        assert($user instanceof User);
+
+        try {
+            $application = $this->applicationService->saveAssessment($application, $data, false);
+            return $this->applicationSubsidyService->getApplicationSubsidyResource($application, false);
+        } catch (InvalidApplicationSaveException) {
+            abort(Response::HTTP_FORBIDDEN);
+        } catch (ValidationErrorException $exception) {
+            Log::error('ValidationErrorException while processAssessment', [
+                'userId' => $user->id,
+                'applicationId' => $application->id,
+                'validationErrors' => $exception->getValidationResults(),
             ]);
             abort(Response::HTTP_BAD_REQUEST);
         }
@@ -193,17 +280,74 @@ class ApplicationController extends Controller
         }
     }
 
-    public function submitAssessment(Application $application): ApplicationSubsidyVersionResource
-    {
+    /**
+     * @throws Throwable
+     */
+    public function submitAssessment(
+        string $applicationId,
+        Authenticatable $user,
+    ): ApplicationSubsidyVersionResource {
+        return DB::transaction(fn() => $this->doSubmitAssessment($applicationId, $user));
+    }
+
+    /**
+     * @throws AuthorizationException
+     * @throws ApplicationFlowException
+     */
+    public function doSubmitAssessment(
+        string $applicationId,
+        Authenticatable $user,
+    ): ApplicationSubsidyVersionResource {
+        $application = $this->applicationRepository->getApplication($applicationId, lockForUpdate: true);
+
+        if (is_null($application)) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
         $this->authorize('submit', $application);
+
+        assert($user instanceof User);
 
         try {
             $application = $this->applicationService->submitAssessment($application);
+
+            $this->logService->log((new SubmitAssessmentEvent())
+                ->withActor($user)
+                ->withData([
+                    'applicationId' => $application->id,
+                    'userId' => $user->getAuthIdentifier(),
+                ]));
+
             return $this->applicationSubsidyService->getApplicationSubsidyResource($application, true);
         } catch (InvalidApplicationSubmitException) {
             abort(Response::HTTP_FORBIDDEN);
-        } catch (ValidationException) {
+        } catch (ValidationErrorException $exception) {
+            Log::error('ValidationErrorException while submitAssessment', [
+                'userId' => $user->id,
+                'applicationId' => $application->id,
+                'validationErrors' => $exception->getValidationResults(),
+            ]);
             abort(Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    private function getFilteredApplications(
+        ApplicationRequest $request,
+        bool $onlyMyApplications
+    ): AnonymousResourceCollection {
+        $user = $request->user();
+        assert($user !== null);
+
+        $filter = ApplicationsFilter::fromArray($request->validated());
+        $sortOptions = SortOptions::fromString($request->validated('sort'));
+        $paginationOptions = PaginationOptions::fromArray($request->safe(['page', 'per_page']));
+
+        return $this->applicationService->getApplications(
+            user: $user,
+            onlyMyApplications: $onlyMyApplications,
+            applicationsFilter: $filter,
+            paginationOptions: $paginationOptions,
+            sortOptions: $sortOptions,
+        );
     }
 }
