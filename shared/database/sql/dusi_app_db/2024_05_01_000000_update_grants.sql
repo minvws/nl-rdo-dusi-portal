@@ -69,11 +69,11 @@ GRANT SELECT ON TABLE public.deploy_releases TO "dpw_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "assessment_web_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "backend_dusi";
 
--- Audit logs should be readable and insertable for every user
-GRANT SELECT,INSERT ON TABLE public.audit_logs TO "user_admin_dusi";
-GRANT SELECT,INSERT ON TABLE public.audit_logs TO "dpw_dusi";
-GRANT SELECT,INSERT ON TABLE public.audit_logs TO "assessment_web_dusi";
-GRANT SELECT,INSERT ON TABLE public.audit_logs TO "backend_dusi";
+-- Audit logs should be insertable for every user
+GRANT INSERT ON TABLE public.audit_logs TO "user_admin_dusi";
+GRANT INSERT ON TABLE public.audit_logs TO "dpw_dusi";
+GRANT INSERT ON TABLE public.audit_logs TO "assessment_web_dusi";
+GRANT INSERT ON TABLE public.audit_logs TO "backend_dusi";
 
 -- Permissions for user-admin
 GRANT SELECT ON TABLE public.subsidies TO "user_admin_dusi";
