@@ -92,4 +92,3 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public.users TO "user_admin_dusi";
 GRANT SELECT ON TABLE public.users TO "assessment_web_dusi";
 GRANT UPDATE (password, password_updated_at,updated_at,password_reset_token,password_reset_token_valid_until) ON TABLE public.users TO "assessment_web_dusi";
 GRANT SELECT ON TABLE public.users TO "backend_dusi";
-
