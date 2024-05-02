@@ -1,14 +1,25 @@
 
 -- Handle with care, execute manually:
--- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM user_admin_dusi;
--- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM assessment_web_dusi;
--- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM backend_dusi;
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "dpw-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "user-admin-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "assessment-web-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "backend-dusi";
+
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "dpw_dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "user_admin_dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "assessment_web_dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "backend_dusi";
 
 -- Cleanup alternate from with dashes
 -- DROP ROLE IF EXISTS "dpw-dusi";
 -- DROP ROLE IF EXISTS "backend_dusi";
 -- DROP ROLE IF EXISTS "user-admin-dusi";
 -- DROP ROLE IF EXISTS "assessment-web-dusi";
+
+-- DROP ROLE IF EXISTS "dpw-acc-dusi";
+-- DROP ROLE IF EXISTS "backend-acc-dusi";
+-- DROP ROLE IF EXISTS "user-admin-acc-dusi";
+-- DROP ROLE IF EXISTS "assessment-web-acc-dusi";
 
 do $$
 <<first_block>>
@@ -57,7 +68,7 @@ ALTER TABLE public.roles OWNER TO dusi_dba;
 ALTER TABLE public.users OWNER TO dusi_dba;
 ALTER TABLE public.deploy_releases OWNER TO dusi_dba;
 
-GRANT SELECT ON TABLE public.deploy_releases TO "user-admin-dusi";
+GRANT SELECT ON TABLE public.deploy_releases TO "user_admin_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "assessment_web_dusi";
 GRANT SELECT ON TABLE public.deploy_releases TO "backend_dusi";
 
@@ -79,7 +90,5 @@ GRANT SELECT ON TABLE public.roles TO "backend_dusi";
 
 GRANT SELECT,INSERT,UPDATE ON TABLE public.users TO "user_admin_dusi";
 GRANT SELECT ON TABLE public.users TO "assessment_web_dusi";
-GRANT UPDATE (password, password_updated_at,password_reset_token,password_reset_token_valid_until) ON TABLE public.users TO "assessment_web_dusi";
+GRANT UPDATE (password, password_updated_at,updated_at,password_reset_token,password_reset_token_valid_until) ON TABLE public.users TO "assessment_web_dusi";
 GRANT SELECT ON TABLE public.users TO "backend_dusi";
-
-
