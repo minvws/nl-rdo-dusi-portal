@@ -5,11 +5,23 @@
 -- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "assessment-web-dusi";
 -- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "backend-dusi";
 
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "dpw_dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "user_admin_dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "assessment_web_dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "backend_dusi";
+
+
 -- Cleanup alternate from with dashes
 -- DROP ROLE IF EXISTS "dpw-dusi";
 -- DROP ROLE IF EXISTS "backend-dusi";
 -- DROP ROLE IF EXISTS "user-admin-dusi";
 -- DROP ROLE IF EXISTS "assessment-web-dusi";
+
+-- DROP ROLE IF EXISTS "dpw-acc-dusi";
+-- DROP ROLE IF EXISTS "backend-acc-dusi";
+-- DROP ROLE IF EXISTS "user-admin-acc-dusi";
+-- DROP ROLE IF EXISTS "assessment-web-acc-dusi";
+
 
 do $$
 <<first_block>>
