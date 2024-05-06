@@ -1,13 +1,13 @@
 {layout 'letter_layout.latte'}
 
 {block concern}
-    Betreft: Toekenning aanvraag 'Regeling {$content->subsidyTitle}'
+    Betreft: Toekenning aanvraag '{$content->subsidyTitle}'
 {/block}
 
 {block content}
     <p>Beste lezer,</p>
     <p>
-        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de 'Regeling {$content->subsidyTitle}' met referentienummer {$content->reference}.
+        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling '{$content->subsidyTitle}' met referentienummer {$content->reference}.
         Met deze brief beslis ik op uw aanvraag.
     </p>
 

@@ -1,15 +1,18 @@
 {block content}
     <p>Beste lezer,</p>
     <p>
-        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de 'Regeling {$content->subsidyTitle}' met referentienummer {$content->reference}.
+        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling '{$content->subsidyTitle}' met referentienummer {$content->reference}.
         Met deze brief beslis ik op uw aanvraag.
     </p>
 
     <h2>Besluit</h2>
-    <p>Namens het kabinet verleen ik u hierbij de financiële ondersteuning van {$content->stage2->amount} volgens de ‘Regeling
-        zorgmedewerkers met langdurige post-COVID klachten’. U ontvangt dit als gebaar ter erkenning voor uw ontstane
-        leed en uw getoonde inzet in de zorg tijdens de uitzonderlijke situatie van de eerste golf in de
-        COVID-pandemie.</p>
+    <p>
+            Namens het kabinet verleen ik u hierbij de financiële ondersteuning van {$content->stage2->amount} volgens de regeling '{$content->subsidyTitle}'.
+             Dat betekent, tot mijn spijt, dat u geconfronteerd bent met de grote gevolgen van uw langdurige post-COVID klachten.
+             Met de financiële ondersteuning wil het kabinet erkenning bieden voor uw getoonde inzet tijdens uw werk en het
+             ontstane leed als gevolg van uw langdurige post-COVID klachten. U ontvangt dit als gebaar ter erkenning voor
+             uw onstane leed en uw getoonde inzet in de zorg.
+        </p>
 
     {if $content->stage2->firstAssessmentApprovedNote}
         <h2>Motivering bij het besluit</h2>
@@ -17,8 +20,11 @@
     {/if}
 
     <h2>Wanneer ontvangt u de financiële ondersteuning?</h2>
-    <p>Het bedrag van {$content->stage2->amount} wordt in één keer uitbetaald. Wij streven ernaar de financiële
-        ondersteuning binnen 10 werkdagen uit te keren.</p>
+    <p>
+            Wij betalen het bedrag van {$content->stage2->amount} in één keer uit op het door u opgegeven rekeningnummer.
+             Wij streven ernaar het bedrag binnen 4 weken aan u over te maken.
+        </p>
+
 
     <h2>Verder willen wij u wijzen op de volgende punten:</h2>
     <ul>
@@ -28,9 +34,6 @@
             gekeken naar uw vermogen. Het kabinet werkt aan een tijdelijke uitzondering van deze financiële
             ondersteuning voor de vermogenstoets. Op de website van DUS-I kunt u lezen of dit voor u relevant is en hoe
             u de uitzondering kunt aanvragen. Let op: U moet de uitzondering dus zelf aanvragen.
-        </li>
-        <li>De financiële ondersteuning wordt direct vastgesteld. Dat betekent dat u geen verantwoording hoeft in te
-            dienen.
         </li>
     </ul>
 {/block}

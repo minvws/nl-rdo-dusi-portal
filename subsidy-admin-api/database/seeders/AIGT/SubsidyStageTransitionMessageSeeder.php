@@ -48,8 +48,8 @@ class SubsidyStageTransitionMessageSeeder extends Seeder
            'status' => VersionStatus::Published,
            'created_at' => Carbon::now(),
            'subject' => 'Aanvraag goedgekeurd',
-           'content_pdf' => file_get_contents(__DIR__ . '/resources/letters/letter-approved-pdf.latte'),
-           'content_html' => file_get_contents(__DIR__ . '/resources/letters/letter-approved-view.latte'),
+           'content_pdf' => file_get_contents(__DIR__ . '/resources/letters/letter-allocated-pdf.latte'),
+           'content_html' => file_get_contents(__DIR__ . '/resources/letters/letter-allocated-view.latte'),
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
@@ -59,8 +59,8 @@ class SubsidyStageTransitionMessageSeeder extends Seeder
            'status' => VersionStatus::Published,
            'created_at' => Carbon::now(),
            'subject' => 'Aanvraag vastgesteld',
-           'content_pdf' => file_get_contents(__DIR__ . '/resources/letters/letter-determined-pdf.latte'),
-           'content_html' => file_get_contents(__DIR__ . '/resources/letters/letter-determined-view.latte'),
+           'content_pdf' => file_get_contents(__DIR__ . '/resources/letters/letter-approved-pdf.latte'),
+           'content_html' => file_get_contents(__DIR__ . '/resources/letters/letter-approved-view.latte'),
         ]);
 
         DB::table('subsidy_stage_transition_messages')->insert([
