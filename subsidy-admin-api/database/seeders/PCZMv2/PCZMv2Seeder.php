@@ -59,7 +59,6 @@ class PCZMv2Seeder extends Seeder
                 'mail_to_address_field_identifier' => 'email',
                 'mail_to_name_field_identifier' => 'firstName;infix;lastName',
                 'review_period' => 7 * 13, // 13 weeks
-                'review_deadline' => CarbonImmutable::parse('2024-08-30')->endOfDay()->floorSecond()
             ]
         );
     }
