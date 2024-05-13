@@ -24,16 +24,10 @@
             "type": "FormResultsTable",
             "options": {
                 "fields": {
-                    "Bewijs": "{proof}"
-                }
-            }
-        },
-        {
-            "type": "CustomControl",
-            "scope": "#/properties/internalNote",
-            "options": {
-                "readonly": true,
-                "format": "textarea"
+                    "Bewijs": "{proof}",
+                    "Interne notitie": "{internalNote}"
+                },
+                "showEmptyFields": true
             }
         }
     ]
