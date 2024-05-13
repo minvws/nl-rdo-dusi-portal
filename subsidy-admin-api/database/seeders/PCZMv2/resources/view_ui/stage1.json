@@ -20,7 +20,8 @@
                             "Tussenvoegsel": "{infix}",
                             "Achternaam": "{lastName}",
                             "Geboortedatum": "{dateOfBirth}"
-                        }
+                        },
+                        "showEmptyFields": true
                     }
                 }
             ]
