@@ -106,7 +106,7 @@ class SubsidyStageDataSchemaBuilder
                 // Currently nothing extra
                 break;
             case FieldType::Upload:
-                $result['items'] = [
+                $result['contains'] = [
                     'type' => 'object',
                     'properties' => [
                         'id' => ['type' => 'string'],
