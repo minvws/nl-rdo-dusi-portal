@@ -19,7 +19,8 @@
                             "Voornaam": "{firstName}",
                             "Tussenvoegsel": "{infix}",
                             "Achternaam": "{lastName}"
-                        }
+                        },
+                        "showEmptyFields": true
                     }
                 }
             ]
@@ -121,7 +122,8 @@
                     "options": {
                         "fields": {
                             "Naam": "{childName}",
-                            "Straat": "{residentialStreet}",
+                            "Geboortedatum": "{dateOfBirth}",
+                            "Straatnaam": "{residentialStreet}",
                             "Huisnummer": "{residentialHouseNumber}",
                             "Huisnummer toevoeging": "{residentialHouseNumberSuffix}",
                             "Postcode": "{residentialPostalCode}",
@@ -134,49 +136,8 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "DAMU-school primair onderwijs": "{damuSchoolPrimary}"
-                        }
-                    },
-                    "rule": {
-                        "effect": "SHOW",
-                        "condition": {
-                            "scope": "#/properties/educationType",
-                            "schema": {
-                                "const": "Primair onderwijs"
-                            }
-                        }
-                    }
-
-                },
-                {
-                    "type": "FormResultsTable",
-                    "options": {
-                        "fields": {
-                            "DAMU-school voortgezet onderwijs": "{damuSchoolSecondary}"
-                        }
-                    },
-                    "rule": {
-                        "effect": "SHOW",
-                        "condition": {
-                            "scope": "#/properties/educationType",
-                            "schema": {
-                                "const": "Voortgezet onderwijs"
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "FormResultsTable",
-                    "options": {
-                        "fields": {
-                            "DAMU-school adres": "{damuSchoolAddress}"
-                        }
-                    }
-                },
-                {
-                    "type": "FormResultsTable",
-                    "options": {
-                        "fields": {
+                            "DAMU-school primair onderwijs": "{damuSchoolPrimary}",
+                            "DAMU-school adres": "{damuSchoolAddress}",
                             "HBO vooropleiding": "{hboPreviousEducationPrimary}"
                         }
                     },
@@ -195,6 +156,8 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
+                            "DAMU-school voortgezet onderwijs": "{damuSchoolSecondary}",
+                            "DAMU-school adres": "{damuSchoolAddress}",
                             "HBO vooropleiding": "{hboPreviousEducationSecondary}"
                         }
                     },
@@ -244,7 +207,7 @@
                         "fields": {
                             "IB60 formulier": "{IBDocument}",
                             "Inschrijfbewijs DAMU-school": "{proofOfRegistrationDAMUSchool}",
-                            "Inschrijfbewijs reguliere school": "{proofOfRegistrationHboCollaborationPartner}"
+                            "Inschrijfbewijs hbo-vooropleiding dans en muziek": "{proofOfRegistrationHboCollaborationPartner}"
                         }
                     }
                 }

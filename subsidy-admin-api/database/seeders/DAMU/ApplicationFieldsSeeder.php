@@ -54,7 +54,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'street',
-            title:          'Straat',
+            title:          'Straatnaam',
         );
 
         $this->createTextField(
@@ -82,7 +82,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'city',
-            title:          'Plaats',
+            title:          'Plaatsnaam',
             params:         ['maxLength' => 100],
         );
 
@@ -145,7 +145,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'hasAlimony',
-            title:          'Alimentatie?',
+            title:          'Ontvangt u kinderalimentatie?',
             options:        ['Ja', 'Nee'],
         );
 
@@ -191,7 +191,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'residentialStreet',
-            title:          'Straat',
+            title:          'Straatnaam',
         );
 
         $this->createTextField(
@@ -218,14 +218,14 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'residentialCity',
-            title:          'Plaats',
+            title:          'Plaatsnaam',
             params:         ['maxLength' => 100],
         );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'educationType',
-            title:          'Gaat naar het:',
+            title:          'Gaat naar het',
             options:        ['Primair onderwijs', 'Voortgezet onderwijs'],
         );
 
@@ -235,6 +235,7 @@ class ApplicationFieldsSeeder extends Seeder
             title:          'DAMU-school',
             options:        ['Amsterdam - Olympiaschool', 'Den Haag - School voor Jong Talent', 'Rotterdam - Nieuwe Park Rozenburgschool'],
             isRequired:     false,
+            requiredCondition: new ComparisonCondition(1, 'educationType', Operator::Identical, 'Primair onderwijs'),
         );
 
         $this->createSelectField(
@@ -255,12 +256,13 @@ class ApplicationFieldsSeeder extends Seeder
                 'Venlo - Valuas College',
             ],
             isRequired: false,
+            requiredCondition: new ComparisonCondition(1, 'educationType', Operator::Identical, 'Voortgezet onderwijs'),
         );
 
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'damuSchoolAddress',
-            title:          'Adres DAMU-school',
+            title:          'DAMU-school adres',
             isRequired:     false,
             source:         FieldSource::Calculated,
         );
@@ -268,19 +270,20 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'hboPreviousEducationPrimary',
-            title:          'HBO vooropleiding dans en muziek',
+            title:          'HBO vooropleiding',
             options:        [
                 'Academie voor Theater en Dans: Nationale Balletacademie (dans) (21QA)',
                 'Codarts (dans) (14NI)',
                 'Koninklijk Conservatorium (dans en muziek) (23KJ)]'
             ],
             isRequired:     false,
+            requiredCondition: new ComparisonCondition(1, 'educationType', Operator::Identical, 'Primair onderwijs'),
         );
 
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'hboPreviousEducationSecondary',
-            title:          'HBO vooropleiding dans en muziek',
+            title:          'HBO vooropleiding',
             options:        [
                 'Academie voor Theater en Dans 5 o’clock class (dans) (21QA)',
                 'Academie voor Theater en Dans: Nationale Balletacademie (dans) (21QA)',
@@ -296,6 +299,7 @@ class ApplicationFieldsSeeder extends Seeder
                 'Prins Claus Conservatorium (muziek) (25BE)'
             ],
             isRequired: false,
+            requiredCondition: new ComparisonCondition(1, 'educationType', Operator::Identical, 'Voortgezet onderwijs'),
         );
 
         $this->createTextField(
@@ -309,7 +313,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'travelExpenseReimbursement',
-            title:          'Kilometervergoeding',
+            title:          'Vergoeding per kilometer',
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
@@ -319,7 +323,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'requestedSubsidyAmount',
-            title:          'Gevraagde subsidie bedrag',
+            title:          'Gevraagd subsidiebedrag',
             inputMode:      'float',
             params:         ['readonly' => true],
             isRequired:     false,
@@ -349,7 +353,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'proofOfRegistrationHboCollaborationPartner',
-            title:          'Inschrijfbewijs reguliere school',
+            title:          'Inschrijfbewijs hbo-vooropleiding dans en muziek',
             mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
             minItems:       1,
             maxItems:       20,
