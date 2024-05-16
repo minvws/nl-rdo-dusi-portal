@@ -10,6 +10,11 @@
 -- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "assessment_web_dusi";
 -- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "backend_dusi";
 
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "dpw-acc-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "user-admin-acc-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "assessment-web-acc-dusi";
+-- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM "backend-acc-dusi";
+
 
 -- Cleanup alternate from with dashes
 -- DROP ROLE IF EXISTS "dpw-dusi";
@@ -62,6 +67,11 @@ begin
      CREATE role assessment_web_dusi;
    end if;
 end first_block $$;
+
+ALTER ROLE user_admin_dusi WITH LOGIN;
+ALTER ROLE dpw_dusi WITH LOGIN;
+ALTER ROLE assessment_web_dusi WITH LOGIN;
+ALTER ROLE backend_dusi WITH LOGIN;
 
 -- Deploy releases should be readable for every user
 GRANT SELECT ON TABLE public.deploy_releases TO "user_admin_dusi";
