@@ -15,23 +15,28 @@ use Psr\Log\LoggerInterface;
 
 class FileValidator
 {
-    private ?LaravelValidator $validator;
+    private const FILE_FIELD_NAME = 'file';
 
     public function __construct(
         private ClamAvService $clamAvService,
         private LoggerInterface $logger,
         private Translator $translator,
     ) {
-        $this->validator = null;
     }
 
     public function getValidator(Field $field, UploadedFile $file): ValidatorContract
     {
-        if ($this->validator === null) {
-            $this->validator = $this->createValidator($field, $file);
-        }
+        $rules = $this->getRules($field);
 
-        return $this->validator;
+        return new LaravelValidator(
+            translator: $this->translator,
+            data: [
+                self::FILE_FIELD_NAME => $file,
+            ],
+            rules: [
+                self::FILE_FIELD_NAME => $rules,
+            ],
+        );
     }
 
     public function getRules(Field $field): array
@@ -57,29 +62,26 @@ class FileValidator
         return $rules;
     }
 
-    private function createValidator(Field $field, UploadedFile $file): LaravelValidator
+    /**
+     * Check if the validator fails on the mimetype rule
+     *
+     * If the validator did not run yet, it will run the validation rules
+     * This is done under the hood by calling the errors() method
+     *
+     * @param ValidatorContract $validator
+     * @return bool True if the validator fails on the mimetype rule
+     */
+    public function failsOnMimetype(ValidatorContract $validator): bool
     {
-        $rules = $this->getRules($field);
-
-        return new LaravelValidator(
-            translator: $this->translator,
-            data: [
-                'file' => $file,
-            ],
-            rules: [
-                'file' => $rules,
-            ],
-        );
-    }
-
-    public function failsOnMimetype(): bool
-    {
-        if ($this->validator === null || $this->validator->passes()) {
+        if ($validator->errors()->isEmpty()) {
             return false;
         }
 
-        return collect(array_keys($this->validator->failed()['file']))
-            ->filter(fn(int|string $rule) => strpos(strtolower((string)$rule), 'mimetypes') !== false)
-            ->isNotEmpty();
+        $failedRules = $validator->failed();
+        if (!array_key_exists(self::FILE_FIELD_NAME, $failedRules)) {
+            return false;
+        }
+
+        return array_key_exists('Mimetypes', $failedRules[self::FILE_FIELD_NAME]);
     }
 }

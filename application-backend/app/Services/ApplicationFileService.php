@@ -8,9 +8,11 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Services;
 
+use Exception;
 use finfo;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Application\Backend\Interfaces\FrontendDecryption;
+use MinVWS\DUSi\Application\Backend\Services\Exceptions\FrontendDecryptionFailedException;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadApplication;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\DTO\TemporaryFile;
@@ -56,6 +58,37 @@ readonly class ApplicationFileService
     ) {
     }
 
+    public function getApplicationFile(ApplicationFileParams $params): EncryptedResponse
+    {
+        try {
+            return $this->doGetApplicationFile($params);
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::GET_APPLICATION_FILE,
+                $params->publicKey
+            );
+        }
+    }
+
+    public function saveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
+    {
+        try {
+            return DB::transaction(fn () => $this->doSaveApplicationFile($params));
+        } catch (Throwable $e) {
+            return $this->exceptionHelper->processException(
+                $e,
+                __CLASS__,
+                __METHOD__,
+                RPCMethods::UPLOAD_APPLICATION_FILE,
+                $params->publicKey
+            );
+        }
+    }
+
+
     private function loadApplicationStage(Application $application): ApplicationStage
     {
         if (!$application->status->isEditableForApplicant()) {
@@ -93,6 +126,11 @@ readonly class ApplicationFileService
         return $field;
     }
 
+    /**
+     * @throws FrontendDecryptionFailedException
+     * @throws EncryptedResponseException
+     * @throws Exception
+     */
     private function doSaveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
     {
         $identity = $this->loadIdentity($params->identity);
@@ -104,36 +142,7 @@ readonly class ApplicationFileService
 
         $decryptedContent = $this->frontendDecryptionService->decrypt($params->data);
 
-        $tempFile = new TemporaryFile($decryptedContent);
-
-        $validator = $this->fileValidator->getValidator($field, $tempFile->getUploadedFile());
-        if ($validator->fails()) {
-            $this->logger->debug('File validation failed', [
-                'errors' => $validator->errors()->toArray(),
-                'failed' => $validator->failed(),
-                'file' => [
-                    'size' => $tempFile->getUploadedFile()->getSize(),
-                    'mimeType' => $tempFile->getUploadedFile()->getMimeType()
-                ]
-            ]);
-
-            // After calling fails, the validator has run and the file can be closed
-            $tempFile->close();
-
-            if ($this->fileValidator->failsOnMimetype()) {
-                throw new EncryptedResponseException(
-                    EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
-                    'file_mimetype_not_allowed',
-                );
-            }
-
-            throw new EncryptedResponseException(
-                EncryptedResponseStatus::BAD_REQUEST,
-                'file_validation_failed'
-            );
-        }
-
-        $tempFile->close();
+        $this->validateFile($field, $decryptedContent);
 
         $this->applicationFileManager->writeFile($applicationStage, $field, $id, $decryptedContent);
 
@@ -142,21 +151,6 @@ readonly class ApplicationFileService
             new FileUploadResult($id),
             $params->publicKey
         );
-    }
-
-    public function saveApplicationFile(EncryptedApplicationFileUploadParams $params): EncryptedResponse
-    {
-        try {
-            return DB::transaction(fn () => $this->doSaveApplicationFile($params));
-        } catch (Throwable $e) {
-            return $this->exceptionHelper->processException(
-                $e,
-                __CLASS__,
-                __METHOD__,
-                RPCMethods::UPLOAD_APPLICATION_FILE,
-                $params->publicKey
-            );
-        }
     }
 
     private function doGetApplicationFile(ApplicationFileParams $params): EncryptedResponse
@@ -188,18 +182,41 @@ readonly class ApplicationFileService
         );
     }
 
-    public function getApplicationFile(ApplicationFileParams $params): EncryptedResponse
+    /**
+     * @throws EncryptedResponseException
+     */
+    private function validateFile(Field $field, string $fileContent): void
     {
-        try {
-            return $this->doGetApplicationFile($params);
-        } catch (Throwable $e) {
-            return $this->exceptionHelper->processException(
-                $e,
-                __CLASS__,
-                __METHOD__,
-                RPCMethods::GET_APPLICATION_FILE,
-                $params->publicKey
+        $tempFile = new TemporaryFile($fileContent);
+        $uploadedFile = $tempFile->getUploadedFile();
+
+        $validator = $this->fileValidator->getValidator($field, $uploadedFile);
+        if ($validator->fails()) {
+            $this->logger->debug('File validation failed', [
+                'errors' => $validator->errors()->toArray(),
+                'failed' => $validator->failed(),
+                'file' => [
+                    'size' => $uploadedFile->getSize(),
+                    'mimeType' => $uploadedFile->getMimeType()
+                ]
+            ]);
+
+            // After calling fails, the validator has run and the file can be closed
+            $tempFile->close();
+
+            if ($this->fileValidator->failsOnMimetype($validator)) {
+                throw new EncryptedResponseException(
+                    EncryptedResponseStatus::UNPROCESSABLE_ENTITY,
+                    'file_mimetype_not_allowed',
+                );
+            }
+
+            throw new EncryptedResponseException(
+                EncryptedResponseStatus::BAD_REQUEST,
+                'file_validation_failed'
             );
         }
+
+        $tempFile->close();
     }
 }
