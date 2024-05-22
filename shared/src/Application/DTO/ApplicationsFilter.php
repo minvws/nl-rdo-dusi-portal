@@ -9,32 +9,32 @@ use Exception;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 
 /**
+ * @param array<string, mixed> $inputArray
  * @throws Exception
  */
-function createDateTimeOrNull(array $inputArray, mixed $key, bool $setTimeToEndOfDay = false): ?DateTime
+function createDateTimeOrNull(array $inputArray, string $key, bool $setTimeToEndOfDay = false): ?DateTime
 {
-    if (array_key_exists($key, $inputArray)) {
-        $value = $inputArray[$key];
-
-        if ($inputArray[$key] instanceof DateTime) {
-            $value = $inputArray[$key];
-        } else {
-            $value = new DateTime($inputArray[$key]);
-        }
-
-        if ($setTimeToEndOfDay) {
-            $value->setTime(23, 59, 59);
-        }
-
-        return $value;
+    if (!array_key_exists($key, $inputArray)) {
+        return null;
     }
-    return null;
+
+    $value = $inputArray[$key];
+    if (!($value instanceof DateTime)) {
+        $value = new DateTime($value);
+    }
+
+    if ($setTimeToEndOfDay) {
+        $value->setTime(23, 59, 59);
+    }
+
+    return $value;
 }
 
 /**
- * @return array<array-key, ApplicationStatus|null>|null
+ * @param array<string, mixed> $inputArray
+ * @return array<ApplicationStatus>|null
  */
-function getStatusOrNull(array $inputArray, mixed $key): ?array
+function getStatusOrNull(array $inputArray, string $key): ?array
 {
     if (!array_key_exists($key, $inputArray)) {
         return null;
@@ -45,10 +45,11 @@ function getStatusOrNull(array $inputArray, mixed $key): ?array
     $stateList = $inputArray[$key];
 
     foreach ($stateList as $state) {
+        if (!($state instanceof ApplicationStatus)) {
+            $state = ApplicationStatus::tryFrom($state);
+        }
         if ($state instanceof ApplicationStatus) {
             $states[] = $state;
-        } else {
-            $states[] = ApplicationStatus::tryFrom($state);
         }
     }
 
@@ -58,6 +59,9 @@ function getStatusOrNull(array $inputArray, mixed $key): ?array
 class ApplicationsFilter
 {
     /**
+     * @param array<ApplicationStatus>|null $status
+     * @param array<string>|null $subsidy
+     * @param array<string>|null $phase
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -76,6 +80,7 @@ class ApplicationsFilter
     }
 
     /**
+     * @param array<string, mixed> $inputArray
      * @throws Exception
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */

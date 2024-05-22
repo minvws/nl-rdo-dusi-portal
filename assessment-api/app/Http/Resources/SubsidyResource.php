@@ -6,21 +6,17 @@ namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 
 /**
- * @property mixed $id
- * @property mixed $title
- * @property mixed $description
- * @property mixed $valid_from
- * @property mixed $valid_to
- * @property mixed $publishedVersion
+ * @mixin Subsidy
  */
 class SubsidyResource extends JsonResource
 {
     /**
      * @param Request $request
      *
-     * @return array
+     * @return array{id: string, title: string, description: string, validFrom: string, validTo: string|null}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array

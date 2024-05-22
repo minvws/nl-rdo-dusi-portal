@@ -22,6 +22,9 @@ readonly class UserEventSubscriber
     ) {
     }
 
+    /**
+     * @return array<class-string, string>
+     */
     public function subscribe(): array
     {
         return [

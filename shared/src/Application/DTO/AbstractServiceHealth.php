@@ -10,6 +10,10 @@ use MinVWS\DUSi\Shared\Application\Interfaces\ServiceHealth;
 abstract class AbstractServiceHealth implements JsonSerializable, ServiceHealth
 {
     protected bool $isHealthy = false;
+
+    /**
+     * @var array<mixed>
+     */
     protected array $details = [];
 
     public function __construct(
@@ -28,6 +32,9 @@ abstract class AbstractServiceHealth implements JsonSerializable, ServiceHealth
         return $this->isHealthy;
     }
 
+    /**
+     * @return array<mixed>|null
+     */
     public function getDetails(): ?array
     {
         return $this->details ?? null;
@@ -35,7 +42,10 @@ abstract class AbstractServiceHealth implements JsonSerializable, ServiceHealth
 
     abstract protected function checkHealth(): void;
 
-    public function jsonSerialize(): ?array
+    /**
+     * @return array{service: string, healthy: bool, details?: array<mixed>}
+     */
+    public function jsonSerialize(): array
     {
         $status = [
             'service' => $this->name,

@@ -18,10 +18,14 @@ use MinVWS\DUSi\Shared\User\Resources\OrganisationResource;
 class UserResource extends JsonResource
 {
     /**
-     * @var Collection<array-key,Subsidy>
+     * @var Collection<int,Subsidy>
      */
     protected Collection $subsidies;
 
+    /**
+     * @param User $resource
+     * @param Collection<int,Subsidy> $subsidies
+     */
     public function __construct($resource, Collection $subsidies)
     {
         parent::__construct($resource);
@@ -45,6 +49,9 @@ class UserResource extends JsonResource
         ];
     }
 
+    /**
+     * @return array<array-key, array{name: string, subsidy: array{id: string, title: string}, viewAllStages: bool}>
+     */
     protected function getRoles(): array
     {
         $roles = [];
@@ -69,6 +76,11 @@ class UserResource extends JsonResource
         return $roles;
     }
 
+    /**
+     * @param Role $role
+     * @param Subsidy $subsidy
+     * @return array{name: string, subsidy: array{id: string, title: string}, viewAllStages: bool}
+     */
     protected function getRoleData(Role $role, Subsidy $subsidy): array
     {
         return [

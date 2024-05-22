@@ -14,7 +14,7 @@ class SortRule implements ValidationRule
      * Explode the sort query parameter into an array of columns.
      * Check if the columns are in the sortable columns array.
      *
-     * @param array $sortableColumns
+     * @param array<string> $sortableColumns
      * @param string $descendingSortPrefix
      */
     public function __construct(protected array $sortableColumns, protected string $descendingSortPrefix = '-')

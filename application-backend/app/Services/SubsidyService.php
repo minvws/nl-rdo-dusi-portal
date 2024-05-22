@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use MinVWS\DUSi\Application\Backend\Mappers\SubsidyMapper;
 use MinVWS\DUSi\Application\Backend\Services\Traits\LoadIdentity;
 use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Identity;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
@@ -20,8 +21,6 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConcepts;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
-use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 use Throwable;
 
@@ -94,7 +93,8 @@ class SubsidyService
     /**
      * @psalm-suppress InvalidTemplateParam
      *
-     * @param Collection $applications<array-key, mixed>
+     * @param Collection<array-key, Application> $applications
+     * @return ApplicationConcept[]
      */
     private function mapConceptApplicationsToApplicationConcepts(Collection $applications): array
     {
@@ -102,13 +102,22 @@ class SubsidyService
             return [];
         }
 
-        return $applications->map(function ($application) {
+        /**
+         * The Application model here is extended with the following properties:
+         * - subsidy_stage_id
+         * - created_at
+         * - updated_at
+         * - expires_at
+         * This is done in the ApplicationRepository::getMyConceptApplications function.
+         */
+        return $applications->map(function (Application $application) {
             return new ApplicationConcept(
                 $application->reference,
                 $application->subsidyVersion->subsidy->code,
-                $application->subsidy_stage_id,
+                $application->subsidy_stage_id, // @phpstan-ignore-line
                 CarbonImmutable::parse($application->created_at),
                 CarbonImmutable::parse($application->updated_at),
+                // @phpstan-ignore-next-line
                 $application->expires_at ? CarbonImmutable::parse($application->expires_at) : null,
                 $application->status,
             );
@@ -126,10 +135,5 @@ class SubsidyService
         }
 
         return $subsidy->allow_multiple_applications;
-    }
-
-    public function getStageTransitionsForSubsidyStage(SubsidyStage $selectedCurrentSubsidyStage): Collection
-    {
-        return SubsidyStageTransition::where('current_subsidy_stage_id', $selectedCurrentSubsidyStage->id)->get();
     }
 }

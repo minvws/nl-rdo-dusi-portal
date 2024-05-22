@@ -94,7 +94,7 @@ readonly class ApplicationDataService
         return $validationResult;
     }
 
-    private function saveFieldValues(array $fieldValues, mixed $encrypter, ApplicationStage $applicationStage): void
+    private function saveFieldValues(array $fieldValues, Encrypter $encrypter, ApplicationStage $applicationStage): void
     {
         foreach ($fieldValues as $fieldValue) {
             $this->saveFieldValue($encrypter, $applicationStage, $fieldValue);

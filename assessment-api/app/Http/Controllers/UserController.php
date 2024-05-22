@@ -36,6 +36,10 @@ class UserController extends Controller
         return SubsidyResource::collection($this->getSubsidiesForUser($user));
     }
 
+    /**
+     * @param User $user
+     * @return Collection<int,Subsidy>
+     */
     protected function getSubsidiesForUser(User $user): Collection
     {
         if ($this->userService->hasAccessToAllSubsidies($user)) {

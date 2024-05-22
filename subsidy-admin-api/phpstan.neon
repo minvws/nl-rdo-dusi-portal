@@ -9,8 +9,6 @@ parameters:
         - routes
     level: 8
     inferPrivatePropertyTypeFromConstructor: true
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     excludePaths:
         - public/index.php
         - routes/console.php

@@ -23,7 +23,12 @@ class TemporaryFile
 
         $this->fileResource = $resource;
 
-        $this->path = stream_get_meta_data($this->fileResource)['uri'];
+        $uri = stream_get_meta_data($this->fileResource)['uri'] ?? null;
+        if (!is_string($uri)) {
+            throw new \RuntimeException('Could not get temporary file URI');
+        }
+
+        $this->path = $uri;
 
         fwrite($this->fileResource, $data);
         fseek($this->fileResource, 0);

@@ -15,7 +15,7 @@ use MinVWS\DUSi\Shared\Application\Services\Validation\Rules\ImplicitValidationR
 class CustomRuleValidator extends BaseValidator
 {
     /**
-     * @var Collection<string, array>
+     * @var Collection<string, array<ValidationResult>>
      */
     public Collection $validationResults;
 

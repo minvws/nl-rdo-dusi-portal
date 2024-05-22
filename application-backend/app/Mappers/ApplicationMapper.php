@@ -79,6 +79,10 @@ class ApplicationMapper
         );
     }
 
+    /**
+     * @param array<ApplicationMessage> $applicationMessages
+     * @return MessageListDTO
+     */
     public function mapApplicationMessageArrayToMessageListDTO(array $applicationMessages): MessageListDTO
     {
         $messages = array_map(

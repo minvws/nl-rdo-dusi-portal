@@ -7,11 +7,15 @@ namespace MinVWS\DUSi\Assessment\API\Fortify\Providers;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Database\Eloquent\Builder;
+use MinVWS\DUSi\Shared\User\Enums\Role;
 use MinVWS\DUSi\Shared\User\Models\User;
 use RuntimeException;
 
 class AssessmentUserProvider extends EloquentUserProvider
 {
+    /**
+     * @var Role[]
+     */
     protected array $allowedRoles = [];
 
     /**
@@ -19,7 +23,7 @@ class AssessmentUserProvider extends EloquentUserProvider
      *
      * @param HasherContract $hasher
      * @param class-string $model
-     * @param array $allowedRoles
+     * @param array<Role> $allowedRoles
      */
     public function __construct(HasherContract $hasher, string $model, array $allowedRoles = [])
     {

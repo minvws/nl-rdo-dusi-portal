@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Bridge\Laravel;
 
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use MinVWS\DUSi\Shared\Bridge\Client\Client;
@@ -15,18 +15,22 @@ class ConnectionManager
     /** @var array<string, Connection> */
     private array $connections = [];
 
-    public function __construct(private readonly Application $app)
+    public function __construct(private readonly ConfigContract $config)
     {
     }
 
     private function getDefaultConnectionName(): string
     {
-        return $this->app['config']['bridge.defaultConnection'] ?? 'default';
+        return $this->config->get('bridge.defaultConnection', 'default');
     }
 
+    /**
+     * @param string $name
+     * @return array<string, mixed>
+     */
     private function configuration(string $name): array
     {
-        $connections = $this->app['config']['bridge.connections'] ?? [];
+        $connections = $this->config->get('bridge.connections', []);
         assert(is_array($connections));
 
         $config = Arr::get($connections, $name);
@@ -36,6 +40,7 @@ class ConnectionManager
 
         return $config;
     }
+
     public function connection(?string $name = null): Connection
     {
         $name = $name ?: $this->getDefaultConnectionName();
@@ -67,6 +72,6 @@ class ConnectionManager
 
     public function client(?string $connection = null): Client
     {
-        return self::connection($connection)->client();
+        return $this->connection($connection)->client();
     }
 }

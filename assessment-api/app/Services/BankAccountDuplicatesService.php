@@ -24,14 +24,14 @@ class BankAccountDuplicatesService
     }
 
     /**
-     * @return Collection
+     * @return Collection<int, ApplicationHashDTO>
+     * @throws BankAccountSubsidyStageHashNotFoundException
      */
     public function getDuplicatesForSubsidy(Subsidy $subsidy): Collection
     {
         $subsidyStageHash = $this->getBankAccountSubsidyStageHash($subsidy);
 
         $query = $this->applicationHashService->getApplicationHashDuplicatesQuery($subsidyStageHash);
-
 
         /**
          * @psalm-suppress InvalidTemplateParam
@@ -44,6 +44,7 @@ class BankAccountDuplicatesService
                     /** @phpstan-ignore-next-line  */
                     $applicationIds = $result->application_ids;
 
+                    /** @var Collection<array-key, Application> $applications */
                     $applications = Application::query()
                         ->whereIn('id', explode(',', $applicationIds))
                         ->get();

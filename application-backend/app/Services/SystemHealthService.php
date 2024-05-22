@@ -7,13 +7,17 @@ namespace MinVWS\DUSi\Application\Backend\Services;
 use Illuminate\Contracts\Redis\Connection;
 use MinVWS\DUSi\Shared\Application\DTO\SurepayServiceHealth;
 use MinVWS\DUSi\Shared\Application\DTO\RedisServiceHealth;
+use MinVWS\DUSi\Shared\Application\Interfaces\ServiceHealth;
 
-class SystemHealthService
+readonly class SystemHealthService
 {
-    public function __construct(private readonly Connection $connection)
+    public function __construct(private Connection $connection)
     {
     }
 
+    /**
+     * @return array{healthy: bool, services: array<ServiceHealth>}
+     */
     public function getSystemHealthStatus(): array
     {
         $services = $this->collectServicesHealth();
@@ -33,6 +37,9 @@ class SystemHealthService
         ];
     }
 
+    /**
+     * @return array<ServiceHealth>
+     */
     private function collectServicesHealth(): array
     {
         $services = [];

@@ -21,7 +21,7 @@ class SubsidyResource extends JsonResource
     /**
      * @param Request $request
      *
-     * @return array
+     * @return array<string, mixed>
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array

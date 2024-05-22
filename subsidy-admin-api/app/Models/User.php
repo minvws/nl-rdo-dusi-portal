@@ -49,6 +49,9 @@ class User extends Authenticatable
         'active_until' => 'timestamp',
     ];
 
+    /**
+     * @return BelongsTo<self, self>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(__CLASS__, 'created_by');

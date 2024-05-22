@@ -13,7 +13,7 @@ use MinVWS\Codable\Encoding\EncodingContainer;
 class FileList implements Codable, JsonSerializable
 {
     /**
-     * @param array<File> $items
+     * @param File[] $items
      */
     public function __construct(
         public readonly array $items
@@ -33,12 +33,18 @@ class FileList implements Codable, JsonSerializable
         return new self($container->decodeArray(File::class));
     }
 
+    /**
+     * @return string[]
+     */
     public function getFileIds(): array
     {
         return array_map(fn(File $file) => $file->id, $this->items);
     }
 
-    public function jsonSerialize(): mixed
+    /**
+     * @return File[]
+     */
+    public function jsonSerialize(): array
     {
         return $this->items;
     }

@@ -47,6 +47,7 @@ class TestPdf extends Command
      */
     public function handle(): void
     {
+        /** @var \Illuminate\Database\Eloquent\Collection<array-key, SubsidyVersion> $subsidyVersions */
         $subsidyVersions = SubsidyVersion::with(['subsidy', 'subsidyStages'])->get();
         $subsidyVersionChoices = $this->getSubsidyVersionChoices($subsidyVersions);
 
@@ -130,6 +131,7 @@ class TestPdf extends Command
             $this->info('PDF moved to ' . $newFileName);
         }
     }
+
     protected function fakeLetterStage(): LetterStageData
     {
         return new class extends LetterStageData {
@@ -140,6 +142,10 @@ class TestPdf extends Command
         };
     }
 
+    /**
+     * @param Collection<array-key, SubsidyVersion> $subsidyVersions
+     * @return array<string, string>
+     */
     protected function getSubsidyVersionChoices(Collection $subsidyVersions): array
     {
         return $subsidyVersions->mapWithKeys(function (SubsidyVersion $version) {

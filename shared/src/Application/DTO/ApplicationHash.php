@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\DTO;
 
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
+use MinVWS\DUSi\Shared\Application\Models\Application;
 
-class ApplicationHash
+readonly class ApplicationHash
 {
+    /**
+     * @param string $hash
+     * @param int $count
+     * @param Collection<int, Application> $applications
+     */
     public function __construct(
-        public readonly string $hash,
-        public readonly int $count,
-        public readonly Collection $applications
+        public string $hash,
+        public int $count,
+        public Collection $applications
     ) {
     }
 }

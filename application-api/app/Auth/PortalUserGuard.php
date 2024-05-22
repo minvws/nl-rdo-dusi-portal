@@ -46,7 +46,7 @@ class PortalUserGuard implements Guard
     }
 
     /**
-     * @param array $credentials
+     * @param array<mixed> $credentials
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */

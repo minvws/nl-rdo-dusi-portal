@@ -27,26 +27,27 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
+    /**
+     * The subscriber classes to register.
+     *
+     * @var array<class-string>
+     */
     protected $subscribe = [
         UserEventSubscriber::class,
     ];
 
     /**
      * Register any events for your application.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }
 
     /**
      * Determine if events and listeners should be automatically discovered.
-     *
-     * @return false
      */
-    public function shouldDiscoverEvents()
+    public function shouldDiscoverEvents(): bool
     {
         return false;
     }

@@ -8,6 +8,10 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 readonly class FieldValue
 {
+    /**
+     * @param Field $field
+     * @param FileList|string|int|bool|float|array<mixed>|null $value
+     */
     public function __construct(
         public Field $field,
         public FileList|string|int|bool|float|array|null $value
@@ -18,13 +22,17 @@ readonly class FieldValue
     {
         if (is_array($this->value)) {
             return implode(', ', $this->value);
-        } elseif ($this->value instanceof FileList) {
+        }
+
+        if ($this->value instanceof FileList) {
             // Assuming FileList has a __toString() method
             return $this->value->__toString();
-        } elseif (is_null($this->value)) {
-            return '';
-        } else {
-            return (string) $this->value;
         }
+
+        if (is_null($this->value)) {
+            return '';
+        }
+
+        return (string) $this->value;
     }
 }

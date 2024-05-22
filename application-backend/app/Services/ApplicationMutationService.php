@@ -21,6 +21,7 @@ use MinVWS\DUSi\Shared\Application\Helpers\EncryptedResponseExceptionHelper;
 use MinVWS\DUSi\Shared\Application\Jobs\CheckSurePayJob;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
+use MinVWS\DUSi\Shared\Application\Models\Submission\FileList;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
@@ -29,6 +30,7 @@ use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Application\Services\FormDecodingService;
 use MinVWS\DUSi\Shared\Application\Services\ResponseEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\Validation\ValidationResult;
 use MinVWS\DUSi\Shared\Serialisation\Exceptions\EncryptedResponseException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationCreateParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationSaveBody;
@@ -340,6 +342,11 @@ readonly class ApplicationMutationService
         }
     }
 
+    /**
+     * @param array<FileList|string|int|bool|float|array<mixed>|null> $data
+     * @param array<ValidationResult> $validationResults
+     * @return ValidatedAndProcessedDataDTO
+     */
     public function createValidatedAndProcessedDataDTO(
         array $data,
         array $validationResults

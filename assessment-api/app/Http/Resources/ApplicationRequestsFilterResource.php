@@ -24,7 +24,7 @@ class ApplicationRequestsFilterResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @return array{uischema: array<mixed>, dataschema: array<mixed>}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array
@@ -37,6 +37,7 @@ class ApplicationRequestsFilterResource extends JsonResource
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @return array<mixed>
      */
     private function toUIschema(): array
     {
@@ -142,6 +143,9 @@ class ApplicationRequestsFilterResource extends JsonResource
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function toSchema(): array
     {
         //TODO dynamic content

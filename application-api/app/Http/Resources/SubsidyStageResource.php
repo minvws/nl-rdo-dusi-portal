@@ -27,7 +27,7 @@ class SubsidyStageResource extends JsonResource
     /**
      * @param Request $request
      *
-     * @return array
+     * @return array<string, mixed>
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array
@@ -40,6 +40,9 @@ class SubsidyStageResource extends JsonResource
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function createMetadata(): array
     {
         return [
@@ -54,6 +57,9 @@ class SubsidyStageResource extends JsonResource
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function createDataSchema(): array
     {
         return $this->dataSchemaBuilder->buildDataSchema($this->subsidyStage);

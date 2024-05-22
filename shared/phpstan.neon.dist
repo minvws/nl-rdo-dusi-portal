@@ -4,11 +4,12 @@ parameters:
     paths:
         - ./src
     level: 8
-
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     treatPhpDocTypesAsCertain: false
-
     universalObjectCratesClasses:
         - MinVWS\Codable\Decoding\DecodingContainer
         - MinVWS\Codable\Encoding\EncodingContainer
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+        -
+            identifier: missingType.generics

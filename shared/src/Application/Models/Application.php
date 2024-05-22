@@ -31,6 +31,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @property DateTime $locked_from
  * @property DateTimeInterface|null $final_review_deadline
  * @property DateTimeInterface $created_at
+ * @property DateTimeInterface $updated_at
  * @property-read DateTimeInterface|null $submitted_at
  * @property-read bool $is_editable_for_applicant
  * @property-read SubsidyVersion $subsidyVersion
@@ -123,6 +124,9 @@ class Application extends Model
             ->oldest();
     }
 
+    /**
+     * @return HasOne<ApplicationStage>
+     */
     public function currentApplicationStage(): HasOne
     {
         return
@@ -132,6 +136,9 @@ class Application extends Model
                 ->limit(1);
     }
 
+    /**
+     * @return HasOne<ApplicationStage>
+     */
     public function lastApplicationStage(): HasOne
     {
         return
@@ -140,6 +147,9 @@ class Application extends Model
                 ->limit(1);
     }
 
+    /**
+     * @return HasOne<ApplicationStage>
+     */
     public function firstApplicationStage(): HasOne
     {
         return
@@ -148,11 +158,18 @@ class Application extends Model
                 ->limit(1);
     }
 
+    /**
+     * @return BelongsTo<Identity, Application>
+     */
     public function identity(): BelongsTo
     {
         return $this->belongsTo(Identity::class, 'identity_id', 'id');
     }
 
+    /**
+     * @psalm-return BelongsTo
+     * @return BelongsTo<SubsidyVersion, Application>
+     */
     public function subsidyVersion(): BelongsTo
     {
         return $this->belongsTo(SubsidyVersion::class, 'subsidy_version_id', 'id');
@@ -202,11 +219,25 @@ class Application extends Model
         return $query->where('final_review_deadline', '<=', $timestamp);
     }
 
+    /**
+     * @psalm-param Builder $query
+     * @param Builder<Application> $query
+     * @param array<ApplicationStatus|string> $status
+     * @psalm-return Builder
+     * @return Builder<Application>
+     */
     public function scopeStatus(Builder $query, array $status): Builder
     {
         return $query->whereIn('status', $status);
     }
 
+    /**
+     * @psalm-param Builder $query
+     * @param Builder<Application> $query
+     * @param array<string> $codes
+     * @psalm-return Builder
+     * @return Builder<Application>
+     */
     public function scopeSubsidyCode(Builder $query, array $codes): Builder
     {
         return $query->whereHas('subsidyVersion.subsidy', function (Builder $q) use ($codes) {
@@ -224,6 +255,12 @@ class Application extends Model
     /**
      * Note that we search explicitly for a stage title as multiple subsidy stages belonging to different susbsidies
      * could have the same stage title
+     *
+     * @psalm-param Builder $query
+     * @param Builder<Application> $query
+     * @param array<string> $titles
+     * @psalm-return Builder
+     * @return Builder<Application>
      */
     public function scopePhase(Builder $query, array $titles): Builder
     {

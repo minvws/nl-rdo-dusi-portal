@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Shared\Bridge\Laravel\Console;
 
 use DateTimeImmutable;
 use Illuminate\Console\Command;
+use InvalidArgumentException;
 use MinVWS\DUSi\Shared\Bridge\Laravel\ConnectionManager;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Ping;
 use MinVWS\DUSi\Shared\Bridge\Ping\DTO\Pong;
@@ -18,6 +19,9 @@ class PingBridge extends Command
     public function handle(ConnectionManager $connectionManager): void
     {
         $name = $this->option('connection');
+        if (!is_string($name) && $name !== null) {
+            throw new InvalidArgumentException('Connection must be a string or null');
+        }
 
         $client = $connectionManager->client($name);
         $result = $client->call('ping', new Ping(new DateTimeImmutable()), Pong::class, timeout: 5);

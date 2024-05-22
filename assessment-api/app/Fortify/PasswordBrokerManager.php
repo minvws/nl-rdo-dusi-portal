@@ -17,7 +17,7 @@ class PasswordBrokerManager extends LaravelPasswordBrokerManager
      * Create a token repository instance based on the given configuration.
      * Overrides function to use our PasswordResetTokenRepository
      *
-     * @param array $config
+     * @param array{expire: int, throttle?: int} $config
      * @return TokenRepositoryInterface
      * @throws BindingResolutionException
      */

@@ -8,7 +8,6 @@ parameters:
         - public
         - routes
     level: 8
-    checkGenericClassInNonGenericObjectType: false
     excludePaths:
         - public/index.php
         - routes/console.php

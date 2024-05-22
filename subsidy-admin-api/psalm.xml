@@ -16,5 +16,7 @@
     </projectFiles>
     <stubs>
         <file name="_ide_helper.php" />
+        <file name="vendor/larastan/larastan/stubs/common/HasOne.stub" />
+        <file name="vendor/larastan/larastan/stubs/common/BelongsTo.stub" />
     </stubs>
 </psalm>

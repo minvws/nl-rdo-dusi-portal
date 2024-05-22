@@ -131,7 +131,6 @@ jobs:
         with:
           php-version: '8.2'
           extensions: zip
-          tools: phpstan
 
       - name: Copy .env
         continue-on-error: true
@@ -154,7 +153,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Static analysis with PHPStan
-        run: phpstan analyse
+        run: vendor/bin/phpstan analyse
 
   phpmd:
     strategy:

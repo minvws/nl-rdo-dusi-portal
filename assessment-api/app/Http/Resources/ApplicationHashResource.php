@@ -6,16 +6,16 @@ namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Collection;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use MinVWS\DUSi\Shared\Application\DTO\ApplicationHash;
 
 /**
- * @property string $hash
- * @property int $count
- * @property Collection $applications
+ * @mixin ApplicationHash
  */
 class ApplicationHashResource extends JsonResource
 {
     /**
+     * @return array{hash: string, count: int, applications: ResourceCollection}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(Request $request): array

@@ -8,6 +8,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class MessageRequest extends FormRequest
 {
+    /**
+     * @return array<string, string>
+     */
     public function rules(): array
     {
         $rules = [

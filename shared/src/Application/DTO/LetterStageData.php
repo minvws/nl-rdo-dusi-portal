@@ -16,7 +16,7 @@ class LetterStageData extends Collection
     public ?DateTime $submittedAt;
     public ?DateTime $closedAt;
 
-    public function __get($key): mixed
+    public function __get($key): ApplicationStageAnswer
     {
         return $this->get($key)?->answerData;
     }

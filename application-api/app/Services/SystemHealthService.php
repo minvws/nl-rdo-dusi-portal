@@ -16,6 +16,9 @@ class SystemHealthService
     ) {
     }
 
+    /**
+     * @return array{healthy: bool, services: ServiceHealth[]}
+     */
     public function getSystemHealthStatus(): array
     {
         $services = $this->collectServicesHealth();

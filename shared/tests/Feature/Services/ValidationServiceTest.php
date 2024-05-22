@@ -77,10 +77,8 @@ class ValidationServiceTest extends TestCase
 
         $validator = $validationService->getValidator(
             applicationStage: $applicationStage,
-            fieldValues: [
-                $fieldValue,
-            ],
-            submit: true
+            fieldValues: [$fieldValue],
+            submit: true,
         );
 
         $validationResults = $validator->validate();
@@ -365,11 +363,8 @@ class ValidationServiceTest extends TestCase
 
         $validator = $validationService->getValidator(
             applicationStage: $applicationStage,
-            fieldValues: [
-                $fieldValue1,
-                $fieldValue2
-            ],
-            submit: true
+            fieldValues: [$fieldValue1, $fieldValue2],
+            submit: true,
         );
 
         $validationResult = $validator->validate();

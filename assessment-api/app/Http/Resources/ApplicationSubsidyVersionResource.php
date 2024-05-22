@@ -30,6 +30,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return array{application: array<mixed>, applicationStages: array<mixed>}
      */
     public function toArray(Request $request): array
     {
@@ -39,6 +40,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function buildApplication(): array
     {
         $surePayCloseMatchSuggestion = $this->getCloseMatchSuggestion();
@@ -127,6 +131,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function buildApplicationStages(): array
     {
         $stage = $this->application->currentApplicationStage ?? $this->application->lastApplicationStage;
@@ -140,6 +147,10 @@ class ApplicationSubsidyVersionResource extends JsonResource
         );
     }
 
+    /**
+     * @param ApplicationStageData $applicationStageData
+     * @return array<mixed>
+     */
     private function buildApplicationStage(ApplicationStageData $applicationStageData): array
     {
         $applicationStage = $applicationStageData->applicationStage;
@@ -187,6 +198,9 @@ class ApplicationSubsidyVersionResource extends JsonResource
             ) : "-";
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function applicationMetaData(): array
     {
         return [

@@ -179,6 +179,11 @@ class ApplicationService
         return $this->applicationFileService->getMessageFile($message, $format);
     }
 
+    /**
+     * @param SortOptions $sortOptions
+     * @return array{sorts: array{column: string, direction: 'ascending'|'descending'}[]}
+     */
+
     protected function getResourceSortMetadata(SortOptions $sortOptions): array
     {
         $sorts = [];

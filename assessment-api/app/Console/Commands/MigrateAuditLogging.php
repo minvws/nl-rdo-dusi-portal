@@ -9,6 +9,7 @@ use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Monolog\Logger;
 use MinVWS\Logging\Laravel\Models\AuditLog;
 use Monolog\Handler\StreamHandler;
+use SodiumException;
 use SplFileObject;
 
 class MigrateAuditLogging extends Command implements PromptsForMissingInput
@@ -83,6 +84,12 @@ class MigrateAuditLogging extends Command implements PromptsForMissingInput
         }
     }
 
+    /**
+     * @param array<mixed>|string|false $line
+     * @param string $decryptionKeypair
+     * @return bool
+     * @throws SodiumException
+     */
     public function handleLine(array|string|false $line, string $decryptionKeypair): bool
     {
         if (!is_string($line) || strpos($line, 'AuditLog:') === false) {

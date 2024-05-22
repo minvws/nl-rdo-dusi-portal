@@ -11,6 +11,7 @@ class MessageFiltersResource extends JsonResource
 {
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return array{uischema: array<string, mixed>, schema: array<string, mixed>}
      */
     public function toArray(Request $request): array
     {
@@ -20,6 +21,9 @@ class MessageFiltersResource extends JsonResource
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function toUIschema(): array
     {
         return [
@@ -77,6 +81,9 @@ class MessageFiltersResource extends JsonResource
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function toSchema(): array
     {
         return [

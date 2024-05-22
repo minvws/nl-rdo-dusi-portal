@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use MinVWS\DUSi\Assessment\API\Rules\SortRule;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
@@ -34,7 +35,7 @@ class ApplicationRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array|string>
+     * @return array<string, string|array<int, Enum|ValidationRule|Rule|SortRule|string>>
      */
     public function rules(): array
     {

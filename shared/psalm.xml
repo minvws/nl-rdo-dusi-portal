@@ -9,16 +9,19 @@
     findUnusedCode="false"
 >
     <projectFiles>
-        <directory name="src" />
+        <directory name="src"/>
         <ignoreFiles>
-            <directory name="vendor" />
+            <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
-
+    <stubs>
+        <file name="vendor/larastan/larastan/stubs/common/HasOne.stub" />
+        <file name="vendor/larastan/larastan/stubs/common/BelongsTo.stub" />
+    </stubs>
     <issueHandlers>
         <UndefinedClass>
             <errorLevel type="suppress">
-                <referencedClass name="RedisException" />
+                <referencedClass name="RedisException"/>
             </errorLevel>
         </UndefinedClass>
     </issueHandlers>

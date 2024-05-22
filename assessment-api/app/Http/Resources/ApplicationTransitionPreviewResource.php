@@ -34,6 +34,7 @@ class ApplicationTransitionPreviewResource extends ApplicationSubsidyVersionReso
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return array{application: array<mixed>, applicationStages: array<mixed>, transition: array<mixed>}
      */
     public function toArray(Request $request): array
     {
@@ -42,6 +43,9 @@ class ApplicationTransitionPreviewResource extends ApplicationSubsidyVersionReso
         return $result;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function buildTransition(): array
     {
         $result = [

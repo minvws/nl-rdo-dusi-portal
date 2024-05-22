@@ -118,6 +118,12 @@ class ApplicationExportService
         return $encrypter->decrypt($encryptedAnswer);
     }
 
+    /**
+     * @psalm-param Builder $query
+     * @phpstan-param Builder<Application> $query
+     * @param ApplicationsFilter $filter
+     * @return void
+     */
     private function applyFilters(Builder $query, ApplicationsFilter $filter): void
     {
         $filterValues = [
