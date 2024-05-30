@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\DTO;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 
 readonly class ApplicationHash
