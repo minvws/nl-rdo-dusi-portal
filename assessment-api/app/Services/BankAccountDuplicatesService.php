@@ -49,15 +49,6 @@ class BankAccountDuplicatesService
 
                     /** @phpstan-ignore-next-line */
                     return new ApplicationHashDTO($result->hash, $result->count, $applications);
-                })
-                ->groupBy('hash')
-                ->map(function ($group) {
-                    /** @phpstan-ignore-next-line */
-                    $hash = $group->first()->hash;
-                    $count = $group->sum('count');
-                    $applications = $group->flatMap->applications;
-
-                    return new ApplicationHashDTO($hash, $count, $applications);
                 });
         })->values()->toBase();
     }
