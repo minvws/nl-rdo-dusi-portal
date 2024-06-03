@@ -56,7 +56,7 @@ class PCZMSeeder extends Seeder
             'status' => VersionStatus::Archived,
             'created_at' => '2023-08-31',
             'subsidy_page_url' => 'https://www.dus-i.nl/subsidies/zorgmedewerkers-met-langdurige-post-covid-klachten',
-            'contact_mail_address' => 'dienstpostbus@minvws.nl',
+            'contact_mail_address' => 'post-covid@minvws.nl',
             'mail_to_address_field_identifier' => 'email',
             'mail_to_name_field_identifier' => 'firstName;infix;lastName',
             'review_deadline' => CarbonImmutable::parse('2024-01-22')->endOfDay()->floorSecond()
