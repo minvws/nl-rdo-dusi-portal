@@ -5,25 +5,23 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Subsidy\Admin\API\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Console\PromptsForMissingInput;
 use JsonException;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMApplicationStageUISeeder;
 
-class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInput
+class LetterSqlBuilder extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'local:build-pczm-subsidy-stage-ui-update-sql {--input-ui} {--view-ui}';
+    protected $signature = 'local:build-letter-update-sql {--html} {--pdf}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate SQL query to update subsidy stage UI.';
+    protected $description = 'Generate SQL query to update letter.';
 
     /**
      * Execute the console command.
@@ -31,26 +29,30 @@ class PCZMSubsidyStageUIBuilder extends Command implements PromptsForMissingInpu
      */
     public function handle(): void
     {
-        $seeder = new PCZMApplicationStageUISeeder();
+        $needsBuildHtml = $this->option('html');
+        $needsBuildPdf = $this->option('pdf');
 
-        $needsBuildInputUi = $this->option('input-ui');
-        $needsBuildViewUi = $this->option('view-ui');
-
-        if (!$needsBuildInputUi && !$needsBuildViewUi) {
-            $needsBuildInputUi = true;
-            $needsBuildViewUi = true;
+        if (!$needsBuildHtml && !$needsBuildPdf) {
+            $needsBuildHtml = true;
+            $needsBuildPdf = true;
         }
 
-        $inputUi = $needsBuildInputUi ? $seeder->buildInputUi() : null;
-        $viewUi = $needsBuildViewUi ? $seeder->buildViewUI() : null;
+        // Example of pdf letter, needs to be replaced with the needed letter
+        // Also the query needs to be updated with the correct id
+
+        // phpcs:ignore
+        $html = $needsBuildHtml ? file_get_contents(base_path('database/seeders/PCZMv2/resources/letters/letter-approved-view.latte')) : null;
+        // phpcs:ignore
+        $pdf = $needsBuildPdf ? file_get_contents(base_path('database/seeders/PCZMv2/resources/letters/letter-approved-pdf.latte')) : null;
 
         $query = implode(PHP_EOL, array_filter([
-            "UPDATE public.subsidy_stage_uis",
+            "UPDATE public.subsidy_stage_transition_messages",
             $this->getSetQuery(array_filter([
-                'input_ui' => $inputUi,
-                'view_ui' => $viewUi,
+                'content_html' => $html,
+                'content_pdf' => $pdf,
+                'updated_at' => 'now()',
             ], mode: ARRAY_FILTER_USE_BOTH)),
-            "WHERE id = '" . PCZMApplicationStageUISeeder::PCZM_STAGE1_V1_UUID . "';",
+            "WHERE id = '';",
         ]));
 
         $this->info($query);
