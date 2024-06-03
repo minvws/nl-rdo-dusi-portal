@@ -35,9 +35,6 @@ SET content_html = e'{block content}
         <li>De financiële ondersteuning is eenmalig en telt daarom niet voor de inkomensbelasting (Box 1). Het heeft ook geen gevolgen voor uw WIA-uitkering. Het bedrag wordt wel onderdeel van het vermogen en kan hier belast worden (Box 3). Voor toeslagen, de bijstand en de eigen bijdragen voor zorg op basis van de Wet langdurige zorg of de Wet maatschappelijke ondersteuning 2015 wordt gekeken naar uw vermogen. Het kabinet heeft de financiële ondersteuning tijdelijk (voor een periode van 10 jaar) uitgezonderd voor deze vermogenstoets. Let op: U moet de uitzondering zelf aanvragen. Meer informatie staat bij de vragen en antwoorden op <a href="https://www.dus-i.nl/post-covid" target="_blank">www.dus-i.nl/post-covid</a>.
         </li>
     </ul>
-
-    <h2>Heeft u vragen?</h2>
-    <p>Neem dan contact met ons op via post-covid@minvws.nl of 070-3405566. Vermeld bij al uw correspondentie het referentienummer {$content->reference}.</p>
 {/block}
 
 {block signature}
@@ -86,9 +83,6 @@ SET content_html = e'{block content}
         <li>De financiële ondersteuning is eenmalig en telt daarom niet voor de inkomensbelasting (Box 1). Het heeft ook geen gevolgen voor uw WIA-uitkering. Het bedrag wordt wel onderdeel van het vermogen en kan hier belast worden (Box 3). Voor toeslagen, de bijstand en de eigen bijdragen voor zorg op basis van de Wet langdurige zorg of de Wet maatschappelijke ondersteuning 2015 wordt gekeken naar uw vermogen. Het kabinet heeft de financiële ondersteuning tijdelijk (voor een periode van 10 jaar) uitgezonderd voor deze vermogenstoets. Let op: U moet de uitzondering zelf aanvragen. Meer informatie staat bij de vragen en antwoorden op <a href="https://www.dus-i.nl/post-covid" target="_blank">www.dus-i.nl/post-covid</a>.
         </li>
     </ul>
-
-    <h2>Heeft u vragen?</h2>
-    <p>Neem dan contact met ons op via post-covid@minvws.nl of 070-3405566. Vermeld bij al uw correspondentie het referentienummer {$content->reference}.</p>
 {/block}
 
 {block signature}
@@ -149,9 +143,6 @@ SET content_html = e'{block content}
             bij de vragen en antwoorden op <a href="https://www.dus-i.nl/post-covid" target="_blank">www.dus-i.nl/post-covid</a>.
         </li>
     </ul>
-
-    <h2>Heeft u vragen?</h2>
-    <p>Neem dan contact met ons op via post-covid@minvws.nl of 070-3405566. Vermeld bij al uw correspondentie het referentienummer {$content->reference}.</p>
 {/block}
 
 {block signature}
@@ -210,9 +201,6 @@ SET content_html = e'{block content}
             bij de vragen en antwoorden op <a href="https://www.dus-i.nl/post-covid" target="_blank">www.dus-i.nl/post-covid</a>.
         </li>
     </ul>
-
-    <h2>Heeft u vragen?</h2>
-    <p>Neem dan contact met ons op via post-covid@minvws.nl of 070-3405566. Vermeld bij al uw correspondentie het referentienummer {$content->reference}.</p>
 {/block}
 
 {block signature}
