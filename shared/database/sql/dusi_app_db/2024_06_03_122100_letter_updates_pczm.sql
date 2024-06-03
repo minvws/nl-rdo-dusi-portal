@@ -1,0 +1,105 @@
+-- DUSI-1799 Behandelportaal post-COVID: Brief Herziening toekenning aanvraag automatisch toevoegen bij goedgekeurde aanvragen
+UPDATE public.subsidy_stage_transition_messages
+SET content_html = e'{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->stage5->closedAt|date:"d-m-Y"} ontving u een beslissing op uw aanvraag voor de regeling \'{$content->subsidyTitle}\' met referentienummer {$content->reference}.
+        Uw aanvraag is toen toegekend. Namens het kabinet verleende ik u de eenmalige financiële ondersteuning van € 15.000.
+    </p>
+
+    <p>
+        Dat betekent, tot mijn spijt, dat u geconfronteerd bent met de grote gevolgen van uw langdurige post-COVID klachten. Met de financiële ondersteuning wil het kabinet erkenning bieden voor uw getoonde inzet tijdens uw werk en het ontstane leed als gevolg van uw langdurige post-COVID klachten.
+    </p>
+
+    <p>
+        Naar aanleiding van een nieuw kabinetsbesluit, informeer ik u in deze brief over de hoogte van de eenmalige financiële ondersteuning.
+    </p>
+
+    <h2>Herzieningsbesluit</h2>
+    <p>Het kabinet heeft in april 2024 besloten om de eenmalige financiële ondersteuning te verhogen van € 15.000 naar € 24.010. Dit betekent dat u nog een bedrag van € 9.010 ontvangt.</p>
+
+    <h2>Wanneer ontvangt u de financiële ondersteuning?</h2>
+    <p>Wij betalen het bedrag van € 9.010 in één keer uit. Wij gebruiken hiervoor het rekeningnummer dat u eerder bij uw aanvraag aan ons doorgaf. Klopt dit rekeningnummer niet meer? Geef dit zo snel mogelijk aan ons door: 070-3405566. Wij streven ernaar het bedrag binnen 4 weken aan u over te maken.</p>
+
+    <h2>Gevolgen voor belastingen en uitkeringen:</h2>
+    <ul>
+        <li>De financiële ondersteuning is eenmalig en telt daarom niet voor de inkomensbelasting (Box 1). Het heeft ook geen gevolgen voor uw WIA-uitkering. Het bedrag wordt wel onderdeel van het vermogen en kan hier belast worden (Box 3). Voor toeslagen, de bijstand en de eigen bijdragen voor zorg op basis van de Wet langdurige zorg of de Wet maatschappelijke ondersteuning 2015 wordt gekeken naar uw vermogen. Het kabinet heeft de financiële ondersteuning tijdelijk (voor een periode van 10 jaar) uitgezonderd voor deze vermogenstoets. Let op: U moet de uitzondering zelf aanvragen. Meer informatie staat bij de vragen en antwoorden op <a href="https://www.dus-i.nl/post-covid" target="_blank">www.dus-i.nl/post-covid</a>.
+        </li>
+    </ul>
+
+    <h2>Heeft u vragen?</h2>
+    <p>Neem dan contact met ons op via post-covid@minvws.nl of 070-3405566. Vermeld bij al uw correspondentie het referentienummer {$content->reference}.</p>
+{/block}
+
+{block signature}
+    <p>
+        Met vriendelijke groet,<br/>
+        <br/>
+        de Minister van Volksgezondheid, Welzijn en Sport,<br/>
+        namens deze,<br/>
+        het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
+        <br/>
+        <img class="signature" alt="handtekening" src="{$content->getSignature(\'vws_dusi_signature.jpg\')|dataStream}" />
+        <br/>
+        L. van der Weij
+    </p>
+{/block}
+',
+    content_pdf                 = e'{layout \'letter_layout.latte\'}
+
+{block concern}
+    Betreft: Herziening toekenning aanvraag \'{$content->subsidyTitle}\'
+{/block}
+
+{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->stage5->closedAt|date:"d-m-Y"} ontving u een beslissing op uw aanvraag voor de regeling \'{$content->subsidyTitle}\' met referentienummer {$content->reference}.
+        Uw aanvraag is toen toegekend. Namens het kabinet verleende ik u de eenmalige financiële ondersteuning van € 15.000.
+    </p>
+
+    <p>
+        Dat betekent, tot mijn spijt, dat u geconfronteerd bent met de grote gevolgen van uw langdurige post-COVID klachten. Met de financiële ondersteuning wil het kabinet erkenning bieden voor uw getoonde inzet tijdens uw werk en het ontstane leed als gevolg van uw langdurige post-COVID klachten.
+    </p>
+
+    <p>
+        Naar aanleiding van een nieuw kabinetsbesluit, informeer ik u in deze brief over de hoogte van de eenmalige financiële ondersteuning.
+    </p>
+
+    <h2>Herzieningsbesluit</h2>
+    <p>Het kabinet heeft in april 2024 besloten om de eenmalige financiële ondersteuning te verhogen van € 15.000 naar € 24.010. Dit betekent dat u nog een bedrag van € 9.010 ontvangt.</p>
+
+    <h2>Wanneer ontvangt u de financiële ondersteuning?</h2>
+    <p>Wij betalen het bedrag van € 9.010 in één keer uit. Wij gebruiken hiervoor het rekeningnummer dat u eerder bij uw aanvraag aan ons doorgaf. Klopt dit rekeningnummer niet meer? Geef dit zo snel mogelijk aan ons door: 070-3405566. Wij streven ernaar het bedrag binnen 4 weken aan u over te maken.</p>
+
+    <h2>Gevolgen voor belastingen en uitkeringen:</h2>
+    <ul>
+        <li>De financiële ondersteuning is eenmalig en telt daarom niet voor de inkomensbelasting (Box 1). Het heeft ook geen gevolgen voor uw WIA-uitkering. Het bedrag wordt wel onderdeel van het vermogen en kan hier belast worden (Box 3). Voor toeslagen, de bijstand en de eigen bijdragen voor zorg op basis van de Wet langdurige zorg of de Wet maatschappelijke ondersteuning 2015 wordt gekeken naar uw vermogen. Het kabinet heeft de financiële ondersteuning tijdelijk (voor een periode van 10 jaar) uitgezonderd voor deze vermogenstoets. Let op: U moet de uitzondering zelf aanvragen. Meer informatie staat bij de vragen en antwoorden op <a href="https://www.dus-i.nl/post-covid" target="_blank">www.dus-i.nl/post-covid</a>.
+        </li>
+    </ul>
+
+    <h2>Heeft u vragen?</h2>
+    <p>Neem dan contact met ons op via post-covid@minvws.nl of 070-3405566. Vermeld bij al uw correspondentie het referentienummer {$content->reference}.</p>
+{/block}
+
+{block signature}
+    <p>
+        Met vriendelijke groet,<br/>
+        <br/>
+        de Minister van Volksgezondheid, Welzijn en Sport,<br/>
+        namens deze,<br/>
+        het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
+        <br/>
+        <img class="signature" alt="handtekening" src="{$content->getSignature(\'vws_dusi_signature.jpg\')|dataStream}" />
+        <br/>
+        L. van der Weij
+    </p>
+{/block}
+
+{block sidebar}
+    {include parent}
+{/block}
+', updated_at = 'now()'
+WHERE id = 'd3dcc915-fdaf-472a-9f3c-d9a09dc263b3';
+
+
