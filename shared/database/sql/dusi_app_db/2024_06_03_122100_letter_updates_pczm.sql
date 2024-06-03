@@ -1,3 +1,8 @@
+-- DUSI-1798 Beschikking post-COVID: de template voor de toewijzingsbrief en de afwijzingsbrief e-mailadres aanpassen naar: Post-COVID@minvws.nl
+update public.subsidy_versions
+set contact_mail_address = 'post-covid@minvws.nl'
+where id = '0185f897-99b0-4390-bd1f-98cce4bd578b'; -- Version 2
+
 -- DUSI-1799 Behandelportaal post-COVID: Brief Herziening toekenning aanvraag automatisch toevoegen bij goedgekeurde aanvragen
 UPDATE public.subsidy_stage_transition_messages
 SET content_html = e'{block content}
