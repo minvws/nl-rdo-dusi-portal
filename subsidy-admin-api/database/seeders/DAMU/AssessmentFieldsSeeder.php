@@ -182,6 +182,7 @@ class AssessmentFieldsSeeder extends Seeder
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_3_UUID,
             code:           'amount',
+            inputMode:      'float',
             title:          'Toegekend bedrag',
             isRequired:     true,
             requiredCondition: new AndCondition([
