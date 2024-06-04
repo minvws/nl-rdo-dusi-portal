@@ -1,5 +1,14 @@
 {layout 'letter_layout.latte'}
 
+{block header}
+<header>
+    <section id="logo">
+        <img id="ribbon" style="top: -14.5mm;" src="{$content->logoStream|dataStream}"/>
+        <span id="ministry">Ministerie van Onderwijs, Cultuur en Wetenschap</span>
+    </section>
+</header>
+{/block}
+
 {block concern}
     Betreft: Afwijzing aanvraag '{$content->subsidyTitle}'
 {/block}
