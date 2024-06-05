@@ -177,7 +177,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             code: 'internalAssessmentChecklist',
             title: 'Controlevragen',
             options: [
-                'Valt de aanvrager onder de WSNP/bewindvoering?',
+                'Aanvrager valt niet onder de WSNP/bewindvoering?',
                 'Alle benodigde documenten zijn aangeleverd',
                 'Het subsidiebedrag klopt met de gekozen behandeling',
                 'De aanvraag kan verleend worden',

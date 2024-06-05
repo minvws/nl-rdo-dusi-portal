@@ -208,7 +208,7 @@ class AssessmentFieldsSeeder extends Seeder
             code: 'internalAssessmentChecklist',
             title: 'Gecontroleerd',
             options: [
-                'Valt de aanvrager onder de WSNP/bewindvoering?',
+                'Aanvrager valt niet onder de WSNP/bewindvoering?',
                 'Is het subsidiebedrag juist vermeld in SAP?',
                 'Komt het IBAN op de aanvraag overeen met SAP?',
                 'Is de aangemaakte verplichting geboekt op juiste budgetplaats en budgetpositie?'
