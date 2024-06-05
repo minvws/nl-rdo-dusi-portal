@@ -199,7 +199,7 @@ Betreft: Verlening aanvraag \'{$content->subsidyTitle}\'
 <p>De regelgeving kunt u raadplegen via <a href="https://wetten.overheid.nl" target="_blank">wetten.overheid.nl</a>.</p>
 
 <u>Meldingsplicht</u>
-<p>U bent verplicht een melding te maken bij de Dienst Uitvoering Subsidies aan Instellingen (DUS-I) wanneer niet, niet
+<p>U bent verplicht een melding te maken bij de Dienst Uitvoering Subsidies aan Instellingen (DUS-I) wanneer niet
     op tijd of niet geheel zal worden voldaan aan de verplichtingen die aan de subsidie zijn verbonden. U doet in ieder
     geval melding als de leerling dit subsidiejaar met de opleiding stopt.</p>
 
