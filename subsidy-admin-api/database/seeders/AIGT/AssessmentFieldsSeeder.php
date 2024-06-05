@@ -38,7 +38,7 @@ class AssessmentFieldsSeeder extends Seeder
             code:           'firstAssessmentChecklist',
             title:          'Gecontroleerd',
             options:        [
-                                'Valt de aanvrager onder de WSNP/bewindvoering?',
+                                'Aanvrager valt niet onder de WSNP/bewindvoering?',
                                 'Is de aanvraag tijdig ingediend?',
                                 'Is het aanvraagformulier volledig ingevuld?',
                                 'Is het aanvraagformulier juist ondertekend?',
@@ -128,7 +128,7 @@ class AssessmentFieldsSeeder extends Seeder
             code:            'internalAssessmentChecklist',
             title:           'Controlevragen',
             options:         [
-                                 'Valt de aanvrager onder de WSNP/bewindvoering?',
+                                 'Aanvrager valt niet onder de WSNP/bewindvoering?',
                                  'Alle benodigde documenten zijn aangeleverd',
                                  'De aanvraag kan verleend worden',
                                  'Het IBAN is juist vermeld in het Portaal en in de verplichting in SAP',
