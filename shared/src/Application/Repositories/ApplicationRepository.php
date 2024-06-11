@@ -139,9 +139,8 @@ class ApplicationRepository
             ->when(
                 value: $user->hasRole(Role::LegalSpecialist),
                 callback: fn(Builder $q) => $q->where(function (Builder $q) {
-                    $q
-                        ->where('status', ApplicationStatus::Approved)
-                        ->orWhere('status', ApplicationStatus::Rejected);
+                    $q->whereIn('status', [ApplicationStatus::Approved,
+                        ApplicationStatus::Rejected, ApplicationStatus::Reclaimed]);
                 }),
             );
 
@@ -562,9 +561,8 @@ class ApplicationRepository
         $query->when(
             value: !isset($filter->reference),
             callback: fn(Builder $q) => $q->where(function (Builder $q) {
-                $q
-                    ->where('status', '<>', ApplicationStatus::Approved)
-                    ->where('status', '<>', ApplicationStatus::Rejected);
+                $q->whereNotIn('status', [ApplicationStatus::Approved,
+                    ApplicationStatus::Rejected, ApplicationStatus::Reclaimed]);
             }),
         );
     }
