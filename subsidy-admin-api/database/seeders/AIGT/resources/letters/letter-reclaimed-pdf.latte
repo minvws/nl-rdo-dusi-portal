@@ -21,6 +21,14 @@
         L. van der Weij
     </p>
 {/block}
+
 {block sidebar}
     {include parent}
+
+    <h4>Relatienummer</h4>
+    <p>{$content->stage2->businessPartnerNumber}</p>
+
+    <h4>Verplichtingennummer</h4>
+    <p>{$content->stage2->liabilitiesNumber}</p>
 {/block}
+
