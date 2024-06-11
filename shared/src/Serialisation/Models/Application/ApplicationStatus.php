@@ -33,4 +33,21 @@ enum ApplicationStatus: string
     {
         return in_array($this, self::NEW_APPLICATION_ALLOWED_STATUSES, true);
     }
+
+    /**
+     * Function to get the difference between two arrays of ApplicationStatuses
+     * array_diff does not work with enums, so we need to use array_udiff.
+     *
+     * @param ApplicationStatus[] $array
+     * @param ApplicationStatus[] $array2
+     * @return ApplicationStatus[]
+     */
+    public static function getDiff(array $array, array $array2): array
+    {
+        return array_values(array_udiff(
+            $array,
+            $array2,
+            static fn(self $valueA, self $valueB) => $valueA->value <=> $valueB->value,
+        ));
+    }
 }

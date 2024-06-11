@@ -111,6 +111,23 @@ class Subsidy extends Model
         return $query->whereIn('id', $subsidyIds);
     }
 
+    /**
+     * Scope to get only subsidies that are valid today.
+     *
+     * @param Builder<Subsidy> $query
+     * @return Builder<Subsidy>
+     */
+    public function scopeValid(Builder $query): Builder
+    {
+        return $query
+            ->where('valid_from', '<=', CarbonImmutable::today())
+            ->where(function (Builder $query) {
+                $query
+                    ->whereNull('valid_to')
+                    ->orWhere('valid_to', '>=', CarbonImmutable::tomorrow());
+            });
+    }
+
     protected function isOpenForNewApplications(): Attribute
     {
         return Attribute::make(

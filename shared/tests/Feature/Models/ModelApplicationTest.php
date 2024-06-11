@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Tests\Feature\Models;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
@@ -15,8 +14,6 @@ use MinVWS\DUSi\Shared\Tests\TestCase;
 
 class ModelApplicationTest extends TestCase
 {
-    use DatabaseTransactions;
-
     private Application $application;
     private ApplicationStage $applicationStage;
     private Subsidy $subsidy;
@@ -28,10 +25,6 @@ class ModelApplicationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Subsidy::query()->truncate();
-        SubsidyVersion::query()->truncate();
-        Application::query()->truncate();
-        ApplicationStage::query()->truncate();
 
         $this->subsidy = Subsidy::factory()->create([
             'title' => 'Test Subsidy',
@@ -56,6 +49,11 @@ class ModelApplicationTest extends TestCase
             'subsidy_id' => Subsidy::factory()->create()->id,
         ]);
         $this->falseApplication = Application::factory()->create();
+    }
+
+    public function testApplicationSubsidy(): void
+    {
+        $this->assertEquals($this->subsidy->id, $this->application->subsidy->id);
     }
 
     public function testScopeDates()

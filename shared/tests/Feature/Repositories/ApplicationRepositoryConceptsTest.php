@@ -191,7 +191,7 @@ class ApplicationRepositoryConceptsTest extends TestCase
 
         // Application should be visible
         $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
-        $this->assertCount(1, $applications);
+        $this->assertCount(2, $applications);
     }
 
     public function testGetMyConceptApplicationMultipleApplicationsInDifferentSubsidies(): void

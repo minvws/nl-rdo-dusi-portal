@@ -18,7 +18,6 @@ class ApplicationConcept implements Codable
     public function __construct(
         public readonly string $reference,
         public readonly string $subsidyCode,
-        public readonly string $subsidyStageUuid,
         public readonly DateTimeInterface $createdAt,
         public readonly DateTimeInterface $updatedAt,
         public readonly ?DateTimeInterface $expiresAt,

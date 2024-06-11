@@ -403,8 +403,7 @@ class ApplicationRepository
         return
             $identity
                 ->applications()
-                ->whereRelation('subsidyVersion', 'subsidy_id', '=', $subsidy->id)
-                ->orderBy('created_at', 'desc')
+                ->ofSubsidy($subsidy->id)
                 ->whereNotIn('status', ApplicationStatus::NEW_APPLICATION_ALLOWED_STATUSES)
                 ->exists();
     }
@@ -427,53 +426,31 @@ class ApplicationRepository
      */
     public function getMyConceptApplications(Identity $identity, Subsidy $subsidy): Collection
     {
-        $query = $identity->applications()
-            ->select([
-                'applications.*',
-                'application_stages.subsidy_stage_id',
-                'application_stages.created_at',
-                'application_stages.updated_at',
-                'application_stages.expires_at',
-            ])
-            ->join('subsidy_versions', 'applications.subsidy_version_id', '=', 'subsidy_versions.id')
-                ->where('subsidy_versions.subsidy_id', $subsidy->id)
-            ->join('subsidies', 'subsidies.id', '=', 'subsidy_versions.subsidy_id')
-            ->join('subsidy_stages', 'subsidy_versions.id', '=', 'subsidy_stages.subsidy_version_id')
-                ->where('subsidy_stages.subject_role', '=', SubjectRole::Applicant)
-            ->join('application_stages', function (JoinClause $join) {
-                $join
-                    ->on('applications.id', '=', 'application_stages.application_id')
-                    ->on('subsidy_stages.id', '=', 'application_stages.subsidy_stage_id');
-            })
-                ->where('application_stages.is_current', true)
-                ->where('application_stages.is_submitted', false)
-            ->where(function ($query) {
+        return $identity->applications()
+            ->ofSubsidy($subsidy->id)
+            /** @phpstan-ignore argument.type */
+            ->where(function (Builder $query) {
+                /** @var Builder<Application> $query */
                 $query
-                    ->where(function ($query) {
-                        $query
-                            ->where('applications.status', ApplicationStatus::RequestForChanges)
-                            ->where(function ($query) {
-                                $query
-                                    ->whereNull('application_stages.expires_at')
-                                    ->orWhere('application_stages.expires_at', '>=', CarbonImmutable::tomorrow());
-                            });
+                    ->orWhere(function (Builder $query) {
+                        $query->where('status', ApplicationStatus::Draft)
+                            ->validSubsidy();
                     })
-                    ->orWhere(function ($query) {
-                        $query
-                            ->where('applications.status', ApplicationStatus::Draft)
-                            ->where(function ($query) {
-                                $query
-                                    ->where('subsidies.valid_from', '<=', CarbonImmutable::today())
-                                    ->where(function ($query) {
-                                        $query
-                                            ->whereNull('subsidies.valid_to')
-                                            ->orWhere('subsidies.valid_to', '>=', CarbonImmutable::tomorrow());
-                                    });
-                            });
-                    });
-            });
-
-        return $query->get();
+                    ->orWhere(function (Builder $query) {
+                        $query->where('status', ApplicationStatus::RequestForChanges)
+                            ->lastApplicationStageNotExpired();
+                    })
+                    ->orWhereIn('status', [
+                        ApplicationStatus::Pending,
+                        ApplicationStatus::Approved,
+                        ApplicationStatus::Allocated,
+                        ApplicationStatus::Rejected,
+                        ApplicationStatus::Reclaimed,
+                    ]);
+            })
+            ->with(['lastApplicationStage'])
+            ->orderByStatus()
+            ->get();
     }
 
     public function getMyApplication(Identity $identity, string $reference, bool $lockForUpdate = false): ?Application

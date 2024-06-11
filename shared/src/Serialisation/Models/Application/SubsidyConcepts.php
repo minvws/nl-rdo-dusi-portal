@@ -6,7 +6,6 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\Subsidy;
 
 class SubsidyConcepts implements Codable
 {

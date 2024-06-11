@@ -68,14 +68,11 @@ class SubsidyService
             );
         }
 
-        $identity = $this->identityService->findOrCreateIdentity($params->identity, lockForUpdate: true);
-
-        $applications = $this->applicationRepository->getMyConceptApplications($identity, $subsidy);
+        $identity = $this->identityService->findIdentity($params->identity);
 
         $subsidyDto = $this->subsidyMapper->mapSubsidyToSubsidyDTO($subsidy);
-        $concepts = $this->mapConceptApplicationsToApplicationConcepts($applications);
-
-        $newConceptsAllowed = $this->getNewConceptsAllowed($subsidy, $identity);
+        $newConceptsAllowed = $this->getNewConceptsAllowed($identity, $subsidy);
+        $concepts = $this->getConceptApplications($identity, $subsidy);
 
         $subsidyConcepts = new SubsidyConcepts(
             subsidy: $subsidyDto,
@@ -102,32 +99,28 @@ class SubsidyService
             return [];
         }
 
-        /**
-         * The Application model here is extended with the following properties:
-         * - subsidy_stage_id
-         * - created_at
-         * - updated_at
-         * - expires_at
-         * This is done in the ApplicationRepository::getMyConceptApplications function.
-         */
         return $applications->map(function (Application $application) {
             return new ApplicationConcept(
                 $application->reference,
                 $application->subsidyVersion->subsidy->code,
-                $application->subsidy_stage_id, // @phpstan-ignore-line
                 CarbonImmutable::parse($application->created_at),
                 CarbonImmutable::parse($application->updated_at),
-                // @phpstan-ignore-next-line
-                $application->expires_at ? CarbonImmutable::parse($application->expires_at) : null,
+                $application->lastApplicationStage->expires_at
+                    ? CarbonImmutable::parse($application->lastApplicationStage->expires_at)
+                    : null,
                 $application->status,
             );
         })->toArray();
     }
 
-    private function getNewConceptsAllowed(Subsidy $subsidy, Identity $identity): bool
+    private function getNewConceptsAllowed(?Identity $identity, Subsidy $subsidy): bool
     {
         if (!$subsidy->is_open_for_new_applications) {
             return false;
+        }
+
+        if (!$identity) {
+            return true;
         }
 
         if (!$this->applicationRepository->hasOpenOrApprovedApplicationsForSubsidy($identity, $subsidy)) {
@@ -135,5 +128,19 @@ class SubsidyService
         }
 
         return $subsidy->allow_multiple_applications;
+    }
+
+    /**
+     * @return ApplicationConcept[]
+     */
+    private function getConceptApplications(?Identity $identity, Subsidy $subsidy): array
+    {
+        if (!$identity) {
+            return [];
+        }
+
+
+        $applications = $this->applicationRepository->getMyConceptApplications($identity, $subsidy);
+        return $this->mapConceptApplicationsToApplicationConcepts($applications);
     }
 }

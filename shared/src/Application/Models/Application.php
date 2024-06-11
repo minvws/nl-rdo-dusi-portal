@@ -15,10 +15,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
+use MinVWS\DUSi\Shared\Application\Eloquent\HasOneUuidSupport;
+use MinVWS\DUSi\Shared\Application\Traits\ApplicationScopes;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
+use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 
 /**
  * @property string $id
@@ -47,12 +51,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
  * @method Builder<self> forIdentity(Identity $identity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class Application extends Model
 {
     use HasFactory;
     use HasUuids;
+    use ApplicationScopes;
 
     protected $connection = Connection::APPLICATION;
 
@@ -70,6 +74,9 @@ class Application extends Model
         'locked_from'
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) - $value is not used
+     */
     protected function submittedAt(): Attribute
     {
         return Attribute::make(
@@ -124,6 +131,18 @@ class Application extends Model
             ->oldest();
     }
 
+    public function subsidy(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            related: Subsidy::class,
+            through: SubsidyVersion::class,
+            firstKey: 'id',
+            secondKey: 'id',
+            localKey: 'subsidy_version_id',
+            secondLocalKey: 'subsidy_id',
+        );
+    }
+
     /**
      * @return HasOne<ApplicationStage>
      */
@@ -131,9 +150,12 @@ class Application extends Model
     {
         return
             $this->hasOne(ApplicationStage::class)
-                ->where('is_current', true)
-                ->orderBy('sequence_number', 'desc')
-                ->limit(1);
+                ->ofMany([
+                    'sequence_number' => 'MAX',
+                    'id' => 'MAX',
+                ], function (Builder $query) {
+                    $query->where('is_current', true);
+                });
     }
 
     /**
@@ -143,8 +165,7 @@ class Application extends Model
     {
         return
             $this->hasOne(ApplicationStage::class)
-                ->orderBy('sequence_number', 'desc')
-                ->limit(1);
+                ->ofMany('sequence_number', 'MAX');
     }
 
     /**
@@ -153,9 +174,8 @@ class Application extends Model
     public function firstApplicationStage(): HasOne
     {
         return
-            $this->hasOne(ApplicationStage::class, 'application_id', 'id')
-                ->orderBy('sequence_number', 'asc')
-                ->limit(1);
+            $this->hasOne(ApplicationStage::class)
+                ->ofMany('sequence_number', 'MIN');
     }
 
     /**
@@ -175,102 +195,17 @@ class Application extends Model
         return $this->belongsTo(SubsidyVersion::class, 'subsidy_version_id', 'id');
     }
 
-    public function scopeForIdentity(Builder $query, Identity $identity): Builder
-    {
-        return $query->where('identity_id', $identity->id);
-    }
-
-    public function scopeTitle(Builder $query, string $title): Builder
-    {
-        return $query->where('application_title', 'LIKE', '%' . $title . '%');
-    }
-    public function scopeReference(Builder $query, string $title): Builder
-    {
-        return $query->where('reference', 'LIKE', '%' . $title . '%');
-    }
-
-    public function scopeCreatedAtFrom(Builder $query, DateTime $timestamp): Builder
-    {
-        return $query->where('created_at', '>=', $timestamp);
-    }
-
-    public function scopeCreatedAtTo(Builder $query, DateTime $timestamp): Builder
-    {
-        return $query->where('created_at', '<=', $timestamp);
-    }
-
-    public function scopeUpdatedAtFrom(Builder $query, DateTime $timestamp): Builder
-    {
-        return $query->where('updated_at', '>=', $timestamp);
-    }
-
-    public function scopeUpdatedAtTo(Builder $query, DateTime $timestamp): Builder
-    {
-        return $query->where('updated_at', '<=', $timestamp);
-    }
-
-    public function scopeFinalReviewDeadlineFrom(Builder $query, DateTime $timestamp): Builder
-    {
-        return $query->where('final_review_deadline', '>=', $timestamp);
-    }
-
-    public function scopeFinalReviewDeadlineTo(Builder $query, DateTime $timestamp): Builder
-    {
-        return $query->where('final_review_deadline', '<=', $timestamp);
-    }
-
-    /**
-     * @psalm-param Builder $query
-     * @param Builder<Application> $query
-     * @param array<ApplicationStatus|string> $status
-     * @psalm-return Builder
-     * @return Builder<Application>
-     */
-    public function scopeStatus(Builder $query, array $status): Builder
-    {
-        return $query->whereIn('status', $status);
-    }
-
-    /**
-     * @psalm-param Builder $query
-     * @param Builder<Application> $query
-     * @param array<string> $codes
-     * @psalm-return Builder
-     * @return Builder<Application>
-     */
-    public function scopeSubsidyCode(Builder $query, array $codes): Builder
-    {
-        return $query->whereHas('subsidyVersion.subsidy', function (Builder $q) use ($codes) {
-            $q->whereIn('code', $codes);
-        });
-    }
-
-    public function scopeOrderByStatus(Builder $query): Builder
-    {
-        // phpcs:disable Generic.Files.LineLength
-        return $query->orderByRaw('CASE status WHEN \'draft\' THEN 1 WHEN \'pending\' THEN 2 WHEN \'approved\' THEN 3 WHEN \'rejected\' THEN 4 END');
-        // phpcs:enable Generic.Files.LineLength
-    }
-
-    /**
-     * Note that we search explicitly for a stage title as multiple subsidy stages belonging to different susbsidies
-     * could have the same stage title
-     *
-     * @psalm-param Builder $query
-     * @param Builder<Application> $query
-     * @param array<string> $titles
-     * @psalm-return Builder
-     * @return Builder<Application>
-     */
-    public function scopePhase(Builder $query, array $titles): Builder
-    {
-        return $query->whereHas('currentApplicationStage.subsidyStage', function (Builder $q) use ($titles) {
-            $q->whereIn('title', $titles);
-        });
-    }
-
     protected static function newFactory(): ApplicationFactory
     {
         return new ApplicationFactory();
+    }
+
+    /**
+     * Override the hasOne method to use the custom HasOneUuidSupport class
+     * to support UUIDs in the hasOne -> ofMany functionality.
+     */
+    protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey): HasOne
+    {
+        return new HasOneUuidSupport($query, $parent, $foreignKey, $localKey);
     }
 }
