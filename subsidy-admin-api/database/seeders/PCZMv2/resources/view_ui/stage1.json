@@ -163,7 +163,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Medisch onderzoeksverslag (medische rapportage)": "{socialMedicalAssessment}",
+                            "Sociaal-medische beoordeling (medische rapportage)": "{socialMedicalAssessment}",
                             "Bevat uw medisch onderzoeksverslag de diagnose langdurige post-COVID?": "{hasPostCovidDiagnose}",
                             "Verklaring arts (indien geen diagnose)": "{doctorsCertificate}"
                         }
