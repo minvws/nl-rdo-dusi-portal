@@ -61,6 +61,27 @@ class AssessmentFieldsSeeder extends Seeder
             isRequired:     false,
         );
 
+        $this->createTextField(
+            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
+            code:            'businessPartnerNumber',
+            title:           'Zakenpartnernummer',
+            inputMode:       'numeric',
+            params:          ['maxLength' => 20],
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
+            code:            'liabilitiesNumber',
+            title:           'Verplichtingennummer',
+            inputMode:       'numeric',
+            params:          ['maxLength' => 20],
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
             code:           'amount',
