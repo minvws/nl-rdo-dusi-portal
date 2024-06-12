@@ -258,7 +258,7 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/socialMedicalAssessment",
-                            "label": "Medisch onderzoeksverslag (medische rapportage)",
+                            "label": "Sociaal-medische beoordeling (medische rapportage)",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
