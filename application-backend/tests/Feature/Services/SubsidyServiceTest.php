@@ -23,8 +23,8 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponse;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\EncryptedResponseStatus;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\HsmEncryptedData;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\IdentityType;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConcepts;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyOverview;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyOverviewParams;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\VersionStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
@@ -88,9 +88,9 @@ class SubsidyServiceTest extends TestCase
     }
 
 
-    public function testGetApplicationConceptsEmpty(): void
+    public function testGetSubsidyOverviewEmpty(): void
     {
-        $params = new SubsidyConceptsParams(
+        $params = new SubsidyOverviewParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -99,20 +99,20 @@ class SubsidyServiceTest extends TestCase
             $this->subsidy->code
         );
 
-        $encryptedResponse = $this->subsidyService->getSubsidyAndConcepts($params);
+        $encryptedResponse = $this->subsidyService->getSubsidyOverview($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 
-        $subsidyConcepts = $this->responseEncryptionService
-            ->decryptCodable($encryptedResponse, SubsidyConcepts::class, $this->keyPair);
-        $this->assertNotNull($subsidyConcepts);
-        $this->assertNotNull($subsidyConcepts->subsidy);
-        $this->assertIsArray($subsidyConcepts->concepts);
-        $this->assertCount(0, $subsidyConcepts->concepts);
-        $this->assertEquals($this->subsidy->code, $subsidyConcepts->subsidy->code);
+        $subsidyOverview = $this->responseEncryptionService
+            ->decryptCodable($encryptedResponse, SubsidyOverview::class, $this->keyPair);
+        $this->assertNotNull($subsidyOverview);
+        $this->assertNotNull($subsidyOverview->subsidy);
+        $this->assertIsArray($subsidyOverview->applications);
+        $this->assertCount(0, $subsidyOverview->applications);
+        $this->assertEquals($this->subsidy->code, $subsidyOverview->subsidy->code);
     }
 
-    public function testGetApplicationConcepts(): void
+    public function testGetSubsidyOverview(): void
     {
         $application = Application::factory()
             ->for($this->identity)
@@ -146,7 +146,7 @@ class SubsidyServiceTest extends TestCase
             ]);
 
 
-        $params = new SubsidyConceptsParams(
+        $params = new SubsidyOverviewParams(
             new EncryptedIdentity(
                 type: IdentityType::CitizenServiceNumber,
                 encryptedIdentifier: new HsmEncryptedData($this->identity->hashed_identifier, '')
@@ -155,16 +155,16 @@ class SubsidyServiceTest extends TestCase
             $this->subsidy->code
         );
 
-        $encryptedResponse = $this->subsidyService->getSubsidyAndConcepts($params);
+        $encryptedResponse = $this->subsidyService->getSubsidyOverview($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 
-        $subsidyConcepts = $this->responseEncryptionService
-            ->decryptCodable($encryptedResponse, SubsidyConcepts::class, $this->keyPair);
-        $this->assertNotNull($subsidyConcepts);
-        $this->assertNotNull($subsidyConcepts->subsidy);
-        $this->assertIsArray($subsidyConcepts->concepts);
-        $this->assertCount(1, $subsidyConcepts->concepts);
-        $this->assertEquals($application->reference, $subsidyConcepts->concepts[0]->reference);
+        $subsidyOverview = $this->responseEncryptionService
+            ->decryptCodable($encryptedResponse, SubsidyOverview::class, $this->keyPair);
+        $this->assertNotNull($subsidyOverview);
+        $this->assertNotNull($subsidyOverview->subsidy);
+        $this->assertIsArray($subsidyOverview->applications);
+        $this->assertCount(1, $subsidyOverview->applications);
+        $this->assertEquals($application->reference, $subsidyOverview->applications[0]->reference);
     }
 }

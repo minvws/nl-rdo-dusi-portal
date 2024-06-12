@@ -11,32 +11,17 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 
-/**
- * @psalm-suppress InvalidTemplateParam
- */
 class SubsidyMapper
 {
-    public function mapSubsidyVersionToSubsidyDTO(SubsidyVersion $subsidyVersion): SubsidyDTO
+    public function mapSubsidyVersionToSubsidyDTO(SubsidyVersion $subsidyVersion, ?Subsidy $subsidy = null): SubsidyDTO
     {
-        return new SubsidyDTO(
-            $subsidyVersion->subsidy->code,
-            $subsidyVersion->title ?? $subsidyVersion->subsidy->title,
-            $subsidyVersion->subsidy->description,
-            $subsidyVersion->subsidy_page_url,
-            $subsidyVersion->subsidy->valid_from,
-            $subsidyVersion->subsidy->valid_to,
-            $subsidyVersion->subsidy->allow_multiple_applications,
-            $subsidyVersion->subsidy->is_open_for_new_applications,
-        );
-    }
+        $subsidy = $subsidy ?? $subsidyVersion->subsidy;
 
-    public function mapSubsidyToSubsidyDTO(Subsidy $subsidy): SubsidyDTO
-    {
         return new SubsidyDTO(
             $subsidy->code,
-            $subsidy->title,
+            $subsidyVersion->title ?? $subsidy->title,
             $subsidy->description,
-            null,
+            $subsidyVersion->subsidy_page_url,
             $subsidy->valid_from,
             $subsidy->valid_to,
             $subsidy->allow_multiple_applications,

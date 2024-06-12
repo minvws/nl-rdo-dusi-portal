@@ -20,5 +20,5 @@ class RPCMethods
 
     public const GET_ACTIONABLE_COUNTS = 'getActionableCounts';
 
-    public const GET_SUBSIDY_CONCEPTS = 'getSubsidyConcepts';
+    public const GET_SUBSIDY_OVERVIEW = 'getSubsidyOverview';
 }

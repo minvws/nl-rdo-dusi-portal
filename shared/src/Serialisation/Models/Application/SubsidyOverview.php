@@ -7,14 +7,19 @@ namespace MinVWS\DUSi\Shared\Serialisation\Models\Application;
 use MinVWS\Codable\Coding\Codable;
 use MinVWS\Codable\Coding\CodableSupport;
 
-class SubsidyConcepts implements Codable
+class SubsidyOverview implements Codable
 {
     use CodableSupport;
 
+    /**
+     * @param ApplicationListApplication[] $applications
+     */
     public function __construct(
         public readonly Subsidy $subsidy,
         public readonly bool $newConceptAllowed,
-        public readonly array $concepts,
+        public readonly bool $hasApprovedApplication,
+        public readonly bool $hasRejectedApplication,
+        public readonly array $applications,
     ) {
     }
 }

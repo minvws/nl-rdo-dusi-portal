@@ -11,10 +11,11 @@ namespace MinVWS\DUSi\Shared\Application\Repositories;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\AnswersByApplicationStage;
@@ -366,7 +367,7 @@ class ApplicationRepository
      *
      * @psalm-suppress InvalidReturnStatement
      * @psalm-suppress InvalidReturnType
-     * @return Collection<int, ApplicationStage>
+     * @return Collection<array-key, ApplicationStage>
      */
     public function getExpiredApplicationStages(): Collection
     {
@@ -407,55 +408,56 @@ class ApplicationRepository
                 ->exists();
     }
 
-    /**
-     * @return array<Application>
-     */
-    public function getMyApplications(Identity $identity): array
+    public function hasApprovedApplicationForSubsidy(Identity $identity, Subsidy $subsidy): bool
     {
-        return $identity
-            ->applications()
-            ->with(['subsidyVersion', 'subsidyVersion.subsidy'])
-            ->orderByStatus()
-            ->get()
-            ->all();
+        return
+            $identity
+                ->applications()
+                ->ofSubsidy($subsidy->id)
+                ->whereIn('status', [ApplicationStatus::Approved, ApplicationStatus::Allocated])
+                ->exists();
+    }
+
+    public function hasRejectedApplicationForSubsidy(Identity $identity, Subsidy $subsidy): bool
+    {
+        return
+            $identity
+                ->applications()
+                ->ofSubsidy($subsidy->id)
+                ->whereIn('status', [ApplicationStatus::Rejected, ApplicationStatus::Reclaimed])
+                ->exists();
     }
 
     /**
      * @return Collection<array-key, Application>
      */
-    public function getMyConceptApplications(Identity $identity, Subsidy $subsidy): Collection
+    public function getMyApplications(Identity $identity, ?Subsidy $subsidy = null): Collection
     {
-        return $identity->applications()
-            ->ofSubsidy($subsidy->id)
+        $query = $identity
+            ->applications()
+            ->with(['subsidyVersion', 'subsidyVersion.subsidy', 'lastApplicationStage'])
             /** @phpstan-ignore argument.type */
-            ->where(function (Builder $query) {
+            ->when($subsidy, function (Builder $query, Subsidy $subsidy) {
                 /** @var Builder<Application> $query */
-                $query
-                    ->orWhere(function (Builder $query) {
-                        $query->where('status', ApplicationStatus::Draft)
-                            ->validSubsidy();
-                    })
-                    ->orWhere(function (Builder $query) {
-                        $query->where('status', ApplicationStatus::RequestForChanges)
-                            ->lastApplicationStageNotExpired();
-                    })
-                    ->orWhereIn('status', [
-                        ApplicationStatus::Pending,
-                        ApplicationStatus::Approved,
-                        ApplicationStatus::Allocated,
-                        ApplicationStatus::Rejected,
-                        ApplicationStatus::Reclaimed,
-                    ]);
-            })
-            ->with(['lastApplicationStage'])
+                $query->ofSubsidy($subsidy->id);
+            });
+
+        $this->filterMyApplicationsQueryValidStatus($query);
+
+        return $query
             ->orderByStatus()
             ->get();
     }
 
     public function getMyApplication(Identity $identity, string $reference, bool $lockForUpdate = false): ?Application
     {
-        return $identity->applications()
-            ->when($lockForUpdate, fn($q) => $q->lockForUpdate())
+        $query = $identity
+            ->applications()
+            ->when($lockForUpdate, fn($q) => $q->lockForUpdate());
+
+        $this->filterMyApplicationsQueryValidStatus($query);
+
+        return $query
             ->where('reference', $reference)
             ->first();
     }
@@ -464,28 +466,13 @@ class ApplicationRepository
     {
         return $identity->applications()
             ->where('status', ApplicationStatus::RequestForChanges)
+            ->lastApplicationStageNotExpired()
             ->count();
     }
 
     public function deleteAnswersByStage(ApplicationStage $applicationStage): void
     {
         $this->getAnswerQuery($applicationStage)->delete();
-    }
-
-    protected function getAnswerQuery(
-        ApplicationStage $applicationStage,
-        ?Field $field = null,
-    ): Builder {
-        return Answer::query()
-            ->where('application_stage_id', $applicationStage->id)
-            ->when(
-                $field !== null,
-                function (Builder $query) use ($field) {
-                    // Assertion is above in the value parameter
-                    assert($field instanceof Field);
-                    $query->where('field_id', $field->id);
-                }
-            );
     }
 
     public function assignApplicationStage(ApplicationStage $applicationStage, ?User $user): void
@@ -565,5 +552,53 @@ class ApplicationRepository
                     ApplicationStatus::Rejected, ApplicationStatus::Reclaimed]);
             }),
         );
+    }
+
+    private function getAnswerQuery(
+        ApplicationStage $applicationStage,
+        ?Field $field = null,
+    ): Builder {
+        return Answer::query()
+            ->where('application_stage_id', $applicationStage->id)
+            ->when(
+                $field !== null,
+                function (Builder $query) use ($field) {
+                    // Assertion is above in the value parameter
+                    assert($field instanceof Field);
+                    $query->where('field_id', $field->id);
+                }
+            );
+    }
+
+    /**
+     * This method filters the applications that are visible for the user.
+     * When application is draft and the subsidy is not valid, the application is not visible.
+     * When application is in RequestForChanges and the last application stage is expired,
+     * the application is not visible.
+     *
+     * @param HasMany<Application> $query
+     * @return void
+     */
+    private function filterMyApplicationsQueryValidStatus(HasMany $query): void
+    {
+        /** @var Builder<Application> $query */
+        $query->where(function (Builder $query) {
+            $query
+                ->orWhere(function (Builder $query) {
+                    $query->where('status', ApplicationStatus::Draft)
+                        ->validSubsidy();
+                })
+                ->orWhere(function (Builder $query) {
+                    $query->where('status', ApplicationStatus::RequestForChanges)
+                        ->lastApplicationStageNotExpired();
+                })
+                ->orWhereIn('status', [
+                    ApplicationStatus::Pending,
+                    ApplicationStatus::Approved,
+                    ApplicationStatus::Allocated,
+                    ApplicationStatus::Rejected,
+                    ApplicationStatus::Reclaimed,
+                ]);
+        });
     }
 }

@@ -9,7 +9,7 @@ use MinVWS\DUSi\Application\API\Services\StateService;
 use MinVWS\DUSi\Application\API\Services\SubsidyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyOverviewParams;
 
 class SubsidyController extends Controller
 {
@@ -29,12 +29,12 @@ class SubsidyController extends Controller
         ClientPublicKeyHelper $publicKeyHelper,
         StateService $stateService,
     ): Response {
-        $params = new SubsidyConceptsParams(
+        $params = new SubsidyOverviewParams(
             $stateService->getEncryptedIdentity(),
             $publicKeyHelper->getClientPublicKey(),
             $subsidyCode
         );
-        $response = $this->subsidyService->getSubsidyConcepts($params);
+        $response = $this->subsidyService->getSubsidyOverview($params);
         return $this->encryptedResponse($response);
     }
 }

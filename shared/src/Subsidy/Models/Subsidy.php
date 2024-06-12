@@ -120,11 +120,11 @@ class Subsidy extends Model
     public function scopeValid(Builder $query): Builder
     {
         return $query
-            ->where('valid_from', '<=', CarbonImmutable::today())
+            ->where('valid_from', '<=', CarbonImmutable::now())
             ->where(function (Builder $query) {
                 $query
                     ->whereNull('valid_to')
-                    ->orWhere('valid_to', '>=', CarbonImmutable::tomorrow());
+                    ->orWhere('valid_to', '>=', CarbonImmutable::now());
             });
     }
 

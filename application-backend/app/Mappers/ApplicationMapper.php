@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Mappers;
 
+use Illuminate\Database\Eloquent\Collection;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationMessage;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\Application as ApplicationDTO;
@@ -26,24 +27,26 @@ class ApplicationMapper
         $subsidy = $this->subsidyMapper->mapSubsidyVersionToSubsidyDTO($app->subsidyVersion);
 
         return new ApplicationListApplicationDTO(
-            $app->reference,
-            $subsidy,
-            $app->submitted_at,
-            $app->final_review_deadline,
-            $app->status,
-            $app->status->isEditableForApplicant(),
+            reference: $app->reference,
+            subsidy: $subsidy,
+            updatedAt: $app->updated_at,
+            expiresAt: $app->lastApplicationStage->expires_at ?? null,
+            submittedAt: $app->submitted_at,
+            finalReviewDeadline: $app->final_review_deadline,
+            status: $app->status,
+            isEditable: $app->status->isEditableForApplicant(),
         );
     }
 
     /**
-     * @param array<Application> $applications
+     * @psalm-suppress InvalidTemplateParam
+     * @param Collection<array-key, Application> $applications
      */
-    public function mapApplicationArrayToApplicationListDTO(array $applications): ApplicationListDTO
+    public function mapApplicationsToApplicationListDTO(Collection $applications): ApplicationListDTO
     {
-        $apps = array_map(
-            fn (Application $app) => $this->mapApplicationToApplicationListApplicationDTO($app),
-            $applications
-        );
+        $apps = $applications
+            ->map(fn (Application $app) => $this->mapApplicationToApplicationListApplicationDTO($app))
+            ->toArray();
         return new ApplicationListDTO($apps);
     }
 

@@ -421,14 +421,14 @@ class ApplicationMutationServiceTest extends TestCase
             'draft_cannot_be_saved' => [
                 ApplicationStatus::Draft,
                 false,
-                EncryptedResponseStatus::FORBIDDEN,
-                'application_readonly'
+                EncryptedResponseStatus::NOT_FOUND,
+                'application_not_found'
             ],
             'draft_cannot_be_submitted' => [
                 ApplicationStatus::Draft,
                 true,
-                EncryptedResponseStatus::FORBIDDEN,
-                'subsidy_closed_for_new_applications'
+                EncryptedResponseStatus::NOT_FOUND,
+                'application_not_found'
             ],
             'request_for_changes_can_be_saved' =>
                 [ApplicationStatus::RequestForChanges, false, EncryptedResponseStatus::OK, null],

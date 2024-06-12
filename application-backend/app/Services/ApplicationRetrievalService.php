@@ -73,7 +73,7 @@ readonly class ApplicationRetrievalService
         }
 
         $apps = $this->applicationRepository->getMyApplications($identity);
-        $list = $this->applicationMapper->mapApplicationArrayToApplicationListDTO($apps);
+        $list = $this->applicationMapper->mapApplicationsToApplicationListDTO($apps);
 
         $this->logService->log((new ListApplicationsEvent())
             ->withData([

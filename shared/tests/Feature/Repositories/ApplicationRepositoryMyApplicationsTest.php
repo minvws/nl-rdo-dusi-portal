@@ -23,7 +23,7 @@ use MinVWS\DUSi\Shared\User\Enums\Role;
 /**
  * @group application-concepts
  */
-class ApplicationRepositoryConceptsTest extends TestCase
+class ApplicationRepositoryMyApplicationsTest extends TestCase
 {
     private ApplicationRepository $repository;
 
@@ -49,15 +49,15 @@ class ApplicationRepositoryConceptsTest extends TestCase
     }
 
 
-    public function testGetMyConceptApplicationEmptyResult(): void
+    public function testGetMyApplicationEmptyResult(): void
     {
         // Test without applications
-        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $applications = $this->repository->getMyApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount(0, $applications);
     }
 
 
-    public function testGetMyConceptApplicationSingleResult(): void
+    public function testGetMyApplicationSingleResult(): void
     {
         // Test without applications
         // Create a test application
@@ -84,11 +84,11 @@ class ApplicationRepositoryConceptsTest extends TestCase
             ]);
 
         // Application should be visible
-        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $applications = $this->repository->getMyApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount(1, $applications);
     }
 
-    public function testGetMyConceptApplicationMultipleResults(): void
+    public function testGetMyApplicationMultipleResults(): void
     {
         // Create a test application
         $application1 = Application::factory()
@@ -137,11 +137,11 @@ class ApplicationRepositoryConceptsTest extends TestCase
             ]);
 
         // Application should be visible
-        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $applications = $this->repository->getMyApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount(2, $applications);
     }
 
-    public function testGetMyConceptApplicationMultipleApplications(): void
+    public function testGetMyApplicationsMultipleApplications(): void
     {
         // Create a test application
         $application1 = Application::factory()
@@ -190,11 +190,11 @@ class ApplicationRepositoryConceptsTest extends TestCase
             ]);
 
         // Application should be visible
-        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $applications = $this->repository->getMyApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount(2, $applications);
     }
 
-    public function testGetMyConceptApplicationMultipleApplicationsInDifferentSubsidies(): void
+    public function testGetMyApplicationsMultipleApplicationsInDifferentSubsidies(): void
     {
         // Create a test application
         $application1 = Application::factory()
@@ -251,11 +251,11 @@ class ApplicationRepositoryConceptsTest extends TestCase
             ]);
 
         // Application should be visible
-        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $applications = $this->repository->getMyApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount(1, $applications);
     }
 
-    public function testGetMyConceptApplicationWhenRequestForChanges(): void
+    public function testGetMyApplicationWhenRequestForChanges(): void
     {
         // Create a RequestForChanges application not expired
         $application1 = Application::factory()
@@ -306,11 +306,11 @@ class ApplicationRepositoryConceptsTest extends TestCase
             ]);
 
         // Application should be visible
-        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $applications = $this->repository->getMyApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount(1, $applications);
     }
 
-    public static function getMyConceptApplicationSubsidyPeriodDataProvider()
+    public static function getMyApplicationsSubsidyPeriodDataProvider()
     {
         return [
             'When draft outside subsidy period' => [
@@ -332,9 +332,9 @@ class ApplicationRepositoryConceptsTest extends TestCase
     }
 
     /**
-     * @dataProvider getMyConceptApplicationSubsidyPeriodDataProvider
+     * @dataProvider getMyApplicationsSubsidyPeriodDataProvider
      */
-    public function testGetMyConceptApplicationWhenDraftOutsideSubsidyPeriod(
+    public function testGetApplicationsWhenDraftOutsideSubsidyPeriod(
         ?DateTimeInterface $validTo,
         ApplicationStatus $applicationStatus,
         int $resultCount
@@ -365,7 +365,7 @@ class ApplicationRepositoryConceptsTest extends TestCase
             ]);
 
         // Application should be visible
-        $applications = $this->repository->getMyConceptApplications($this->identity, $this->subsidyVersion->subsidy);
+        $applications = $this->repository->getMyApplications($this->identity, $this->subsidyVersion->subsidy);
         $this->assertCount($resultCount, $applications);
     }
 

@@ -22,7 +22,7 @@ use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageDownloadParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageListParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\MessageParams;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\RPCMethods;
-use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyConceptsParams;
+use MinVWS\DUSi\Shared\Serialisation\Models\Application\SubsidyOverviewParams;
 
 $bindings = [
     'ping' => [
@@ -73,9 +73,9 @@ $bindings = [
         'paramsClass' => ActionableCountsParams::class,
         'callback' => [ActionableService::class, 'getActionableCounts']
     ],
-    RPCMethods::GET_SUBSIDY_CONCEPTS => [
-        'paramsClass' => SubsidyConceptsParams::class,
-        'callback' => [SubsidyService::class, 'getSubsidyAndConcepts']
+    RPCMethods::GET_SUBSIDY_OVERVIEW => [
+        'paramsClass' => SubsidyOverviewParams::class,
+        'callback' => [SubsidyService::class, 'getSubsidyOverview']
     ]
 ];
 

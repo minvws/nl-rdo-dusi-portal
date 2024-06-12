@@ -136,8 +136,8 @@ class ApplicationRetrievalServiceTest extends TestCase
     public static function getApplicationIsEditableWhenSubsidyIsNotOpenForNewApplicationsAnymoreProvider(): array
     {
         return [
-            'draft_should_not_be_editable' => [ApplicationStatus::Draft, false],
-            'request_for_changes_should_be_editable' => [ApplicationStatus::RequestForChanges, true],
+            'draft_should_not_be_retrievable' => [ApplicationStatus::Draft, false, false],
+            'request_for_changes_should_be_editable' => [ApplicationStatus::RequestForChanges, true, true],
         ];
     }
 
@@ -146,6 +146,7 @@ class ApplicationRetrievalServiceTest extends TestCase
      */
     public function testGetApplicationIsEditableWhenSubsidyIsNotOpenForNewApplicationsAnymore(
         ApplicationStatus $status,
+        bool $expectIsRetrievable,
         bool $expectIsEditable
     ): void {
         $this->assertNotNull($this->application->subsidyVersion->subsidy->valid_to);
@@ -168,6 +169,12 @@ class ApplicationRetrievalServiceTest extends TestCase
 
         $encryptedResponse = $this->app->get(ApplicationRetrievalService::class)->getApplication($params);
         $this->assertInstanceOf(EncryptedResponse::class, $encryptedResponse);
+
+        if (!$expectIsRetrievable) {
+            $this->assertEquals(EncryptedResponseStatus::NOT_FOUND, $encryptedResponse->status);
+            return;
+        }
+
         $this->assertEquals(EncryptedResponseStatus::OK, $encryptedResponse->status);
 
         $app =
