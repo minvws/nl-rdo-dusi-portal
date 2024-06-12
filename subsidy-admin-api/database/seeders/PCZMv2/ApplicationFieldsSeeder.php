@@ -334,7 +334,7 @@ class ApplicationFieldsSeeder extends Seeder
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::STAGE_1_UUID,
             code: 'socialMedicalAssessment',
-            title: 'Medisch onderzoeksverslag',
+            title: 'Sociaal-medische beoordeling (medische rapportage)',
             mimeTypes: ['image/jpeg', 'image/png', 'application/pdf'],
             maxFileSize: 20971520,
             minItems: 1,
