@@ -99,7 +99,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Uitreksel bevolkingsregister": "{extractPopulationRegisterDocument}",
+                            "Uittreksel bevolkingsregister": "{extractPopulationRegisterDocument}",
                             "Verklaring behandeltraject": "{proofOfMedicalTreatmentDocument}",
                             "Verklaring type behandeling": "{proofOfTypeOfMedicalTreatmentDocument}"
                         }

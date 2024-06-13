@@ -466,6 +466,18 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
                             Operator::Identical,
                             'Vaststellen'
                         ),
+                        new ComparisonCondition(
+                            5,
+                            'assessment',
+                            Operator::Identical,
+                            'Vorderen'
+                        ),
+                        new ComparisonCondition(
+                            6,
+                            'assessment',
+                            Operator::Identical,
+                            'Vorderen'
+                        ),
                     ]),
                     new ComparisonCondition(
                         7,

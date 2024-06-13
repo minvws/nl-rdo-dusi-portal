@@ -6,7 +6,7 @@
     "elements": [
         {
             "type": "FormGroupControl",
-            "label": "Persoonsgegevens",
+            "label": "Beoordeling",
             "options": {
                 "section": true,
                 "headingLevel": "2"

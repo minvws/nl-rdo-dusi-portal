@@ -5,6 +5,24 @@
     },
     "elements": [
         {
+            "type": "FormGroupControl",
+            "label": "Beoordeling",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/assignationAuditChecklist",
+                    "options": {
+                        "readonly": true,
+                        "format": "checkbox-group"
+                    }
+                }
+            ]
+        },
+        {
             "type": "CustomControl",
             "scope": "#/properties/assessment",
             "options": {
@@ -13,12 +31,23 @@
             }
         },
         {
-            "type": "CustomControl",
-            "scope": "#/properties/internalNote",
+            "type": "FormGroupControl",
+            "label": "Vordering",
             "options": {
-                "readonly": true,
-                "format": "textarea"
-            }
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Vorderingsnummer": "{reclaimNumber}",
+                            "Interne notitie": "{internalNote}"
+                        }
+                    }
+                }
+            ]
         }
     ]
 }

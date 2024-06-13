@@ -5,6 +5,24 @@
     },
     "elements": [
         {
+            "type": "FormGroupControl",
+            "label": "Beoordeling",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/assessmentDelayChecklist",
+                    "options": {
+                        "readonly": true,
+                        "format": "checkbox-group"
+                    }
+                }
+            ]
+        },
+        {
             "type": "CustomControl",
             "scope": "#/properties/assessment",
             "options": {

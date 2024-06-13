@@ -7,6 +7,24 @@
     "elements": [
         {
             "type": "Group",
+            "label": "Beoordeling",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/assignationAuditChecklist",
+                            "options": {
+                                "format": "checkbox-group"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
             "label": "Status",
             "elements": [
                 {
@@ -18,6 +36,15 @@
                             "options": {
                                 "format": "radio"
                             }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/reclaimNumber"
                         }
                     ]
                 }
@@ -43,3 +70,4 @@
         }
     ]
 }
+

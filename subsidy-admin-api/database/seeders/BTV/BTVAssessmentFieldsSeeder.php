@@ -38,6 +38,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             code:           'firstAssessmentChecklist',
             title:          'Gecontroleerd',
             options:        [
+                                'De aanvrager valt niet onder de WSNP/bewindvoering',
                                 'De aanvrager heeft niet eerder een BTV-subsidieaanvraag ingediend',
                                 'De aanvrager komt niet voor in het M&O register',
                                 'De persoonsgegevens zijn door de aanvrager juist ingevuld (NAW-gegevens, IBAN)',
@@ -211,6 +212,21 @@ class BTVAssessmentFieldsSeeder extends Seeder
 
     public function assignationDelayPeriodFields(): void
     {
+        $this->createMultiSelectField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code: 'assessmentDelayChecklist',
+            title: 'Controlevragen',
+            options: [
+                'De aanvraag zit in de steekproef',
+                'De aanvraag zit niet in de steekproef',
+                'De opgevraagde informatie is compleet en akkoord',
+                'De vaststelling is geaccordeerd in SAP',
+                'Het dossier is compleet (voltoets)',
+            ],
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
             code: 'assessment',
@@ -241,6 +257,21 @@ class BTVAssessmentFieldsSeeder extends Seeder
 
     public function assignationAssessmentFields(): void
     {
+        $this->createMultiSelectField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code: 'assessmentDelayChecklist',
+            title: 'Controlevragen',
+            options: [
+                'De aanvraag zit in de steekproef',
+                'De aanvraag zit niet in de steekproef',
+                'De opgevraagde informatie is compleet en akkoord',
+                'De vaststelling is geaccordeerd in SAP',
+                'Het dossier is compleet (voltoets)',
+            ],
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
             code: 'assessment',
@@ -271,11 +302,34 @@ class BTVAssessmentFieldsSeeder extends Seeder
 
     public function assignationAuditAssessmentFields(): void
     {
+
+        $this->createMultiSelectField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
+            code: 'assignationAuditChecklist',
+            title: 'Controlevragen',
+            options: [
+                'De subsidie mag worden vastgesteld',
+                'De vaststelling is geaccordeerd in SAP',
+                'Het vorderingsnummer is aangemaakt in SAP (alleen bij terugvorderen)',
+                'De beschikking mag verzonden worden'
+            ],
+            isRequired: false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
             code: 'assessment',
             title: 'Beoordeling',
             options: ['Eens met de beoordeling op de vaststelling', 'Oneens met de beoordeling op de vaststelling'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
+            code:            'reclaimNumber',
+            title:           'Vorderingsnummer',
+            isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
         );
 

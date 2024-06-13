@@ -6,6 +6,29 @@
 
 {block content}
     <p>Beste lezer,</p>
+
+    <p>Bij brief van datum verleningsbrief, met kenmerk {$content->reference}, heb ik aan u een subsidie verleend van
+        {$content->stage2->amount} voor de subsidieregeling borstprothesen transvrouwen (hierna: Subsidieregeling). In mijn
+        administratie is uw aanvraag bekend onder nummer: {$content->reference}.</p>
+
+    <h2>Besluit</h2>
+
+    <p>Ik stel de subsidie vast op een lager bedrag dan aan u is verleend, namelijk € 0,00.</p>
+
+    <p>Mocht u in de toekomst alsnog gebruiken willen maken van de Subsidieregeling borstprothesen transvrouwen, dan dient u
+    een volledig nieuwe aanvraag in te dienen, conform de vereisten die in artikel 7 van de regeling zijn opgenomen. U
+    kunt zich niet beroepen op al eerder ingediende documenten.</p>
+
+    <h2>Hoe wordt de subsidie afgehandeld?</h2>
+
+    <p>De subsidie is geheel als voorschot aan u uitbetaald.</p>
+
+    <p>Het verschil tussen het vastgestelde subsidiebedrag en het ontvangen voorschot bedraagt {$content->stage2->amount}. Ik vorder dit
+    verschil van u terug op grond van artikel 4:57 van de Algemene wet bestuursrecht.</p>
+
+    <p>Ik verzoek u het bedrag van {$content->stage2->amount} binnen zes weken na de datum van deze beschikking over te
+    maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
+    het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
 {/block}
 
 {block signature}
@@ -32,4 +55,7 @@
 
     <h4>Verplichtingennummer</h4>
     <p>{$content->stage2->liabilitiesNumber}</p>
+
+    <p><i>Correspondentie uitsluitend richten aan het retouradres met vermelding van de datum het kenmerk van deze brief en met
+            het onderwerp op de enveloppe.</i></p>
 {/block}
