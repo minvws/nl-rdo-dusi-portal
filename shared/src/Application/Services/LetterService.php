@@ -184,7 +184,8 @@ readonly class LetterService
         $submittedAt = $stage->application->submitted_at;
         $submittedAt = $submittedAt ?? CarbonImmutable::now(); // preview doesn't have a submit timestamp
         $subsidy = $stage->subsidyStage->subsidyVersion->subsidy;
-        $lastAllocatedAt = $this->applicationRepository->getLatestAllocatedApplicationStage($stage->application)?->created_at;
+        $lastAllocatedAt = $this->applicationRepository->
+            getLatestAllocatedApplicationStage($stage->application)?->created_at;
 
         return new LetterData(
             subsidy: $subsidy,
