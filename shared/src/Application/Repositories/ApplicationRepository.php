@@ -358,6 +358,18 @@ class ApplicationRepository
                 ->first();
     }
 
+    public function getLatestAllocatedApplicationStage(
+        Application $application
+    ): ?ApplicationStage {
+        return
+            $application
+                ->applicationStages()
+                ->join('application_stage_transitions', 'application_stage_transitions.new_application_stage_id', '=', 'application_stages.id')
+                ->where('application_stage_transitions.new_application_status', '=', ApplicationStatus::Allocated)
+                ->orderBy('application_stage_transitions.created_at', 'desc')
+                ->first();
+    }
+
     /**
      * Returns all the expired application stages that have a transition with the expiration trigger.
      *
