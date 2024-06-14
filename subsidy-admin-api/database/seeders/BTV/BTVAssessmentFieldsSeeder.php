@@ -72,16 +72,6 @@ class BTVAssessmentFieldsSeeder extends Seeder
             retentionPeriod: DataRetentionPeriod::Short
         );
 
-        $this->createTextField(
-            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
-            code:            'liabilitiesNumber',
-            title:           'Verplichtingennummer',
-            inputMode:       'numeric',
-            params:          ['maxLength' => 20],
-            isRequired:      false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
         $this->createSelectField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
             code:           'amount',
@@ -329,6 +319,32 @@ class BTVAssessmentFieldsSeeder extends Seeder
             subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
             code:            'reclaimNumber',
             title:           'Vorderingsnummer',
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
+            code:            'reclaimMotivation',
+            title:           'Motivering',
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
+            code:            'newAssignationAmount',
+            inputMode:      'float',
+            title:           'Vastgesteld bedrag',
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
+            code:            'reclaimAmount',
+            inputMode:      'float',
+            title:           'Te vorderen bedrag',
             isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
         );

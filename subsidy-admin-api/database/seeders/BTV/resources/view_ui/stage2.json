@@ -37,14 +37,6 @@
                     "options": {
                         "readonly": true
                     }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/liabilitiesNumber",
-                    "label": "Verplichtingennummer",
-                    "options": {
-                        "readonly": true
-                    }
                 }
             ]
         },

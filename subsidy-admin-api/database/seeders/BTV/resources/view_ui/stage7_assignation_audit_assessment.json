@@ -32,7 +32,7 @@
         },
         {
             "type": "FormGroupControl",
-            "label": "Vordering",
+            "label": "Vorderen",
             "options": {
                 "section": true,
                 "headingLevel": "2"
@@ -43,6 +43,26 @@
                     "options": {
                         "fields": {
                             "Vorderingsnummer": "{reclaimNumber}",
+                            "Motivering": "{reclaimMotivation}",
+                            "Vastgesteld bedrag": "{newAssignationAmount}",
+                            "Te vorderen bedrag": "{reclaimAmount}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Notities",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
                             "Interne notitie": "{internalNote}"
                         }
                     }

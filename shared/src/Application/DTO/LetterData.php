@@ -24,6 +24,7 @@ readonly class LetterData
         public string $reference,
         public DateTimeInterface $submittedAt,
         public SubsidyFileManager $fileManager,
+        public ?DateTimeInterface $lastAllocatedAt,
     ) {
     }
 

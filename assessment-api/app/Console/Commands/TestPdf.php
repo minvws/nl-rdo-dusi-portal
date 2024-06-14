@@ -105,7 +105,8 @@ class TestPdf extends Command
             contactEmailAddress: 'tester@irealisatie.nl',
             reference: '123456789',
             submittedAt: new CarbonImmutable(),
-            fileManager: $this->fileManager
+            fileManager: $this->fileManager,
+            lastAllocatedAt: new CarbonImmutable()
         );
 
         $pdfContent = $this->letterService->generatePDFLetter($transitionMessage->content_pdf, $letterData);
