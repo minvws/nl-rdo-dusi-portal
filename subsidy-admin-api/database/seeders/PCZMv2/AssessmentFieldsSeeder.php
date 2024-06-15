@@ -77,7 +77,7 @@ class AssessmentFieldsSeeder extends Seeder
                 'Niet van toepassing',
                 'Op het verzekeringsbericht staat vermeld dat de aanvrager een WIA-uitkering ontvangt',
                 'De ingangsdatum van de WIA in de WIA-beslissing komt overeen met de ingangsdatum op het verzekeringsbericht',
-                'De eerste ziektedag ligt in de periode van 1 maart 2020 tot 31 december 2020',
+                'De eerste ziektedag ligt in de periode van 1 maart 2020 tot en met 31 december 2020',
             ],
             isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
