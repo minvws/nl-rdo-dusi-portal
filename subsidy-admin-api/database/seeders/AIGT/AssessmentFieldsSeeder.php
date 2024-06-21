@@ -223,7 +223,7 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
             code: 'assessment',
             title: 'Beoordeling',
-            options: ['Vaststellen', 'Uitstellen'],  // MGO-1876: 'Vorderen' option has been disabled but not removed from the transition flow
+            options: ['Vaststellen', 'Uitstellen'],  // DUSI-1876: 'Vorderen' option has been disabled but not removed from the transition flow
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -265,7 +265,7 @@ class AssessmentFieldsSeeder extends Seeder
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
             code: 'assessment',
             title: 'Beoordeling',
-            options: ['Vaststellen', 'Uitstellen'],  // MGO-1876: 'Vorderen' option has been disabled but not removed from the transition flow
+            options: ['Vaststellen', 'Uitstellen'],  // DUSI-1876: 'Vorderen' option has been disabled but not removed from the transition flow
             retentionPeriod: DataRetentionPeriod::Short
         );
 
