@@ -28,9 +28,16 @@ class CacheSubsidyStages extends Command
 
         foreach ($activeSubsidies as $subsidy) {
             $this->info('Retrieving forms for subsidy "' . $subsidy->title . '"...');
-            $subsidyStages = $subsidy->publishedVersion->subsidyStages->filter(
-                function ($subsidyStage) {
-                    return $subsidyStage->subject_role === SubjectRole::Applicant;
+
+            $subsidyStages = collect();
+
+            $subsidy->subsidyVersions->each(
+                function ($subsidyVersion) use ($subsidyStages) {
+                    $subsidyStages->push(...$subsidyVersion->subsidyStages->filter(
+                        function ($subsidyStage) {
+                            return $subsidyStage->subject_role === SubjectRole::Applicant;
+                        }
+                    ));
                 }
             );
 
