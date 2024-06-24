@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "10ccdbd02bae119d535c501e23410756",
+    "content-hash": "f1a89a92a49dfbc12e9848575954d579",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3171,16 +3171,16 @@
         },
         {
             "name": "minvws/openid-connect-php-laravel",
-            "version": "v0.2.0",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/minvws/nl-rdo-openid-connect-php-laravel.git",
-                "reference": "59b1fc68f371970f50e0e318ca65b845652742a8"
+                "reference": "058238f1ac8b761c11a3b226c192f52a83c063e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/nl-rdo-openid-connect-php-laravel/zipball/59b1fc68f371970f50e0e318ca65b845652742a8",
-                "reference": "59b1fc68f371970f50e0e318ca65b845652742a8",
+                "url": "https://api.github.com/repos/minvws/nl-rdo-openid-connect-php-laravel/zipball/058238f1ac8b761c11a3b226c192f52a83c063e0",
+                "reference": "058238f1ac8b761c11a3b226c192f52a83c063e0",
                 "shasum": ""
             },
             "require": {
@@ -3224,9 +3224,9 @@
             "description": "OpenID Connect client for Laravel",
             "support": {
                 "issues": "https://github.com/minvws/nl-rdo-openid-connect-php-laravel/issues",
-                "source": "https://github.com/minvws/nl-rdo-openid-connect-php-laravel/tree/v0.2.0"
+                "source": "https://github.com/minvws/nl-rdo-openid-connect-php-laravel/tree/v0.3.0"
             },
-            "time": "2024-04-23T11:45:23+00:00"
+            "time": "2024-06-10T14:20:43+00:00"
         },
         {
             "name": "minvws/php-rmq-rpc-bridge",
@@ -6052,16 +6052,16 @@
         },
         {
             "name": "symfony/http-client",
-            "version": "v7.1.0",
+            "version": "v7.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "2266f9813ed7d8c84e04627edead7b7fd249d6e9"
+                "reference": "1ec24a54d1885b11e862d6ddab31bd6749720d20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/2266f9813ed7d8c84e04627edead7b7fd249d6e9",
-                "reference": "2266f9813ed7d8c84e04627edead7b7fd249d6e9",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/1ec24a54d1885b11e862d6ddab31bd6749720d20",
+                "reference": "1ec24a54d1885b11e862d6ddab31bd6749720d20",
                 "shasum": ""
             },
             "require": {
@@ -6126,7 +6126,7 @@
                 "http"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client/tree/v7.1.0"
+                "source": "https://github.com/symfony/http-client/tree/v7.1.1"
             },
             "funding": [
                 {
@@ -6142,7 +6142,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-05-13T15:35:37+00:00"
+            "time": "2024-05-31T14:57:53+00:00"
         },
         {
             "name": "symfony/http-client-contracts",
