@@ -8,6 +8,7 @@ use MinVWS\DUSi\Application\API\Services\CacheService;
 use Illuminate\Console\Command;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 class CacheSubsidyStages extends Command
@@ -28,9 +29,18 @@ class CacheSubsidyStages extends Command
 
         foreach ($activeSubsidies as $subsidy) {
             $this->info('Retrieving forms for subsidy "' . $subsidy->title . '"...');
-            $subsidyStages = $subsidy->publishedVersion->subsidyStages->filter(
-                function ($subsidyStage) {
-                    return $subsidyStage->subject_role === SubjectRole::Applicant;
+
+            $subsidyStages = collect();
+
+            /** @psalm-suppress MissingTemplateParam, InvalidTemplateParam */
+            $subsidy->subsidyVersions->each(
+                /** @phpstan-ignore-next-line */
+                function (SubsidyVersion $subsidyVersion) use ($subsidyStages) {
+                    $subsidyStages->push(...$subsidyVersion->subsidyStages->filter(
+                        function (SubsidyStage $subsidyStage) {
+                            return $subsidyStage->subject_role === SubjectRole::Applicant;
+                        }
+                    ));
                 }
             );
 
