@@ -8,6 +8,7 @@ use MinVWS\DUSi\Application\API\Services\CacheService;
 use Illuminate\Console\Command;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStage;
+use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
 
 class CacheSubsidyStages extends Command
@@ -31,10 +32,12 @@ class CacheSubsidyStages extends Command
 
             $subsidyStages = collect();
 
+            /** @psalm-suppress MissingTemplateParam, InvalidTemplateParam */
             $subsidy->subsidyVersions->each(
-                function ($subsidyVersion) use ($subsidyStages) {
+                /** @phpstan-ignore-next-line */
+                function (SubsidyVersion $subsidyVersion) use ($subsidyStages) {
                     $subsidyStages->push(...$subsidyVersion->subsidyStages->filter(
-                        function ($subsidyStage) {
+                        function (SubsidyStage $subsidyStage) {
                             return $subsidyStage->subject_role === SubjectRole::Applicant;
                         }
                     ));
