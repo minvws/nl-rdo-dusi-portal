@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Controllers;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
+use MinVWS\DUSi\Assessment\API\Events\Logging\UploadFileEvent;
 use MinVWS\DUSi\Assessment\API\Events\Logging\ViewFileEvent;
 use MinVWS\DUSi\Assessment\API\Http\Requests\ApplicationFileUploadRequest;
 use MinVWS\DUSi\Assessment\API\Services\ApplicationFileService;
@@ -69,7 +70,7 @@ class ApplicationFileController extends Controller
 
         assert($user instanceof User);
 
-        $this->logger->log((new ViewFileEvent())
+        $this->logger->log((new UploadFileEvent())
             ->withActor($user)
             ->withData([
                 'applicationId' => $application->id,
