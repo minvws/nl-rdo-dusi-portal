@@ -50,8 +50,15 @@
                     "elements": [
                         {
                             "type": "CustomControl",
+                            "scope": "#\/properties\/motivation",
+                            "options": {
+                                "format": "textarea",
+                                "tip": "Indien ingevuld wordt de motivatie opgenomen in de brief aan de aanvrager voor zowel een vaststelling als een vordering."
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
                             "scope": "#/properties/proof",
-                            "label": "Bewijs",
                             "options": {
                                 "accept": "image/jpeg,image/png,application/pdf",
                                 "maxFileSize": 20971520,
@@ -70,6 +77,44 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "Group",
+            "label": "Vorderen",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/reclaimNumber"
+                        }
+                    ]
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#\/properties\/newAssignationAmount",
+                    "options": {
+                        "format": "float"
+                    }
+                },
+                {
+                    "type": "CustomControl",
+                    "scope": "#\/properties\/reclaimAmount",
+                    "options": {
+                        "format": "float"
+                    }
+                }
+            ],
+            "rule": {
+                "effect": "SHOW",
+                "condition": {
+                    "scope": "#\/properties\/assessment",
+                    "schema": {
+                        "const": "Vorderen"
+                    }
+                }
+            }
         }
     ]
 }

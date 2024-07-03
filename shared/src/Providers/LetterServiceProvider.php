@@ -44,7 +44,7 @@ class LetterServiceProvider extends ServiceProvider
                 number_format((float)$amount, 2, ',', '.'));
 
             $policy = new SecurityPolicy();
-            $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include']);
+            $policy->allowTags(['block', 'if', 'else', 'elseif', '=', 'layout', 'include', 'var']);
             $policy->allowFilters([
                 'dataStream', 'date', 'join', 'spaceless', 'capitalize',
                 'firstUpper', 'lower', 'upper', 'round', 'breakLines', 'nocheck'
