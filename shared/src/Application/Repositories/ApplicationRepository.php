@@ -461,7 +461,7 @@ class ApplicationRepository
 
         $this->filterMyApplicationsQueryValidStatus($query);
 
-        return  $query
+        return $query
             ->orderByStatus()
             ->orderBy('updated_at', 'desc')
             ->get();
