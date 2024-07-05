@@ -53,27 +53,6 @@
                             "scope": "#\/properties\/reclaimNumber"
                         }
                     ]
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#\/properties\/reclaimMotivation",
-                    "options": {
-                        "format": "textarea"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#\/properties\/newAssignationAmount",
-                    "options": {
-                        "format": "float"
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#\/properties\/reclaimAmount",
-                    "options": {
-                        "format": "float"
-                    }
                 }
             ]
         },

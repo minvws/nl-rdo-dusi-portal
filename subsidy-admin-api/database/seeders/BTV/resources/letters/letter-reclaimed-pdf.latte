@@ -11,28 +11,34 @@
         {$content->stage2->amount} voor de subsidieregeling borstprothesen transvrouwen (hierna: Subsidieregeling). In mijn
         administratie is uw aanvraag bekend onder nummer: {$content->reference}.</p>
 
-    {if $content->stage7->reclaimMotivation}
-    <p>{$content->stage7->reclaimMotivation}</p>
+    {if $content->stage5->motivation}
+        <p>{$content->stage5->motivation}</p>
+        {else}
+            {if $content->stage6->motivation}
+                <p>{$content->stage6->motivation}</p>
+            {/if}
     {/if}
 
     <h2>Besluit</h2>
 
-    <p>Ik stel de subsidie vast op een lager bedrag dan aan u is verleend, namelijk € {formatCurrency($content->stage7->newAssignationAmount)}.</p>
+    {var $newAssignationAmount = $content->stage5->newAssignationAmount ? $content->stage5->newAssignationAmount : $content->stage6->newAssignationAmount}
+    <p>Ik stel de subsidie vast op een lager bedrag dan aan u is verleend, namelijk € {formatCurrency($newAssignationAmount)}.</p>
 
     <p>Mocht u in de toekomst alsnog gebruiken willen maken van de Subsidieregeling borstprothesen transvrouwen, dan dient u
-    een volledig nieuwe aanvraag in te dienen, conform de vereisten die in artikel 7 van de regeling zijn opgenomen. U
-    kunt zich niet beroepen op al eerder ingediende documenten.</p>
+        een volledig nieuwe aanvraag in te dienen, conform de vereisten die in artikel 7 van de regeling zijn opgenomen. U
+        kunt zich niet beroepen op al eerder ingediende documenten.</p>
 
     <h2>Hoe wordt de subsidie afgehandeld?</h2>
 
     <p>De subsidie is geheel als voorschot aan u uitbetaald.</p>
 
     <p>Het verschil tussen het vastgestelde subsidiebedrag en het ontvangen voorschot bedraagt {$content->stage2->amount}. Ik vorder dit
-    verschil van u terug op grond van artikel 4:57 van de Algemene wet bestuursrecht.</p>
+        verschil van u terug op grond van artikel 4:57 van de Algemene wet bestuursrecht.</p>
 
-    <p>Ik verzoek u het bedrag van € {formatCurrency($content->stage7->reclaimAmount)} binnen zes weken na de datum van deze beschikking over te
-    maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
-    het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
+    {var $reclaimAmount = $content->stage5->reclaimAmount ? $content->stage5->reclaimAmount : $content->stage6->reclaimAmount}
+    <p>Ik verzoek u het bedrag van € {formatCurrency($reclaimAmount)} binnen zes weken na de datum van deze beschikking over te
+        maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
+        het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
 {/block}
 
 {block signature}

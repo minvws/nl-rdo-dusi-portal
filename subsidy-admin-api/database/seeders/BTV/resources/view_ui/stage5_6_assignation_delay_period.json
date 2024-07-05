@@ -39,6 +39,35 @@
                 },
                 "showEmptyFields": true
             }
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Vorderen",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Motivatie": "{motivation}",
+                            "Vastgesteld bedrag": "{newAssignationAmount}",
+                            "Te vorderen bedrag": "{reclaimAmount}"
+                        }
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/assessment",
+                            "schema": {
+                                "const": "Vorderen"
+                            }
+                        }
+                    }
+                }
+            ]
         }
     ]
 }

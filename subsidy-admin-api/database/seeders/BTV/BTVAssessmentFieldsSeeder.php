@@ -226,6 +226,32 @@ class BTVAssessmentFieldsSeeder extends Seeder
         );
 
         $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code:            'motivation',
+            title:           'Motivering',
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code:            'newAssignationAmount',
+            inputMode:      'float',
+            title:           'Vastgesteld bedrag',
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code:            'reclaimAmount',
+            inputMode:      'float',
+            title:           'Te vorderen bedrag',
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
             code: 'internalNote',
             title: 'Interne notitie',
@@ -267,6 +293,32 @@ class BTVAssessmentFieldsSeeder extends Seeder
             code: 'assessment',
             title: 'Beoordeling',
             options: ['Vaststellen', 'Vorderen', 'Uitstellen'],
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code:            'motivation',
+            title:           'Motivering',
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code:            'newAssignationAmount',
+            inputMode:      'float',
+            title:           'Vastgesteld bedrag',
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createTextField(
+            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code:            'reclaimAmount',
+            inputMode:      'float',
+            title:           'Te vorderen bedrag',
+            isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -319,32 +371,6 @@ class BTVAssessmentFieldsSeeder extends Seeder
             subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
             code:            'reclaimNumber',
             title:           'Vorderingsnummer',
-            isRequired:      false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
-        $this->createTextField(
-            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
-            code:            'reclaimMotivation',
-            title:           'Motivering',
-            isRequired:      false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
-        $this->createTextField(
-            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
-            code:            'newAssignationAmount',
-            inputMode:      'float',
-            title:           'Vastgesteld bedrag',
-            isRequired:      false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
-        $this->createTextField(
-            subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_7_UUID,
-            code:            'reclaimAmount',
-            inputMode:      'float',
-            title:           'Te vorderen bedrag',
             isRequired:      false,
             retentionPeriod: DataRetentionPeriod::Short
         );
