@@ -43,6 +43,21 @@
         },
         {
             "type": "Group",
+            "label": "Vorderen",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/reclaimNumber"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
             "label": "Toelichting",
             "elements": [
                 {

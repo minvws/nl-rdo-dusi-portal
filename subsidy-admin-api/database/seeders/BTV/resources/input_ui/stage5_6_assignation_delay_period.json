@@ -50,14 +50,6 @@
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#\/properties\/motivation",
-                            "options": {
-                                "format": "textarea",
-                                "tip": "Indien ingevuld wordt de motivatie opgenomen in de brief aan de aanvrager voor zowel een vaststelling als een vordering."
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
                             "scope": "#/properties/proof",
                             "options": {
                                 "accept": "image/jpeg,image/png,application/pdf",
@@ -83,13 +75,11 @@
             "label": "Vorderen",
             "elements": [
                 {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#\/properties\/reclaimNumber"
-                        }
-                    ]
+                    "type": "CustomControl",
+                    "scope": "#\/properties\/motivation",
+                    "options": {
+                        "format": "textarea"
+                    }
                 },
                 {
                     "type": "CustomControl",

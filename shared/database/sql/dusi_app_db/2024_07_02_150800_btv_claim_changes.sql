@@ -7,11 +7,6 @@ WHERE code = 'reclaimMotivation'
 
 UPDATE public.fields
 SET subsidy_stage_id = 'f5f76ce6-e2ed-4abf-a38e-103b8dfd2b82'
-WHERE code = 'reclaimNumber'
-  AND subsidy_stage_id = '0c2c1f22-624c-45fc-bb20-a3249b647fa7';
-
-UPDATE public.fields
-SET subsidy_stage_id = 'f5f76ce6-e2ed-4abf-a38e-103b8dfd2b82'
 WHERE code = 'newAssignationAmount'
   AND subsidy_stage_id = '0c2c1f22-624c-45fc-bb20-a3249b647fa7';
 
@@ -24,11 +19,6 @@ INSERT INTO public.fields (id, title, description, type, params, is_required, co
                            required_condition, retention_period_on_approval, exclude_from_clone_data)
 VALUES ('21ffcaa6-7129-4c74-bac5-04b3235d9b28', 'Motivering', null, 'text', 'null', false, 'motivation', 'user',
         '1ec333d3-4b9c-437f-a04d-c1f6a7b70446', null, 'short', false);
-
-INSERT INTO public.fields (id, title, description, type, params, is_required, code, source, subsidy_stage_id,
-                           required_condition, retention_period_on_approval, exclude_from_clone_data)
-VALUES ('3d06affa-f001-4430-9259-fc4b6b4621b8', 'Vorderingsnummer', null, 'text', 'null', false, 'reclaimNumber',
-        'user', '1ec333d3-4b9c-437f-a04d-c1f6a7b70446', null, 'short', false);
 
 INSERT INTO public.fields (id, title, description, type, params, is_required, code, source, subsidy_stage_id,
                            required_condition, retention_period_on_approval, exclude_from_clone_data)
@@ -93,14 +83,6 @@ SET input_ui   = '{
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#\/properties\/motivation",
-                            "options": {
-                                "format": "textarea",
-                                "tip": "Indien ingevuld wordt de motivatie opgenomen in de brief aan de aanvrager voor zowel een vaststelling als een vordering."
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
                             "scope": "#\/properties\/proof",
                             "options": {
                                 "accept": "image\/jpeg,image\/png,application\/pdf",
@@ -126,13 +108,11 @@ SET input_ui   = '{
             "label": "Vorderen",
             "elements": [
                 {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#\/properties\/reclaimNumber"
-                        }
-                    ]
+                    "type": "CustomControl",
+                    "scope": "#\/properties\/motivation",
+                    "options": {
+                        "format": "textarea"
+                    }
                 },
                 {
                     "type": "CustomControl",
@@ -198,7 +178,6 @@ SET input_ui   = '{
                 "type": "FormResultsTable",
                 "options": {
                     "fields": {
-                        "Motivering": "{motivation}",
                         "Bewijs": "{proof}",
                         "Interne notitie": "{internalNote}"
                     },
@@ -217,7 +196,7 @@ SET input_ui   = '{
                         "type": "FormResultsTable",
                         "options": {
                             "fields": {
-                                "Vorderingsnummer": "{reclaimNumber}",
+                                "Motivatie": "{motivation}",
                                 "Vastgesteld bedrag": "{newAssignationAmount}",
                                 "Te vorderen bedrag": "{reclaimAmount}"
                             }
@@ -291,14 +270,6 @@ SET input_ui   = '{
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#\/properties\/motivation",
-                            "options": {
-                                "format": "textarea",
-                                "tip": "Indien ingevuld wordt de motivatie opgenomen in de brief aan de aanvrager voor zowel een vaststelling als een vordering."
-                            }
-                        },
-                        {
-                            "type": "CustomControl",
                             "scope": "#\/properties\/proof",
                             "options": {
                                 "accept": "image\/jpeg,image\/png,application\/pdf",
@@ -324,13 +295,11 @@ SET input_ui   = '{
             "label": "Vorderen",
             "elements": [
                 {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#\/properties\/reclaimNumber"
-                        }
-                    ]
+                    "type": "CustomControl",
+                    "scope": "#\/properties\/motivation",
+                    "options": {
+                        "format": "textarea"
+                    }
                 },
                 {
                     "type": "CustomControl",
@@ -396,7 +365,6 @@ SET input_ui   = '{
                 "type": "FormResultsTable",
                 "options": {
                     "fields": {
-                        "Motivering": "{motivation}",
                         "Bewijs": "{proof}",
                         "Interne notitie": "{internalNote}"
                     },
@@ -415,7 +383,7 @@ SET input_ui   = '{
                         "type": "FormResultsTable",
                         "options": {
                             "fields": {
-                                "Vorderingsnummer": "{reclaimNumber}",
+                                "Motivatie": "{motivation}",
                                 "Vastgesteld bedrag": "{newAssignationAmount}",
                                 "Te vorderen bedrag": "{reclaimAmount}"
                             }
@@ -475,6 +443,21 @@ SET input_ui   = '{
                             "options": {
                                 "format": "radio"
                             }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Vorderen",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/reclaimNumber"
                         }
                     ]
                 }
@@ -545,6 +528,7 @@ SET input_ui   = '{
                         "type": "FormResultsTable",
                         "options": {
                             "fields": {
+                                "Vorderingsnummer": "{reclaimNumber}",
                                 "Interne notitie": "{internalNote}"
                             }
                         }
@@ -556,20 +540,13 @@ SET input_ui   = '{
 WHERE id = 'fe5b6562-9cf9-4c2f-b963-dadc87044766';
 
 UPDATE public.subsidy_stage_transition_messages
-SET content_html = e'{block content}
+SET
+    content_html                = e'{block content}
     <p>Beste lezer,</p>
     <p>Met mijn brief van {$content->stage4->closedAt|date:"d-m-Y"} heb ik u een subsidie verleend van
         {$content->stage2->amount} voor de regeling \'{$content->subsidyTitle}\'. Uit de aan mij ter beschikking
         gestelde gegevens blijkt dat u inmiddels voldoet aan de vereisten voor deze regeling.
     </p>
-
-    {if $content->stage5->motivation}
-        <p>{$content->stage5->motivation}</p>
-    {else}
-        {if $content->stage6->motivation}
-            <p>{$content->stage6->motivation}</p>
-        {/if}
-    {/if}
 
     <h2>Ambtshalve subsidievaststelling</h2>
     <p>Hierbij deel ik u mede dat ik uw verleende subsidie voor de borstprothesen transvrouwen met
@@ -582,7 +559,6 @@ SET content_html = e'{block content}
             <li>Subsidieregeling borstprothesen transvrouwen</li>
         </ul>
     </p>
-
 
     <h2>Hoe wordt de subsidie afgehandeld?</h2>
     <p>
@@ -606,7 +582,7 @@ SET content_html = e'{block content}
     </p>
 {/block}
 ',
-    content_pdf  = e'{layout \'letter_layout.latte\'}
+    content_pdf                 = e'{layout \'letter_layout.latte\'}
 
 {block concern}
     Betreft: Ambtshalve vaststelling subsidie \'{$content->subsidyTitle}\'
@@ -619,18 +595,9 @@ SET content_html = e'{block content}
         gestelde gegevens blijkt dat u inmiddels voldoet aan de vereisten voor deze regeling.
     </p>
 
-    {if $content->stage5->motivation}
-    <p>{$content->stage5->motivation}</p>
-    {else}
-        {if $content->stage6->motivation}
-        <p>{$content->stage6->motivation}</p>
-        {/if}
-    {/if}
-
-<h2>Ambtshalve subsidievaststelling</h2>
+    <h2>Ambtshalve subsidievaststelling</h2>
     <p>Hierbij deel ik u mede dat ik uw verleende subsidie voor de borstprothesen transvrouwen met
         kenmerk {$content->reference}, ambtshalve vaststel op {$content->stage2->amount}.</p>
-
 
     <p>De subsidie is vastgesteld op grond van:<br/>
         <ul>
@@ -670,11 +637,12 @@ SET content_html = e'{block content}
 
 {/block}
 ',
-    updated_at   = 'now()'
+    updated_at                  = 'now()'
 WHERE id = 'd8c2a8d1-e512-40a1-94f8-6535cc85289c';
 
 UPDATE public.subsidy_stage_transition_messages
-SET content_html = e'{block content}
+SET
+    content_html                = e'{block content}
     <p>Beste lezer,</p>
 
     <p>Bij brief van {$content->lastAllocatedAt|date:\'d-m-Y\'}, met kenmerk {$content->reference}, heb ik aan u een subsidie verleend van
@@ -706,10 +674,9 @@ SET content_html = e'{block content}
         verschil van u terug op grond van artikel 4:57 van de Algemene wet bestuursrecht.</p>
 
     {var $reclaimAmount = $content->stage5->reclaimAmount ? $content->stage5->reclaimAmount : $content->stage6->reclaimAmount}
-    {var $reclaimNumber = $content->stage5->reclaimNumber ? $content->stage5->reclaimNumber : $content->stage6->reclaimNumber}
     <p>Ik verzoek u het bedrag van € {formatCurrency($reclaimAmount)} binnen zes weken na de datum van deze beschikking over te
         maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
-        het vorderingsnummer {$reclaimNumber} en subsidienummer {$content->reference}.</p>
+        het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
 {/block}
 
 
@@ -728,8 +695,8 @@ SET content_html = e'{block content}
         P.A. van Hecking Colenbrander
     </p>
 {/block}
-'
-  , content_pdf  = e'{layout \'letter_layout.latte\'}
+',
+    content_pdf                 = e'{layout \'letter_layout.latte\'}
 
 {block concern}
     Betreft: Vordering subsidie \'{$content->subsidyTitle}\'
@@ -767,10 +734,9 @@ SET content_html = e'{block content}
         verschil van u terug op grond van artikel 4:57 van de Algemene wet bestuursrecht.</p>
 
     {var $reclaimAmount = $content->stage5->reclaimAmount ? $content->stage5->reclaimAmount : $content->stage6->reclaimAmount}
-    {var $reclaimNumber = $content->stage5->reclaimNumber ? $content->stage5->reclaimNumber : $content->stage6->reclaimNumber}
     <p>Ik verzoek u het bedrag van € {formatCurrency($reclaimAmount)} binnen zes weken na de datum van deze beschikking over te
         maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
-        het vorderingsnummer {$reclaimNumber} en subsidienummer {$content->reference}.</p>
+        het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
 {/block}
 
 {block signature}
@@ -797,15 +763,14 @@ SET content_html = e'{block content}
     <p>{$content->stage2->businessPartnerNumber}</p>
     {/if}
 
-    {var $reclaimNumber = $content->stage5->reclaimNumber ? $content->stage5->reclaimNumber : $content->stage6->reclaimNumber}
-    {if ($reclaimNumber)}
+    {if ($content->stage7->reclaimNumber)}
     <h4>Vorderingsnummer</h4>
-    <p>{$reclaimNumber}</p>
+    <p> {$content->stage7->reclaimNumber}</p>
     {/if}
 
     <p><i>Correspondentie uitsluitend richten aan het retouradres met vermelding van de datum het kenmerk van deze brief en met
             het onderwerp op de enveloppe.</i></p>
 {/block}
-'
-  , updated_at   = 'now()'
+',
+    updated_at                  = 'now()'
 WHERE id = 'd9917011-3baf-4a5f-8b1f-0e8e2b62d0a4';

@@ -42,6 +42,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
+                            "Vorderingsnummer": "{reclaimNumber}",
                             "Interne notitie": "{internalNote}"
                         }
                     }

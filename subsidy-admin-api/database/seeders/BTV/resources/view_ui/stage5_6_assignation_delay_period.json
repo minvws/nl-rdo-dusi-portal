@@ -34,7 +34,6 @@
             "type": "FormResultsTable",
             "options": {
                 "fields": {
-                    "Motivering": "{motivation}",
                     "Bewijs": "{proof}",
                     "Interne notitie": "{internalNote}"
                 },
@@ -53,7 +52,7 @@
                     "type": "FormResultsTable",
                     "options": {
                         "fields": {
-                            "Vorderingsnummer": "{reclaimNumber}",
+                            "Motivatie": "{motivation}",
                             "Vastgesteld bedrag": "{newAssignationAmount}",
                             "Te vorderen bedrag": "{reclaimAmount}"
                         }

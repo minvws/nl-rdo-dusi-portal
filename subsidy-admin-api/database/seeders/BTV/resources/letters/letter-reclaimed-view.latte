@@ -30,10 +30,9 @@
         verschil van u terug op grond van artikel 4:57 van de Algemene wet bestuursrecht.</p>
 
     {var $reclaimAmount = $content->stage5->reclaimAmount ? $content->stage5->reclaimAmount : $content->stage6->reclaimAmount}
-    {var $reclaimNumber = $content->stage5->reclaimNumber ? $content->stage5->reclaimNumber : $content->stage6->reclaimNumber}
     <p>Ik verzoek u het bedrag van € {formatCurrency($reclaimAmount)} binnen zes weken na de datum van deze beschikking over te
         maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
-        het vorderingsnummer {$reclaimNumber} en subsidienummer {$content->reference}.</p>
+        het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
 {/block}
 
 
