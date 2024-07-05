@@ -463,6 +463,7 @@ class ApplicationRepository
 
         return $query
             ->orderByStatus()
+            ->orderBy('updated_at', 'desc')
             ->get();
     }
 
