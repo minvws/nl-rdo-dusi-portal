@@ -46,10 +46,7 @@ jobs:
 
       - name: Concat manual files
         if: steps.check_files.outputs.files_exists == 'true'
-        uses: bayssmekanique/action-md-concat@v1
-        with:
-          srcDir: ${{ matrix.directory }}/doc/manual
-          destFile: "${{ matrix.directory }}/doc/${{ matrix.name }} ${{ env.RELEASE_VERSION }}.md"
+        run: sed -e '$s/$/\n/' -s ${{ matrix.directory }}/doc/manual/*.md > "${{ matrix.directory }}/doc/${{ matrix.name }} ${{ env.RELEASE_VERSION }}.md"
 
       - name: Update template
         run: sed -i "s/{{{version}}}/$RELEASE_VERSION/g" .github/workflows/manual/pdf_template.html
