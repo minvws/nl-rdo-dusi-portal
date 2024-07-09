@@ -6,6 +6,18 @@
     "elements": [
         {
             "type": "Group",
+            "elements": [
+                {
+                    "type": "FormNotification",
+                    "options": {
+                        "displayAs": "warning",
+                        "message": "Bij het invullen van de gegevens kunt u enige vertraging ervaren, dit duurt enkele seconden. Dit wordt veroorzaakt door de berekeningen die worden uitgevoerd. Excuses voor het ongemak."
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Group",
             "label": "Persoonlijke informatie aanvrager",
             "elements": [
                 {
