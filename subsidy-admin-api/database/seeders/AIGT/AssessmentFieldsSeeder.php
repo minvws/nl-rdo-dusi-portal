@@ -291,6 +291,19 @@ class AssessmentFieldsSeeder extends Seeder
 
     public function assignationAuditAssessmentFields(): void
     {
+        $this->createMultiSelectField(
+            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_7_UUID,
+            code:            'assignationImplementationAssessmentChecklist',
+            title:           'Controlevragen',
+            options:         [
+                'Akkoord met de vaststelling',
+                'De verplichting is geaccordeerd in SAP',
+                'De vaststellingsbrief mag verzonden worden',
+            ],
+            isRequired:      false,
+            retentionPeriod: DataRetentionPeriod::Short
+        );
+
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_7_UUID,
             code: 'assessment',
@@ -310,19 +323,6 @@ class AssessmentFieldsSeeder extends Seeder
 
     public function assignationImplementationAssessmentFields(): void
     {
-        $this->createMultiSelectField(
-            subsidyStageId:  SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
-            code:            'assignationImplementationAssessmentChecklist',
-            title:           'Controlevragen',
-            options:         [
-                'Akkoord met de vaststelling',
-                'De verplichting is geaccordeerd in SAP',
-                'De vaststellingsbrief mag verzonden worden',
-            ],
-            isRequired:      false,
-            retentionPeriod: DataRetentionPeriod::Short
-        );
-
         $this->createSelectField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_8_UUID,
             code: 'assessment',
