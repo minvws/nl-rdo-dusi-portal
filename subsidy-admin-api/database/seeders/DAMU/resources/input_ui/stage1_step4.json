@@ -14,7 +14,6 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/IBDocument",
-                            "label": "IB60 formulier",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
@@ -31,7 +30,6 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/proofOfRegistrationDAMUSchool",
-                            "label": "Inschrijfbewijs DAMU-school",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
@@ -48,7 +46,6 @@
                         {
                             "type": "CustomControl",
                             "scope": "#/properties/proofOfRegistrationHboCollaborationPartner",
-                            "label": "Inschrijfbewijs hbo-vooropleiding dans en muziek",
                             "options": {
                                 "accept": "image/jpeg,image/png,.pdf",
                                 "maxFileSize": 20971520,
