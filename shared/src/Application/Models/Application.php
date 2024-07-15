@@ -20,7 +20,6 @@ use MinVWS\DUSi\Shared\Application\Database\Factories\ApplicationFactory;
 use MinVWS\DUSi\Shared\Application\Eloquent\HasOneUuidSupport;
 use MinVWS\DUSi\Shared\Application\Traits\ApplicationScopes;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyVersion;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
 
@@ -74,22 +73,10 @@ class Application extends Model
         'locked_from'
     ];
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter) - $value is not used
-     */
     protected function submittedAt(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attrs) =>
-                ApplicationStage::query()
-                    ->where('application_id', '=', $attrs['id'])
-                    ->whereRelation('subsidyStage', 'stage', '=', 1)
-                    ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
-                    ->where('is_submitted', '=', true)
-                    ->orderBy('sequence_number')
-                    ->limit(1)
-                    ->first(['submitted_at'])
-                    ?->submitted_at
+            get: fn () => $this->firstApplicationStage->submitted_at
         )->shouldCache();
     }
 

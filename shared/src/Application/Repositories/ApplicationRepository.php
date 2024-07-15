@@ -137,6 +137,7 @@ class ApplicationRepository
 
         $query = Application::query()
             ->with([
+                'firstApplicationStage',
                 'currentApplicationStage',
                 'currentApplicationStage.subsidyStage',
                 'currentApplicationStage.assessorUser',
@@ -166,8 +167,6 @@ class ApplicationRepository
         $filterValues = [
             'applicationTitle' => 'title',
             'reference' => 'reference',
-            'dateFrom' => 'createdAtFrom',
-            'dateTo' => 'createdAtTo',
             'dateLastModifiedFrom' => 'updatedAtFrom',
             'dateLastModifiedTo' => 'updatedAtTo',
             'dateFinalReviewDeadlineFrom' => 'finalReviewDeadlineFrom',
@@ -183,6 +182,17 @@ class ApplicationRepository
                 fn() => $query->$method($filter->$filterKey)
             );
         }
+
+        $query->when(
+            isset($filter->dateFrom) || isset($filter->dateTo),
+            fn() => $query->whereHas(
+                'firstApplicationStage',
+                function (Builder $builder) use ($filter) {
+                    /** @var Builder<ApplicationStage> $builder */
+                    $builder->submittedAtBetween($filter->dateFrom, $filter->dateTo);
+                }
+            )
+        );
     }
 
     public function getApplication(string $appId, bool $lockForUpdate = false): ?Application

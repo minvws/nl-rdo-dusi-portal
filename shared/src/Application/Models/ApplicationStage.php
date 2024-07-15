@@ -103,6 +103,13 @@ class ApplicationStage extends Model
         return $query->where('assessor_user_id', $assessor->id);
     }
 
+    public function scopeSubmittedAtBetween(Builder $query, DateTime $start = null, DateTime $end = null): Builder
+    {
+        return $query->where(fn (Builder $query) => $query
+            ->when($start !== null, fn (Builder $query) => $query->where('submitted_at', '>=', $start))
+            ->when($end !== null, fn (Builder $query) => $query->where('submitted_at', '<=', $end)));
+    }
+
     protected static function newFactory(): ApplicationStageFactory
     {
         return ApplicationStageFactory::new();
