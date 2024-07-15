@@ -6,55 +6,260 @@
     "elements": [
         {
             "type": "Group",
-            "label": "Documenten",
+            "elements": [
+                {
+                    "type": "FormNotification",
+                    "options": {
+                        "displayAs": "warning",
+                        "message": "Bij het invullen van de gegevens kunt u enige vertraging ervaren, dit duurt enkele seconden. Dit wordt veroorzaakt door de berekeningen die worden uitgevoerd. Excuses voor het ongemak."
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Inkomen",
             "elements": [
                 {
                     "type": "VerticalLayout",
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/IBDocument",
-                            "label": "IB60 formulier",
+                            "scope": "#/properties/isSingleParentFamily",
                             "options": {
-                                "accept": "image/jpeg,image/png,.pdf",
-                                "maxFileSize": 20971520,
-                                "minItems": 1,
-                                "maxItems": 20,
-                                "tip": "In het formulier wordt het bruto jaarinkomen gevraagd van beide ouders of wettelijk vertegenwoordigers. Ook als u niet duurzaam samenleeft. Bij een eenoudergezin geldt dit uiteraard niet.<br/></br/>De inkomensverklaring (IB60 formulier) kunt u downloaden in Mijn Belastingdienst onder het tabblad Inkomstenbelasting. U kunt de verklaring ook gratis aanvragen bij de Belastingdienst via het telefoonnummer 0800 0543. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                                "format": "radio",
+                                "placeholder": "",
+                                "tip": "Er is alleen sprake van een eenoudergezin als een van de ouders overleden is of als een van de ouders volledig uit beeld is.",
+                                "remoteAction": ["onValid"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hasAlimony",
+                            "options": {
+                                "format": "radio",
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualIncomeParentA",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualIncomeParentB",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/isSingleParentFamily",
+                                    "schema": { "const": "Nee" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualJointIncome",
+                            "options": {
+                                "readonly": true
                             }
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Gegevens kind",
+            "elements": [
                 {
                     "type": "VerticalLayout",
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/proofOfRegistrationDAMUSchool",
-                            "label": "Inschrijfbewijs DAMU-school",
+                            "scope": "#/properties/childName",
                             "options": {
-                                "accept": "image/jpeg,image/png,.pdf",
-                                "maxFileSize": 20971520,
-                                "minItems": 1,
-                                "maxItems": 20,
-                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/dateOfBirth",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialStreet",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialHouseNumber",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialHouseNumberSuffix",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialPostalCode",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialCity",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/educationType",
+                            "options": {
+                                "format": "radio",
+                                "placeholder": "",
+                                "remoteAction": ["onValid"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolPrimary",
+                            "options": {
+                                "format": "select",
+                                "placeholder": "",
+                                "remoteAction": ["onValid"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Primair onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolSecondary",
+                            "options": {
+                                "format": "select",
+                                "placeholder": "",
+                                "remoteAction": ["onValid"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Voortgezet onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolAddress",
+                            "options": {
+                                "placeholder": "",
+                                "readonly": true
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#",
+                                    "schema": {
+                                        "required": ["educationType"]
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hboPreviousEducationPrimary",
+                            "options": {
+                                "format": "select",
+                                "placeholder": ""
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Primair onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hboPreviousEducationSecondary",
+                            "options": {
+                                "format": "select",
+                                "placeholder": ""
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Voortgezet onderwijs" }
+                                }
                             }
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Subsidie",
+            "elements": [
                 {
                     "type": "VerticalLayout",
                     "elements": [
                         {
                             "type": "CustomControl",
-                            "scope": "#/properties/proofOfRegistrationHboCollaborationPartner",
-                            "label": "Inschrijfbewijs hbo-vooropleiding dans en muziek",
+                            "scope": "#/properties/travelDistanceSingleTrip",
                             "options": {
-                                "accept": "image/jpeg,image/png,.pdf",
-                                "maxFileSize": 20971520,
-                                "minItems": 1,
-                                "maxItems": 20,
-                                "tip": "Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"],
+                                "tip": "Gebruik de <a target='_blank' href='https://www.anwb.nl/verkeer/routeplanner'>ANWB-routeplanner</a> met de optie ‘snelste route’. U mag geen andere routeplanner gebruiken. Kies als route het woonadres naar de DAMU-school. Schakel de optie 'Route op basis van actueel verkeer' uit en klik op 'Herbereken route'."
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/travelExpenseReimbursement",
+                            "options": {
+                                "readonly": true,
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/requestedSubsidyAmount",
+                            "options": {
+                                "readonly": true,
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/explanation",
+                            "options": {
+                                "format": "textarea"
                             }
                         }
                     ]
