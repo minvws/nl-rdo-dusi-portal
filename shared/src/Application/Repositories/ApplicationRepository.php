@@ -136,6 +136,13 @@ class ApplicationRepository
         }
 
         $query = Application::query()
+            ->with([
+                'currentApplicationStage',
+                'currentApplicationStage.subsidyStage',
+                'currentApplicationStage.assessorUser',
+                'subsidyVersion',
+                'subsidyVersion.subsidy',
+            ])
             ->whereExists($filteredQuery)
             ->when(
                 value: $user->hasRole(Role::LegalSpecialist),
