@@ -173,7 +173,7 @@ class ApplicationRepository
         foreach ($filterValues as $filterKey => $method) {
             $query->when(
                 isset($filter->$filterKey) || is_array($filter->$filterKey),
-                fn() => $query->$method($filter->$filterKey)->get()
+                fn() => $query->$method($filter->$filterKey)
             );
         }
     }
