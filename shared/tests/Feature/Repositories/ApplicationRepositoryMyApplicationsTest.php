@@ -182,11 +182,9 @@ class ApplicationRepositoryMyApplicationsTest extends TestCase
         ApplicationStage::factory()
             ->for($application2)
             ->for($this->subsidyStages->get(1))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 1,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         // Application should be visible

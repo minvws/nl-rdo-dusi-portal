@@ -29,6 +29,7 @@ class ApplicationControllerTest extends TestCase
 
     private Application $application1;
     private ApplicationStage $application1Stage1;
+    private ApplicationStage $application1Stage2;
 
     private Application $application2;
     private ApplicationStage $application2Stage1;
@@ -107,14 +108,22 @@ class ApplicationControllerTest extends TestCase
                 'status' => ApplicationStatus::Pending,
             ]
         );
+
+        // There must be a submitted stage, to load the submitted_at date.
         $this->application1Stage1 = ApplicationStage::factory()
+            ->for($this->application1)
             ->for($this->subsidyStage1)
-            ->create(
-                [
-                'application_id' => $this->application1->id,
+            ->submitted(Carbon::now())
+            ->create([
                 'sequence_number' => 1,
-                ]
-            );
+            ]);
+
+        $this->application1Stage2 = ApplicationStage::factory()
+            ->for($this->application1)
+            ->for($this->subsidyStage2)
+            ->create([
+                'sequence_number' => 2,
+            ]);
 
         $this->application2 = Application::factory()->create(
             [
@@ -127,24 +136,19 @@ class ApplicationControllerTest extends TestCase
             ]
         );
         $this->application2Stage1 = ApplicationStage::factory()
+            ->for($this->application2)
             ->for($this->subsidyStage1)
-            ->create(
-                [
-                    'is_current' => false,
-                    'is_submitted' => true,
-                    'application_id' => $this->application2->id,
-                    'sequence_number' => 1,
-                ]
-            );
+            ->submitted(Carbon::now())
+            ->create([
+                'sequence_number' => 1,
+            ]);
         $this->application2Stage2 = ApplicationStage::factory()
+            ->for($this->application2)
             ->for($this->subsidyStage2)
-            ->create(
-                [
-                    'application_id' => $this->application2->id,
-                    'assessor_user_id' => $this->assessorUser1,
-                    'sequence_number' => 2,
-                ]
-            );
+            ->for($this->assessorUser1, 'assessorUser')
+            ->create([
+                'sequence_number' => 2,
+            ]);
 
         $this->application3 = Application::factory()->create(
             [
@@ -157,25 +161,19 @@ class ApplicationControllerTest extends TestCase
             ]
         );
         $this->application3Stage1 = ApplicationStage::factory()
+            ->for($this->application3)
             ->for($this->subsidyStage1)
-            ->create(
-                [
-                    'is_current' => false,
-                    'is_submitted' => true,
-                    'application_id' => $this->application3->id,
-                    'assessor_user_id' => $this->assessorUser2->id
-                ]
-            );
+            ->for($this->assessorUser2, 'assessorUser')
+            ->submitted(Carbon::now())
+            ->create();
 
         $this->application3Stage2 = ApplicationStage::factory()
+            ->for($this->application3)
             ->for($this->subsidyStage2)
-            ->create(
-                [
-                'application_id' => $this->application3->id,
-                'assessor_user_id' => $this->assessorUser2,
+            ->for($this->assessorUser2, 'assessorUser')
+            ->create([
                 'sequence_number' => 2,
-                ]
-            );
+            ]);
 
         $this->application4 = Application::factory()
             ->for($this->subsidyVersion)
@@ -191,10 +189,8 @@ class ApplicationControllerTest extends TestCase
         $this->application4Stage1 = ApplicationStage::factory()
             ->for($this->subsidyStage1)
             ->for($this->application4)
-            ->create([
-                'is_current' => false,
-                'is_submitted' => true,
-            ]);
+            ->submitted(Carbon::now())
+            ->create();
 
         $this->application4Stage2 = ApplicationStage::factory()
             ->for($this->subsidyStage2)
@@ -214,13 +210,11 @@ class ApplicationControllerTest extends TestCase
             ]
         );
         $this->application5Stage1 = ApplicationStage::factory()
+            ->for($this->application5)
             ->for($this->subsidyStage1)
-            ->create(
-                [
-                    'application_id' => $this->application5->id,
-                    'sequence_number' => 1,
-                ]
-            );
+            ->create([
+                'sequence_number' => 1,
+            ]);
 
         $this->application6 = Application::factory()->create(
             [
@@ -249,7 +243,7 @@ class ApplicationControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
 
-        $this->assertJsonFragment($response, $this->application1, ['show']);
+        $this->assertJsonFragment($response, $this->application1, ['assign', 'show']);
     }
 
     public function testFilterForAssessorOnClaimedApplication(): void
@@ -293,7 +287,9 @@ class ApplicationControllerTest extends TestCase
             ->json('GET', '/api/applications');
 
         $response->assertStatus(200);
+
         $response->assertJsonCount(3, 'data');
+
 
         $this->assertJsonFragment($response, $this->application1, ['release', 'show']);
         $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
@@ -327,7 +323,7 @@ class ApplicationControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonCount(4, 'data');
 
-        $this->assertJsonFragment($response, $this->application1, ['show']);
+        $this->assertJsonFragment($response, $this->application1, ['assign', 'show']);
         $this->assertJsonFragment($response, $this->application2, ['release', 'show']);
 
         // Don't show draft
@@ -549,8 +545,8 @@ class ApplicationControllerTest extends TestCase
     {
         return [
             'reference' => $application->reference,
-            'date_from' => $application->created_at,
-            'date_to' => $application->created_at,
+            'date_from' => $application->submitted_at,
+            'date_to' => $application->submitted_at,
             'date_last_modified_from' => $application->updated_at,
             'date_last_modified_to' => $application->updated_at,
             'date_final_review_deadline_from' => $application->final_review_deadline,

@@ -28,11 +28,17 @@ trait ApplicationScopes
         return $query->where('reference', 'LIKE', '%' . $title . '%');
     }
 
+    /**
+     * The createdAt is the date the application was created but not the date the application was submitted.
+     */
     public function scopeCreatedAtFrom(Builder $query, DateTime $timestamp): Builder
     {
         return $query->where('created_at', '>=', $timestamp);
     }
 
+    /**
+     * The createdAt is the date the application was created but not the date the application was submitted.
+     */
     public function scopeCreatedAtTo(Builder $query, DateTime $timestamp): Builder
     {
         return $query->where('created_at', '<=', $timestamp);
