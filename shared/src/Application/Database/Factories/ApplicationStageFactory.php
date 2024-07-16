@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\DUSi\Shared\Application\Database\Factories;
 
+use DateTime;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -38,15 +39,16 @@ class ApplicationStageFactory extends Factory
         ];
     }
 
-    public function configure(): static
+    public function submitted(?DateTime $submittedAt = null): static
     {
-        return $this->afterCreating(function (ApplicationStage $applicationStage) {
-            $closedAt = $this->faker->dateTimeBetween($applicationStage->created_at);
-            $applicationStage->update([
-                'closed_at' => $applicationStage->is_submitted ? $closedAt : null,
-                'submitted_at' => $applicationStage->is_submitted ? $closedAt : null,
-                'is_current' => $applicationStage->is_current && !$applicationStage->is_submitted
-            ]);
+        return $this->state(function (array $attributes) use ($submittedAt) {
+            $closedAt = $submittedAt ?? $this->faker->dateTimeBetween($attributes['created_at']);
+            return [
+                'closed_at' => $closedAt,
+                'submitted_at' => $closedAt,
+                'is_current' => false,
+                'is_submitted' => true,
+            ];
         });
     }
 }

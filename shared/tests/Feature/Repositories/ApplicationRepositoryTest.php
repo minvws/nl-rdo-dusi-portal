@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\DUSi\Shared\Tests\Feature\Repositories;
 
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\QueryException;
 use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\DTO\PaginationOptions;
@@ -31,6 +32,7 @@ class ApplicationRepositoryTest extends TestCase
     private Identity $identity;
     private SubsidyVersion $subsidyVersion;
     private SubsidyStage $subsidyStage;
+    private SubsidyStage $subsidyStage2;
 
     protected function setUp(): void
     {
@@ -42,6 +44,7 @@ class ApplicationRepositoryTest extends TestCase
         $this->identity = Identity::factory()->create();
         $this->subsidyVersion = SubsidyVersion::factory()->for($subsidy)->create();
         $this->subsidyStage = SubsidyStage::factory()->for($this->subsidyVersion)->create(['stage' => 1]);
+        $this->subsidyStage2 = SubsidyStage::factory()->for($this->subsidyVersion)->create(['stage' => 2]);
         $this->repository = new ApplicationRepository();
 
         User::factory()->make();
@@ -56,34 +59,40 @@ class ApplicationRepositoryTest extends TestCase
         $application = Application::factory()
             ->for($this->identity)
             ->for($this->subsidyVersion)
-            ->create(
-                [
+            ->create([
                 'application_title' => 'some_application_title',
-                'updated_at' => new \DateTime('now'),
-                'created_at' => new \DateTime('now'),
-                'final_review_deadline' => new \DateTime('now'),
+                'updated_at' => new DateTime('now'),
+                'created_at' => new DateTime('now'),
+                'final_review_deadline' => new DateTime('now'),
                 'status' => ApplicationStatus::Pending,
-                ]
-            );
+            ]);
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStage)
-            ->create()->id;
+            ->submitted(new DateTime('now'))
+            ->create([
+                'sequence_number' => 1
+            ]);
+
+        ApplicationStage::factory()
+            ->for($application)
+            ->for($this->subsidyStage2)
+            ->create([
+                'sequence_number' => 2
+            ]);
 
         $user = User::factory()->create();
         $user->attachRole(Role::Assessor);
 
         $filter = [
             'application_title' => 'some_application_title',
-            'date_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
-            'date_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
-            'date_last_modified_from' => (new \DateTime())->createFromFormat('U', (string)strtotime('yesterday')),
-            'date_last_modified_to' => (new \DateTime())->createFromFormat('U', (string)strtotime('tomorrow')),
-            'date_final_review_deadline_from' => (new \DateTime())
-                ->createFromFormat('U', (string)strtotime('yesterday')),
-            'date_final_review_deadline_to' => (new \DateTime())
-                ->createFromFormat('U', (string)strtotime('tomorrow')),
+            'date_from' => (new DateTime('yesterday'))->format('Y-m-d'),
+            'date_to' => (new DateTime('tomorrow'))->format('Y-m-d'),
+            'date_last_modified_from' => (new DateTime('yesterday'))->format('Y-m-d'),
+            'date_last_modified_to' => (new DateTime('tomorrow'))->format('Y-m-d'),
+            'date_final_review_deadline_from' => (new DateTime('yesterday'))->format('Y-m-d'),
+            'date_final_review_deadline_to' => (new DateTime('tomorrow'))->format('Y-m-d'),
             'status' => [ApplicationStatus::Pending],
             'subsidy' => ['SST'],
         ];
@@ -303,13 +312,13 @@ class ApplicationRepositoryTest extends TestCase
             'final_review_deadline' => Carbon::today(),
         ]);
 
-        $applicationStage1 = ApplicationStage::factory()->create([
-            'application_id' => $application->id,
-            'subsidy_stage_id' => $this->subsidyStage->id,
-            'sequence_number' => 1,
-            'is_current' => false,
-            'is_submitted' => true
-        ]);
+        $applicationStage1 = ApplicationStage::factory()
+            ->submitted()
+            ->create([
+                'application_id' => $application->id,
+                'subsidy_stage_id' => $this->subsidyStage->id,
+                'sequence_number' => 1,
+            ]);
 
         Answer::factory()->create([
             'application_stage_id' => $applicationStage1->id,
@@ -506,15 +515,13 @@ class ApplicationRepositoryTest extends TestCase
             ]
         );
 
-        $applicationStage1 = ApplicationStage::factory()->create(
-            [
+        $applicationStage1 = ApplicationStage::factory()
+            ->submitted()
+            ->create([
                 'application_id' => $application->id,
                 'subsidy_stage_id' => $this->subsidyStage->id,
                 'sequence_number' => 1,
-                'is_current' => false,
-                'is_submitted' => true,
-            ]
-        );
+            ]);
 
         Answer::factory()->create(
             [

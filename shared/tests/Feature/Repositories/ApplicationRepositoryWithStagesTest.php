@@ -109,11 +109,9 @@ class ApplicationRepositoryWithStagesTest extends TestCase
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(1))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 1,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
@@ -153,21 +151,17 @@ class ApplicationRepositoryWithStagesTest extends TestCase
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(1))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 1,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(2))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 2,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
@@ -207,31 +201,25 @@ class ApplicationRepositoryWithStagesTest extends TestCase
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(1))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 1,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(2))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 2,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(3))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 3,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
@@ -271,43 +259,35 @@ class ApplicationRepositoryWithStagesTest extends TestCase
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(1))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 1,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(2))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 2,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(3))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 3,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(3))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 4,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
@@ -347,55 +327,45 @@ class ApplicationRepositoryWithStagesTest extends TestCase
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(1))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 1,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(2))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 2,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(3))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 3,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(3))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 4,
-                'is_current' => false,
-                'is_submitted' => true,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         ApplicationStage::factory()
             ->for($application)
             ->for($this->subsidyStages->get(3))
+            ->submitted(new DateTime('now'))
             ->create([
                 'sequence_number' => 5,
-                'is_current' => false,
-                'is_submitted' => true,
                 'assessor_user_id' => $this->implementationCoordinatorUser->id,
                 'assessor_decision' => ApplicationStageDecision::Approved,
-                'submitted_at' => new DateTime('now'),
             ]);
 
         // Application should be visible
