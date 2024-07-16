@@ -330,6 +330,13 @@ class ApplicationFieldsSeeder extends Seeder
             source:         FieldSource::Calculated,
         );
 
+        $this->createTextAreaField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
+            code:           'explanation',
+            title:          'Eventuele toelichting op uw aanvraag',
+            isRequired:     false,
+        );
+
         $this->createUploadField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_1_UUID,
             code:           'IBDocument',

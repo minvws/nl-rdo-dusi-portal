@@ -50,6 +50,10 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                         "email",
                         "bankAccountHolder",
                         "bankAccountNumber",
+                    ]
+                ),
+                $this->buildInputUiStep(
+                    3, 'Gezinssituatie', [
                         "isSingleParentFamily",
                         "hasAlimony",
                         "annualIncomeParentA",
@@ -64,14 +68,14 @@ class ApplicationStageUISeeder extends AbstractApplicationStageUISeeder
                     ]
                 ),
                 $this->buildInputUiStep(
-                    3, 'Documenten toevoegen', [
+                    4, 'Documenten toevoegen', [
                         "IBDocument",
                         "proofOfRegistrationDAMUSchool",
                         "proofOfRegistrationHboCollaborationPartner",
                     ]
                 ),
                 $this->buildInputUiStep(
-                    4, 'Controleren en ondertekenen', [
+                    5, 'Controleren en ondertekenen', [
                         'truthfullyCompleted'
                     ]
                 )

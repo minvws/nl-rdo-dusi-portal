@@ -187,8 +187,10 @@
                         "fields": {
                             "Reisafstand enkele reis (in kilometers)": "{travelDistanceSingleTrip}",
                             "Kilometervergoeding": "{travelExpenseReimbursement}",
-                            "Gevraagd subsidiebedrag": "{requestedSubsidyAmount}"
-                        }
+                            "Gevraagd subsidiebedrag": "{requestedSubsidyAmount}",
+                            "Eventuele toelichting op uw aanvraag": "{explanation}"
+                        },
+                        "showEmptyFields": true
                     }
                 }
             ]
