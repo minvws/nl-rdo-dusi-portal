@@ -103,7 +103,7 @@ class SubsidyService
         if (!$identity) {
             return new SubsidyOverview(
                 subsidy: $subsidyDto,
-                newConceptAllowed: true,
+                newConceptAllowed: $subsidy->is_open_for_new_applications,
                 hasApprovedApplication: false,
                 hasRejectedApplication: false,
                 applications: [],
