@@ -173,7 +173,7 @@
                                 "minItems": 1,
                                 "maxItems": 20,
                                 "tip": "De ingevoerde naam rekeninghouder en IBAN konden niet worden geverifieerd.\n\nOp de kopie van een recent bankafschrift moeten het rekeningnummer en uw naam zichtbaar zijn. Adres en datum mogen ook, maar zijn niet verplicht. Maak de andere gegevens onleesbaar. U mag ook een afdruk van internet bankieren gebruiken of een kopie van uw bankpas. Zie ook dit <a href=\"https://www.dus-i.nl/documenten/publicaties/2018/07/30/voorbeeld-bankafschrift\" target=\"_blank\">voorbeeld</a>.",
-                                "validation": ["onInput"]
+                                "validation": ["onValid"]
                             },
                             "rule": {
                                 "effect": "SHOW",
