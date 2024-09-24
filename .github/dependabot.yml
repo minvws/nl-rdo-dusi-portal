@@ -17,110 +17,51 @@ updates:
 
   # Maintain dependencies for npm
   - package-ecosystem: "npm"
-    directory: "/application-api"
+    directories:
+      - "/application-api"
+      - "/application-backend"
+      - "/shared"
+      - "/assessment-api"
+      - "/subsidy-admin-api"
+      - "/user-admin-api"
+      - "/bridge"
     schedule:
       interval: "weekly"
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      dev-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
     registries:
       - github-minvws
-    open-pull-requests-limit: 5
 
   # Maintain dependencies for Composer
   - package-ecosystem: "composer"
-    directory: "/application-api"
-    registries:
-      - github-minvws
+    directories:
+      - "/application-api"
+      - "/application-backend"
+      - "/shared"
+      - "/assessment-api"
+      - "/subsidy-admin-api"
+      - "/user-admin-api"
     schedule:
       interval: "weekly"
-
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/application-backend"
-    schedule:
-      interval: "weekly"
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      dev-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
     registries:
       - github-minvws
-    open-pull-requests-limit: 5
-
-  # Maintain dependencies for Composer
-  - package-ecosystem: "composer"
-    directory: "/application-backend"
-    registries:
-      - github-minvws
-    schedule:
-      interval: "weekly"
-
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/shared"
-    schedule:
-      interval: "weekly"
-    registries:
-      - github-minvws
-    open-pull-requests-limit: 5
-
-  # Maintain dependencies for Composer
-  - package-ecosystem: "composer"
-    directory: "/shared"
-    registries:
-      - github-minvws
-    schedule:
-      interval: "weekly"
-
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/assessment-api"
-    schedule:
-      interval: "weekly"
-    registries:
-      - github-minvws
-    open-pull-requests-limit: 5
-
-  # Maintain dependencies for Composer
-  - package-ecosystem: "composer"
-    directory: "/assessment-api"
-    registries:
-      - github-minvws
-    schedule:
-      interval: "weekly"
-
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/subsidy-admin-api"
-    schedule:
-      interval: "weekly"
-    registries:
-      - github-minvws
-    open-pull-requests-limit: 5
-
-  # Maintain dependencies for Composer
-  - package-ecosystem: "composer"
-    directory: "/subsidy-admin-api"
-    registries:
-      - github-minvws
-    schedule:
-      interval: "weekly"
-
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/user-admin-api"
-    schedule:
-      interval: "weekly"
-    registries:
-      - github-minvws
-    open-pull-requests-limit: 5
-
-  # Maintain dependencies for Composer
-  - package-ecosystem: "composer"
-    directory: "/user-admin-api"
-    registries:
-      - github-minvws
-    schedule:
-      interval: "weekly"
-
-  # Maintain dependencies for Composer
-  - package-ecosystem: "composer"
-    directory: "/bridge"
-    registries:
-      - github-minvws
-    schedule:
-      interval: "weekly"
