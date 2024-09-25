@@ -1,3 +1,5 @@
+{layout 'letter_view_layout.latte'}
+
 {block content}
     <p>Beste lezer,</p>
     <p>
@@ -27,36 +29,41 @@
     <h2>Waaraan moet u voldoen?</h2>
     <p>U moet voldoen aan de verplichtingen in de wet- en regelgeving in deze beschikking.</p>
 
-    <u>Wet- en regelgeving</u>
-    <p>Op deze subsidie is de volgende wet- en regelgeving van toepassing:
+    <p><u>Wet- en regelgeving</u><br/>
+       Op deze subsidie is de volgende wet- en regelgeving van toepassing:
+   </p>
     <ul>
-        <li>Wet overige OCW subsidies;</li>
+        <li>Wet overige OCW-subsidies BWBR0009458;</li>
         <li>Kaderregeling subsidies OCW, SZW en VWS;</li>
+        {if $content->stage1->educationType === 'Primair onderwijs'}
         <li>Subsidieregeling reiskosten DAMU-leerlingen, nr.24900503;</li>
+        {else}
+        <li>Subsidieregeling reiskosten DAMU-leerlingen, nr. VO/1360431</li>
+        {/if}
         <li>Algemene wet bestuursrecht;</li>
-        <li>Wet bestuurlijke boete bijzondere meldingsplichten die gelden voor subsidies die door ministers zijn
-            verleend.
-        </li>
     </ul>
-    </p>
     <p>De regelgeving kunt u raadplegen via <a href="https://wetten.overheid.nl" target="_blank">wetten.overheid.nl</a>.</p>
 
-    <u>Meldingsplicht</u>
-    <p>U bent verplicht een melding te maken bij de Dienst Uitvoering Subsidies aan Instellingen (DUS-I) wanneer niet, niet
+    <p><u>Meldingsplicht</u><br/>
+        U bent verplicht een melding te maken bij de Dienst Uitvoering Subsidies aan Instellingen (DUS-I) wanneer niet, niet
         op tijd of niet geheel zal worden voldaan aan de verplichtingen die aan de subsidie zijn verbonden. U doet in ieder
-        geval melding als de leerling dit subsidiejaar met de opleiding stopt.</p>
+        geval melding als de leerling dit subsidiejaar met de opleiding stopt.
+    </p>
 
-    <u>Verantwoording</u>
-    <p>De subsidie is direct vastgesteld. Dit betekent dat er na afloop van het subsidiejaar geen verantwoording van de
-        subsidie nodig is.</p>
+    <p><u>Verantwoording</u><br/>
+        De subsidie is direct vastgesteld. Dit betekent dat er na afloop van het subsidiejaar geen verantwoording van de
+        subsidie nodig is.
+    </p>
 
-    <u>Wat als u zich niet aan de voorschriften houdt?</u>
-    <p>Het niet voldoen aan de verplichtingen kan tot gevolg hebben dat u de subsidie helemaal of gedeeltelijk moet
-        terugbetalen.</p>
+    <p><u>Wat als u zich niet aan de voorschriften houdt?</u>
+        Het niet voldoen aan de verplichtingen kan tot gevolg hebben dat u de subsidie helemaal of gedeeltelijk moet
+        terugbetalen.
+    </p>
 
     <h2>Wanneer ontvangt u de subsidie?</h2>
     <p>Ik streef ernaar het toegekende subsidiebedrag zo spoedig mogelijk naar u over te maken onder vermelding van
-        het referentienummer {$content->reference}.</p>
+        het referentienummer {$content->reference}.
+    </p>
 {/block}
 
 {block signature}
@@ -74,11 +81,9 @@
 {/block}
 
 {block objectionFooter}
-    <footer>
-        <h2>Bezwaar</h2>
-        <p>Als u belang hebt bij dit besluit, dan kunt u hiertegen binnen 6 weken, gerekend vanaf de verzenddatum, bezwaar
-            maken. Stuur uw bezwaarschrift naar DUO, Postbus 30205, 2500 GE Den Haag. U kunt uw bezwaar ook digitaal
-            indienen via <a href="https://www.duo.nl/zakelijk/oneens-met-duo/bezwaar-maken.jsp" target="_blank">www.duo.nl/zakelijk/oneens-met-duo/bezwaar-maken.jsp</a>.
-        </p>
-    </footer>
+<h2>Bezwaar</h2>
+<p>Als u belang hebt bij dit besluit, dan kunt u hiertegen binnen 6 weken, gerekend vanaf de verzenddatum, bezwaar
+    maken. Stuur uw bezwaarschrift naar DUO, Postbus 30205, 2500 GE Den Haag. U kunt uw bezwaar ook digitaal
+    indienen via <a href="https://www.duo.nl/zakelijk/oneens-met-duo/bezwaar-maken.jsp" target="_blank">www.duo.nl/zakelijk/oneens-met-duo/bezwaar-maken.jsp</a>.
+</p>
 {/block}

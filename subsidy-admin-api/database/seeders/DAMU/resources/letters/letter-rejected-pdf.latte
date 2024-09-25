@@ -21,7 +21,6 @@
 
     <h2>Besluit</h2>
     <p>Uw aanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
-    <p>&nbsp;</p>
 
     <h2>Motivatie</h2>
 
@@ -34,8 +33,8 @@
     {/if}
 
     {if $content->stage2->firstAssessmentRejectedNote}
-        <p>Uw aanvraag voldoet niet aan de volgende voorwaarde(n):</p>
-        <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
+    <p>Uw aanvraag voldoet niet aan de volgende voorwaarde(n):</p>
+    <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
     {/if}
 {/block}
 
@@ -53,7 +52,6 @@
     </p>
 {/block}
 
-
 {block objectionFooter}
 <footer>
     <h2>Bezwaar</h2>
@@ -62,8 +60,4 @@
         indienen via <a href="https://www.duo.nl/zakelijk/oneens-met-duo/bezwaar-maken.jsp" target="_blank">www.duo.nl/zakelijk/oneens-met-duo/bezwaar-maken.jsp</a>.
     </p>
 </footer>
-{/block}
-
-{block sidebar}
-    {include parent}
 {/block}

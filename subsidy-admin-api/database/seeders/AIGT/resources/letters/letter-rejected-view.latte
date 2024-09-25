@@ -1,27 +1,26 @@
+{layout 'letter_view_layout.latte'}
+
 {block content}
     <p>Beste lezer,</p>
     <p>
         Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling '{$content->subsidyTitle}' met referentienummer {$content->reference}.
         Met deze brief beslis ik op uw aanvraag.
     </p>
-    <p>&nbsp;</p>
 
     <h2>Besluit</h2>
     <p>Uw subsidieaanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
-    <p>&nbsp;</p>
 
     {if $content->stage2->firstAssessmentRejectedNote}
         <h2>Motivering bij het besluit</h2>
-        <p>Uw aanvraag is beoordeeld op grond van:
+        <p>Uw aanvraag is beoordeeld op grond van:</p>
         <ul>
             <li>Kaderregeling subsidies OCW, SZW en VWS;</li>
             <li>Subsidieregeling opleidingsactiviteiten Arts Internationale Gezondheid en Tropengeneeskunde 2021-2026;</li>
             <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
             <li>Profielregister RGS en opleidingsregister OIGT.</li>
         </ul>
-        Uw aanvraag voldoet niet aan de volgende voorwaarde(n):</p>
+        <p>Uw aanvraag voldoet niet aan de volgende voorwaarde(n):</p>
         <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
-        <p>&nbsp;</p>
     {/if}
 {/block}
 

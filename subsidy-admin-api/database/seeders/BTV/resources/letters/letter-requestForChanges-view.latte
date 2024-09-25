@@ -1,3 +1,5 @@
+{layout 'letter_view_layout.latte'}
+
 {block content}
     <p>Beste lezer,</p>
     <p>
@@ -11,7 +13,6 @@
         Ik verzoek u om uw aanvraag aan te vullen met:<br/>
         {$content->stage2->firstAssessmentRequestedComplementNote|breakLines}
     </p>
-    <p>&nbsp;</p>
 
     <h2>Termijn</h2>
     <p>
@@ -23,7 +24,6 @@
     <p>
         Als de gevraagde gegevens niet binnen 2 weken door mij zijn ontvangen, of onvoldoende zijn voor verdere beoordeling, dan kan uw aanvraag niet verder worden behandeld.
     </p>
-    <p>&nbsp;</p>
 {/block}
 
 {block signature}
@@ -41,3 +41,5 @@
         P.A. van Hecking Colenbrander
     </p>
 {/block}
+
+{block objectionFooter}{/block}

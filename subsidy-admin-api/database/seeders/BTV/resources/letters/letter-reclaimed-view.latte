@@ -1,3 +1,5 @@
+{layout 'letter_view_layout.latte'}
+
 {block content}
     <p>Beste lezer,</p>
 
@@ -5,13 +7,13 @@
         {$content->stage2->amount} voor de subsidieregeling borstprothesen transvrouwen (hierna: Subsidieregeling). In mijn
         administratie is uw aanvraag bekend onder nummer: {$content->reference}.</p>
 
-        {if $content->stage5->motivation}
-            <p>{$content->stage5->motivation}</p>
+    {if $content->stage5->motivation}
+        <p>{$content->stage5->motivation}</p>
         {else}
             {if $content->stage6->motivation}
                 <p>{$content->stage6->motivation}</p>
             {/if}
-        {/if}
+    {/if}
 
     <h2>Besluit</h2>
 
@@ -34,7 +36,6 @@
         maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
         het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
 {/block}
-
 
 {block signature}
     <p>

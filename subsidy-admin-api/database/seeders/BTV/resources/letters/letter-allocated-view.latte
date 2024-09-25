@@ -1,10 +1,11 @@
+{layout 'letter_view_layout.latte'}
+
 {block content}
     <p>Beste lezer,</p>
     <p>
         Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling '{$content->subsidyTitle}' met referentienummer {$content->reference}.
         Met deze brief beslis ik op uw aanvraag.
     </p>
-    <p>&nbsp;</p>
 
     <h2>Besluit</h2>
     <p>
@@ -21,7 +22,6 @@
        operatie dient in beginsel binnen een jaar na de aanvraag van de subsidie verricht te zijn. Als dit door
        omstandigheden niet mogelijk is gebleken, kan ontheffing of vrijstelling van deze termijn verleend worden.
     </p>
-    <p>&nbsp;</p>
 
     {if $content->stage2->firstAssessmentApprovedNote}
         <h2>Motivering bij het besluit</h2>
@@ -32,14 +32,14 @@
     <p>U moet voldoen aan de verplichtingen in de wet- en regelgeving die van toepassing zijn op de subsidie en aan al
         hetgeen in deze beschikking is opgenomen.</p>
 
-    <p>Wet- en regelgeving
-        De volgende regelgeving is in ieder geval van toepassing op de subsidie:<br/>
-        <ul>
-            <li>Kaderwet VWS-subsidies</li>
-            <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
-            <li>Subsidieregeling borstprothesen transvrouwen</li>
-        </ul>
+    <p><u>Wet- en regelgeving</u><br/>
+        De volgende regelgeving is in ieder geval van toepassing op de subsidie:
     </p>
+    <ul>
+        <li>Kaderwet VWS-subsidies</li>
+        <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
+        <li>Subsidieregeling borstprothesen transvrouwen</li>
+    </ul>
 
     <p>De regelgeving kunt u raadplegen via <a href="https://wetten.overheid.nl" target="_blank">wetten.overheid.nl</a>.</p>
 
@@ -59,7 +59,7 @@
     </p>
 
     <p>
-        <b>Meldingsplicht</b><br/>
+        <u>Meldingsplicht</u><br/>
         Indien zich na indiening van de aanvraag omstandigheden voordoen die van belang kunnen zijn voor de beslissing
         tot vaststelling van de subsidie, doet u daarvan zo spoedig mogelijk schriftelijk mededeling aan de Minister zo
         mogelijk onder overlegging van de relevante stukken.
@@ -71,12 +71,10 @@
         melden, verzoek ik u contact op te nemen met uw contactpersoon.
     </p>
 
-    <h2>Wat als u zich niet aan de voorschriften houdt?</h2>
-    <p>
+    <p><u>Wat als u zich niet aan de voorschriften houdt?</u>
         Het niet voldoen aan de verplichtingen die aan de subsidie verbonden zijn of het
         niet (geheel) verrichten van de activiteiten kan tot gevolg hebben dat ik de
         subsidie geheel of gedeeltelijk terugvorder.
-
     </p>
     <p>
         Ik wijs u er verder op dat een registratie van (ernstige) onregelmatigheden bij
