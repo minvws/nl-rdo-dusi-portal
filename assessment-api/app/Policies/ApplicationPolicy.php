@@ -211,4 +211,17 @@ class ApplicationPolicy
             $pczmSubsidy->id
         );
     }
+
+    public function damuExport(User $user): bool
+    {
+        $damuSubsidy = Subsidy::whereCode('DAMU')->first();
+        if ($damuSubsidy === null) {
+            return false;
+        }
+
+        return $user->hasRoleForSubsidy(
+            Role::ImplementationCoordinator,
+            $damuSubsidy->id
+        );
+    }
 }

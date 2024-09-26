@@ -75,4 +75,55 @@ class ApplicationExportController extends Controller
             $csvWriter->close();
         }, $fileName);
     }
+
+    /**
+     * @param ApplicationExportRequest $request
+     *
+     * @return StreamedResponse
+     * @throws \Exception
+     */
+    public function damuExport(ApplicationExportRequest $request): StreamedResponse
+    {
+        $this->authorize('damuExport', [Application::class]);
+
+        $user = $request->user();
+        assert($user !== null);
+
+        $filter = ApplicationsFilter::fromArray([
+            ...$request->validated(),
+            'subsidy' => ['DAMU'],
+        ]);
+
+        assert($filter->status !== null);
+
+        $this->logger->log(
+            (new ExportApplicationsEvent())
+                ->withData([
+                    'userId' => $user->id,
+                    'subsidy' => implode(', ', $filter->subsidy),
+                    'dateFrom' => $filter->dateFrom,
+                    'dateTo' => $filter->dateTo
+                ])
+        );
+
+        $fileName = sprintf('damu-export-%s.csv', CarbonImmutable::now()->format('Y-m-d-His'));
+
+        return response()->streamDownload(function () use ($filter, $fileName) {
+            $csvWriter = SimpleExcelWriter::streamDownload($fileName);
+
+            $rowCounter = 0;
+            $limit = 100;
+            foreach ($this->exportService->exportDamuApplications($filter) as $row) {
+                $csvWriter->addRow($row);
+
+                if ($rowCounter % $limit === 0) {
+                    flush();
+                }
+
+                $rowCounter++;
+            }
+
+            $csvWriter->close();
+        }, $fileName);
+    }
 }

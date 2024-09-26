@@ -23,6 +23,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::middleware(EnsurePasswordUpdated::class)->group(function () {
         Route::get('export/applications', [ApplicationExportController::class, 'export']);
+        Route::get('export/applications/damu', [ApplicationExportController::class, 'damuExport']);
 
         Route::prefix('applications')
             ->controller(ApplicationController::class)

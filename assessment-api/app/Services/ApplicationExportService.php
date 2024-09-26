@@ -12,11 +12,13 @@ use MinVWS\DUSi\Shared\Application\DTO\ApplicationsFilter;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryptionService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 
 class ApplicationExportService
 {
     public function __construct(
         private readonly ApplicationStageEncryptionService $encryptionService,
+        private readonly ApplicationDataService $applicationDataService,
     ) {
         //
     }
@@ -97,6 +99,73 @@ class ApplicationExportService
 
             yield $row;
         }
+    }
+
+    public function exportDamuApplications(ApplicationsFilter $filter): \Generator
+    {
+        $query = Application::query()
+            ->whereHas('firstApplicationStage', function (Builder $query) {
+                // Only include applications that have been submitted
+                $query->whereNotNull('submitted_at');
+            })
+            ->orderBy('updated_at');
+
+        $this->applyFilters($query, $filter);
+
+        foreach ($query->lazy(25) as $application) {
+            assert($application instanceof Application);
+
+            if ($application->firstApplicationStage === null || $application->lastApplicationStage === null) {
+                // Skip applications without stages
+                Log::debug(
+                    sprintf(
+                        'No applicationStage found while exporting application %s / %s',
+                        $application->reference,
+                        $application->id
+                    )
+                );
+                continue;
+            }
+
+            $lastStage = $application->lastApplicationStage;
+
+            $answersPerStage = $this->applicationDataService
+                ->getApplicationStageDataUniqueByStageUpToIncluding($lastStage);
+
+            $firstAssessment = $answersPerStage[2]->data->firstAssessment ?? null;
+            $row = [
+                'Dossiernummer' => $application->reference,
+                'PO/VO' => $answersPerStage[1]->data->educationType ?? null,
+                'Werkelijke reisafstand' => $answersPerStage[2]->data->actualTravelDistanceSingleTrip ?? null,
+                'Is er sprake van een eenoudergezin?' => $answersPerStage[1]->data->isSingleParentFamily ?? null,
+                'Werkelijk gezamenlijk jaarinkomen' => $answersPerStage[2]->data->actualAnnualJointIncome ?? null,
+                'Soort beoordeling' => $answersPerStage[2]->data->decisionCategory ?? null,
+                'Beoordeling' => $firstAssessment ?? null,
+                'Reden van afkeuring' => $firstAssessment === 'Afgekeurd' ?
+                        $answersPerStage[2]->data->firstAssessmentRejectedNote ?? null : null,
+                'Motivatie van goedkeuring' => $firstAssessment === 'Goedgekeurd' ?
+                        $answersPerStage[2]->data->firstAssessmentApprovedNote ?? null : null,
+                'Interne notitie van beoordelaar' => $answersPerStage[2]->data->firstAssessmentInternalNote ?? null,
+                'Bedrag in beschikking' => $answersPerStage[3]->data->amount ?? null,
+                'Status' => $this->translateStatus($application->status->value),
+            ];
+
+            yield $row;
+        }
+    }
+
+    private function translateStatus(string $status): string
+    {
+        return match ($status) {
+            "allocated" => "Toegewezen",
+            "approved" => "Toegekend",
+            "draft" => "Nog niet ingediend",
+            "pending" => "In behandeling",
+            "reclaimed" => "Gevorderd",
+            "rejected" => "Afgewezen",
+            "requestForChanges" => "Aanvulling nodig",
+            default => 'Onbekend',
+        };
     }
 
     /**
