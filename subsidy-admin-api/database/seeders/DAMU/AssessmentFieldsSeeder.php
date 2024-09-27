@@ -42,7 +42,6 @@ class AssessmentFieldsSeeder extends Seeder
                 'Is het inschrijvingsbewijs van de HBO school aangeleverd?',
                 'Is naam van de leerling op het HBO inschrijvingsbewijs hetzelfde als waarvoor subsidie wordt aangevraagd?',
                 'Is een recente inkomensverklaring (van beide ouders) aangeleverd (maximaal 2 kalenderjaren oud)?',
-                'Zijn onnodige gegevens onleesbaar gemaakt?'
             ],
             isRequired: false,
         );
