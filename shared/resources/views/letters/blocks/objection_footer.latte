@@ -1,4 +1,4 @@
-{define objectionFooterTemplate}
+{define objectionFooterTemplate bool $isLetter = false}
 <h2>Bezwaar</h2>
 
 <p>
@@ -35,6 +35,13 @@
     <li>het referentienummer: <em>{$content->reference}</em>;</li>
     <li>de reden waarom u het niet eens bent met de beslissing.</li>
 </ul>
+
+{if $isLetter}
+<p>
+    Vergeet niet om uw bezwaarschrift te ondertekenen en van een datum te voorzien. Wilt u zo vriendelijk zijn
+    om een kopie van deze brief mee te sturen met het bezwaarschrift?
+</p>
+{/if}
 
 <p>
     Het indienen van bezwaar schort de werking van deze beschikking niet op.
