@@ -69,8 +69,10 @@
     <table class="layout" style="background: #f3f3f3; max-width: 600px;" role="presentation">
         <tr>
             <td>
-                <div style="background:#ffffff;">
-                            <div style="text-align: center; width: 100%; height: 77px;">
+               <table cellpadding="0" cellspacing="0" bgcolor="#ffffff" border="0" width="100%" role="presentation">
+                    <tr>
+                        <td align="center">
+                            <div style="text-align: center; width: 100%; height: 120px;">
                                 <center>
                                     <div style="width: 230px; height: 120px; margin-left: 145px;">
                                         <img src="{{ $message->embed($logoPath) }}"
@@ -81,7 +83,9 @@
                                     </div>
                                 </center>
                             </div>
-                </div>
+                        </td>
+                    </tr>
+                </table>
 
                 <table cellpadding="0" cellspacing="0" bgcolor="#007bc6" border="0" width="100%" role="presentation">
                     <tr height="2">
