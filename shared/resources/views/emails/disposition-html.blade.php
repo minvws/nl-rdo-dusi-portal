@@ -81,17 +81,6 @@
                             </div>
                         </center>
                     </div>
-
-                    <table cellpadding="40" cellspacing="0" border="0" width="100%" role="presentation">
-                        <tr>
-                            <td align="left" style="padding-bottom:10px;">
-                                <div
-                                    style="cursor: auto; color: #282828; font-family: Tahoma, Geneva, sans-serif; font-size: 32px; line-height: 40px;">
-
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
                 </div>
 
                 <table cellpadding="0" cellspacing="0" bgcolor="#007bc6" border="0" width="100%" role="presentation">
