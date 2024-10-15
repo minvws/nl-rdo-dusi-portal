@@ -70,17 +70,17 @@
         <tr>
             <td>
                 <div style="background:#ffffff;">
-                    <div style="text-align: center; width: 100%; height: 77px;">
-                        <center>
-                            <div style="width: 230px; height: 120px; margin-left: 145px;">
-                                <img src="{{ $message->embed($logoPath) }}"
-                                     alt="Logo Dienst Uitvoering Subsidies aan Instellingen"
-                                     width="230" height="120"
-                                     style="display: block; border: none; width: 230px; height: 120px;"
-                                >
+                            <div style="text-align: center; width: 100%; height: 77px;">
+                                <center>
+                                    <div style="width: 230px; height: 120px; margin-left: 145px;">
+                                        <img src="{{ $message->embed($logoPath) }}"
+                                            alt="Logo Dienst Uitvoering Subsidies aan Instellingen"
+                                            width="230" height="120"
+                                            style="display: block; border: none; width: 230px; height: 120px;"
+                                        >
+                                    </div>
+                                </center>
                             </div>
-                        </center>
-                    </div>
                 </div>
 
                 <table cellpadding="0" cellspacing="0" bgcolor="#007bc6" border="0" width="100%" role="presentation">
@@ -89,7 +89,7 @@
                     </tr>
                 </table>
 
-                <table cellpadding="40" cellspacing="0" bgcolor="#ffffff" border="0" width="100%" role="presentation">
+                <table cellpadding="40" cellspacing="0" bgcolor="#ffffff" border="0" width="100%">
                     <tr>
                         <td align="left" style="padding-top: 10px;">
                             <div
@@ -117,7 +117,7 @@
                     <div style="background-color: #154273; width: 44px; height: 32px; margin: 0 auto;"></div>
                 </div>
 
-                <table cellpadding="20" cellspacing="0" border="0" width="100%" role="presentation">
+                <table cellpadding="20" cellspacing="0" border="0" width="100%">
                     <tr>
                         <td align="left">
                             <div
