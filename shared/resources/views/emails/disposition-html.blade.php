@@ -89,7 +89,7 @@
                     </tr>
                 </table>
 
-                <table cellpadding="40" cellspacing="0" bgcolor="#ffffff" border="0" width="100%">
+                <table cellpadding="40" cellspacing="0" bgcolor="#ffffff" border="0" width="100%" role="presentation">
                     <tr>
                         <td align="left" style="padding-top: 10px;">
                             <div
@@ -117,7 +117,7 @@
                     <div style="background-color: #154273; width: 44px; height: 32px; margin: 0 auto;"></div>
                 </div>
 
-                <table cellpadding="20" cellspacing="0" border="0" width="100%">
+                <table cellpadding="20" cellspacing="0" border="0" width="100%" role="presentation">
                     <tr>
                         <td align="left">
                             <div
