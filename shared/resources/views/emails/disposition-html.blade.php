@@ -117,9 +117,13 @@
                     </tr>
                 </table>
 
-                <div style="background: #ffffff; width: 100%; height: 32px;">
-                    <div style="background-color: #154273; width: 44px; height: 32px; margin: 0 auto;"></div>
-                </div>
+                <table cellpadding="0" cellspacing="0" bgcolor="#ffffff" border="0" width="100%" role="presentation">
+                    <tr height="32">
+                        <td bgcolor="#ffffff" width="280"></td>
+                        <td bgcolor="#154273" height="32" width="44" style="font-size: 0px; line-height: 0px;">&nbsp;</td>
+                        <td bgcolor="#ffffff" width="280"></td>
+                    </tr>
+                </table>
 
                 <table cellpadding="20" cellspacing="0" border="0" width="100%" role="presentation">
                     <tr>
