@@ -69,30 +69,23 @@
     <table class="layout" style="background: #f3f3f3; max-width: 600px;" role="presentation">
         <tr>
             <td>
-                <div style="background:#ffffff;">
-                    <div style="text-align: center; width: 100%; height: 77px;">
-                        <center>
-                            <div style="width: 230px; height: 120px; margin-left: 145px;">
-                                <img src="{{ $message->embed($logoPath) }}"
-                                     alt="Logo Dienst Uitvoering Subsidies aan Instellingen"
-                                     width="230" height="120"
-                                     style="display: block; border: none; width: 230px; height: 120px;"
-                                >
+               <table cellpadding="0" cellspacing="0" bgcolor="#ffffff" border="0" width="100%" role="presentation">
+                    <tr>
+                        <td align="center">
+                            <div style="text-align: center; width: 100%; height: 120px;">
+                                <center>
+                                    <div style="width: 230px; height: 120px; margin-left: 145px;">
+                                        <img src="{{ $message->embed($logoPath) }}"
+                                            alt="Logo Dienst Uitvoering Subsidies aan Instellingen"
+                                            width="230" height="120"
+                                            style="display: block; border: none; width: 230px; height: 120px;"
+                                        >
+                                    </div>
+                                </center>
                             </div>
-                        </center>
-                    </div>
-
-                    <table cellpadding="40" cellspacing="0" border="0" width="100%" role="presentation">
-                        <tr>
-                            <td align="left" style="padding-bottom:10px;">
-                                <div
-                                    style="cursor: auto; color: #282828; font-family: Tahoma, Geneva, sans-serif; font-size: 32px; line-height: 40px;">
-
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                        </td>
+                    </tr>
+                </table>
 
                 <table cellpadding="0" cellspacing="0" bgcolor="#007bc6" border="0" width="100%" role="presentation">
                     <tr height="2">
@@ -124,9 +117,13 @@
                     </tr>
                 </table>
 
-                <div style="background: #ffffff; width: 100%; height: 32px;">
-                    <div style="background-color: #154273; width: 44px; height: 32px; margin: 0 auto;"></div>
-                </div>
+                <table cellpadding="0" cellspacing="0" bgcolor="#ffffff" border="0" width="100%" role="presentation">
+                    <tr height="32">
+                        <td bgcolor="#ffffff" width="280"></td>
+                        <td bgcolor="#154273" height="32" width="44" style="font-size: 0px; line-height: 0px;">&nbsp;</td>
+                        <td bgcolor="#ffffff" width="280"></td>
+                    </tr>
+                </table>
 
                 <table cellpadding="20" cellspacing="0" border="0" width="100%" role="presentation">
                     <tr>
