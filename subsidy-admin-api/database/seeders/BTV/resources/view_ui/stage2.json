@@ -142,11 +142,13 @@
                     }
                 },
                 {
-                    "type": "CustomControl",
-                    "scope": "#/properties/firstAssessmentInternalNote",
+                    "type": "FormResultsTable",
                     "options": {
-                        "readonly": true,
-                        "format": "textarea"
+                        "fields": {
+                            "Aanvullende informatie behandelaar": "{firstAssessmentAdditionalDocuments}",
+                            "Interne notitie": "{firstAssessmentInternalNote}"
+                        },
+                        "showEmptyFields": true
                     }
                 }
             ]

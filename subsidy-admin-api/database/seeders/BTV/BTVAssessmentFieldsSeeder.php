@@ -123,6 +123,17 @@ class BTVAssessmentFieldsSeeder extends Seeder
             retentionPeriod: DataRetentionPeriod::Short
         );
 
+        $this->createUploadField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
+            code:           'firstAssessmentAdditionalDocuments',
+            title:          'Aanvullende informatie behandelaar',
+            isRequired:     false,
+            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize:    20971520,
+            minItems:       1,
+            maxItems:       20
+        );
+
         $this->createTextField(
             subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_2_UUID,
             code: 'firstAssessmentInternalNote',
@@ -149,6 +160,17 @@ class BTVAssessmentFieldsSeeder extends Seeder
             title: 'Beoordeling',
             options: ['Eens met de eerste beoordeling', 'Oneens met de eerste beoordeling'],
             retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createUploadField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_3_UUID,
+            code:           'secondAssessmentAdditionalDocuments',
+            title:          'Aanvullende informatie behandelaar',
+            isRequired:     false,
+            mimeTypes:      ['image/jpeg', 'image/png', 'application/pdf'],
+            maxFileSize:    20971520,
+            minItems:       1,
+            maxItems:       20
         );
 
         $this->createTextField(

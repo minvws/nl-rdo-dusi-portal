@@ -20,11 +20,13 @@
             }
         },
         {
-            "type": "CustomControl",
-            "scope": "#/properties/secondAssessmentInternalNote",
+            "type": "FormResultsTable",
             "options": {
-                "readonly": true,
-                "format": "textarea"
+                "fields": {
+                    "Aanvullende informatie behandelaar": "{secondAssessmentAdditionalDocuments}",
+                    "Interne notitie": "{secondAssessmentInternalNote}"
+                },
+                "showEmptyFields": true
             }
         }
     ]
