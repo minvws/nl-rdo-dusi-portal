@@ -39,7 +39,7 @@ class BTVSubsidyStagesSeeder extends Seeder
             'subject_role' => SubjectRole::Assessor->value,
             'assessor_user_role' => Role::Assessor->value,
             'stage' => 2,
-            'internal_note_field_code' => 'firstAssessmentInternalNote'
+            'internal_note_field_code' => 'firstAssessmentInternalNote',
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::BTV_STAGE_3_UUID,

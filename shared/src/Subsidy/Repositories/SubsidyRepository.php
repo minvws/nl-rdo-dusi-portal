@@ -6,6 +6,7 @@ namespace MinVWS\DUSi\Shared\Subsidy\Repositories;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Str;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 use MinVWS\DUSi\Shared\Subsidy\Models\Subsidy;
@@ -111,6 +112,18 @@ class SubsidyRepository
     {
         return Field
             ::where('subsidy_stage_id', $subsidyStage->id)
+            ->get();
+    }
+
+    /**
+     * @param SubsidyStage $subsidyStage
+     * @return EloquentCollection<array-key, Field>
+     */
+    public function getCalculatedFields(SubsidyStage $subsidyStage): EloquentCollection
+    {
+        return Field
+            ::where('subsidy_stage_id', $subsidyStage->id)
+            ->where('source', FieldSource::Calculated)
             ->get();
     }
 

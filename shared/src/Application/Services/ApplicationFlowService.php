@@ -17,7 +17,6 @@ use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryp
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ApplicationFlowException;
 use MinVWS\DUSi\Shared\Serialisation\Models\Application\ApplicationStatus;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 
 /**
@@ -29,7 +28,8 @@ class ApplicationFlowService
         private readonly ApplicationDataService $applicationDataService,
         private readonly ApplicationStageEncryptionService $encryptionService,
         private readonly ApplicationRepository $applicationRepository,
-        private readonly ApplicationFileManager $applicationFileManager
+        private readonly ApplicationFileManager $applicationFileManager,
+        private readonly ApplicationTransitionService $applicationTransitionService,
     ) {
     }
 
@@ -62,7 +62,7 @@ class ApplicationFlowService
         ApplicationStage $stage,
         EvaluationTrigger $evaluationTrigger
     ): ?ApplicationStage {
-        return DB::transaction(fn () => $this->doEvaluateApplicationStage($stage, $evaluationTrigger));
+        return DB::transaction(fn() => $this->doEvaluateApplicationStage($stage, $evaluationTrigger));
     }
 
     private function doEvaluateApplicationStage(
@@ -118,8 +118,7 @@ class ApplicationFlowService
         $transitions =
             $stage->subsidyStage->subsidyStageTransitions
                 ->filter(
-                    fn (SubsidyStageTransition $transition) =>
-                        $transition->evaluation_trigger === $evaluationTrigger
+                    fn(SubsidyStageTransition $transition) => $transition->evaluation_trigger === $evaluationTrigger
                 );
         foreach ($transitions as $transition) {
             if ($this->evaluateTransitionForApplicationStage($transition, $stage)) {
@@ -139,7 +138,7 @@ class ApplicationFlowService
         }
 
         $data = array_map(
-            fn (ApplicationStageData $stageData) => $stageData->data,
+            fn(ApplicationStageData $stageData) => $stageData->data,
             $this->applicationDataService->getApplicationStageDataUniqueByStageUpToIncluding($stage)
         );
 
@@ -183,52 +182,14 @@ class ApplicationFlowService
 
     private function updateFinalReviewDeadline(
         SubsidyStageTransition $transition,
-        Application $application
+        Application $application,
     ): bool {
-        if ($transition->targetSubsidyStage?->subject_role === SubjectRole::Applicant) {
-            // Returning to the applicant, clear review deadline.
-            $application->final_review_deadline = null;
-            return true;
-        }
-
-        if ($transition->currentSubsidyStage->subject_role !== SubjectRole::Applicant) {
-            // Only need to calculate a new final review deadline if we transition from
-            // the applicant stage.
+        $reviewDeadline = $this->applicationTransitionService->getFinalReviewDeadline($transition, $application);
+        if ($reviewDeadline === false) {
             return false;
         }
 
-        if (isset($application->subsidyVersion->review_deadline)) {
-            $application->final_review_deadline = $application->subsidyVersion->review_deadline;
-            return true;
-        }
-
-        // either review deadline or review period is set
-        assert($application->subsidyVersion->review_period !== null);
-
-        // Calculate final review deadline:
-        // 1. Take the first closed date from the applicant.
-        // 2. Add the review period.
-        // 3. Add any subsequent stages where the application was returned to the applicant.
-        $stages = $this->applicationRepository->getOrderedClosedApplicationStagesForSubsidyStage(
-            $application,
-            $transition->currentSubsidyStage
-        );
-
-        assert(count($stages) > 0);
-        $firstStage = array_shift($stages);
-        assert($firstStage->closed_at !== null);
-
-        $deadline = Carbon::instance($firstStage->closed_at)
-            ->addDays($application->subsidyVersion->review_period);
-
-        foreach ($stages as $stage) {
-            assert($stage->closed_at !== null);
-            $timeAtApplicant = Carbon::instance($stage->created_at)->diff($stage->closed_at);
-            $deadline->add($timeAtApplicant);
-        }
-
-        $application->final_review_deadline = $deadline->endOfDay()->floorSecond();
-
+        $application->final_review_deadline = $reviewDeadline;
         return true;
     }
 
@@ -319,6 +280,8 @@ class ApplicationFlowService
         if ($transition->clone_data && isset($previousInstanceOfTargetStage)) {
             $this->cloneApplicationStageData($previousInstanceOfTargetStage, $stage);
         }
+
+        $this->applicationDataService->calculateCalculatedFieldsForNewApplicationStage($stage);
 
         if ($transition->assign_to_previous_assessor && isset($previousInstanceOfTargetStage)) {
             $this->assignApplicationStageToPreviousAssessor($previousInstanceOfTargetStage, $stage);

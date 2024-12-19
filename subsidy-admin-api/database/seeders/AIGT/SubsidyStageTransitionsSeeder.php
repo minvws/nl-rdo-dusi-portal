@@ -14,7 +14,8 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\InCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
-use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\PCZM\PCZMSubsidyStagesSeeder;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 
 class SubsidyStageTransitionsSeeder extends Seeder
 {
@@ -207,6 +208,8 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_4_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
             'target_application_status' => ApplicationStatus::Allocated,
+            'target_application_review_deadline_source' => ReviewDeadlineSource::Field,
+            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 2, fieldCode: 'assignationDeadline')),
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(

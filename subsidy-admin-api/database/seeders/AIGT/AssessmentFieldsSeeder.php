@@ -10,6 +10,8 @@ use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
 class AssessmentFieldsSeeder extends Seeder
@@ -97,6 +99,28 @@ class AssessmentFieldsSeeder extends Seeder
             code:           'firstAssessment',
             title:          'Beoordeling',
             options:        ['Aanvulling nodig', 'Afgekeurd', 'Goedgekeurd']
+        );
+
+        $this->createDateField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
+            code:           'assignationDeadlineOverride',
+            title:          'Overschrijf vaststellings deadline',
+            isRequired:     false,
+        );
+
+        $this->createDateField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_2_UUID,
+            code:           'assignationDeadline',
+            title:          'Vaststellings deadline',
+            isRequired:     false,
+            params:         [
+                'readonly' => true,
+                'deadlineSourceFieldReference' => new FieldReference(stage: 1, fieldCode: 'abroadCourseComponentStartDate'),
+                'deadlineAdditionalPeriod' => 'P48W',
+                'deadlineOverrideFieldReference' => new FieldReference(stage: 2, fieldCode: 'assignationDeadlineOverride'),
+            ],
+            requiredCondition: new ComparisonCondition(2, 'firstAssessment', Operator::Identical, 'Goedgekeurd'),
+            source: FieldSource::Calculated,
         );
 
         $this->createSelectField(

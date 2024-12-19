@@ -14,6 +14,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\InCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT\SubsidyStagesSeeder;
 
 class BTVSubsidyStageTransitionsSeeder extends Seeder
@@ -206,6 +207,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
             'target_application_status' => ApplicationStatus::Allocated,
+            'target_application_review_deadline_source' => ReviewDeadlineSource::Now,
+            'target_application_review_deadline_additional_period' => 'P1Y',
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(

@@ -82,8 +82,10 @@ trait CreateField
         string $title,
         ?string $description = null,
         bool $isRequired = true,
+        ?array $params = null,
         ?Condition $requiredCondition = null,
         DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
+        FieldSource $source = FieldSource::User,
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -94,6 +96,8 @@ trait CreateField
             isRequired: $isRequired,
             requiredCondition: $requiredCondition,
             retentionPeriod: $retentionPeriod,
+            source: $source,
+            params: $params,
         );
     }
 

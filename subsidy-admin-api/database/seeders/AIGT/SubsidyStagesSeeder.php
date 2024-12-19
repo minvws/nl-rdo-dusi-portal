@@ -39,7 +39,7 @@ class SubsidyStagesSeeder extends Seeder
             'subject_role' => SubjectRole::Assessor,
             'assessor_user_role' => Role::Assessor,
             'stage' => 2,
-            'internal_note_field_code' => 'firstAssessmentInternalNote'
+            'internal_note_field_code' => 'firstAssessmentInternalNote',
         ]);
         DB::table('subsidy_stages')->insert([
             'id' => self::SUBSIDY_STAGE_3_UUID,

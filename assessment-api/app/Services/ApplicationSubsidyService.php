@@ -11,12 +11,16 @@ use MinVWS\DUSi\Assessment\API\Services\Exceptions\TransitionNotFoundException;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationFlowService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationTransitionService;
 use MinVWS\DUSi\Shared\Application\Services\Hsm\HsmDecryptionService;
 use MinVWS\DUSi\Shared\Application\Services\LetterService;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use Throwable;
 
+/**
+ *  @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 readonly class ApplicationSubsidyService
 {
     public function __construct(
@@ -24,7 +28,8 @@ readonly class ApplicationSubsidyService
         private SubsidyStageDataSchemaBuilder $dataSchemaBuilder,
         private ApplicationFlowService $applicationFlowService,
         private LetterService $letterService,
-        private HsmDecryptionService $hsmDecryptionService
+        private HsmDecryptionService $hsmDecryptionService,
+        private ApplicationTransitionService $applicationTransitionService
     ) {
     }
 
@@ -81,7 +86,8 @@ readonly class ApplicationSubsidyService
             $this->getCitizenServiceNumber($application),
             $messageHtml,
             $this->applicationDataService,
-            $this->dataSchemaBuilder
+            $this->dataSchemaBuilder,
+            $this->applicationTransitionService
         );
     }
 }

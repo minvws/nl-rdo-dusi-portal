@@ -26,13 +26,17 @@ use MinVWS\DUSi\Shared\Application\Services\AesEncryption\ApplicationStageEncryp
 use MinVWS\DUSi\Shared\Application\Services\Exceptions\ValidationErrorException;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldType;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
+use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHash;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageHashField;
+use MinVWS\DUSi\Shared\Subsidy\Repositories\SubsidyRepository;
+use RuntimeException;
 use stdClass;
 use Throwable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
  */
 readonly class ApplicationDataService
 {
@@ -46,6 +50,7 @@ readonly class ApplicationDataService
         private JSONDecoder $jsonDecoder,
         private SubsidyStashFieldHasher $subsidyStashFieldHasher,
         private ApplicationFieldHookService $applicationFieldHookService,
+        private SubsidyRepository $subsidyRepository,
     ) {
     }
 
@@ -148,7 +153,6 @@ readonly class ApplicationDataService
         Field $field
     ): FileList|string|int|bool|float|array|null {
         $answer = $this->applicationRepository->getApplicationStageAnswerForField($applicationStage, $field);
-
         if ($answer === null) {
             return null;
         }
@@ -156,6 +160,28 @@ readonly class ApplicationDataService
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
 
         return $this->mapAnswerToValue($answer, $encrypter);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getApplicationStageDataForFieldByFieldReference(
+        Application $application,
+        FieldReference $field
+    ): FileList|string|int|bool|float|array|null {
+        // Retrieve the subsidy stage and field
+        $subsidyStage = $application->subsidyVersion->subsidyStages->sole('stage', $field->stage);
+        $field = $subsidyStage->fields->sole('code', $field->fieldCode);
+
+        $applicationStage = $this->applicationRepository->getLatestSubmittedApplicationStageForSubsidyStage(
+            application: $application,
+            subsidyStage: $subsidyStage
+        );
+        if ($applicationStage === null) {
+            throw new RuntimeException('Application data requested for field without a submitted application stage');
+        }
+
+        return $this->getApplicationStageDataForField($applicationStage, $field);
     }
 
     /**
@@ -378,5 +404,34 @@ readonly class ApplicationDataService
         $encrypter = $this->encryptionService->getEncrypter($applicationStage);
 
         return $encrypter->encrypt($value);
+    }
+
+    public function calculateCalculatedFieldsForNewApplicationStage(ApplicationStage $stage): void
+    {
+        if ($stage->answers()->count() > 0) {
+            return;
+        }
+
+        $defaultFieldValues = $this->getCalculatedFieldsDefaultValue($stage);
+        if (count($defaultFieldValues) === 0) {
+            return;
+        }
+
+        $fieldValues = $this->applicationFieldHookService->findAndExecuteHooks($defaultFieldValues, $stage);
+
+        $this->updateAnswersForApplicationStage($stage, $fieldValues);
+    }
+
+    /**
+     * @param ApplicationStage $stage
+     * @return FieldValue[]
+     */
+    private function getCalculatedFieldsDefaultValue(ApplicationStage $stage): array
+    {
+        $fields = $this->subsidyRepository->getCalculatedFields($stage->subsidyStage);
+
+        return $fields->map(function (Field $field) {
+            return new FieldValue($field, null);
+        })->toArray();
     }
 }

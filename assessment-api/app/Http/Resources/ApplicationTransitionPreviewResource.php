@@ -7,6 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 use Illuminate\Http\Request;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Services\ApplicationDataService;
+use MinVWS\DUSi\Shared\Application\Services\ApplicationTransitionService;
 use MinVWS\DUSi\Shared\Subsidy\Helpers\SubsidyStageDataSchemaBuilder;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 
@@ -21,7 +22,8 @@ class ApplicationTransitionPreviewResource extends ApplicationSubsidyVersionReso
         string $citizenServiceNumber,
         private readonly ?string $messageHtml,
         ApplicationDataService $applicationDataService,
-        SubsidyStageDataSchemaBuilder $dataSchemaBuilder
+        SubsidyStageDataSchemaBuilder $dataSchemaBuilder,
+        private readonly ApplicationTransitionService $applicationTransitionService
     ) {
         parent::__construct(
             $application,
@@ -48,6 +50,10 @@ class ApplicationTransitionPreviewResource extends ApplicationSubsidyVersionReso
      */
     private function buildTransition(): array
     {
+        $newDeadline =
+            $this->applicationTransitionService->getFinalReviewDeadline($this->transition, $this->application) ?: null;
+        $hasNewDeadline = $this->application->final_review_deadline?->getTimestamp() !== $newDeadline?->getTimestamp();
+
         $result = [
             'current' => [
                 'application' => [
@@ -56,7 +62,8 @@ class ApplicationTransitionPreviewResource extends ApplicationSubsidyVersionReso
                 'subsidyStage' => [
                     'title' => $this->transition->currentSubsidyStage->title,
                     'stage' => $this->transition->currentSubsidyStage->stage
-                ]
+                ],
+                'deadline' => $hasNewDeadline ? $this->application->final_review_deadline?->format('Y-m-d') : null
             ],
             'target' => [
                 'application' => [
@@ -71,7 +78,8 @@ class ApplicationTransitionPreviewResource extends ApplicationSubsidyVersionReso
                     'stage' =>
                         $this->transition->targetSubsidyStage?->stage ??
                         $this->transition->currentSubsidyStage->stage,
-                ]
+                ],
+                'deadline' => $hasNewDeadline ? $newDeadline?->format('Y-m-d') : null
             ]
         ];
 
