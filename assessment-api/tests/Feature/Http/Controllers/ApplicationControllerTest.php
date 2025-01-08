@@ -455,7 +455,7 @@ class ApplicationControllerTest extends TestCase
             'application_title' => $application->application_title,
             'subsidy' => $this->subsidy->code,
             'status' => $application->status->value,
-            'final_review_deadline' => $application->final_review_deadline,
+            'final_review_deadline' => $application->final_review_deadline->format('Y-m-d'),
             'updated_at' => $application->updated_at,
             'actions' => ['show'],
         ]);
@@ -562,7 +562,7 @@ class ApplicationControllerTest extends TestCase
             'reference' => $application->reference,
             'subsidy' => $this->subsidy->code,
             'status' => $application->status->value,
-            'final_review_deadline' => $application->final_review_deadline,
+            'final_review_deadline' => $application->final_review_deadline?->format('Y-m-d'),
             'updated_at' => $application->updated_at,
             'actions' => $actions
         ]);
