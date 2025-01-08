@@ -11,6 +11,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
@@ -115,6 +116,7 @@ class AssessmentFieldsSeeder extends Seeder
             isRequired:     false,
             params:         [
                 'readonly' => true,
+                'deadlineSource' => ReviewDeadlineSource::Field,
                 'deadlineSourceFieldReference' => new FieldReference(stage: 1, fieldCode: 'abroadCourseComponentStartDate'),
                 'deadlineAdditionalPeriod' => 'P48W',
                 'deadlineOverrideFieldReference' => new FieldReference(stage: 2, fieldCode: 'assignationDeadlineOverride'),
@@ -251,6 +253,30 @@ class AssessmentFieldsSeeder extends Seeder
             retentionPeriod: DataRetentionPeriod::Short
         );
 
+        $this->createDateField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            code:           'assignationDeadlineOverride',
+            title:          'Overschrijf vaststellings deadline',
+            isRequired:     false,
+            excludeFromCloneData: true,
+        );
+
+        $this->createDateField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            code:           'assignationDeadline',
+            title:          'Vaststellings deadline',
+            isRequired:     false,
+            params:         [
+                'readonly' => true,
+                'deadlineSource' => ReviewDeadlineSource::Now,
+                'deadlineAdditionalPeriod' => 'P1Y',
+                'deadlineOverrideFieldReference' => new FieldReference(stage: 5, fieldCode: 'assignationDeadlineOverride'),
+            ],
+            requiredCondition: new ComparisonCondition(5, 'assessment', Operator::Identical, 'Uitstellen'),
+            source: FieldSource::Calculated,
+            excludeFromCloneData: true,
+        );
+
         $this->createTextField(
             subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
             code: 'internalNote',
@@ -291,6 +317,30 @@ class AssessmentFieldsSeeder extends Seeder
             title: 'Beoordeling',
             options: ['Vaststellen', 'Uitstellen'],  // DUSI-1876: 'Vorderen' option has been disabled but not removed from the transition flow
             retentionPeriod: DataRetentionPeriod::Short
+        );
+
+        $this->createDateField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
+            code:           'assignationDeadlineOverride',
+            title:          'Overschrijf vaststellings deadline',
+            isRequired:     false,
+            excludeFromCloneData: true,
+        );
+
+        $this->createDateField(
+            subsidyStageId: SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
+            code:           'assignationDeadline',
+            title:          'Vaststellings deadline',
+            isRequired:     false,
+            params:         [
+                'readonly' => true,
+                'deadlineSource' => ReviewDeadlineSource::Now,
+                'deadlineAdditionalPeriod' => 'P1Y',
+                'deadlineOverrideFieldReference' => new FieldReference(stage: 6, fieldCode: 'assignationDeadlineOverride'),
+            ],
+            requiredCondition: new ComparisonCondition(6, 'assessment', Operator::Identical, 'Uitstellen'),
+            source: FieldSource::Calculated,
+            excludeFromCloneData: true,
         );
 
         $this->createTextField(

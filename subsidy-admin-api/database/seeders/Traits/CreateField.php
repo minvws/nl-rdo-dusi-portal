@@ -86,6 +86,7 @@ trait CreateField
         ?Condition $requiredCondition = null,
         DataRetentionPeriod $retentionPeriod = DataRetentionPeriod::Short,
         FieldSource $source = FieldSource::User,
+        bool $excludeFromCloneData = false
     ): string {
         return $this->createField(
             subsidyStageId: $subsidyStageId,
@@ -98,6 +99,7 @@ trait CreateField
             retentionPeriod: $retentionPeriod,
             source: $source,
             params: $params,
+            excludeFromCloneData: $excludeFromCloneData,
         );
     }
 
