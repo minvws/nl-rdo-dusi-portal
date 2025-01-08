@@ -167,18 +167,18 @@ readonly class ApplicationDataService
      */
     public function getApplicationStageDataForFieldByFieldReference(
         Application $application,
-        FieldReference $field
+        FieldReference $field,
     ): FileList|string|int|bool|float|array|null {
         // Retrieve the subsidy stage and field
         $subsidyStage = $application->subsidyVersion->subsidyStages->sole('stage', $field->stage);
         $field = $subsidyStage->fields->sole('code', $field->fieldCode);
 
-        $applicationStage = $this->applicationRepository->getLatestSubmittedApplicationStageForSubsidyStage(
+        $applicationStage = $this->applicationRepository->getLatestSubmittedOrCurrentApplicationStageForSubsidyStage(
             application: $application,
-            subsidyStage: $subsidyStage
+            subsidyStage: $subsidyStage,
         );
         if ($applicationStage === null) {
-            throw new RuntimeException('Application data requested for field without a submitted application stage');
+            throw new RuntimeException('Application data requested for field without a application stage');
         }
 
         return $this->getApplicationStageDataForField($applicationStage, $field);

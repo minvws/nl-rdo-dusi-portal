@@ -375,6 +375,22 @@ class ApplicationRepository
                 ->first();
     }
 
+    public function getLatestSubmittedOrCurrentApplicationStageForSubsidyStage(
+        Application $application,
+        SubsidyStage $subsidyStage
+    ): ?ApplicationStage {
+        return
+            $application
+                ->applicationStages()
+                ->where('subsidy_stage_id', '=', $subsidyStage->id)
+                ->where(function ($query) {
+                    $query->where('is_submitted', '=', true)
+                        ->orWhere('is_current', '=', true);
+                })
+                ->orderBy('sequence_number', 'desc')
+                ->first();
+    }
+
     public function getLatestAllocatedApplicationStage(
         Application $application
     ): ?ApplicationStage {
