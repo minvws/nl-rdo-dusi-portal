@@ -263,6 +263,8 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Voortijdige vaststelling uitstellen',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            'target_application_review_deadline_source' => ReviewDeadlineSource::Field,
+            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 5, fieldCode: 'assignationDeadline')),
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     5,
@@ -296,6 +298,8 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Vaststelling uitstellen',
             'current_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_6_UUID,
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
+            'target_application_review_deadline_source' => ReviewDeadlineSource::Field,
+            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 6, fieldCode: 'assignationDeadline')),
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     6,

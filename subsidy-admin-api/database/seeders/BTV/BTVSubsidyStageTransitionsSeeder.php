@@ -15,6 +15,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT\SubsidyStagesSeeder;
 
 class BTVSubsidyStageTransitionsSeeder extends Seeder
@@ -262,6 +263,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Voortijdige vaststelling uitstellen',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            'target_application_review_deadline_source' => ReviewDeadlineSource::Field,
+            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 5, fieldCode: 'assignationDeadline')),
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     5,
@@ -295,6 +298,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Vaststelling uitstellen',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            'target_application_review_deadline_source' => ReviewDeadlineSource::Field,
+            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 6, fieldCode: 'assignationDeadline')),
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     6,
