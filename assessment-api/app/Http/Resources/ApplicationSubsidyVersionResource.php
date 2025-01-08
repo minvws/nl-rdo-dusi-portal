@@ -207,7 +207,7 @@ class ApplicationSubsidyVersionResource extends JsonResource
             'application' => [
                 'id' => $this->application->id,
                 'reference' => $this->application->reference,
-                'finalReviewDeadline' => $this->application->final_review_deadline,
+                'finalReviewDeadline' => $this->application->final_review_deadline?->format('Y-m-d'),
                 'status' => $this->application->status->value
             ],
         ];
