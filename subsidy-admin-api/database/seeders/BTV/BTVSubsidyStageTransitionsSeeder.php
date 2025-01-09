@@ -230,7 +230,6 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'expiration_period' => self::ASCERTAIN_TIMEMOUT_IN_DAYS
         ]);
 
-        // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_5_TO_7,
             'description' => 'Voortijdige vaststellings beoordeling voltooid',
@@ -246,7 +245,6 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'send_message' => false
         ]);
 
-        // User did not respond in time.
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_5_TO_6,
             'description' => 'Vaststellings periode voltooid',
@@ -277,7 +275,6 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'expiration_period' => self::ASCERTAIN_TIMEMOUT_IN_DAYS,
         ]);
 
-        // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_6_TO_7,
             'description' => 'Vaststellings beoordeling voltooid',
