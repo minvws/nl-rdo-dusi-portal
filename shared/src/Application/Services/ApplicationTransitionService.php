@@ -15,7 +15,7 @@ readonly class ApplicationTransitionService
 {
     public function __construct(
         private ApplicationRepository $applicationRepository,
-        private AssignationDeadlineCalculatorService $deadlineCalculatorService,
+        private ReviewDeadlineCalculatorService $deadlineCalculatorService,
     ) {
     }
 
