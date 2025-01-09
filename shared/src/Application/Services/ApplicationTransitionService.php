@@ -23,8 +23,13 @@ readonly class ApplicationTransitionService
         SubsidyStageTransition $transition,
         Application $application,
     ): Carbon | null | false {
+        // If there is no target stage, there is no deadline.
+        if ($transition->targetSubsidyStage === null) {
+            return null;
+        }
+
         // Returning to the applicant, clear review deadline.
-        if ($transition->targetSubsidyStage?->subject_role === SubjectRole::Applicant) {
+        if ($transition->targetSubsidyStage->subject_role === SubjectRole::Applicant) {
             return null;
         }
 
@@ -32,7 +37,7 @@ readonly class ApplicationTransitionService
         // because the deadline was set empty when the application was returned to the applicant.
         if (
             $transition->currentSubsidyStage->subject_role === SubjectRole::Applicant
-            && $transition->targetSubsidyStage?->subject_role === SubjectRole::Assessor
+            && $transition->targetSubsidyStage->subject_role === SubjectRole::Assessor
         ) {
             // If fixed review deadline is set, use that.
             if (isset($application->subsidyVersion->review_deadline)) {
@@ -45,7 +50,7 @@ readonly class ApplicationTransitionService
         // Update the review deadline if this is defined in the transition between assessors.
         if (
             $transition->currentSubsidyStage->subject_role === SubjectRole::Assessor
-            && $transition->targetSubsidyStage?->subject_role === SubjectRole::Assessor
+            && $transition->targetSubsidyStage->subject_role === SubjectRole::Assessor
         ) {
             return $this->calculateDeadlineBasedOnTransitionSettings($application, $transition);
         }

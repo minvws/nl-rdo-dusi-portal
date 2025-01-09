@@ -51,8 +51,10 @@ class ApplicationTransitionPreviewResource extends ApplicationSubsidyVersionReso
     private function buildTransition(): array
     {
         $newDeadline =
-            $this->applicationTransitionService->getFinalReviewDeadline($this->transition, $this->application) ?: null;
-        $hasNewDeadline = $this->application->final_review_deadline?->getTimestamp() !== $newDeadline?->getTimestamp();
+            $this->applicationTransitionService->getFinalReviewDeadline($this->transition, $this->application);
+        $hasNewDeadline =
+            $newDeadline !== false
+            && $this->application->final_review_deadline?->getTimestamp() !== $newDeadline?->getTimestamp();
 
         $result = [
             'current' => [
