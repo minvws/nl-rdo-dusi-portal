@@ -18,10 +18,12 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 class AssignationDeadline implements FieldHook
 {
     private const SUBSIDY_AIGT_V1_UUID = '2aaac0da-d265-40bb-bde6-ac20d77e6bca';
+    private const SUBSIDY_BTV_V1_UUID = '907bb399-0d19-4e1a-ac75-25a864df27c6';
 
     public function isHookActive(ApplicationStage $applicationStage): bool
     {
-        return $applicationStage->subsidyStage->subsidyVersion->id === self::SUBSIDY_AIGT_V1_UUID;
+        return $applicationStage->subsidyStage->subsidyVersion->id === self::SUBSIDY_AIGT_V1_UUID
+            || $applicationStage->subsidyStage->subsidyVersion->id === self::SUBSIDY_BTV_V1_UUID;
     }
 
     /**
