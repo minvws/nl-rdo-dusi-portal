@@ -9,7 +9,7 @@ use JsonException;
 use MinVWS\Codable\Decoding\Decoder;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Application\Services\AssignationDeadlineCalculatorService;
+use MinVWS\DUSi\Shared\Application\Services\ReviewDeadlineCalculatorService;
 use MinVWS\DUSi\Shared\Subsidy\Models\AssignationDeadlineFieldParams;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
@@ -66,9 +66,9 @@ class AssignationDeadline implements FieldHook
         return new FieldValue($fieldValue->field, $value->toDateString());
     }
 
-    private function calculatorService(): AssignationDeadlineCalculatorService
+    private function calculatorService(): ReviewDeadlineCalculatorService
     {
-        return app(AssignationDeadlineCalculatorService::class);
+        return app(ReviewDeadlineCalculatorService::class);
     }
 
     private function getFieldParams(Field $field): AssignationDeadlineFieldParams

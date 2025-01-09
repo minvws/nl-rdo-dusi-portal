@@ -19,7 +19,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 /**
  * Service to calculate the assignation deadline based on the field params.
  */
-readonly class AssignationDeadlineCalculatorService
+readonly class ReviewDeadlineCalculatorService
 {
     public function __construct(
         private ApplicationDataService $applicationDataService,
