@@ -208,8 +208,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
             'target_application_status' => ApplicationStatus::Allocated,
-            'target_application_review_deadline_source' => ReviewDeadlineSource::Now,
-            'target_application_review_deadline_additional_period' => 'P1Y',
+            'target_application_review_deadline_source' => ReviewDeadlineSource::ApplicationSubmittedAt,
+            'target_application_review_deadline_additional_period' => 'P74W',
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(
