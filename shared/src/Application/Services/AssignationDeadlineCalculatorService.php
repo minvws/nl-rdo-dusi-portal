@@ -7,11 +7,13 @@ namespace MinVWS\DUSi\Shared\Application\Services;
 use Carbon\Carbon;
 use DateInterval;
 use DateMalformedIntervalStringException;
+use DateTimeInterface;
 use Illuminate\Support\Facades\Log;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
 use MinVWS\DUSi\Shared\Subsidy\Models\AssignationDeadlineFieldParams;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 
 /**
@@ -93,5 +95,26 @@ readonly class AssignationDeadlineCalculatorService
         }
 
         return $date;
+    }
+
+    public function getSourceFieldValue(
+        Application $application,
+        ReviewDeadlineSource $source,
+        ?FieldReference $sourceFieldReference,
+    ): ?Carbon {
+        return match ($source) {
+            ReviewDeadlineSource::Now => Carbon::now(),
+            ReviewDeadlineSource::ExistingDeadline => $this->getCarbonInstance($application->final_review_deadline),
+            ReviewDeadlineSource::Field => $this->getReferencedFieldValue($application, $sourceFieldReference),
+        };
+    }
+
+    protected function getCarbonInstance(?DateTimeInterface $date): ?Carbon
+    {
+        if ($date === null) {
+            return null;
+        }
+
+        return Carbon::instance($date);
     }
 }
