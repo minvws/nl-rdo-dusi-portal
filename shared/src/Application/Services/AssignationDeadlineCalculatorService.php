@@ -106,6 +106,7 @@ readonly class AssignationDeadlineCalculatorService
             ReviewDeadlineSource::Now => Carbon::now(),
             ReviewDeadlineSource::ExistingDeadline => $this->getCarbonInstance($application->final_review_deadline),
             ReviewDeadlineSource::Field => $this->getReferencedFieldValue($application, $sourceFieldReference),
+            ReviewDeadlineSource::ApplicationSubmittedAt => $this->getCarbonInstance($application->submitted_at),
         };
     }
 
