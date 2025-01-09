@@ -9,6 +9,7 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
@@ -288,6 +289,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             title:           'Vastgesteld bedrag',
             isRequired:      false,
+            requiredCondition: new ComparisonCondition(5, 'assessment', Operator::Identical, 'Vorderen'),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -297,6 +299,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             title:           'Te vorderen bedrag',
             isRequired:      false,
+            requiredCondition: new ComparisonCondition(5, 'assessment', Operator::Identical, 'Vorderen'),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -383,6 +386,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             title:           'Vastgesteld bedrag',
             isRequired:      false,
+            requiredCondition: new ComparisonCondition(6, 'assessment', Operator::Identical, 'Vorderen'),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -392,6 +396,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             title:           'Te vorderen bedrag',
             isRequired:      false,
+            requiredCondition: new ComparisonCondition(6, 'assessment', Operator::Identical, 'Vorderen'),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -445,6 +450,10 @@ class BTVAssessmentFieldsSeeder extends Seeder
             code:            'reclaimNumber',
             title:           'Vorderingsnummer',
             isRequired:      false,
+            requiredCondition: new OrCondition([
+                new ComparisonCondition(5, 'assessment', Operator::Identical, 'Vorderen'),
+                new ComparisonCondition(6, 'assessment', Operator::Identical, 'Vorderen'),
+            ]),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
