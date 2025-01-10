@@ -266,8 +266,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             isRequired:     false,
             params:         [
                 'readonly' => true,
-                'deadlineSource' => ReviewDeadlineSource::Now,
-                'deadlineAdditionalPeriod' => 'P1Y',
+                'deadlineSource' => ReviewDeadlineSource::ExistingDeadline,
                 'deadlineOverrideFieldReference' => new FieldReference(stage: 5, fieldCode: 'assignationDeadlineOverride'),
             ],
             requiredCondition: new ComparisonCondition(5, 'assessment', Operator::Identical, 'Uitstellen'),
@@ -363,8 +362,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             isRequired:     false,
             params:         [
                 'readonly' => true,
-                'deadlineSource' => ReviewDeadlineSource::Now,
-                'deadlineAdditionalPeriod' => 'P1Y',
+                'deadlineSource' => ReviewDeadlineSource::ExistingDeadline,
                 'deadlineOverrideFieldReference' => new FieldReference(stage: 6, fieldCode: 'assignationDeadlineOverride'),
             ],
             requiredCondition: new ComparisonCondition(6, 'assessment', Operator::Identical, 'Uitstellen'),
