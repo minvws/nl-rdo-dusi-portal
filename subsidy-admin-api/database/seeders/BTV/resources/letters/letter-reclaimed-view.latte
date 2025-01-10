@@ -7,10 +7,10 @@
         {$content->stage2->amount} voor de subsidieregeling borstprothesen transvrouwen (hierna: Subsidieregeling). In mijn
         administratie is uw aanvraag bekend onder nummer: {$content->reference}.</p>
 
-    {if $content->stage5->motivation}
+    {if $content->stage5?->motivation}
         <p>{$content->stage5->motivation}</p>
         {else}
-            {if $content->stage6->motivation}
+            {if $content->stage6?->motivation}
                 <p>{$content->stage6->motivation}</p>
             {/if}
     {/if}
