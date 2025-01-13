@@ -209,7 +209,8 @@ class SubsidyStageTransitionsSeeder extends Seeder
             'target_subsidy_stage_id' => SubsidyStagesSeeder::SUBSIDY_STAGE_5_UUID,
             'target_application_status' => ApplicationStatus::Allocated,
             'target_application_review_deadline_source' => ReviewDeadlineSource::Field,
-            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 2, fieldCode: 'assignationDeadline')),
+            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 1, fieldCode: 'abroadCourseComponentStartDate')),
+            'target_application_review_deadline_additional_period' => 'P48W',
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(
