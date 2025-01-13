@@ -91,38 +91,6 @@
                 },
                 {
                     "type": "CustomControl",
-                    "scope": "#/properties/assignationDeadlineOverride",
-                    "options": {
-                        "readonly": true
-                    },
-                    "rule": {
-                        "effect": "SHOW",
-                        "condition": {
-                            "scope": "#/properties/firstAssessment",
-                            "schema": {
-                                "const": "Goedgekeurd"
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "CustomControl",
-                    "scope": "#/properties/assignationDeadline",
-                    "options": {
-                        "readonly": true
-                    },
-                    "rule": {
-                        "effect": "SHOW",
-                        "condition": {
-                            "scope": "#/properties/firstAssessment",
-                            "schema": {
-                                "const": "Goedgekeurd"
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "CustomControl",
                     "scope": "#/properties/firstAssessmentRequestedComplementReason",
                     "options": {
                         "readonly": true,
