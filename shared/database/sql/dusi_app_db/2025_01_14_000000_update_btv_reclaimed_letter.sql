@@ -8,14 +8,14 @@ SET content_html = '{layout ''letter_view_layout.latte''}
         {$content->stage2->amount} voor de subsidieregeling borstprothesen transvrouwen (hierna: Subsidieregeling). In mijn
         administratie is uw aanvraag bekend onder nummer: {$content->reference}.</p>
 
-    {var $motivation = $content->stage6?->motivation ? $content->stage6->motivation : $content->stage5?->motivation}
+    {var $motivation = isset($content->stage6?->motivation) ? $content->stage6->motivation : $content->stage5?->motivation}
     {if $motivation}
         <p>{$motivation}</p>
     {/if}
 
     <h2>Besluit</h2>
 
-    {var $newAssignationAmount = $content->stage6?->newAssignationAmount ? $content->stage6->newAssignationAmount : $content->stage5->newAssignationAmount}
+    {var $newAssignationAmount = isset($content->stage6?->newAssignationAmount) ? $content->stage6->newAssignationAmount : $content->stage5->newAssignationAmount}
     <p>Ik stel de subsidie vast op een lager bedrag dan aan u is verleend, namelijk € {formatCurrency($newAssignationAmount)}.</p>
 
     <p>Mocht u in de toekomst alsnog gebruiken willen maken van de Subsidieregeling borstprothesen transvrouwen, dan dient u
@@ -29,7 +29,7 @@ SET content_html = '{layout ''letter_view_layout.latte''}
     <p>Het verschil tussen het vastgestelde subsidiebedrag en het ontvangen voorschot bedraagt {$content->stage2->amount}. Ik vorder dit
         verschil van u terug op grond van artikel 4:57 van de Algemene wet bestuursrecht.</p>
 
-    {var $reclaimAmount = $content->stage6?->reclaimAmount ? $content->stage6->reclaimAmount : $content->stage5->reclaimAmount}
+    {var $reclaimAmount = isset($content->stage6?->reclaimAmount) ? $content->stage6->reclaimAmount : $content->stage5->reclaimAmount}
     <p>Ik verzoek u het bedrag van € {formatCurrency($reclaimAmount)} binnen zes weken na de datum van deze beschikking over te
         maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
         het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
@@ -64,14 +64,14 @@ SET content_html = '{layout ''letter_view_layout.latte''}
         {$content->stage2->amount} voor de subsidieregeling borstprothesen transvrouwen (hierna: Subsidieregeling). In mijn
         administratie is uw aanvraag bekend onder nummer: {$content->reference}.</p>
 
-    {var $motivation = $content->stage6?->motivation ? $content->stage6->motivation : $content->stage5?->motivation}
+    {var $motivation = isset($content->stage6?->motivation) ? $content->stage6->motivation : $content->stage5?->motivation}
     {if $motivation}
         <p>{$motivation}</p>
     {/if}
 
     <h2>Besluit</h2>
 
-    {var $newAssignationAmount = $content->stage6?->newAssignationAmount ? $content->stage6->newAssignationAmount : $content->stage5->newAssignationAmount}
+    {var $newAssignationAmount = isset($content->stage6?->newAssignationAmount) ? $content->stage6->newAssignationAmount : $content->stage5->newAssignationAmount}
     <p>Ik stel de subsidie vast op een lager bedrag dan aan u is verleend, namelijk € {formatCurrency($newAssignationAmount)}.</p>
 
     <p>Mocht u in de toekomst alsnog gebruiken willen maken van de Subsidieregeling borstprothesen transvrouwen, dan dient u
@@ -85,7 +85,7 @@ SET content_html = '{layout ''letter_view_layout.latte''}
     <p>Het verschil tussen het vastgestelde subsidiebedrag en het ontvangen voorschot bedraagt {$content->stage2->amount}. Ik vorder dit
         verschil van u terug op grond van artikel 4:57 van de Algemene wet bestuursrecht.</p>
 
-    {var $reclaimAmount = $content->stage6?->reclaimAmount ? $content->stage6->reclaimAmount : $content->stage5->reclaimAmount}
+    {var $reclaimAmount = isset($content->stage6?->reclaimAmount) ? $content->stage6->reclaimAmount : $content->stage5->reclaimAmount}
     <p>Ik verzoek u het bedrag van € {formatCurrency($reclaimAmount)} binnen zes weken na de datum van deze beschikking over te
         maken op bankrekeningnummer: NL55INGB0705003566 ten name van VWS — Financieel Dienstencentrum onder vermelding van
         het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
