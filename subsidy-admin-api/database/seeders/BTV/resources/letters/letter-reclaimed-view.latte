@@ -9,7 +9,7 @@
 
     {var $motivation = isset($content->stage6?->motivation) ? $content->stage6->motivation : $content->stage5?->motivation}
     {if $motivation}
-        <p>{$motivation}</p>
+        <p>{$motivation|breakLines}</p>
     {/if}
 
     <h2>Besluit</h2>
