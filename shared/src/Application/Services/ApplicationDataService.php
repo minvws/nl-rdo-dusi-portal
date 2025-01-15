@@ -178,7 +178,7 @@ readonly class ApplicationDataService
             subsidyStage: $subsidyStage,
         );
         if ($applicationStage === null) {
-            throw new RuntimeException('Application data requested for field without a application stage');
+            throw new RuntimeException('Application data requested for field without an application stage');
         }
 
         return $this->getApplicationStageDataForField($applicationStage, $field);

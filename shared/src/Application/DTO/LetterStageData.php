@@ -20,4 +20,9 @@ class LetterStageData extends Collection
     {
         return $this->get($key)?->answerData;
     }
+
+    public function __isset(string $key): bool
+    {
+        return $this->has($key);
+    }
 }
