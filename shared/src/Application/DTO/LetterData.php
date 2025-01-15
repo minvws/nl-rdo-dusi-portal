@@ -43,6 +43,11 @@ readonly class LetterData
         };
     }
 
+    public function __isset(string $key): bool
+    {
+        return $this->__get($key) !== null;
+    }
+
     private function getStylesheetPath(): string
     {
         $manifestContent = file_get_contents(self::PUBLIC_PATH . '/build/manifest.json');
