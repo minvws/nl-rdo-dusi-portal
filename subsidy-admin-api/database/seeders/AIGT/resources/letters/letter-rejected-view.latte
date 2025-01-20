@@ -10,25 +10,25 @@
     <h2>Besluit</h2>
     <p>Uw subsidieaanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
 
+    <h2>Motivering bij het besluit</h2>
     {if $content->stage2->firstAssessmentRejectedNote}
-        <h2>Motivering bij het besluit</h2>
-        <p>Uw aanvraag is beoordeeld op grond van:</p>
-        <ul>
-            <li>Kaderregeling subsidies OCW, SZW en VWS;</li>
-            <li>Subsidieregeling opleidingsactiviteiten Arts Internationale Gezondheid en Tropengeneeskunde 2021-2026;</li>
-            <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
-            <li>Profielregister RGS en opleidingsregister OIGT.</li>
-        </ul>
         <p>Uw aanvraag voldoet niet aan de volgende voorwaarde(n):</p>
         <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
     {/if}
+    <p>Uw aanvraag is beoordeeld op grond van:</p>
+    <ul>
+        <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
+        <li>Kaderregeling subsidies OCW, SZW en VWS;</li>
+        <li>Subsidieregeling opleidingsactiviteiten Arts Internationale Gezondheid en Tropengeneeskunde 2021-2026;</li>
+        <li>Profielregister RGS en opleidingsregister OIGT.</li>
+    </ul>
 {/block}
 
 {block signature}
     <p>
         Met vriendelijke groet,<br/>
         <br/>
-        de Minister voor Medische Zorg,<br/>
+        de minister van Volksgezondheid, Welzijn en Sport,<br/>
         namens deze,<br/>
         het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
         <br/>
