@@ -15,6 +15,7 @@ use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\EvaluationTrigger;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\AIGT\SubsidyStagesSeeder;
 
 class BTVSubsidyStageTransitionsSeeder extends Seeder
@@ -207,8 +208,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_4_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
             'target_application_status' => ApplicationStatus::Allocated,
-            'target_application_review_deadline_source' => ReviewDeadlineSource::Now,
-            'target_application_review_deadline_additional_period' => 'P1Y',
+            'target_application_review_deadline_source' => ReviewDeadlineSource::ApplicationSubmittedAt,
+            'target_application_review_deadline_additional_period' => 'P74W',
             'condition' => $encoder->encode(
                 new AndCondition([
                     new ComparisonCondition(
@@ -229,7 +230,6 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'expiration_period' => self::ASCERTAIN_TIMEMOUT_IN_DAYS
         ]);
 
-        // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_5_TO_7,
             'description' => 'Voortijdige vaststellings beoordeling voltooid',
@@ -245,7 +245,6 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'send_message' => false
         ]);
 
-        // User did not respond in time.
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_5_TO_6,
             'description' => 'Vaststellings periode voltooid',
@@ -262,6 +261,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Voortijdige vaststelling uitstellen',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            'target_application_review_deadline_source' => ReviewDeadlineSource::Field,
+            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 5, fieldCode: 'assignationDeadline')),
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     5,
@@ -274,7 +275,6 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'expiration_period' => self::ASCERTAIN_TIMEMOUT_IN_DAYS,
         ]);
 
-        // Eerste beoordeling = Goedgekeurd of Afgekeurd, aanvraag wordt doorgezet voor de tweede beoordeling
         DB::table('subsidy_stage_transitions')->insert([
             'id' => self::TRANSITION_STAGE_6_TO_7,
             'description' => 'Vaststellings beoordeling voltooid',
@@ -295,6 +295,8 @@ class BTVSubsidyStageTransitionsSeeder extends Seeder
             'description' => 'Vaststelling uitstellen',
             'current_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
             'target_subsidy_stage_id' => BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            'target_application_review_deadline_source' => ReviewDeadlineSource::Field,
+            'target_application_review_deadline_source_field' => $encoder->encode(new FieldReference(stage: 6, fieldCode: 'assignationDeadline')),
             'condition' => $encoder->encode(
                 new ComparisonCondition(
                     6,

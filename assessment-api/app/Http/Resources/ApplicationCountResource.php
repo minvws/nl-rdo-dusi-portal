@@ -7,18 +7,7 @@ namespace MinVWS\DUSi\Assessment\API\Http\Resources;
 use MinVWS\DUSi\Assessment\API\Models\Enums\ApplicationFilterType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Database\Eloquent\Collection;
-use DateTime;
-use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 
-/**
- * @property string $id
- * @property string $subsidy_version_id
- * @property string $application_title
- * @property DateTime $updated_at
- * @property DateTime $final_review_deadline
- * @property Collection<ApplicationStage> $applicationStages
- */
 class ApplicationCountResource extends JsonResource
 {
     /**

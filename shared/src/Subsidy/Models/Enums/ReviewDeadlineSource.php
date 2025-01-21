@@ -9,4 +9,5 @@ enum ReviewDeadlineSource: string
     case Field = 'field';
     case ExistingDeadline = 'existing_deadline';
     case Now = 'now';
+    case ApplicationSubmittedAt = 'application_submitted_at';
 }

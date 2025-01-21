@@ -9,7 +9,11 @@ namespace MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\BTV;
 use Illuminate\Database\Seeder;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\ComparisonCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Condition\Operator;
+use MinVWS\DUSi\Shared\Subsidy\Models\Condition\OrCondition;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\DataRetentionPeriod;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\FieldSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
+use MinVWS\DUSi\Shared\Subsidy\Models\FieldReference;
 use MinVWS\DUSi\Subsidy\Admin\API\Database\Seeders\Traits\CreateField;
 
 class BTVAssessmentFieldsSeeder extends Seeder
@@ -247,6 +251,29 @@ class BTVAssessmentFieldsSeeder extends Seeder
             retentionPeriod: DataRetentionPeriod::Short
         );
 
+        $this->createDateField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code:           'assignationDeadlineOverride',
+            title:          'Overschrijf vaststellings deadline',
+            isRequired:     false,
+            excludeFromCloneData: true,
+        );
+
+        $this->createDateField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
+            code:           'assignationDeadline',
+            title:          'Vaststellings deadline',
+            isRequired:     false,
+            params:         [
+                'readonly' => true,
+                'deadlineSource' => ReviewDeadlineSource::ExistingDeadline,
+                'deadlineOverrideFieldReference' => new FieldReference(stage: 5, fieldCode: 'assignationDeadlineOverride'),
+            ],
+            requiredCondition: new ComparisonCondition(5, 'assessment', Operator::Identical, 'Uitstellen'),
+            source: FieldSource::Calculated,
+            excludeFromCloneData: true,
+        );
+
         $this->createTextField(
             subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_5_UUID,
             code:            'motivation',
@@ -261,6 +288,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             title:           'Vastgesteld bedrag',
             isRequired:      false,
+            requiredCondition: new ComparisonCondition(5, 'assessment', Operator::Identical, 'Vorderen'),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -270,6 +298,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             title:           'Te vorderen bedrag',
             isRequired:      false,
+            requiredCondition: new ComparisonCondition(5, 'assessment', Operator::Identical, 'Vorderen'),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -318,6 +347,29 @@ class BTVAssessmentFieldsSeeder extends Seeder
             retentionPeriod: DataRetentionPeriod::Short
         );
 
+        $this->createDateField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code:           'assignationDeadlineOverride',
+            title:          'Overschrijf vaststellings deadline',
+            isRequired:     false,
+            excludeFromCloneData: true,
+        );
+
+        $this->createDateField(
+            subsidyStageId: BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
+            code:           'assignationDeadline',
+            title:          'Vaststellings deadline',
+            isRequired:     false,
+            params:         [
+                'readonly' => true,
+                'deadlineSource' => ReviewDeadlineSource::ExistingDeadline,
+                'deadlineOverrideFieldReference' => new FieldReference(stage: 6, fieldCode: 'assignationDeadlineOverride'),
+            ],
+            requiredCondition: new ComparisonCondition(6, 'assessment', Operator::Identical, 'Uitstellen'),
+            source: FieldSource::Calculated,
+            excludeFromCloneData: true,
+        );
+
         $this->createTextField(
             subsidyStageId:  BTVSubsidyStagesSeeder::BTV_STAGE_6_UUID,
             code:            'motivation',
@@ -332,6 +384,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             title:           'Vastgesteld bedrag',
             isRequired:      false,
+            requiredCondition: new ComparisonCondition(6, 'assessment', Operator::Identical, 'Vorderen'),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -341,6 +394,7 @@ class BTVAssessmentFieldsSeeder extends Seeder
             inputMode:      'float',
             title:           'Te vorderen bedrag',
             isRequired:      false,
+            requiredCondition: new ComparisonCondition(6, 'assessment', Operator::Identical, 'Vorderen'),
             retentionPeriod: DataRetentionPeriod::Short
         );
 
@@ -394,6 +448,10 @@ class BTVAssessmentFieldsSeeder extends Seeder
             code:            'reclaimNumber',
             title:           'Vorderingsnummer',
             isRequired:      false,
+            requiredCondition: new OrCondition([
+                new ComparisonCondition(5, 'assessment', Operator::Identical, 'Vorderen'),
+                new ComparisonCondition(6, 'assessment', Operator::Identical, 'Vorderen'),
+            ]),
             retentionPeriod: DataRetentionPeriod::Short
         );
 

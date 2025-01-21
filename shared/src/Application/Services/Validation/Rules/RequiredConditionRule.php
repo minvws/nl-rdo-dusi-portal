@@ -25,11 +25,14 @@ class RequiredConditionRule implements DataAwareRule, ImplicitValidationRule
     }
 
     /**
+     * If the value is not empty or numeric, the field has a value and is valid for this rule.
+     * With the numeric check we also allow for 0 as a valid value.
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!empty($value)) {
+        if (!empty($value) || is_numeric($value)) {
             return;
         }
 

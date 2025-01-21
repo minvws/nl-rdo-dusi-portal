@@ -8,15 +8,14 @@ use Carbon\Carbon;
 use DateInterval;
 use MinVWS\DUSi\Shared\Application\Models\Application;
 use MinVWS\DUSi\Shared\Application\Repositories\ApplicationRepository;
-use MinVWS\DUSi\Shared\Subsidy\Models\Enums\ReviewDeadlineSource;
 use MinVWS\DUSi\Shared\Subsidy\Models\Enums\SubjectRole;
 use MinVWS\DUSi\Shared\Subsidy\Models\SubsidyStageTransition;
 
 readonly class ApplicationTransitionService
 {
     public function __construct(
-        private ApplicationDataService $applicationDataService,
         private ApplicationRepository $applicationRepository,
+        private ReviewDeadlineCalculatorService $deadlineCalculatorService,
     ) {
     }
 
@@ -24,8 +23,13 @@ readonly class ApplicationTransitionService
         SubsidyStageTransition $transition,
         Application $application,
     ): Carbon | null | false {
+        // If there is no target stage, there is no deadline.
+        if ($transition->targetSubsidyStage === null) {
+            return null;
+        }
+
         // Returning to the applicant, clear review deadline.
-        if ($transition->targetSubsidyStage?->subject_role === SubjectRole::Applicant) {
+        if ($transition->targetSubsidyStage->subject_role === SubjectRole::Applicant) {
             return null;
         }
 
@@ -33,7 +37,7 @@ readonly class ApplicationTransitionService
         // because the deadline was set empty when the application was returned to the applicant.
         if (
             $transition->currentSubsidyStage->subject_role === SubjectRole::Applicant
-            && $transition->targetSubsidyStage?->subject_role === SubjectRole::Assessor
+            && $transition->targetSubsidyStage->subject_role === SubjectRole::Assessor
         ) {
             // If fixed review deadline is set, use that.
             if (isset($application->subsidyVersion->review_deadline)) {
@@ -46,59 +50,12 @@ readonly class ApplicationTransitionService
         // Update the review deadline if this is defined in the transition between assessors.
         if (
             $transition->currentSubsidyStage->subject_role === SubjectRole::Assessor
-            && $transition->targetSubsidyStage?->subject_role === SubjectRole::Assessor
+            && $transition->targetSubsidyStage->subject_role === SubjectRole::Assessor
         ) {
             return $this->calculateDeadlineBasedOnTransitionSettings($application, $transition);
         }
 
         return false;
-    }
-
-    private function getReviewDeadlineSourceValue(
-        SubsidyStageTransition $transition,
-        Application $application
-    ): Carbon | null {
-        $reviewDeadlineSource = $transition->target_application_review_deadline_source;
-        if ($reviewDeadlineSource === ReviewDeadlineSource::Now) {
-            return Carbon::now();
-        }
-
-        if ($reviewDeadlineSource === ReviewDeadlineSource::ExistingDeadline) {
-            $reviewDeadline = $application->final_review_deadline;
-            if ($reviewDeadline === null) {
-                return null;
-            }
-
-            return Carbon::instance($reviewDeadline);
-        }
-
-        if ($reviewDeadlineSource === ReviewDeadlineSource::Field) {
-            return $this->getReviewDeadlineSourceFieldValue($transition, $application);
-        }
-
-        return null;
-    }
-
-    private function getReviewDeadlineSourceFieldValue(
-        SubsidyStageTransition $transition,
-        Application $application
-    ): ?Carbon {
-        $field = $transition->target_application_review_deadline_source_field;
-        if ($field === null) {
-            return null;
-        }
-
-        $data = $this->applicationDataService->getApplicationStageDataForFieldByFieldReference($application, $field);
-        if (!is_string($data)) {
-            return null;
-        }
-
-        $date = Carbon::createFromFormat("Y-m-d", $data);
-        if ($date === false) {
-            return null;
-        }
-
-        return $date->endOfDay()->floorSecond();
     }
 
     private function calculateDeadlineBasedOnApplicantPeriod(
@@ -140,7 +97,11 @@ readonly class ApplicationTransitionService
         SubsidyStageTransition $transition
     ): Carbon|false {
         // Get the source review deadline.
-        $deadlineAssignation = $this->getReviewDeadlineSourceValue($transition, $application);
+        $deadlineAssignation = $this->deadlineCalculatorService->getSourceFieldValue(
+            application: $application,
+            source: $transition->target_application_review_deadline_source,
+            sourceFieldReference: $transition->target_application_review_deadline_source_field,
+        );
         if ($deadlineAssignation === null) {
             return false;
         }

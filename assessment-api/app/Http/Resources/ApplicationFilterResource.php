@@ -21,7 +21,7 @@ use MinVWS\DUSi\Shared\User\Models\User;
  * @property string $subsidy_version_id
  * @property string $application_title
  * @property DateTime $updated_at
- * @property DateTime $final_review_deadline
+ * @property ?DateTime $final_review_deadline
  * @property SubsidyVersion $subsidyVersion
  * @property ApplicationStage|null $currentApplicationStage
  * @property Collection<ApplicationStage> $applicationStages
@@ -57,7 +57,7 @@ class ApplicationFilterResource extends JsonResource
             'subsidy' => $this->subsidyVersion->subsidy->code,
             'status' => $this->status->value,
             'subsidy_stage_title' => $this->currentApplicationStage->subsidyStage->title ?? 'Afgerond',
-            'final_review_deadline' => $this->final_review_deadline,
+            'final_review_deadline' => $this->final_review_deadline?->format('Y-m-d'),
             'updated_at' => $this->updated_at,
             'assessor' => null,
             'actions' => $actions

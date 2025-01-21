@@ -31,6 +31,38 @@
             }
         },
         {
+            "type": "CustomControl",
+            "scope": "#/properties/assignationDeadlineOverride",
+            "options": {
+                "readonly": true
+            },
+            "rule": {
+                "effect": "SHOW",
+                "condition": {
+                    "scope": "#/properties/assessment",
+                    "schema": {
+                        "const": "Uitstellen"
+                    }
+                }
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/assignationDeadline",
+            "options": {
+                "readonly": true
+            },
+            "rule": {
+                "effect": "SHOW",
+                "condition": {
+                    "scope": "#/properties/assessment",
+                    "schema": {
+                        "const": "Uitstellen"
+                    }
+                }
+            }
+        },
+        {
             "type": "FormResultsTable",
             "options": {
                 "fields": {

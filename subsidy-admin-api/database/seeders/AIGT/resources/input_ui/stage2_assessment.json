@@ -100,46 +100,6 @@
         },
         {
             "type": "Group",
-            "label": "Deadline",
-            "elements": [
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/assignationDeadlineOverride",
-                            "options": {
-                                "placeholder": "",
-                                "remoteAction": ["onBlur"]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "CustomControl",
-                            "scope": "#/properties/assignationDeadline",
-                            "options": {
-                                "readonly": true
-                            }
-                        }
-                    ]
-                }
-            ],
-            "rule": {
-                "effect": "SHOW",
-                "condition": {
-                    "scope": "#/properties/firstAssessment",
-                    "schema": {
-                        "const": "Goedgekeurd"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Group",
             "label": "Toelichting",
             "elements": [
                 {

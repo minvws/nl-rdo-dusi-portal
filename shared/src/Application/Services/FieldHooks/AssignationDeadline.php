@@ -9,17 +9,19 @@ use JsonException;
 use MinVWS\Codable\Decoding\Decoder;
 use MinVWS\DUSi\Shared\Application\Models\ApplicationStage;
 use MinVWS\DUSi\Shared\Application\Models\Submission\FieldValue;
-use MinVWS\DUSi\Shared\Application\Services\AssignationDeadlineCalculatorService;
+use MinVWS\DUSi\Shared\Application\Services\ReviewDeadlineCalculatorService;
 use MinVWS\DUSi\Shared\Subsidy\Models\AssignationDeadlineFieldParams;
 use MinVWS\DUSi\Shared\Subsidy\Models\Field;
 
 class AssignationDeadline implements FieldHook
 {
     private const SUBSIDY_AIGT_V1_UUID = '2aaac0da-d265-40bb-bde6-ac20d77e6bca';
+    private const SUBSIDY_BTV_V1_UUID = '907bb399-0d19-4e1a-ac75-25a864df27c6';
 
     public function isHookActive(ApplicationStage $applicationStage): bool
     {
-        return $applicationStage->subsidyStage->subsidyVersion->id === self::SUBSIDY_AIGT_V1_UUID;
+        return $applicationStage->subsidyStage->subsidyVersion->id === self::SUBSIDY_AIGT_V1_UUID
+            || $applicationStage->subsidyStage->subsidyVersion->id === self::SUBSIDY_BTV_V1_UUID;
     }
 
     /**
@@ -32,15 +34,24 @@ class AssignationDeadline implements FieldHook
         $fieldParams = $this->getFieldParams($fieldValue->field);
 
         // Use the override field value if it is set
-        $overrideFieldValue = $calculatorService->getOverrideFieldValue($fieldParams, $fieldValues, $applicationStage);
+        $overrideFieldValue = $calculatorService->getOverrideFieldValue(
+            fieldParams: $fieldParams,
+            fieldValues: $fieldValues,
+            applicationStage: $applicationStage,
+        );
         if ($overrideFieldValue !== null) {
             return new FieldValue($fieldValue->field, $overrideFieldValue);
         }
 
+        if ($fieldParams->deadlineSource === null) {
+            return new FieldValue($fieldValue->field, null);
+        }
+
         // Get the source field value
-        $value = $calculatorService->getReferencedFieldValue(
-            $applicationStage->application,
-            $fieldParams->deadlineSourceFieldReference
+        $value = $calculatorService->getSourceFieldValue(
+            application: $applicationStage->application,
+            source: $fieldParams->deadlineSource,
+            sourceFieldReference: $fieldParams->deadlineSourceFieldReference,
         );
         if ($value === null) {
             return new FieldValue($fieldValue->field, null);
@@ -55,9 +66,9 @@ class AssignationDeadline implements FieldHook
         return new FieldValue($fieldValue->field, $value->toDateString());
     }
 
-    private function calculatorService(): AssignationDeadlineCalculatorService
+    private function calculatorService(): ReviewDeadlineCalculatorService
     {
-        return app(AssignationDeadlineCalculatorService::class);
+        return app(ReviewDeadlineCalculatorService::class);
     }
 
     private function getFieldParams(Field $field): AssignationDeadlineFieldParams
