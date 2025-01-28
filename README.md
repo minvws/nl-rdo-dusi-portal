@@ -110,3 +110,7 @@ sure the commands are run with the correct environment setup.
   is missing a variable used in the docker(-compose) file.
 
 [laravel-docs]: https://laravel.com/docs/10.x
+
+## License
+
+This repository follows the [REUSE Specification v3.3](https://reuse.software/spec-3.3/). Please see [LICENSE.md](./LICENSE.md), [REUSE.toml](./REUSE.toml), [LICENSES/](./LICENSES/), and the individual `*.license` files (if any).
