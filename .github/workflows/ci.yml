@@ -55,7 +55,7 @@ jobs:
           php-version: ${{ env.PHP_VERSION }}
           extensions: zip, pcov, xdebug, pgsql
           coverage: pcov
-          tools: cs2pr, vimeo/psalm
+          tools: cs2pr
       
       - name: Copy .env
         if: ${{ matrix.directory != 'shared' && matrix.directory != 'bridge' }}
@@ -88,7 +88,7 @@ jobs:
 
       - name: Static analysis with Psalm
         if: ${{ matrix.directory != 'shared' && matrix.directory != 'bridge' }}
-        run: psalm --output-format=github
+        run: vendor/bin/psalm --output-format=github
       
       - name: Coding style PSR12 Check
         run: vendor/bin/phpcs -q --report=checkstyle | cs2pr
