@@ -1,0 +1,33 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/firstAssessorMotivatedValid",
+            "options": {
+                "readonly": true
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/secondAssessment",
+            "options": {
+                "readonly": true,
+                "format": "radio"
+            }
+        },
+        {
+            "type": "FormResultsTable",
+            "options": {
+                "fields": {
+                    "Aanvullende informatie behandelaar": "{secondAssessmentAdditionalDocuments}",
+                    "Interne notitie": "{secondAssessmentInternalNote}"
+                },
+                "showEmptyFields": true
+            }
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+    php:
+        build: ./
+        volumes:
+          - ./:/src
+        working_dir: /src
+        profiles:
+            - donotstart
+
+    rabbitmq:
+        image: rabbitmq:3.12-management
+        volumes:
+            - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+            - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json

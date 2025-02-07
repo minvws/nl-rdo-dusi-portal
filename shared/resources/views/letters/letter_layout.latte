@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <title>{$content->subsidyTitle}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="{$content->stylesheetPath}">
+</head>
+<body>
+
+{block header}
+<header>
+    <section id="logo">
+        <img id="ribbon" style="top: -14.5mm;" src="{$content->logoStream|dataStream}"/>
+        <span id="ministry">Ministerie van Volksgezondheid, Welzijn en Sport</span>
+    </section>
+</header>
+{/block}
+
+<aside id="right">
+    {block sidebar}
+        <h3>Dienst Uitvoering Subsidies aan Instellingen (DUS-I)</h3>
+        <p>&nbsp;</p>
+        <h4>Bezoekadres:</h4>
+        <p>
+            Rijnstraat 50<br>
+            2515 XP DEN HAAG
+        </p>
+
+        <h4>Contact</h4>
+        <p>
+            {$content->contactEmailAddress}<br>
+            070 340 5566<br>
+            <em>Bereikbaar op werkdagen<br>van 9.00 tot 16.00 uur</em>
+        </p>
+
+        <p>www.dus-i.nl</p>
+
+        {if $content->reference}
+            <h4>Ons kenmerk</h4>
+            <p>{$content->reference}</p>
+        {/if}
+    {/block}
+</aside>
+
+<article>
+    <p class="small"><span aria-hidden="true">&gt; </span>Retouradres Postbus 16006 2500 BA Den Haag</p>
+
+    <p>
+        {$content->stage1->firstName} {$content->stage1->infix} {$content->stage1->lastName}<br />
+        {$content->stage1->street} {$content->stage1->houseNumber}{$content->stage1->houseNumberSuffix}<br />
+        {$content->stage1->postalCode}&nbsp;&nbsp;{$content->stage1->city}
+    </p>
+    <p>&nbsp;</p>
+
+    <p>
+        Datum: {$content->createdAt|date:"d-m-Y"}<br />
+        {block concern}{/block}
+    </p>
+    <p>&nbsp;</p>
+
+    {block content}{/block}
+
+    {import 'blocks/questions.latte'}
+    {block questions}
+        {include questionsTemplate}
+    {/block}
+
+    {block signature}
+        <p>
+            Met vriendelijke groet,<br/>
+            <br/>
+            Dienst Uitvoering Subsidies aan Instellingen<br/>
+        </p>
+    {/block}
+</article>
+
+{import 'blocks/objection_footer.latte'}
+{block objectionFooter}
+    <footer>
+        {include objectionFooterTemplate}
+    </footer>
+{/block}
+
+</body>
+
+</html>

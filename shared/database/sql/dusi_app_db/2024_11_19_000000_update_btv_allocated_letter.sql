@@ -1,0 +1,268 @@
+UPDATE public.subsidy_stage_transition_messages
+SET content_html = '{layout ''letter_view_layout.latte''}
+
+{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling ''{$content->subsidyTitle}'' met referentienummer {$content->reference}.
+        Met deze brief beslis ik op uw aanvraag.
+    </p>
+
+    <h2>Besluit</h2>
+    <p>
+        Uw subsidieaanvraag borstprothesen transvrouwen is toegewezen. De hoogte van de subsidie is
+        {$content->stage2->amount}.
+    </p>
+    <p>
+        De subsidie is gebaseerd op artikel 4 van de subsidieregeling borstprothesen transvrouwen. De
+        subsidieregeling heeft als doel dat man-vrouw transgenders met genderdysforie, die zich in een medisch
+        transitietraject bevinden, door een vergroting van de borsten een vrouwelijk(er) profiel kunnen krijgen.
+    </p>
+    <p>
+       Volgens artikel 8 van de subsidieregeling ontvangt u een voorschot van 100% van het subsidiebedrag. De
+       operatie dient in beginsel binnen een jaar na de aanvraag van de subsidie verricht te zijn. Als dit door
+       omstandigheden niet mogelijk is gebleken, kan ontheffing of vrijstelling van deze termijn verleend worden.
+    </p>
+
+    <p>De hoogte van de subsidie is bepaald op basis van artikel 5 van de subsidieregeling.</p>
+
+    {if $content->stage2->firstAssessmentApprovedNote}
+        <h2>Motivering bij het besluit</h2>
+        <p>{$content->stage2->firstAssessmentApprovedNote|breakLines}</p>
+    {/if}
+
+    <h2>Waar moet u aan voldoen?</h2>
+    <p>U moet voldoen aan de verplichtingen in de wet- en regelgeving die van toepassing zijn op de subsidie en aan al
+        hetgeen in deze beschikking is opgenomen.</p>
+
+    <p><u>Wet- en regelgeving</u><br/>
+        De volgende regelgeving is in ieder geval van toepassing op de subsidie:
+    </p>
+    <ul>
+        <li>Kaderwet VWS-subsidies</li>
+        <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
+        <li>Subsidieregeling borstprothesen transvrouwen</li>
+    </ul>
+
+    <p>De regelgeving kunt u raadplegen via <a href="https://wetten.overheid.nl" target="_blank">wetten.overheid.nl</a>.</p>
+
+    <p>
+        U bent zelf verantwoordelijk voor de naleving hiervan en de eventuele gevolgen
+        bij niet-naleving.
+    </p>
+
+    <p>Zonder volledig te zijn breng ik in het bijzonder de volgende bepalingen uit de
+        wet- en regelgeving onder uw aandacht.</p>
+
+    <p>
+        <b>Plastisch-chirurgische behandeling</b><br/>
+        Deze subsidie wordt verstrekt ten behoeve van een behandeling van plastisch-chirurgische aard - die strekt tot
+        borstconstructie bij een transvrouw en die voldoet aan de stand van de wetenschap en praktijk - en de medisch
+        noodzakelijke kosten die samenhangen met deze operatie. De subsidie mag niet worden gebruikt voor de autologe
+        vettransplantatie (AFT) – ook wel ‘lipofilling’ genoemd – ten behoeve van de (re)constructie van een volledige
+        borst.
+    </p>
+
+    <p>
+        <u>Meldingsplicht</u><br/>
+        Na uw aanvraag kunnen zich verschillende situaties voordoen die u zo snel mogelijk aan ons moet melden:
+        <ul>
+            <li>De behandeling gaat niet door. In dit geval moet u de ontvangen subsidie terugbetalen.</li>
+            <li>De behandeling wordt uitgesteld. Vindt de behandeling niet binnen 1 jaar plaats? Dan kunt u een ontheffing van deze termijn aanvragen. Doet u dit niet? Dan moet u de ontvangen subsidie terugbetalen. Wel kunt u daarna een nieuwe aanvraag doen.</li>
+            <li>Er verandert iets aan uw situatie wat gevolgen kan hebben voor de hoogte van de subsidie. In dit geval kan de subsidie lager of hoger uitvallen. Ook in dit geval moet u dit aan ons melden, zodat we samen kunnen kijken naar uw situatie.</li>
+        </ul>
+    </p>
+
+    <p>
+        Uw melding doet u via het contactformulier op dus-i.nl of schriftelijk. Vermeld in de melding uw
+        zaaknummer {$content->reference} en leg duidelijk uit wat er is veranderd aan uw situatie.
+        Heeft u documenten die relevant zijn voor uw melding? Stuur deze dan mee.
+    </p>
+
+    <p><u>Wat als u zich niet aan de voorschriften houdt?</u>
+        Het niet voldoen aan de verplichtingen die aan de subsidie verbonden zijn of het
+        niet (geheel) verrichten van de activiteiten kan tot gevolg hebben dat ik de
+        subsidie geheel of gedeeltelijk terugvorder.
+    </p>
+    <p>
+        Ik wijs u er verder op dat een registratie van (ernstige) onregelmatigheden bij
+        subsidies wordt bijgehouden met het oog op het tegengaan van misbruik van
+        subsidie.
+    </p>
+
+    <h2>Wanneer ontvangt u de subsidie?</h2>
+    <p>
+        U ontvangt een voorschot van 100% van het subsidiebedrag.<br>
+        Ik streef ernaar dit binnen 10 werkdagen naar u over te maken onder vermelding van het
+        referentienummer {$content->reference}.
+    </p>
+
+    <h2>Wanneer wordt de subsidie vastgesteld?</h2>
+    <p>
+        Op basis van artikel 10 van de subsidieregeling neemt de minister binnen 22 weken na afloop van de datum waarop
+        de operatie waarvoor de subsidie is verleend, moet zijn verricht, ambtshalve een besluit over de vaststelling
+        van de subsidie. Wij controleren of de borstoperatie is uitgevoerd. Dit doen we bij iedereen die via deze regeling
+        subsidie ontvangt. Zo controleren we of de ontvangen subsidie is gebruikt waarvoor deze is bedoeld. Bij de controle
+        vragen we u de factuur van de borstoperatie naar ons te sturen. Het kan gebeuren dat we vragen hebben over de factuur.
+        Als dat zo is kunnen we u vragen aanvullende documenten te sturen, zoals een bankafschrift of een verklaring van
+        de kliniek. Daarom is het advies om uw factuur goed te bewaren.
+    </p>
+
+{/block}
+
+{block signature}
+    <p>
+        Met vriendelijke groet,<br/>
+        <br/>
+        de minister van Volksgezondheid, Welzijn en Sport,<br/>
+        namens deze,<br/>
+        de directeur Curatieve Zorg,<br/>
+        voor deze,<br/>
+        het afdelingshoofd Dienst Uitvoering Subsidies aan Instellingen,<br/>
+        <br/>
+        <img class="signature" alt="handtekening" src="{$content->getSignature(''vws_dusi_signature.jpg'')|dataStream}" />
+        <br/>
+        P.A. van Hecking Colenbrander
+    </p>
+{/block}
+',
+    content_pdf = '{layout ''letter_layout.latte''}
+
+{block concern}
+    Betreft: Verlening aanvraag ''{$content->subsidyTitle}''
+{/block}
+
+{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling ''{$content->subsidyTitle}'' met referentienummer {$content->reference}.
+        Met deze brief beslis ik op uw aanvraag.
+    </p>
+
+    <h2>Besluit</h2>
+    <p>
+        Uw subsidieaanvraag borstprothesen transvrouwen is toegewezen. De hoogte van de subsidie is
+        {$content->stage2->amount}.
+    </p>
+    <p>
+        De subsidie is gebaseerd op artikel 4 van de subsidieregeling borstprothesen transvrouwen. De
+        subsidieregeling heeft als doel dat man-vrouw transgenders met genderdysforie, die zich in een medisch
+        transitietraject bevinden, door een vergroting van de borsten een vrouwelijk(er) profiel kunnen krijgen.
+    </p>
+    <p>
+       Volgens artikel 8 van de subsidieregeling ontvangt u een voorschot van 100% van het subsidiebedrag. De
+       operatie dient in beginsel binnen een jaar na de aanvraag van de subsidie verricht te zijn. Als dit door
+       omstandigheden niet mogelijk is gebleken, kan ontheffing of vrijstelling van deze termijn verleend worden.
+    </p>
+
+    <p>De hoogte van de subsidie is bepaald op basis van artikel 5 van de subsidieregeling.</p>
+
+    {if $content->stage2->firstAssessmentApprovedNote}
+        <h2>Motivering bij het besluit</h2>
+        <p>{$content->stage2->firstAssessmentApprovedNote|breakLines}</p>
+    {/if}
+
+    <h2>Waar moet u aan voldoen?</h2>
+    <p>U moet voldoen aan de verplichtingen in de wet- en regelgeving die van toepassing zijn op de subsidie en aan al
+        hetgeen in deze beschikking is opgenomen.</p>
+
+    <p><u>Wet- en regelgeving</u><br/>
+        De volgende regelgeving is in ieder geval van toepassing op de subsidie:
+    </p>
+    <ul>
+        <li>Kaderwet VWS-subsidies</li>
+        <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
+        <li>Subsidieregeling borstprothesen transvrouwen</li>
+    </ul>
+
+    <p>De regelgeving kunt u raadplegen via <a href="https://wetten.overheid.nl" target="_blank">wetten.overheid.nl</a>.</p>
+
+    <p>
+        U bent zelf verantwoordelijk voor de naleving hiervan en de eventuele gevolgen
+        bij niet-naleving.
+    </p>
+
+    <p>Zonder volledig te zijn breng ik in het bijzonder de volgende bepalingen uit de
+        wet- en regelgeving onder uw aandacht.</p>
+
+    <p>
+        <b>Plastisch-chirurgische behandeling</b><br/>
+        Deze subsidie wordt verstrekt ten behoeve van een behandeling van plastisch-chirurgische aard - die strekt tot
+        borstconstructie bij een transvrouw en die voldoet aan de stand van de wetenschap en praktijk - en de medisch
+        noodzakelijke kosten die samenhangen met deze operatie. De subsidie mag niet worden gebruikt voor de autologe
+        vettransplantatie (AFT) – ook wel ‘lipofilling’ genoemd – ten behoeve van de (re)constructie van een volledige
+        borst.
+    </p>
+
+    <p>
+        <u>Meldingsplicht</u><br/>
+        Na uw aanvraag kunnen zich verschillende situaties voordoen die u zo snel mogelijk aan ons moet melden:
+        <ul>
+            <li>De behandeling gaat niet door. In dit geval moet u de ontvangen subsidie terugbetalen.</li>
+            <li>De behandeling wordt uitgesteld. Vindt de behandeling niet binnen 1 jaar plaats? Dan kunt u een ontheffing van deze termijn aanvragen. Doet u dit niet? Dan moet u de ontvangen subsidie terugbetalen. Wel kunt u daarna een nieuwe aanvraag doen.</li>
+            <li>Er verandert iets aan uw situatie wat gevolgen kan hebben voor de hoogte van de subsidie. In dit geval kan de subsidie lager of hoger uitvallen. Ook in dit geval moet u dit aan ons melden, zodat we samen kunnen kijken naar uw situatie.</li>
+        </ul>
+    </p>
+
+    <p>
+        Uw melding doet u via het contactformulier op dus-i.nl of schriftelijk. Vermeld in de melding uw
+        zaaknummer {$content->reference} en leg duidelijk uit wat er is veranderd aan uw situatie.
+        Heeft u documenten die relevant zijn voor uw melding? Stuur deze dan mee.
+    </p>
+
+    <p><u>Wat als u zich niet aan de voorschriften houdt?</u>
+        Het niet voldoen aan de verplichtingen die aan de subsidie verbonden zijn of het
+        niet (geheel) verrichten van de activiteiten kan tot gevolg hebben dat ik de
+        subsidie geheel of gedeeltelijk terugvorder.
+    </p>
+    <p>
+        Ik wijs u er verder op dat een registratie van (ernstige) onregelmatigheden bij
+        subsidies wordt bijgehouden met het oog op het tegengaan van misbruik van
+        subsidie.
+    </p>
+
+    <h2>Wanneer ontvangt u de subsidie?</h2>
+    <p>
+        U ontvangt een voorschot van 100% van het subsidiebedrag.<br>
+        Ik streef ernaar dit binnen 10 werkdagen naar u over te maken onder vermelding van het
+        referentienummer {$content->reference}.
+    </p>
+
+    <h2>Wanneer wordt de subsidie vastgesteld?</h2>
+    <p>
+        Op basis van artikel 10 van de subsidieregeling neemt de minister binnen 22 weken na afloop van de datum waarop
+        de operatie waarvoor de subsidie is verleend, moet zijn verricht, ambtshalve een besluit over de vaststelling
+        van de subsidie. Wij controleren of de borstoperatie is uitgevoerd. Dit doen we bij iedereen die via deze regeling
+        subsidie ontvangt. Zo controleren we of de ontvangen subsidie is gebruikt waarvoor deze is bedoeld. Bij de controle
+        vragen we u de factuur van de borstoperatie naar ons te sturen. Het kan gebeuren dat we vragen hebben over de factuur.
+        Als dat zo is kunnen we u vragen aanvullende documenten te sturen, zoals een bankafschrift of een verklaring van
+        de kliniek. Daarom is het advies om uw factuur goed te bewaren.
+    </p>
+
+{/block}
+
+{block signature}
+    <p>
+        Met vriendelijke groet,<br/>
+        <br/>
+        de minister van Volksgezondheid, Welzijn en Sport,<br/>
+        namens deze,<br/>
+        de directeur Curatieve Zorg,<br/>
+        voor deze,<br/>
+        het afdelingshoofd Dienst Uitvoering Subsidies aan Instellingen,<br/>
+        <br/>
+        <img class="signature" alt="handtekening" src="{$content->getSignature(''vws_dusi_signature.jpg'')|dataStream}" />
+        <br/>
+        P.A. van Hecking Colenbrander
+    </p>
+{/block}
+
+{block sidebar}
+    {include parent}
+
+    <h4>Relatienummer</h4>
+    <p>{$content->stage2->businessPartnerNumber}</p>
+{/block}
+',
+    updated_at = 'now()'
+WHERE id = '532d7372-a029-4190-bf8f-c8417ce9acb4';

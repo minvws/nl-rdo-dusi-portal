@@ -1,0 +1,14 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+parameters:
+    paths:
+        - app
+        - bootstrap
+        - config
+        - public
+        - routes
+    level: 8
+    inferPrivatePropertyTypeFromConstructor: true
+    excludePaths:
+        - public/index.php
+        - routes/console.php

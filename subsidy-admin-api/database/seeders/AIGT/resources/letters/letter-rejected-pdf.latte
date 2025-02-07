@@ -1,0 +1,53 @@
+{layout 'letter_layout.latte'}
+
+{block concern}
+    Betreft: Afwijzing aanvraag '{$content->subsidyTitle}'
+{/block}
+
+{block content}
+    <p>Beste lezer,</p>
+    <p>
+        Op {$content->submittedAt|date:"d-m-Y"} heeft u een aanvraag ingediend voor de regeling '{$content->subsidyTitle}' met referentienummer {$content->reference}.
+        Met deze brief beslis ik op uw aanvraag.
+    </p>
+
+    <h2>Besluit</h2>
+    <p>Uw subsidieaanvraag moet ik helaas afwijzen. De reden(en) licht ik hieronder toe.</p>
+
+    <h2>Motivering bij het besluit</h2>
+    {if $content->stage2->firstAssessmentRejectedNote}
+        <p>Uw aanvraag voldoet niet aan de volgende voorwaarde(n):</p>
+        <p>{$content->stage2->firstAssessmentRejectedNote|breakLines}</p>
+    {/if}
+    <p>Uw aanvraag is beoordeeld op grond van:</p>
+    <ul>
+        <li>Algemene wet bestuursrecht, in het bijzonder titel 4.2 Subsidies;</li>
+        <li>Kaderregeling subsidies OCW, SZW en VWS;</li>
+        <li>Subsidieregeling opleidingsactiviteiten Arts Internationale Gezondheid en Tropengeneeskunde 2021-2026;</li>
+        <li>Profielregister RGS en opleidingsregister OIGT.</li>
+    </ul>
+{/block}
+
+{block signature}
+    <p>
+        Met vriendelijke groet,<br/>
+        <br/>
+        de minister van Volksgezondheid, Welzijn en Sport,<br/>
+        namens deze,<br/>
+        het afdelingshoofd van Dienst Uitvoering Subsidies aan Instellingen<br/>
+        <br/>
+        <img class="signature" alt="handtekening" src="{$content->getSignature('vws_dusi_signature.jpg')|dataStream}" />
+        <br/>
+        L. van der Weij
+    </p>
+{/block}
+
+{block sidebar}
+    {include parent}
+
+    <h4>Relatienummer</h4>
+    <p>{$content->stage2->businessPartnerNumber}</p>
+
+    <h4>Verplichtingennummer</h4>
+    <p>{$content->stage2->liabilitiesNumber}</p>
+{/block}

@@ -1,0 +1,104 @@
+name: Create RDO MaZi Packages
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build-mazi:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        directory: [ "user-admin-api", "subsidy-admin-api", "application-api", "assessment-api", "application-backend" ]
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Package json exist
+        id: package_json_exist
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "${{ matrix.directory }}/package.json"
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        if: steps.package_json_exist.outputs.files_exists == 'true'
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.directory }}/package-lock.json'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install Node.js for shared
+        uses: actions/setup-node@v4
+        if: steps.package_json_exist.outputs.files_exists != 'true'
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: 'shared/package-lock.json'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install npm dependencies
+        if: steps.package_json_exist.outputs.files_exists == 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
+          cache-dependency-path: '${{ matrix.directory }}/package-lock.json'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: pcov
+          extensions: pgsql
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.directory }}-composer-${{ hashFiles(matrix.directory, '/composer.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.directory }}-composer-
+
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-dev
+
+      - name: Run build task
+        if: steps.package_json_exist.outputs.files_exists == 'true'
+        run: npm run build
+
+      - name: Clean build
+        run: rm -rfv node_modules
+
+      - name: Run shared build task
+        run: cd ../shared && npm ci --ignore-scripts --no-audit --no-fund && npm run build && rm -rfv node_modules
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.REPO_READ_ONLY_TOKEN }}
+
+      - name: Create lang dir if not exists
+        run: mkdir --parents lang
+
+      - run: 'echo "{ \"version\": \"${{ env.RELEASE_VERSION }}\", \"git_ref\": \"$GITHUB_SHA\"}" > public/version.json'
+        shell: bash
+
+      - name: Create tar
+        run: tar -czhf ${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}.tar.gz ./app ./bootstrap ./config ./database ./lang ./public ./resources ./routes ./vendor ./composer.json
+
+      - name: Upload release tar
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}
+          path: ${{ matrix.directory }}/${{ github.event.repository.name }}-${{ matrix.directory }}_${{ env.RELEASE_VERSION }}.tar.gz

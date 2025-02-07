@@ -1,0 +1,19 @@
+{block content}{/block}
+
+{import 'blocks/questions.latte'}
+{block questions}
+    {include questionsTemplate}
+{/block}
+
+{block signature}
+    <p>
+        Met vriendelijke groet,<br/>
+        <br/>
+        Dienst Uitvoering Subsidies aan Instellingen<br/>
+    </p>
+{/block}
+
+{import 'blocks/objection_footer.latte'}
+{block objectionFooter}
+    {include objectionFooterTemplate}
+{/block}

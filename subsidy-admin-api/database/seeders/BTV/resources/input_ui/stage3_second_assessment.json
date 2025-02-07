@@ -1,0 +1,62 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true,
+        "group": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Status",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/firstAssessorMotivatedValid",
+                            "options": {
+                                "format": "checkbox"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/secondAssessment",
+                            "options": {
+                                "format": "radio"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/secondAssessmentAdditionalDocuments",
+                            "options": {
+                                "accept": "image/jpeg,image/png,application/pdf",
+                                "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "Upload een of meerdere bewijsstukken. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/secondAssessmentInternalNote",
+                            "options": {
+                                "format": "textarea"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

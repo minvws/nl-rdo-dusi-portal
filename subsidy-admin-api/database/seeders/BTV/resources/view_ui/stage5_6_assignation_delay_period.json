@@ -1,0 +1,105 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "FormGroupControl",
+            "label": "Beoordeling",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "CustomControl",
+                    "scope": "#/properties/assessmentDelayChecklist",
+                    "options": {
+                        "readonly": true,
+                        "format": "checkbox-group"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/assessment",
+            "options": {
+                "readonly": true,
+                "format": "radio"
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/assignationDeadlineOverride",
+            "options": {
+                "readonly": true
+            },
+            "rule": {
+                "effect": "SHOW",
+                "condition": {
+                    "scope": "#/properties/assessment",
+                    "schema": {
+                        "const": "Uitstellen"
+                    }
+                }
+            }
+        },
+        {
+            "type": "CustomControl",
+            "scope": "#/properties/assignationDeadline",
+            "options": {
+                "readonly": true
+            },
+            "rule": {
+                "effect": "SHOW",
+                "condition": {
+                    "scope": "#/properties/assessment",
+                    "schema": {
+                        "const": "Uitstellen"
+                    }
+                }
+            }
+        },
+        {
+            "type": "FormResultsTable",
+            "options": {
+                "fields": {
+                    "Bewijs": "{proof}",
+                    "Interne notitie": "{internalNote}"
+                },
+                "showEmptyFields": true
+            }
+        },
+        {
+            "type": "FormGroupControl",
+            "label": "Vorderen",
+            "options": {
+                "section": true,
+                "headingLevel": "2"
+            },
+            "elements": [
+                {
+                    "type": "FormResultsTable",
+                    "options": {
+                        "fields": {
+                            "Motivatie": "{motivation}",
+                            "Vastgesteld bedrag": "{newAssignationAmount}",
+                            "Te vorderen bedrag": "{reclaimAmount}"
+                        }
+                    },
+                    "rule": {
+                        "effect": "SHOW",
+                        "condition": {
+                            "scope": "#/properties/assessment",
+                            "schema": {
+                                "const": "Vorderen"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

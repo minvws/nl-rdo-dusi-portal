@@ -1,0 +1,14 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "FormHtml",
+            "options": {
+                "html": "file:intro.html"
+            }
+        }
+    ]
+}

@@ -1,0 +1,63 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true,
+        "group": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Beoordeling",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/assignationImplementationAssessmentChecklist",
+                            "options": {
+                                "format": "checkbox-group"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Status",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/assessment",
+                            "options": {
+                                "format": "radio"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Toelichting",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#\/properties\/internalNote",
+                            "options": {
+                                "format": "textarea"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

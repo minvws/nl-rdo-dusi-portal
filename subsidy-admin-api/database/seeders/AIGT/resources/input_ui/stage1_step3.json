@@ -1,0 +1,67 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Opleiding",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/abroadCourseComponentStartDate",
+                            "label": "Start opleidingsonderdeel buitenland",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Documenten",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/proofOfRegistrationDocument",
+                            "label": "Bewijs van inschrijving",
+                            "options": {
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "Upload de brief met het besluit van de Registratiecommissie Geneeskundig Specialisten (RGS) waarin wordt bevestigd dat u bent ingeschreven in het opleidingsregister voor het specialisme profielregister Internationale Gezondheidszorg en Tropengeneeskunde.\nDe bijlage bij de brief moet u niet indienen. Het overzicht met registratiegegevens verwerken wij namelijk niet bij de behandeling van de aanvraag. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/educationalInstituteDeclarationDocument",
+                            "label": "Verklaring van opleidingsinstituut",
+                            "options": {
+                                "accept": "image/jpeg,image/png,.pdf",
+                                "maxFileSize": 20971520,
+                                "minItems": 1,
+                                "maxItems": 20,
+                                "tip": "Upload een ondertekende verklaring van het Opleidingsinstituut Internationale Gezondheidszorg en Tropengeneeskunde (OIGT) waarin wordt bevestigd dat u in opleiding bent tot Arts IGT-KNMG en dat u het opleidingsonderdeel ‘Buitenland’ volgt of heeft gevolgd. Toegestane bestandstypen: pdf, jpg, jpeg, png. Maximale bestandsgrootte: 20 MB."
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

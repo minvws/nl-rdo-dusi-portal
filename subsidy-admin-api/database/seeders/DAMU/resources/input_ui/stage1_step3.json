@@ -1,0 +1,258 @@
+{
+    "type": "FormGroupControl",
+    "options": {
+        "section": true
+    },
+    "elements": [
+        {
+            "type": "Group",
+            "label": "Inkomen",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/isSingleParentFamily",
+                            "options": {
+                                "format": "radio",
+                                "placeholder": "",
+                                "tip": "Er is alleen sprake van een eenoudergezin als een van de ouders overleden is of als een van de ouders volledig uit beeld is.",
+                                "remoteAction": ["onValid"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hasAlimony",
+                            "options": {
+                                "format": "radio",
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualIncomeParentA",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualIncomeParentB",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/isSingleParentFamily",
+                                    "schema": { "const": "Nee" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/annualJointIncome",
+                            "options": {
+                                "readonly": true
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Gegevens kind",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/childName",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/dateOfBirth",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialStreet",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialHouseNumber",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialHouseNumberSuffix",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialPostalCode",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/residentialCity",
+                            "options": {
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/educationType",
+                            "options": {
+                                "format": "radio",
+                                "placeholder": "",
+                                "remoteAction": ["onValid"]
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolPrimary",
+                            "options": {
+                                "format": "select",
+                                "placeholder": "",
+                                "remoteAction": ["onValid"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Primair onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolSecondary",
+                            "options": {
+                                "format": "select",
+                                "placeholder": "",
+                                "remoteAction": ["onValid"]
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Voortgezet onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/damuSchoolAddress",
+                            "options": {
+                                "placeholder": "",
+                                "readonly": true
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#",
+                                    "schema": {
+                                        "required": ["educationType"]
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hboPreviousEducationPrimary",
+                            "options": {
+                                "format": "select",
+                                "placeholder": ""
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Primair onderwijs" }
+                                }
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/hboPreviousEducationSecondary",
+                            "options": {
+                                "format": "select",
+                                "placeholder": ""
+                            },
+                            "rule": {
+                                "effect": "SHOW",
+                                "condition": {
+                                    "scope": "#/properties/educationType",
+                                    "schema": { "const": "Voortgezet onderwijs" }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Subsidie",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/travelDistanceSingleTrip",
+                            "options": {
+                                "placeholder": "",
+                                "remoteAction": ["onBlur"],
+                                "tip": "Gebruik de <a target='_blank' href='https://www.anwb.nl/verkeer/routeplanner'>ANWB-routeplanner</a> met de optie ‘snelste route’. U mag geen andere routeplanner gebruiken. Kies als route het woonadres naar de DAMU-school. Schakel de optie 'Route op basis van actueel verkeer' uit en klik op 'Herbereken route'."
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/travelExpenseReimbursement",
+                            "options": {
+                                "readonly": true,
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/requestedSubsidyAmount",
+                            "options": {
+                                "readonly": true,
+                                "placeholder": ""
+                            }
+                        },
+                        {
+                            "type": "CustomControl",
+                            "scope": "#/properties/explanation",
+                            "options": {
+                                "format": "textarea"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
