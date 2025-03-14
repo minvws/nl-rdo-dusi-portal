@@ -15,7 +15,7 @@
         "guzzlehttp/guzzle": "^7.7",
         "laravel/framework": "^10.17",
         "laravel/tinker": "^2.8",
-        "minvws/codable": "dev-main as 1.0.x-dev",
+        "minvws/codable": "^1.0.0",
         "minvws/dusi-shared": "@dev",
         "minvws/php-rmq-rpc-bridge": "@dev",
         "xenolope/quahog": "^3.0",
