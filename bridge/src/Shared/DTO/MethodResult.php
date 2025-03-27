@@ -27,8 +27,9 @@ class MethodResult implements Codable
 
     /**
      * @SuppressWarnings(UnusedFormalParameter)
+     * @return MethodResult<TData>
      */
-    public static function decode(DecodingContainer $container, ?Decodable $object = null): static
+    public static function decode(DecodingContainer $container, ?Decodable $object = null): self
     {
         $dataClass = $container->getContext()->getValue(self::DATA_CLASS);
         if ($dataClass === null) {

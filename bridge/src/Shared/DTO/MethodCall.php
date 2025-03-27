@@ -28,8 +28,9 @@ class MethodCall implements Codable
 
     /**
      * @SuppressWarnings(UnusedFormalParameter)
+     * @return MethodCall<TParams>
      */
-    public static function decode(DecodingContainer $container, ?Decodable $object = null): static
+    public static function decode(DecodingContainer $container, ?Decodable $object = null): self
     {
         $method = $container->{'method'}->decodeString();
 
