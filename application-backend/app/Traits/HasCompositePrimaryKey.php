@@ -2,7 +2,6 @@
 
 // @phpstan-ignore-file
 
-
 declare(strict_types=1);
 
 namespace MinVWS\DUSi\Application\Backend\Traits;

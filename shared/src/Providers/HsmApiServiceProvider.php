@@ -111,6 +111,7 @@ class HsmApiServiceProvider extends ServiceProvider
                 service: $app->make(HsmService::class),
                 hsmApiModule: $config->get('hsm_api.module') ?? '',
                 hsmApiSlot: $config->get('hsm_api.slot') ?? '',
+                hsmApiPublicKeyFilePath: $config->get('hsm_encryption.public_key_path') ?? '',
                 hsmApiEncryptionKeyLabel: $config->get('hsm_encryption.key_label') ?? '',
             );
         });

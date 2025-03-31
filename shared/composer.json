@@ -12,7 +12,7 @@
         "guzzlehttp/guzzle": "^7.8",
         "laravel/framework": "^10.17",
         "latte/latte": "^3.0",
-        "minvws/codable": "dev-main as 1.0.x-dev",
+        "minvws/codable": "^1.0.0",
         "minvws/laravel-logging": "^2.2",
         "xenolope/quahog": "^3.0",
         "laravel/fortify": "^1.18",

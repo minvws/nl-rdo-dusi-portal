@@ -31,6 +31,7 @@ class HsmLocalInitCommand extends Command
         protected HsmService $service,
         protected string $hsmApiModule,
         protected string $hsmApiSlot,
+        protected string $hsmApiPublicKeyFilePath,
         protected string $hsmApiEncryptionKeyLabel,
     ) {
         parent::__construct();
@@ -51,9 +52,9 @@ class HsmLocalInitCommand extends Command
             return;
         }
 
-        if (!$this->encryptionKeyLabelInConfig()) {
-            $this->error('Encryption key label must be set in the environment config. Please set
-            HSM_ENCRYPTION_KEY_LABEL.');
+        if (!$this->publicKeyFilePathAndEncryptionKeyLabelInConfig()) {
+            $this->error('HSM Public Key Path and Encryption key label must be set in the environment config. Please set
+            HSM_PUBLIC_KEY_FILE_PATH and HSM_ENCRYPTION_KEY_LABEL.');
             return;
         }
 
@@ -259,7 +260,7 @@ class HsmLocalInitCommand extends Command
             }
 
             try {
-                $this->publicKeyToFile($publicKey, env('HSM_PUBLIC_KEY_FILE_PATH'));
+                $this->publicKeyToFile($publicKey, $this->hsmApiPublicKeyFilePath);
             } catch (\Exception $e) {
                 $this->error('Could not write public key to file.');
                 return;
@@ -293,9 +294,9 @@ class HsmLocalInitCommand extends Command
         return !empty($this->hsmApiModule) && !empty($this->hsmApiSlot);
     }
 
-    protected function encryptionKeyLabelInConfig(): bool
+    protected function publicKeyFilePathAndEncryptionKeyLabelInConfig(): bool
     {
-        return !empty($this->hsmApiEncryptionKeyLabel);
+        return !empty($this->hsmApiPublicKeyFilePath) && !empty($this->hsmApiEncryptionKeyLabel);
     }
 
     public function confirm($question, $default = false): bool

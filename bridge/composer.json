@@ -8,7 +8,7 @@
         "php": "^8.2",
         "ext-pcntl": "*",
         "ext-posix": "*",
-        "minvws/codable": "dev-main as 1.0.x-dev",
+        "minvws/codable": "^1.0.0",
         "php-amqplib/php-amqplib": "^3.5",
         "ext-openssl": "*"
     },

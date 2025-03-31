@@ -265,22 +265,22 @@ class ApplicationRepository
 
         $query = match ($applicationStageGrouping) {
             ApplicationStageGrouping::ByStageNumber =>
-                $query->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage),
+            $query->whereRelation('subsidyStage', 'stage', '<=', $stage->subsidyStage->stage),
             ApplicationStageGrouping::BySequenceNumber =>
-                $query->where('sequence_number', '<=', $stage->sequence_number),
+            $query->where('sequence_number', '<=', $stage->sequence_number),
         };
 
         /** @var array<ApplicationStage> $matchingStages */
         $matchingStages = $query
-                ->where('sequence_number', '<=', $stage->sequence_number)
-                ->where(
-                    fn ($query) =>
-                        $query
-                            ->where('is_submitted', '=', true)
-                            ->when(!$readOnly, fn ($query) => $query->orWhere('id', '=', $stage->id))
-                )
-                ->orderBy('sequence_number')
-                ->get();
+            ->where('sequence_number', '<=', $stage->sequence_number)
+            ->where(
+                fn ($query) =>
+                $query
+                    ->where('is_submitted', '=', true)
+                    ->when(!$readOnly, fn ($query) => $query->orWhere('id', '=', $stage->id))
+            )
+            ->orderBy('sequence_number')
+            ->get();
 
         $uniqueStages = [];
         foreach ($matchingStages as $currentStage) {
@@ -331,9 +331,9 @@ class ApplicationRepository
                 ->whereRelation('subsidyStage', 'subject_role', '=', SubjectRole::Applicant)
                 ->where(
                     fn ($query) =>
-                        $query
-                            ->where('is_current', '=', true)
-                            ->orWhere('is_submitted', '=', true)
+                    $query
+                        ->where('is_current', '=', true)
+                        ->orWhere('is_submitted', '=', true)
                 )
                 ->orderBy('sequence_number', 'desc')
                 ->limit(1);
@@ -486,12 +486,12 @@ class ApplicationRepository
         $query = $identity
             ->applications()
             ->with(['subsidyVersion', 'subsidyVersion.subsidy', 'lastApplicationStage'])
-            /** @phpstan-ignore argument.type */
             ->when($subsidy, function (Builder $query, Subsidy $subsidy) {
                 /** @var Builder<Application> $query */
                 $query->ofSubsidy($subsidy->id);
             });
 
+        /** @phpstan-ignore argument.type */
         $this->filterMyApplicationsQueryValidStatus($query);
 
         return $query
@@ -506,6 +506,7 @@ class ApplicationRepository
             ->applications()
             ->when($lockForUpdate, fn($q) => $q->lockForUpdate());
 
+        /** @phpstan-ignore argument.type */
         $this->filterMyApplicationsQueryValidStatus($query);
 
         return $query
