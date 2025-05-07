@@ -12,13 +12,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: 18  
+  NODE_VERSION: 22
   PHP_VERSION: 8.2
 
 jobs:
   validate:
     name: 'Build & validate'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         directory: ["bridge", "shared", "user-admin-api", "subsidy-admin-api", "application-backend", "application-api", "assessment-api"]
@@ -142,7 +142,7 @@ jobs:
 
   sonar:
     name: SonarCloud
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: validate
     steps:
       - name: Checkout repository

@@ -1,17 +1,17 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "vite build"
     },
     "devDependencies": {
-        "laravel-vite-plugin": "^0.8.1",
-        "vite": "^4.5.12",
-        "vite-plugin-static-copy": "^0.17.1"
+        "laravel-vite-plugin": "^1.2.0",
+        "vite": "^6.3.5",
+        "vite-plugin-static-copy": "^2.3.1"
     },
     "dependencies": {
         "@minvws/nl-rdo-rijksoverheid-ui-theme": "^0.0.17",
-        "sass": "^1.79.3",
-        "semver": "^7.6.0"
+        "sass": "^1.87.0"
     }
 }
