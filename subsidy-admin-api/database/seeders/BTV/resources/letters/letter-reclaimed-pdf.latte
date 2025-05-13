@@ -38,19 +38,23 @@
         het vorderingsnummer {$content->stage7->reclaimNumber} en subsidienummer {$content->reference}.</p>
 {/block}
 
+{block questions}
+    <h2>Vragen?</h2>
+    <p>Neem contact op met DUS-I via telefoon: <a href="tel:+31703405566">070 3405566</a> of gebruik het contactformulier op <a href="https://www.dus-i.nl/btv">www.dus-i.nl/btv</a>.
+     Vermeld hierbij het kenmerk <em>{$content->reference}</em>.</p>
+{/block}
+
 {block signature}
     <p>
         Met vriendelijke groet,<br/>
         <br/>
-        de minister van Volksgezondheid, Welzijn en Sport,<br/>
-        namens deze,<br/>
-        de directeur Curatieve Zorg,<br/>
-        voor deze,<br/>
-        het afdelingshoofd Dienst Uitvoering Subsidies aan Instellingen,<br/>
+        namens de minister van Volksgezondheid, Welzijn en Sport,<br/>
         <br/>
         <img class="signature" alt="handtekening" src="{$content->getSignature('vws_dusi_signature.jpg')|dataStream}" />
         <br/>
-        P.A. van Hecking Colenbrander
+        Aryan van Driel<br/>
+        Algemeen directeur<br/>
+        Dienst Uitvoering Subsidies aan Instellingen
     </p>
 {/block}
 
